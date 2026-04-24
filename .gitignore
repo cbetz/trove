@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+*.egg
+dist/
+build/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Data (raw downloads, built Parquet)
+data/
+!data/.gitkeep
+
+# Environment
+.env
+.env.local
+
+# Claude Code local overrides
+.claude/settings.local.json
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Docs
+site/
+
+# Node (web/)
+node_modules/
+.next/
+.observablehq/cache
+dist-web/
+
+# Notebooks
+.ipynb_checkpoints/
