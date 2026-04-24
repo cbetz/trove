@@ -13,9 +13,9 @@ On top of those: a Claude skill bundle (`skills/hcris-analyst`) and a static Obs
 
 ## Status
 
-**M0 — Scaffold.** Workspace, CI, license, docs skeleton. No parsers yet.
+**M1 — HCRIS parser (Hospital 2552-10).** Download, parse, and write partitioned Parquet for FY2015→latest. Sacarny's invariants enforced (unique `rpt_rec_num` per year, no null NMRC values, NMRC/ALPHA IDs subset of RPT). No semantic field dictionary yet — that's M2.
 
-See milestone plan in the repo root issue tracker (or the original design doc).
+See `packages/hcris/README.md` for usage.
 
 ## Dev setup
 
