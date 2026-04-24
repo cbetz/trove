@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>trove — underused healthcare datasets</title>
+  <meta name="description" content="Open-source parsers, agents, and visualizations for underused healthcare datasets.">
+  <meta property="og:title" content="trove">
+  <meta property="og:description" content="Open-source parsers, agents, and visualizations for underused healthcare datasets.">
+  <style>
+    :root { color-scheme: light dark; --muted: #888; --border: rgba(127, 127, 127, 0.3); }
+    * { box-sizing: border-box; }
+    body {
+      max-width: 44rem;
+      margin: 0 auto;
+      padding: 5rem 1.5rem;
+      font: 15px/1.65 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    h1 { font-size: 3rem; margin: 0 0 0.5rem; letter-spacing: -0.03em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 1.5rem; font-size: 1.05rem; }
+    .status { display: inline-block; padding: 0.15rem 0.6rem; border: 1px solid var(--border); border-radius: 999px; font-size: 0.75rem; color: var(--muted); }
+    section { margin-top: 3rem; }
+    h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 0.75rem; font-weight: 600; }
+    ul { padding-left: 1.25rem; margin: 0; }
+    li { margin: 0.4rem 0; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+    code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+  <h1>trove</h1>
+  <p class="tagline">Open-source parsers, agents, and visualizations for underused healthcare datasets.</p>
+  <p><span class="status">M0 · scaffold</span></p>
+
+  <section>
+    <h2>Phase 1 datasets</h2>
+    <ul>
+      <li>CMS Medicare Cost Reports (HCRIS, form 2552-10)</li>
+      <li>IRS Form 990 — Schedule H (hospital community benefit)</li>
+      <li>CCN ↔ EIN crosswalk for joining the two</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Source</h2>
+    <p><a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a></p>
+  </section>
+</body>
+</html>
