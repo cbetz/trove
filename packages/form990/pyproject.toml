@@ -1,0 +1,16 @@
+[project]
+name = "form990"
+version = "0.1.0"
+description = "Parser for IRS Form 990 XML, scoped to Schedule H (hospital community benefit)."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "Chris Betz" }]
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/form990"]

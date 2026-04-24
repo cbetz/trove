@@ -1,0 +1,10 @@
+site_name: trove
+site_description: Parsers, agents, and visualizations for underused healthcare datasets.
+theme:
+  name: material
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - content.code.copy
+nav:
+  - Home: index.md
