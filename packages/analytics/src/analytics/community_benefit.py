@@ -44,8 +44,15 @@ def community_benefit_gap(
         )
     )
 
+    # When a 990 has been amended, the same EIN appears in multiple release-year
+    # ingests with the same tax_period_end. Prefer the newest release_year, then
+    # newest tax_period_end. release_year may be missing if the caller ran
+    # parse_zip directly — fall back to tax_period_end-only ordering.
+    sort_keys = ["tax_period_end"]
+    if "release_year" in schedule_h.columns:
+        sort_keys = ["release_year", "tax_period_end"]
     sched_latest = (
-        schedule_h.sort_values("tax_period_end", ascending=False)
+        schedule_h.sort_values(sort_keys, ascending=False)
         .drop_duplicates(subset=["ein"], keep="first")[
             [
                 "ein",

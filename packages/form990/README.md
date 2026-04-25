@@ -32,4 +32,8 @@ The parser short-circuits on a cheap byte-level check for `IRS990ScheduleH` befo
 
 XPaths target the `http://www.irs.gov/efile` namespace. Element names (`FinancialAssistanceAtCostTyp`, `TotalCommunityBenefitsGrp`, etc.) have been stable since TY2013 schema 2013v3.0; pre-2013 paths used a different shape and aren't supported.
 
-**Bootstrap year:** TY2022. Most TY2022 returns appear in the `2024_TEOS_XML_*.zip` release; late filers and amendments trickle into 2025 and 2026 ZIPs. Pull additional release years if you want maximum coverage.
+**Bootstrap year:** TY2022. Most TY2022 returns appear in the `2024_TEOS_XML_*.zip` release; late filers and amendments trickle into 2025 and 2026 ZIPs. Concat parses across release years and dedup downstream — `parse_tax_year` attaches a `release_year` column so the analytics layer can prefer the most recent version per EIN.
+
+## ZIP compression
+
+The IRS started using DEFLATE64 (`compress_type=9`) for the 2025 release year. Python's stdlib `zipfile` can index these archives but can't decompress them. The parser falls back to manual local-header reading + `inflate64` for any entry with `compress_type=9`. Earlier releases (DEFLATE, `compress_type=8`) go through stdlib unchanged.

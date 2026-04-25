@@ -10,6 +10,8 @@ dependencies = [
     "pandas>=2.2",
     "pyarrow>=18",
     "lxml>=5",
+    "pyzipper>=0.3.6",
+    "inflate64>=1.0.4",
 ]
 
 [build-system]
