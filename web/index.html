@@ -34,23 +34,25 @@
 <body>
   <h1>trove</h1>
   <p class="tagline">Open-source parsers, agents, and visualizations for underused healthcare datasets.</p>
-  <p><span class="status">M2 · semantic dictionary</span></p>
+  <p><span class="status">M4 · community benefit gap</span></p>
 
   <section>
-    <h2>What works today</h2>
-    <p>Three lines of Python turn a raw 130 MB HCRIS ZIP into a hospital-report DataFrame with named columns:</p>
-<pre><code>files = parse_zip(download_year(2023))
-wide  = pivot_wide(files)
-wide[["hospital_name", "total_beds", "net_patient_revenue"]]</code></pre>
-    <p>Validated on all 6,105 hospital reports in FY2023 — NYP, NYU Langone, Stanford, and Cleveland Clinic surface at the top of net patient revenue with bed counts matching public reporting.</p>
+    <h2>The headline</h2>
+    <p>Hennepin County Medical Center, Minneapolis. Reports <strong>$64.3M of charity care cost</strong> to CMS on Worksheet S-10 of its Medicare Cost Report. Reports <strong>$34.4M of financial assistance at cost</strong> to the IRS on Schedule H of its Form 990. Same concept, different filings, <strong>$30M apart</strong>.</p>
+    <p>That comparison didn't exist as a public, queryable dataset before this project. It does now — for any U.S. nonprofit hospital, every year — in four lines of Python:</p>
+<pre><code>hcris   = pivot_wide(parse_hcris("HOSP10FY2023.zip"))   # CMS S-10, by CCN
+sched_h = parse_990("2024_TEOS_XML_01A.zip")             # 990 Schedule H, by EIN
+cw      = load_seed()                                    # CCN ↔ EIN
+gap     = community_benefit_gap(hcris, sched_h, cw)</code></pre>
   </section>
 
   <section>
     <h2>Phase 1 datasets</h2>
     <ul>
-      <li>CMS Medicare Cost Reports (HCRIS, form 2552-10) — <span class="demo-comment">parser + 15-variable dictionary shipped</span></li>
-      <li>IRS Form 990 — Schedule H (hospital community benefit) — <span class="demo-comment">M3</span></li>
-      <li>CCN ↔ EIN crosswalk for joining the two — <span class="demo-comment">M4</span></li>
+      <li>CMS Medicare Cost Reports (HCRIS, form 2552-10) — <span class="demo-comment">parser + 44-variable dictionary shipped</span></li>
+      <li>IRS Form 990 Schedule H (hospital community benefit) — <span class="demo-comment">parser + 19 fields shipped</span></li>
+      <li>CCN ↔ EIN crosswalk for joining the two — <span class="demo-comment">3,523 hospitals from CBI, shipped</span></li>
+      <li>Composed analytics — <span class="demo-comment">community_benefit_gap() shipped</span></li>
     </ul>
   </section>
 

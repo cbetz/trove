@@ -23,6 +23,12 @@ members = [
 name = "analytics"
 version = "0.1.0"
 source = { editable = "packages/analytics" }
+dependencies = [
+    { name = "pandas" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "pandas", specifier = ">=2.2" }]
 
 [[package]]
 name = "babel"
@@ -154,6 +160,16 @@ wheels = [
 name = "crosswalk"
 version = "0.1.0"
 source = { editable = "packages/crosswalk" }
+dependencies = [
+    { name = "pandas" },
+    { name = "pyarrow" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pandas", specifier = ">=2.2" },
+    { name = "pyarrow", specifier = ">=18" },
+]
 
 [[package]]
 name = "form990"
