@@ -1,0 +1,146 @@
+# Semantic field dictionary for CMS Medicare Cost Report Hospital form 2552-10.
+#
+# Maps (wksht_cd, line_num, clmn_num) tuples to human-readable variable names
+# so that downstream code can work with `total_beds` instead of `(S300001, 1400, 200)`.
+#
+# Factual codes (wksht_cd, line_num, clmn_num) are drawn from CMS Provider
+# Reimbursement Manual Chapter 40 and the published 2552-10 worksheet templates —
+# public-domain US government work. Variable names and descriptions are trove's
+# own authorship. The Sacarny `hospital-cost-reports` repository was consulted
+# as a cross-reference for coverage; this file is an independent authoring.
+#
+# Values for line_num and clmn_num are integers here for readability. The loader
+# zero-pads them to the 5-character strings that CMS actually emits in NMRC/ALPHA
+# (e.g. 200 -> "00200"). Alpha-suffixed column codes like "04A00" stay as strings.
+
+schema_version: 1
+form: "2552-10"
+
+variables:
+  # --- Identity and organization (Worksheet S-2 Part I) ---
+
+  - name: hospital_name
+    source: alpha
+    type: string
+    wksht_cd: S200001
+    line_num: 300
+    clmn_num: 100
+    description: Legal name of the hospital.
+
+  - name: ownership_type
+    source: alpha
+    type: string
+    wksht_cd: S200001
+    line_num: 2100
+    clmn_num: 100
+    description: Type of ownership/control (e.g. voluntary nonprofit, for-profit, government).
+
+  - name: chain_name
+    source: alpha
+    type: string
+    wksht_cd: S200001
+    line_num: 14100
+    clmn_num: 100
+    description: Name of the parent chain organization, if the hospital is part of one.
+
+  # --- Bed capacity and utilization (Worksheet S-3 Part I) ---
+
+  - name: total_beds
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 1400
+    clmn_num: 200
+    description: Total beds including swing beds and special-care units (ICU, CCU, NICU, etc.).
+
+  - name: total_beds_grand
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 2700
+    clmn_num: 200
+    description: Grand total beds including subprovider, SNF, nursing facility, and hospice beds.
+
+  - name: total_discharges
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 100
+    clmn_num: 1500
+    description: Total inpatient discharges for adults, pediatrics, and specialty units.
+
+  - name: total_bed_days_available
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 100
+    clmn_num: 300
+    description: Total bed-days available during the reporting period.
+
+  - name: inpatient_bed_days_utilized
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 100
+    clmn_num: 800
+    description: Total inpatient bed-days utilized during the reporting period.
+
+  # --- Revenue and expense (Worksheet G-3) ---
+
+  - name: net_patient_revenue
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G300000
+    line_num: 300
+    clmn_num: 100
+    description: Net patient revenue — total patient revenues minus allowances and discounts.
+
+  - name: total_operating_expenses
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G300000
+    line_num: 400
+    clmn_num: 100
+    description: Total operating expenses.
+
+  - name: other_income
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G300000
+    line_num: 2500
+    clmn_num: 100
+    description: Total other operating income.
+
+  - name: total_other_expenses
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G300000
+    line_num: 2800
+    clmn_num: 100
+    description: Total other expenses.
+
+  # --- Uncompensated care (Worksheet S-10) ---
+
+  - name: total_bad_debt
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 2600
+    clmn_num: 100
+    description: Total bad debt expense reported on Worksheet S-10 (2010 format only).
+
+  - name: charity_care_cost
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 2300
+    clmn_num: 300
+    description: Cost of charity care reported on Worksheet S-10 (2010 format only).
+
+  - name: uncompensated_care_cost
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 3000
+    clmn_num: 100
+    description: Total cost of uncompensated care reported on Worksheet S-10 (2010 format only).
