@@ -10,12 +10,24 @@ from form990.schema import INDEX_COLUMNS, RETURN_TYPE_990
 
 
 def read_index(path: Path | str) -> pd.DataFrame:
-    """Read an IRS index_{year}.csv into a DataFrame with the documented columns."""
-    return pd.read_csv(
+    """Read an IRS index_{year}.csv into a DataFrame with the documented columns.
+
+    Normalizes ``XML_BATCH_ID`` casing — the IRS index occasionally writes the
+    trailing letter in lowercase (e.g. ``2024_TEOS_XML_04a``) but the actual
+    bulk-XML URL is always uppercase. We upper-case the trailing letter here
+    so cache filenames and URLs stay consistent.
+    """
+    df = pd.read_csv(
         path,
         usecols=list(INDEX_COLUMNS),
         dtype={c: "string" for c in INDEX_COLUMNS},
     )
+    df["XML_BATCH_ID"] = df["XML_BATCH_ID"].str.replace(
+        r"_(\d+)([a-d])$",
+        lambda m: f"_{m.group(1)}{m.group(2).upper()}",
+        regex=True,
+    )
+    return df
 
 
 def filter_990s_for_tax_year(index: pd.DataFrame, tax_year: int) -> pd.DataFrame:
