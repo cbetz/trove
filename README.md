@@ -2,18 +2,20 @@
 
 Open-source parsers, agents, and visualizations for underused healthcare datasets.
 
-## The first finding
+## What this is
 
-**Across 1,334 nonprofit U.S. hospital systems for tax year 2022:**
+A side-by-side comparison tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both forms are *supposed* to report the same underlying figure, but the rules diverge enough that the numbers often don't match.
 
-- **$5.14B** total absolute gap between charity-care cost reported on CMS Worksheet S-10 and "financial assistance at cost" reported on IRS Form 990 Schedule H.
-- **60% of systems** report MORE charity care to CMS than to the IRS.
-- **Top single gap:** Memorial Hermann Health System — $428M to CMS vs. $307M to the IRS, a +$121M difference.
-- **$60.5B** total community benefit reported on Schedule H system-wide.
+For tax year 2022, with HCRIS reports paired only when the two filings cover the same fiscal period (within 1 month) and both report ≥ $500K, the dataset has **228 hospital systems** where the comparison is genuinely apples-to-apples. Among those:
 
-These two filings are *supposed* to report the same underlying number under different rules. trove makes the comparison computable.
+- The **median proportional gap is 25%** — typical disagreement is large.
+- **53 systems (23% of the subset)** disagree by more than 50% — the cases worth a closer look.
+- **Largest aligned-period dollar gap:** Orlando Health — $143M HCRIS vs. $73M IRS = +$71M / 49%.
+- **Largest aligned-period proportional gap:** Western Regional Medical Center — $18M HCRIS vs. $1M IRS = +94%.
 
-**→ Search any of the 1,334 systems at [troveproject.com](https://troveproject.com).**
+The full matched set is 1,334 systems, but most are misaligned by 12 months because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period. The site shows the misaligned rows when you toggle the filter off, but they're flagged in the leaderboard.
+
+**→ Search the 228 aligned systems (or the full 1,334) at [troveproject.com](https://troveproject.com).**
 
 Full table: [`artifacts/community_benefit_gap_2022.csv`](artifacts/community_benefit_gap_2022.csv) · Top 50: [`artifacts/community_benefit_gap_2022_top50.csv`](artifacts/community_benefit_gap_2022_top50.csv) · Method and caveats: [`artifacts/community_benefit_gap_2022_summary.md`](artifacts/community_benefit_gap_2022_summary.md).
 
@@ -59,7 +61,8 @@ scripts/          Build + demo scripts
 
 ## Status
 
-- **M4.2** — TY2022 ingest expanded to 2024+2025+2026 IRS release years (late filers and amendments included). 1,334 systems, $60.5B community benefit, $5.14B absolute gap. Form990 parser now handles DEFLATE64 ZIPs (introduced by IRS in 2025 release).
+- **M4.3** — Validation pass against IRS source XML (6 spot-checks, all exact); per-row alignment signals (HCRIS fiscal year end vs. 990 tax period end); default view filtered to aligned + comparable subset (228 systems); ProPublica deep links per row.
+- **M4.2** — TY2022 ingest expanded to 2024+2025+2026 IRS release years (late filers and amendments). Form990 parser now handles DEFLATE64 ZIPs (introduced by IRS in 2025 release).
 - **M4.1** — first published TY2022 gap dataset from the 2024 release year alone (1,317 systems).
 - **M4** — `crosswalk` package + `analytics.community_benefit_gap()`.
 - **M3** — `form990` Schedule H parser, full TY2022 ingest.

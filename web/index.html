@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>trove — the community benefit gap, computable</title>
-  <meta name="description" content="Search 1,317 nonprofit hospital systems and see the gap between what they report as charity care to CMS vs. the IRS.">
-  <meta property="og:title" content="trove — the community benefit gap">
-  <meta property="og:description" content="Search 1,317 nonprofit hospital systems and see the gap between what they report as charity care to CMS vs. the IRS.">
+  <title>trove — compare hospital charity care reporting (CMS vs. IRS)</title>
+  <meta name="description" content="A side-by-side comparison tool for the charity care numbers that 1,334 nonprofit U.S. hospitals report to CMS and to the IRS for tax year 2022. Many disagree.">
+  <meta property="og:title" content="trove — compare hospital charity care reporting (CMS vs. IRS)">
+  <meta property="og:description" content="A side-by-side comparison tool for the charity care numbers that 1,334 nonprofit U.S. hospitals report to CMS and to the IRS for tax year 2022. Many disagree.">
   <meta property="og:url" content="https://troveproject.com/">
   <meta name="twitter:card" content="summary_large_image">
   <style>
@@ -18,9 +18,10 @@
       --row-active: rgba(127, 127, 127, 0.18);
       --pos: #b8551a;
       --neg: #2c6cb0;
+      --warn-bg: rgba(184, 85, 26, 0.06);
     }
     @media (prefers-color-scheme: dark) {
-      :root { --pos: #ee9457; --neg: #6fa6dd; }
+      :root { --pos: #ee9457; --neg: #6fa6dd; --warn-bg: rgba(238, 148, 87, 0.08); }
     }
     * { box-sizing: border-box; }
     body {
@@ -40,23 +41,32 @@
     pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
     pre code { background: none; padding: 0; }
 
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 1.5rem 0 0; }
+    .lede p { margin: 0.85em 0; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 2rem 0 0; }
     .stat { border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.1rem; }
     .stat-num { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; }
     .stat-label { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
+    .stat-sub { color: var(--muted); font-size: 0.85em; margin-top: 0.4rem; line-height: 1.45; }
     @media (max-width: 640px) {
       .stats { grid-template-columns: 1fr; }
       h1 { font-size: 2.25rem; }
     }
 
-    .search { display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.85rem; margin-bottom: 1rem; }
+    .callout { border-left: 3px solid var(--pos); background: var(--warn-bg); padding: 1rem 1.2rem; border-radius: 0 4px 4px 0; margin-bottom: 1.5rem; }
+    .callout strong { display: block; margin-bottom: 0.35rem; }
+    .callout p { margin: 0.35rem 0; font-size: 0.95em; }
+
+    .controls { display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center; margin-bottom: 1rem; font-size: 0.9em; }
+    .search { flex: 1; min-width: 14rem; display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); border-radius: 6px; padding: 0.55rem 0.85rem; }
     .search::before { content: "›"; color: var(--muted); font-weight: 700; }
     .search input { flex: 1; border: 0; background: transparent; font: inherit; color: inherit; outline: none; padding: 0; }
-    .search-meta { color: var(--muted); font-size: 0.85em; }
+    .toggle { display: inline-flex; align-items: center; gap: 0.35rem; cursor: pointer; user-select: none; color: var(--muted); }
+    .toggle input { margin: 0; }
+    .search-meta { color: var(--muted); font-size: 0.85em; flex-basis: 100%; margin-top: -0.25rem; }
 
     table.leaderboard { width: 100%; border-collapse: collapse; font-size: 0.92em; }
-    table.leaderboard th, table.leaderboard td { padding: 0.55rem 0.65rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
-    table.leaderboard th { font-weight: 600; color: var(--muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; user-select: none; }
+    table.leaderboard th, table.leaderboard td { padding: 0.55rem 0.5rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    table.leaderboard th { font-weight: 600; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; user-select: none; white-space: nowrap; }
     table.leaderboard th[aria-sort="ascending"]::after { content: " ▲"; }
     table.leaderboard th[aria-sort="descending"]::after { content: " ▼"; }
     table.leaderboard td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -65,6 +75,7 @@
     table.leaderboard tbody tr.active { background: var(--row-active); }
     .system-name { font-weight: 600; }
     .facility-name { color: var(--muted); font-size: 0.85em; margin-top: 0.15rem; }
+    .facility-name .warn { color: var(--pos); }
     .pos { color: var(--pos); }
     .neg { color: var(--neg); }
     .col-rank { color: var(--muted); width: 2.5rem; }
@@ -81,7 +92,12 @@
     .detail-row:last-child { border-bottom: 0; }
     .detail-row span:first-child { color: var(--muted); }
     .detail-gap { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; font-size: 1.1rem; font-weight: 700; }
-    @media (max-width: 640px) { .detail-grid { grid-template-columns: 1fr; } }
+    .detail-signals { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr; gap: 0.5rem; font-size: 0.9em; }
+    .signal { display: flex; gap: 0.6rem; align-items: baseline; }
+    .signal-label { color: var(--muted); white-space: nowrap; min-width: 12rem; }
+    .detail-links { margin-top: 1rem; font-size: 0.9em; }
+    .detail-links a { margin-right: 1rem; }
+    @media (max-width: 640px) { .detail-grid { grid-template-columns: 1fr; } .signal-label { min-width: auto; } }
 
     details { border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1.1rem; }
     details summary { cursor: pointer; font-weight: 600; }
@@ -89,7 +105,9 @@
     details p, details ul { margin: 0.5rem 0; }
     details ul { padding-left: 1.25rem; }
 
-    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; display: flex; flex-wrap: wrap; gap: 1.25rem; justify-content: space-between; }
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer .row { display: flex; flex-wrap: wrap; gap: 0.85rem 1.5rem; justify-content: space-between; }
+    footer p { margin: 0 0 0.5rem; }
 
     .empty { color: var(--muted); padding: 2rem; text-align: center; }
     .loading { color: var(--muted); padding: 1.5rem 0; }
@@ -98,55 +116,108 @@
 <body>
   <header class="narrow">
     <h1>trove</h1>
-    <p class="tagline">The community benefit gap, computable.</p>
+    <p class="tagline">A comparison tool for hospital charity care reporting.</p>
   </header>
 
-  <section class="narrow">
-    <p>Every nonprofit hospital in the U.S. files Worksheet S-10 with CMS and Schedule H with the IRS. Both forms are supposed to report the cost of charity care. The numbers don't always match. trove makes the comparison computable across every system at once — for tax year 2022, here's what they look like.</p>
+  <section class="narrow lede">
+    <p>Every nonprofit U.S. hospital files Worksheet S-10 with CMS and Schedule H with the IRS. Both forms ask, in different language, for the same number: the cost of charity care provided to patients who couldn't pay. The forms aren't required to match, and they often don't. trove makes the comparison computable across hospital systems for tax year 2022.</p>
+    <p>This is a side-by-side reconciliation tool, not an accusation engine. A nonzero gap is a starting point for review, not evidence of misconduct — many divergences are explained by definitional differences (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume. The interesting cases are the ones that <em>aren't</em> explained by those.</p>
+    <p><strong>Each row is one nonprofit hospital system</strong> — one IRS Employer Identification Number (EIN) — aggregating the underlying CMS Worksheet S-10 numbers across every CCN-keyed facility that files under that EIN. The 990 figure comes from Schedule H Part I line 7a (financial assistance at cost). The HCRIS figure is Worksheet S-10 charity care cost.</p>
+    <p><strong>Default view: well-aligned, comparable systems only.</strong> HCRIS uses a federal-fiscal-year reporting cycle, not a fiscal period; for many hospitals, CMS reporting cycle "FY2023" actually contains a report covering a 12-month period that doesn't overlap with their TY2022 990 at all. The default filter restricts to systems where the two filings cover the same period (within 1 month) <em>and</em> both report at least $500K — the only subset where the comparison is genuinely apples-to-apples. Toggle the filters off if you want the unfiltered view.</p>
     <div class="stats" id="stats">
-      <div class="stat"><div class="stat-num" id="stat-systems">—</div><div class="stat-label">Systems matched</div></div>
-      <div class="stat"><div class="stat-num" id="stat-gap">—</div><div class="stat-label">Total absolute gap</div></div>
-      <div class="stat"><div class="stat-num" id="stat-pct">—</div><div class="stat-label">Report more to CMS than IRS</div></div>
+      <div class="stat">
+        <div class="stat-num" id="stat-systems">—</div>
+        <div class="stat-label">Aligned, comparable systems</div>
+        <div class="stat-sub">Of <span id="stat-total">—</span> total matched. Periods within 1 month and both filings ≥ $500K.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-median">—</div>
+        <div class="stat-label">Median gap on this subset</div>
+        <div class="stat-sub">Typical disagreement between what a hospital reports to CMS vs. the IRS for the same year.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-big">—</div>
+        <div class="stat-label">Have a 50%+ gap</div>
+        <div class="stat-sub">Hospitals where the two filings disagree by more than half — the cases worth a closer look.</div>
+      </div>
     </div>
   </section>
 
   <section>
-    <h2>Search 1,334 hospital systems</h2>
-    <div class="search">
-      <input id="q" type="search" placeholder="Try “Memorial Hermann”, “Yale”, “Cleveland Clinic”, or an EIN…" autocomplete="off" spellcheck="false">
+    <div class="callout">
+      <strong>How to read the leaderboard.</strong>
+      <p>The default view filters to <em>aligned, comparable</em> systems: HCRIS fiscal year end ≈ 990 tax period end (within 1 month) and both filings report ≥ $500K of charity care. The default sort ranks those by absolute proportional gap — the hospitals where both regulators heard a real number but the numbers disagree most. Click any row to see the underlying numbers, period alignment, and a link to the actual 990 filing on ProPublica.</p>
+      <p>A row appearing high here means: (a) we matched the system across HCRIS and 990 correctly, (b) the periods cover the same year, and (c) the two filings still disagree. It does not mean the hospital is hiding charity care — see the methodology below for the dozen reasons two filings can legitimately diverge.</p>
+    </div>
+
+    <div class="controls">
+      <div class="search">
+        <input id="q" type="search" placeholder="Search by system, facility, or EIN…" autocomplete="off" spellcheck="false">
+      </div>
+      <label class="toggle"><input type="checkbox" id="aligned-only" checked> Aligned periods (within 1 month)</label>
+      <label class="toggle"><input type="checkbox" id="comparable-only" checked> Both filings ≥ $500K</label>
+      <label class="toggle"><input type="radio" name="rank" value="pct" checked> Rank by % gap</label>
+      <label class="toggle"><input type="radio" name="rank" value="abs"> Rank by $ gap</label>
       <span class="search-meta" id="search-meta"></span>
     </div>
+
     <table class="leaderboard" id="board">
       <thead>
         <tr>
           <th class="col-rank">#</th>
           <th data-sort="system">Hospital system</th>
-          <th class="num" data-sort="hcris_charity">HCRIS S-10 charity</th>
-          <th class="num" data-sort="fa_990">990 financial assistance</th>
-          <th class="num" data-sort="gap" aria-sort="descending">Gap</th>
+          <th class="num" data-sort="hcris_charity">HCRIS S-10</th>
+          <th class="num" data-sort="fa_990">990 7a</th>
+          <th class="num" data-sort="gap">Gap</th>
+          <th class="num" data-sort="gap_pct">% gap</th>
         </tr>
       </thead>
-      <tbody id="rows"><tr><td class="loading" colspan="5">Loading…</td></tr></tbody>
+      <tbody id="rows"><tr><td class="loading" colspan="6">Loading…</td></tr></tbody>
     </table>
     <div id="detail-mount"></div>
   </section>
 
   <section class="narrow">
-    <h2>How to read this</h2>
+    <h2>Method, definitions, and what this doesn't show</h2>
     <details>
-      <summary>Method, definitions, caveats</summary>
-      <p><code>charity_gap = HCRIS S-10 charity care cost − Schedule H 7a financial assistance at cost</code></p>
-      <p>Positive gap → the hospital reports more charity care to CMS than to the IRS. Negative → the reverse.</p>
-      <p>A nonzero gap doesn't automatically mean a hospital is hiding community benefit. Plausible reasons the same hospital reports different numbers on each form:</p>
+      <summary>Why HCRIS S-10 charity care cost ≠ Schedule H Part I 7a, even when both are reported correctly</summary>
       <ul>
-        <li><strong>Definitional differences.</strong> Schedule H 7a excludes some categories that HCRIS S-10 may include (Medicaid shortfall handling, partial-payment netting, charity vs. uninsured discount classification).</li>
-        <li><strong>Time alignment.</strong> Hospital fiscal years often don't match calendar tax years; we use the latest 990 per EIN by <code>tax_period_end</code>, mismatch up to ~12 months is common.</li>
-        <li><strong>Cost-to-charge ratio handling.</strong> HCRIS S-10 applies a hospital-wide CCR; Schedule H allows different cost-step-down approaches.</li>
-        <li><strong>Charity care policy boundaries.</strong> The same patient case can be classified as charity, bad debt, or contractual allowance — moving cost between lines.</li>
+        <li><strong>Definitional differences.</strong> Schedule H 7a excludes some categories that HCRIS S-10 may include — Medicaid shortfall handling, partial-payment netting, charity-vs.-uninsured-discount classification.</li>
+        <li><strong>Cost-to-charge ratio (CCR) handling.</strong> HCRIS S-10 applies a hospital-wide CCR; Schedule H allows different cost-step-down approaches.</li>
+        <li><strong>Charity care policy boundaries.</strong> Hospitals can categorize the same patient case as charity care, bad debt, or contractual allowance — moving cost between lines.</li>
+        <li><strong>Multi-facility aggregation.</strong> A single 990 EIN often covers several HCRIS-reporting facilities. Summing facility-level charity care up to the system level can smooth or amplify reporting differences across facilities.</li>
+        <li><strong>Non-Medicare hospitals.</strong> Children's hospitals, specialty cancer centers, and some teaching hospitals don't bill Medicare in volume, so HCRIS S-10 charity care can legitimately be near zero while Schedule H reports millions.</li>
       </ul>
-      <p>A negative gap is often legitimate when a hospital files Schedule H but doesn't bill Medicare in volume — children's hospitals, specialty cancer centers, and major teaching hospitals with disproportionate non-Medicare populations all show this pattern.</p>
-      <p>The data is a <strong>starting point</strong> for review, not a definitive accusation. The value is making the comparison computable at scale.</p>
-      <p><strong>Coverage:</strong> 3,079 of 6,042 HCRIS hospitals appear in the CBI crosswalk; the other ~50% are mostly for-profit and government hospitals (no 990) or hospitals not in CBI's 2024 vintage. Bootstrap pair: HCRIS FY2023 vs. 990 TY2022 from the IRS 2024 release.</p>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>The HCRIS-vs-990 fiscal year alignment problem</summary>
+      <p>HCRIS uses the federal fiscal year as a reporting cycle, not as a fiscal period. The file labeled "FY2023" contains hospital reports submitted during federal fiscal year 2023 — but the periods those reports cover vary by hospital fiscal calendar:</p>
+      <ul>
+        <li>For July–June fiscal-year hospitals, "FY2023" mostly contains their report for the year that <em>ended</em> June 2024.</li>
+        <li>For calendar-year hospitals, "FY2023" mostly contains their CY2023 report (ending Dec 2023).</li>
+        <li>For October–September hospitals, "FY2023" mostly contains their report ending September 2023.</li>
+      </ul>
+      <p>None of those periods perfectly aligns with 990 Tax Year 2022 (which itself varies by filer fiscal calendar). The default filter restricts to systems where the two filings actually cover the same period — about <strong>17%</strong> of the 1,334 matched systems. The rest are visible if you turn the alignment filter off, but those rows are comparing different years and shouldn't be trusted as direct comparisons.</p>
+      <p><strong>Coming in v2:</strong> per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to find the report whose period actually matches each hospital's TY2022 990. This will substantially expand the well-aligned set.</p>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>Coverage and known limits</summary>
+      <ul>
+        <li><strong>Crosswalk:</strong> 3,079 of 6,042 HCRIS hospitals appear in CBI's December 2024 crosswalk; the unmatched ~50% are mostly for-profit and government hospitals (no 990) plus hospitals not in CBI's frozen vintage. Of 1,481 unique TY2022 990 EINs ingested, 1,334 match the crosswalk.</li>
+        <li><strong>Time window:</strong> HCRIS Fiscal Year 2023 paired with 990 Tax Year 2022, ingested across IRS release years 2024, 2025, and 2026. TY2022 amendments filed after the 2026 quarterly cutoff aren't included.</li>
+        <li><strong>Validation:</strong> 6 spot-checked EINs (Memorial Hermann, St Jude, Yale, Western Regional, UVA Prince William, CHI St Vincent) match the IRS source XML exact-to-the-dollar. Parser is verified clean. Not a guarantee that every row is parsed correctly — bug reports welcome at the GitHub issues link.</li>
+        <li><strong>Not a leaderboard of suspicion.</strong> The data is a starting point for review, not a definitive accusation. The value is making the comparison computable at scale, where previously every researcher had to reconstruct it from raw filings.</li>
+      </ul>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>What's coming next</summary>
+      <ul>
+        <li>Per-hospital HCRIS year matching (<strong>v2</strong>) to expand the well-aligned subset substantially.</li>
+        <li>Earlier tax years (TY2018–TY2021) for trend analysis.</li>
+        <li>BMF-based crosswalk reconciliation to close the ~20% unmatched-EIN gap.</li>
+        <li>A Claude skill (<code>hcris-analyst</code>) that answers ad-hoc queries against the bundles in natural language.</li>
+        <li>FDA Summary Basis of Approvals as a Phase 2 dataset.</li>
+      </ul>
     </details>
   </section>
 
@@ -158,11 +229,14 @@ uv run python scripts/build_gap_dataset.py</code></pre>
   </section>
 
   <footer>
-    <span>MIT code · public-domain data · <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a></span>
-    <span>
-      <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022.csv">CSV</a> ·
-      <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">Summary</a>
-    </span>
+    <p><strong>v1 · TY2022 ingest · April 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a>. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <div class="row">
+      <span>MIT code · public-domain data · <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a></span>
+      <span>
+        <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022.csv">CSV</a> ·
+        <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">Summary</a>
+      </span>
+    </div>
   </footer>
 
 <script>
@@ -181,6 +255,10 @@ const usdSigned = (v) => {
   if (v === 0) return "$0";
   return (v > 0 ? "+" : "") + usd(v);
 };
+const pct = (v, decimals = 1) => {
+  if (v == null || Number.isNaN(v)) return "—";
+  return `${(v >= 0 ? "+" : "")}${(v * 100).toFixed(decimals)}%`;
+};
 const titleCase = (s) => {
   if (!s) return "";
   const letters = s.match(/[a-zA-Z]/g);
@@ -189,28 +267,65 @@ const titleCase = (s) => {
   if (upper / letters.length < 0.8) return s;
   return s.replace(/\w\S*/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
 };
+const monthsBetween = (a, b) => {
+  if (!a || !b) return null;
+  const da = new Date(a), db = new Date(b);
+  if (Number.isNaN(da.getTime()) || Number.isNaN(db.getTime())) return null;
+  return Math.round(Math.abs((da - db) / (1000 * 60 * 60 * 24 * 30.44)));
+};
+const formatMonth = (s) => {
+  if (!s) return "—";
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? s : d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
+};
 
 let DATA = null;
-let SORT = { key: "gap", dir: "desc" };
+let SORT = { key: "gap_pct", dir: "desc" };
 let LIMIT = 50;
 let QUERY = "";
 let SELECTED_EIN = null;
-
+let COMPARABLE_ONLY = true;
+let ALIGNED_ONLY = true;
+let RANK_MODE = "pct"; // "pct" or "abs"
+const COMPARABLE_THRESHOLD = 500_000;
+const ALIGNED_THRESHOLD_MONTHS = 1;
 const PAGE_TOP_N = 50;
 
 async function init() {
-  const res = await fetch("./data/community_benefit_gap_2022.json?v=20260425b");
+  const res = await fetch("./data/community_benefit_gap_2022.json?v=20260425d");
   DATA = await res.json();
+  computeDerived();
   renderHero();
   bindControls();
   render();
 }
 
+function computeDerived() {
+  for (const r of DATA.rows) {
+    r._comparable = r.hcris_charity != null && r.fa_990 != null
+      && Math.abs(r.hcris_charity) >= COMPARABLE_THRESHOLD
+      && Math.abs(r.fa_990) >= COMPARABLE_THRESHOLD;
+    r._months = monthsBetween(r.hcris_fy_end, r.period_end);
+    r._aligned = r._months != null && r._months <= ALIGNED_THRESHOLD_MONTHS;
+  }
+}
+
 function renderHero() {
   const t = DATA.totals;
-  $("#stat-systems").textContent = t.systems.toLocaleString();
-  $("#stat-gap").textContent = usd(t.absolute_gap_usd);
-  $("#stat-pct").textContent = `${Math.round(t.pct_hcris_higher * 100)}%`;
+  $("#stat-total").textContent = t.systems.toLocaleString();
+  const subset = DATA.rows.filter(r => r._comparable && r._aligned);
+  $("#stat-systems").textContent = subset.length.toLocaleString();
+  const medianAbsPct = median(subset.map(r => Math.abs(r.gap_pct))) || 0;
+  $("#stat-median").textContent = `${(medianAbsPct * 100).toFixed(0)}%`;
+  const big = subset.filter(r => Math.abs(r.gap_pct) >= 0.5).length;
+  $("#stat-big").textContent = big.toLocaleString();
+}
+
+function median(xs) {
+  if (!xs.length) return null;
+  const s = [...xs].sort((a, b) => a - b);
+  const m = Math.floor(s.length / 2);
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 }
 
 function bindControls() {
@@ -218,6 +333,21 @@ function bindControls() {
     QUERY = e.target.value.trim().toLowerCase();
     LIMIT = QUERY ? Infinity : PAGE_TOP_N;
     render();
+  });
+  $("#comparable-only").addEventListener("change", (e) => {
+    COMPARABLE_ONLY = e.target.checked;
+    render();
+  });
+  $("#aligned-only").addEventListener("change", (e) => {
+    ALIGNED_ONLY = e.target.checked;
+    render();
+  });
+  document.querySelectorAll('input[name="rank"]').forEach(el => {
+    el.addEventListener("change", (e) => {
+      RANK_MODE = e.target.value;
+      SORT = { key: RANK_MODE === "pct" ? "gap_pct" : "gap", dir: "desc" };
+      render();
+    });
   });
   document.querySelectorAll("th[data-sort]").forEach(th => {
     th.addEventListener("click", () => {
@@ -234,23 +364,26 @@ function bindControls() {
 }
 
 function filtered() {
-  if (!QUERY) return DATA.rows.slice();
-  return DATA.rows.filter(r =>
-    (r.system && r.system.toLowerCase().includes(QUERY)) ||
-    (r.facility && r.facility.toLowerCase().includes(QUERY)) ||
-    (r.ein && r.ein.includes(QUERY))
-  );
+  let rows = DATA.rows;
+  if (COMPARABLE_ONLY) rows = rows.filter(r => r._comparable);
+  if (ALIGNED_ONLY) rows = rows.filter(r => r._aligned);
+  if (QUERY) {
+    rows = rows.filter(r =>
+      (r.system && r.system.toLowerCase().includes(QUERY)) ||
+      (r.facility && r.facility.toLowerCase().includes(QUERY)) ||
+      (r.ein && r.ein.includes(QUERY))
+    );
+  }
+  return rows.slice();
 }
 
 function sorted(rows) {
   const k = SORT.key;
   const dir = SORT.dir === "desc" ? -1 : 1;
   const cmp = (a, b) => {
-    if (k === "system") {
-      return (a.system || "").localeCompare(b.system || "") * dir;
-    }
-    if (k === "gap") {
-      return (Math.abs(b.gap || 0) - Math.abs(a.gap || 0)) * (dir === -1 ? 1 : -1);
+    if (k === "system") return (a.system || "").localeCompare(b.system || "") * dir;
+    if (k === "gap" || k === "gap_pct") {
+      return (Math.abs(b[k] || 0) - Math.abs(a[k] || 0)) * (dir === -1 ? 1 : -1);
     }
     return ((b[k] || 0) - (a[k] || 0)) * (dir === -1 ? 1 : -1);
   };
@@ -270,34 +403,52 @@ function render() {
   const showAll = LIMIT === Infinity || total <= PAGE_TOP_N;
   const visible = showAll ? all : all.slice(0, LIMIT);
 
-  $("#search-meta").textContent = QUERY
-    ? `${total.toLocaleString()} match${total === 1 ? "" : "es"}`
-    : `${DATA.rows.length.toLocaleString()} systems · sorted by absolute gap`;
+  const filterLabel = ALIGNED_ONLY && COMPARABLE_ONLY
+    ? "aligned + comparable"
+    : ALIGNED_ONLY ? "aligned periods"
+    : COMPARABLE_ONLY ? "both filings ≥ $500K"
+    : "all matched";
+  const sortLabel = RANK_MODE === "pct" ? "absolute % gap" : "absolute $ gap";
+  let metaText;
+  if (QUERY) {
+    metaText = `${total.toLocaleString()} match${total === 1 ? "" : "es"} · sorted by ${sortLabel}`;
+  } else {
+    metaText = `${total.toLocaleString()} of ${DATA.totals.systems.toLocaleString()} systems (${filterLabel}) · sorted by ${sortLabel}`;
+  }
+  $("#search-meta").textContent = metaText;
 
   const tbody = $("#rows");
   if (total === 0) {
-    tbody.innerHTML = `<tr><td class="empty" colspan="5">No matches for “${escapeHtml(QUERY)}”.</td></tr>`;
+    tbody.innerHTML = `<tr><td class="empty" colspan="6">No matches.</td></tr>`;
     return;
   }
 
   const rowsHtml = visible.map((r, i) => {
     const cls = SELECTED_EIN === r.ein ? "active" : "";
     const gapClass = r.gap > 0 ? "pos" : r.gap < 0 ? "neg" : "";
+    const facility = escapeHtml(titleCase(r.facility || ""));
+    const parts = [facility];
+    if (r.ccns > 1) parts.push(`${r.ccns} facilities`);
+    const warns = [];
+    if (!r._aligned) warns.push(r._months != null ? `⚠ ${Math.round(r._months)}-month period mismatch` : "⚠ period mismatch");
+    if (!r._comparable) warns.push("⚠ one side &lt; $500K");
+    const flagHtml = `<div class="facility-name">${parts.join(" · ")}${warns.length ? ` <span class="warn">${warns.join(" · ")}</span>` : ""}</div>`;
     return `
       <tr class="${cls}" data-ein="${r.ein}">
         <td class="col-rank">${i + 1}</td>
         <td>
           <div class="system-name">${escapeHtml(titleCase(r.system || "(unknown)"))}</div>
-          <div class="facility-name">${escapeHtml(titleCase(r.facility || ""))}${r.ccns > 1 ? ` · ${r.ccns} facilities` : ""}</div>
+          ${flagHtml}
         </td>
         <td class="num">${usd(r.hcris_charity)}</td>
         <td class="num">${usd(r.fa_990)}</td>
-        <td class="num ${gapClass}"><strong>${usdSigned(r.gap)}</strong></td>
+        <td class="num ${gapClass}">${usdSigned(r.gap)}</td>
+        <td class="num ${gapClass}"><strong>${pct(r.gap_pct)}</strong></td>
       </tr>`;
   }).join("");
 
   const moreHtml = !showAll && total > LIMIT
-    ? `<tr class="more-row"><td colspan="5">Show all ${total.toLocaleString()} ↓</td></tr>`
+    ? `<tr class="more-row"><td colspan="6">Show all ${total.toLocaleString()} ↓</td></tr>`
     : "";
 
   tbody.innerHTML = rowsHtml + moreHtml;
@@ -322,30 +473,58 @@ function renderDetail() {
   const r = DATA.rows.find(x => x.ein === SELECTED_EIN);
   if (!r) { mount.innerHTML = ""; return; }
   const gapClass = r.gap > 0 ? "pos" : r.gap < 0 ? "neg" : "";
-  const interp = r.gap > 0 ? "Reports more charity to CMS than IRS" : r.gap < 0 ? "Reports more financial assistance to IRS than CMS" : "Reports identical amounts to both";
+  const interp = r.gap > 0
+    ? "Reports more charity care to CMS than financial assistance to the IRS"
+    : r.gap < 0
+      ? "Reports more financial assistance to the IRS than charity care to CMS"
+      : "Reports identical amounts to both";
+  const months = monthsBetween(r.hcris_fy_end, r.period_end);
+  const propublicaUrl = `https://projects.propublica.org/nonprofits/organizations/${parseInt(r.ein, 10)}`;
+  const ccnSignal = r.ccns > 1
+    ? `${r.ccns} facilities rolled up under one EIN — system-level aggregation may smooth facility-level reporting differences`
+    : `1 facility — clean unit-of-analysis match`;
+  const periodSignal = months == null
+    ? "fiscal-year alignment unknown"
+    : months === 0
+      ? "HCRIS fiscal year and 990 tax period end the same month"
+      : `${months}-month gap between HCRIS fiscal year end and 990 tax period end`;
+  const oneZero = (r.hcris_charity === 0 || r.fa_990 === 0)
+    ? "<strong>One side reports zero.</strong> Often a children's hospital or specialty hospital that doesn't bill Medicare in volume, where HCRIS S-10 charity care is legitimately zero."
+    : null;
+
   mount.innerHTML = `
     <div class="detail">
       <p class="detail-title">${escapeHtml(titleCase(r.system || "(unknown)"))}</p>
-      <p class="detail-sub">${escapeHtml(titleCase(r.facility || ""))} · EIN ${r.ein} · ${r.ccns} CCN${r.ccns === 1 ? "" : "s"} · 990 period ending ${r.period_end}</p>
+      <p class="detail-sub">${escapeHtml(titleCase(r.facility || ""))} · EIN ${r.ein} · ${r.ccns} CCN${r.ccns === 1 ? "" : "s"}</p>
       <div class="detail-grid">
         <div>
           <h3>HCRIS Worksheet S-10 (CMS)</h3>
           <div class="detail-row"><span>Charity care cost</span><span>${usd(r.hcris_charity)}</span></div>
           <div class="detail-row"><span>Uncompensated care cost</span><span>${usd(r.hcris_uncomp)}</span></div>
           <div class="detail-row"><span>Total operating expenses</span><span>${usd(r.hcris_opex)}</span></div>
+          <div class="detail-row"><span>Fiscal year end</span><span>${formatMonth(r.hcris_fy_end)}</span></div>
         </div>
         <div>
           <h3>990 Schedule H (IRS)</h3>
           <div class="detail-row"><span>Financial assistance at cost (7a)</span><span>${usd(r.fa_990)}</span></div>
           <div class="detail-row"><span>Total community benefit (7k)</span><span>${usd(r.cb_990)}</span></div>
           <div class="detail-row"><span>Total expenses</span><span>${usd(r.exp_990)}</span></div>
+          <div class="detail-row"><span>Tax period end</span><span>${formatMonth(r.period_end)}</span></div>
         </div>
       </div>
       <div class="detail-gap">
         <span>Gap (HCRIS − 990)</span>
-        <span class="${gapClass}">${usdSigned(r.gap)}</span>
+        <span class="${gapClass}">${usdSigned(r.gap)} <span style="font-weight: 400; color: var(--muted); font-size: 0.85em;">(${pct(r.gap_pct)})</span></span>
       </div>
-      <p class="detail-sub" style="margin-top: 0.85rem">${interp}.</p>
+      <div class="detail-signals">
+        <div class="signal"><span class="signal-label">Interpretation:</span><span>${interp}.</span></div>
+        <div class="signal"><span class="signal-label">Period alignment:</span><span>${periodSignal}.</span></div>
+        <div class="signal"><span class="signal-label">Aggregation:</span><span>${ccnSignal}.</span></div>
+        ${oneZero ? `<div class="signal"><span class="signal-label">Note:</span><span>${oneZero}</span></div>` : ""}
+      </div>
+      <div class="detail-links">
+        <a href="${propublicaUrl}" target="_blank" rel="noopener">View 990 on ProPublica Nonprofit Explorer ↗</a>
+      </div>
     </div>`;
 }
 
@@ -354,7 +533,7 @@ function escapeHtml(s) {
 }
 
 init().catch(err => {
-  $("#rows").innerHTML = `<tr><td class="empty" colspan="5">Failed to load data: ${escapeHtml(err.message)}</td></tr>`;
+  $("#rows").innerHTML = `<tr><td class="empty" colspan="6">Failed to load data: ${escapeHtml(err.message)}</td></tr>`;
 });
 </script>
 </body>
