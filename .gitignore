@@ -17,9 +17,11 @@ build/
 .coverage
 htmlcov/
 
-# Data (raw downloads, built Parquet)
-data/
-!data/.gitkeep
+# Data (raw downloads, built Parquet) — only the top-level cache dir.
+# Package-bundled artifacts (e.g. packages/crosswalk/src/crosswalk/data/) are
+# legitimately committed.
+/data/
+!/data/.gitkeep
 
 # Environment
 .env

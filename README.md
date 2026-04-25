@@ -13,7 +13,9 @@ On top of those: a Claude skill bundle (`skills/hcris-analyst`) and a static Obs
 
 ## Status
 
-**M3 — IRS Form 990 Schedule H parser.** Bulk-XML download (per-release-year ZIPs), index CSV reader/filter (dedupes amendments by EIN), and Schedule H extraction. Outputs one row per hospital filer with EIN, organization name, tax-period dates, total revenue/expenses, Part I line 7a-k net community benefit amounts, total community benefit ratio, Part III bad debt expense, and Part V hospital facility count. Cheap byte-level pre-filter for `IRS990ScheduleH` keeps a 100 MB ZIP iteration to under a second. Verified on real `2024_TEOS_XML_01A`: 21 hospital filers extracted, including Corewell Health (21 facilities, $823M community benefit) and Hennepin Healthcare. TY2022 is the bootstrap year.
+**M4 — Community benefit gap.** `crosswalk` package ships the bundled CBI CCN↔EIN mapping (3,523 hospitals, 2,385 EINs, frozen at Dec 6 2024); `analytics.community_benefit_gap()` joins HCRIS S-10 to 990 Schedule H by EIN and compares charity care reported to CMS vs. financial assistance reported to the IRS. Verified on real data: Hennepin County Medical Center reports $64.3M to CMS but $34.4M to the IRS — a **$30M gap** that was previously buried in two separate filings.
+
+**M3 — IRS Form 990 Schedule H parser.** Bulk-XML download, index CSV reader, and Schedule H extraction with cheap byte-level pre-filter. 19 fields per filing including Part I line 7a-k net community benefit amounts, Part III bad debt, and Part V hospital facility count. Verified on `2024_TEOS_XML_01A`: 21 hospital filers extracted including Corewell Health (21 facilities, $823M community benefit). TY2022 bootstrap.
 
 **M2.5 — HCRIS semantic dictionary, expanded.** 44 variables covering identity, bed capacity (ICU/CCU/burn/surgical special-care via line-range sums), discharges, revenue breakdown (G-2 inpatient/outpatient), expense, Worksheet S-10 uncompensated care in detail, and Medicare program cost/charges. Validated on FY2023; top uncompensated-care hospitals are the public safety-net systems (Harris Health, Dallas County, Grady, NYC H+H).
 
