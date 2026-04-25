@@ -22,7 +22,8 @@ TAX_YEAR = 2022
 
 def main() -> None:
     df = pd.read_csv(CSV_IN, dtype={"ein": str})
-    df = df.sort_values("charity_gap", ascending=False, key=lambda s: s.abs())
+    df["gap_pct"] = _gap_pct(df)
+    df = df.sort_values("gap_pct", ascending=False, key=lambda s: s.abs())
 
     rows = [
         {
@@ -31,6 +32,7 @@ def main() -> None:
             "facility": r.hospital_name,
             "ccns": int(r.ccn_count),
             "period_end": r.sched_h_tax_period_end,
+            "hcris_fy_end": r.hcris_fy_end_dt,
             "hcris_charity": _num(r.hcris_charity_care_cost),
             "hcris_uncomp": _num(r.hcris_uncompensated_care_cost),
             "hcris_opex": _num(r.hcris_total_operating_expenses),
@@ -38,6 +40,7 @@ def main() -> None:
             "cb_990": _num(r.sched_h_total_community_benefit),
             "exp_990": _num(r.sched_h_total_expenses),
             "gap": _num(r.charity_gap),
+            "gap_pct": _num(r.gap_pct, decimals=4),
             "cb_pct": _num(r.community_benefit_pct_of_expenses, decimals=4),
         }
         for r in df.itertuples(index=False)
@@ -70,6 +73,19 @@ def _num(v: float, decimals: int = 0) -> float | int | None:
     if not math.isfinite(f):
         return None
     return round(f, decimals) if decimals else int(round(f))
+
+
+def _gap_pct(df: pd.DataFrame) -> pd.Series:
+    """Gap as a fraction of the larger of the two reported numbers.
+
+    0 = identical reporting. 1 = one of the two is zero. Sign matches the
+    sign of charity_gap (positive = HCRIS larger, negative = 990 larger).
+    """
+    h = df["hcris_charity_care_cost"].abs()
+    f = df["sched_h_financial_assistance_at_cost"].abs()
+    denom = pd.concat([h, f], axis=1).max(axis=1)
+    pct = df["charity_gap"] / denom
+    return pct.where(denom > 0, 0)
 
 
 if __name__ == "__main__":

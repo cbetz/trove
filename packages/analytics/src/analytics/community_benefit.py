@@ -32,16 +32,20 @@ def community_benefit_gap(
     """
     cw = crosswalk[["ccn", "ein"]].dropna()
 
+    aggs: dict[str, tuple[str, str]] = {
+        "ccn_count": ("ccn", "nunique"),
+        "hospital_name": ("hospital_name", "first"),
+        "hcris_charity_care_cost": ("charity_care_cost", "sum"),
+        "hcris_uncompensated_care_cost": ("uncompensated_care_cost", "sum"),
+        "hcris_total_operating_expenses": ("total_operating_expenses", "sum"),
+    }
+    if "fy_end_dt" in hcris_wide.columns:
+        aggs["hcris_fy_end_dt"] = ("fy_end_dt", "max")
+
     by_system = (
         hcris_wide.merge(cw, left_on="prvdr_num", right_on="ccn", how="inner")
         .groupby("ein", as_index=False)
-        .agg(
-            ccn_count=("ccn", "nunique"),
-            hospital_name=("hospital_name", "first"),
-            hcris_charity_care_cost=("charity_care_cost", "sum"),
-            hcris_uncompensated_care_cost=("uncompensated_care_cost", "sum"),
-            hcris_total_operating_expenses=("total_operating_expenses", "sum"),
-        )
+        .agg(**aggs)
     )
 
     # When a 990 has been amended, the same EIN appears in multiple release-year
