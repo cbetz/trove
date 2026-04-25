@@ -10,6 +10,8 @@ from typing import Any
 import pandas as pd
 from lxml import etree
 
+from form990.download import download_index, download_zip
+from form990.index import filter_990s_for_tax_year, read_index
 from form990.schedule_h import OUTPUT_COLUMNS, PART_I_LINE_GROUPS
 
 _NS_URI = "http://www.irs.gov/efile"
@@ -26,6 +28,42 @@ def parse_zip(zip_path: Path | str) -> pd.DataFrame:
         return pd.DataFrame(columns=list(OUTPUT_COLUMNS))
     df = pd.DataFrame(rows, columns=list(OUTPUT_COLUMNS))
     return _coerce_dtypes(df)
+
+
+def parse_tax_year(
+    tax_year: int,
+    release_year: int,
+    cache_dir: Path | str = "data/raw/form990",
+    *,
+    progress: bool = True,
+) -> pd.DataFrame:
+    """Download all ZIPs containing 990s for ``tax_year`` and parse Schedule H from each.
+
+    Reads the IRS index for ``release_year``, filters to 990 returns whose
+    TAX_PERIOD starts with ``tax_year``, downloads every distinct
+    ``XML_BATCH_ID`` referenced, parses each, and concatenates the results.
+
+    The returned DataFrame is filtered to ``tax_year`` — the parser itself
+    extracts every Schedule H filer in a ZIP regardless of tax year, but at
+    the orchestration boundary we narrow to the requested year.
+    """
+    cache = Path(cache_dir)
+    idx_path = download_index(release_year, cache)
+    idx = read_index(idx_path)
+    filings = filter_990s_for_tax_year(idx, tax_year)
+    batches = sorted(filings["XML_BATCH_ID"].dropna().unique())
+
+    parts: list[pd.DataFrame] = []
+    for i, batch in enumerate(batches, start=1):
+        if progress:
+            print(f"  [{i}/{len(batches)}] {batch}", flush=True)
+        zip_path = download_zip(release_year, batch, cache)
+        parts.append(parse_zip(zip_path))
+
+    if not parts:
+        return pd.DataFrame(columns=list(OUTPUT_COLUMNS))
+    df = pd.concat(parts, ignore_index=True)
+    return df[df["tax_year"] == tax_year].reset_index(drop=True)
 
 
 def iter_schedule_h_filings(zip_path: Path) -> Iterator[dict[str, Any]]:

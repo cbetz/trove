@@ -34,25 +34,34 @@
 <body>
   <h1>trove</h1>
   <p class="tagline">Open-source parsers, agents, and visualizations for underused healthcare datasets.</p>
-  <p><span class="status">M4 · community benefit gap</span></p>
+  <p><span class="status">M4.1 · gap dataset published</span></p>
 
   <section>
-    <h2>The headline</h2>
-    <p>Hennepin County Medical Center, Minneapolis. Reports <strong>$64.3M of charity care cost</strong> to CMS on Worksheet S-10 of its Medicare Cost Report. Reports <strong>$34.4M of financial assistance at cost</strong> to the IRS on Schedule H of its Form 990. Same concept, different filings, <strong>$30M apart</strong>.</p>
-    <p>That comparison didn't exist as a public, queryable dataset before this project. It does now — for any U.S. nonprofit hospital, every year — in four lines of Python:</p>
-<pre><code>hcris   = pivot_wide(parse_hcris("HOSP10FY2023.zip"))   # CMS S-10, by CCN
-sched_h = parse_990("2024_TEOS_XML_01A.zip")             # 990 Schedule H, by EIN
-cw      = load_seed()                                    # CCN ↔ EIN
-gap     = community_benefit_gap(hcris, sched_h, cw)</code></pre>
+    <h2>The first numbers</h2>
+    <p>1,317 nonprofit hospital systems in the U.S. file Worksheet S-10 with CMS and Schedule H with the IRS. Both filings are supposed to report the cost of charity care under different rules. We just made the comparison computable.</p>
+    <ul>
+      <li><strong>$58.7B</strong> in total community benefit reported on 990 Schedule H for tax year 2022.</li>
+      <li><strong>$5.0B</strong> total absolute gap between what the same hospital reports as charity-care cost on its Medicare Cost Report vs. its 990.</li>
+      <li><strong>61% of systems</strong> report more charity care to CMS than to the IRS.</li>
+      <li>Top single gap: Memorial Hermann Kingwood, $428M HCRIS vs. $307M 990 — <strong>+$120.8M</strong>.</li>
+    </ul>
+    <p>Full table: <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022.csv">community_benefit_gap_2022.csv</a> · Top 50: <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_top50.csv">community_benefit_gap_2022_top50.csv</a> · Method and caveats: <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">summary</a>.</p>
+  </section>
+
+  <section>
+    <h2>Reproduce</h2>
+<pre><code>git clone https://github.com/cbetz/trove
+cd trove && uv sync --all-packages
+uv run python scripts/build_gap_dataset.py</code></pre>
   </section>
 
   <section>
     <h2>Phase 1 datasets</h2>
     <ul>
-      <li>CMS Medicare Cost Reports (HCRIS, form 2552-10) — <span class="demo-comment">parser + 44-variable dictionary shipped</span></li>
-      <li>IRS Form 990 Schedule H (hospital community benefit) — <span class="demo-comment">parser + 19 fields shipped</span></li>
-      <li>CCN ↔ EIN crosswalk for joining the two — <span class="demo-comment">3,523 hospitals from CBI, shipped</span></li>
-      <li>Composed analytics — <span class="demo-comment">community_benefit_gap() shipped</span></li>
+      <li>CMS Medicare Cost Reports (HCRIS, form 2552-10) — <span class="demo-comment">parser + 44-variable dictionary</span></li>
+      <li>IRS Form 990 Schedule H (hospital community benefit) — <span class="demo-comment">parser + 19 fields, full TY2022 ingest (1,464 filings)</span></li>
+      <li>CCN ↔ EIN crosswalk for joining the two — <span class="demo-comment">3,523 hospitals from CBI</span></li>
+      <li>Composed analytics — <span class="demo-comment">community_benefit_gap(), 1,317 systems matched</span></li>
     </ul>
   </section>
 

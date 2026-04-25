@@ -13,7 +13,9 @@ On top of those: a Claude skill bundle (`skills/hcris-analyst`) and a static Obs
 
 ## Status
 
-**M4 — Community benefit gap.** `crosswalk` package ships the bundled CBI CCN↔EIN mapping (3,523 hospitals, 2,385 EINs, frozen at Dec 6 2024); `analytics.community_benefit_gap()` joins HCRIS S-10 to 990 Schedule H by EIN and compares charity care reported to CMS vs. financial assistance reported to the IRS. Verified on real data: Hennepin County Medical Center reports $64.3M to CMS but $34.4M to the IRS — a **$30M gap** that was previously buried in two separate filings.
+**M4.1 — Full TY2022 gap dataset published.** `form990.parse_tax_year()` orchestrates the full ingest (download all relevant ZIPs from the IRS index, parse Schedule H, concat). Run end-to-end against FY2023 HCRIS + TY2022 990s + CBI crosswalk to produce a 1,317-system table covering ~$58.7B of reported community benefit. **61% of systems report more charity care to CMS than to the IRS**; total absolute gap is $5.02B. Top gap: Memorial Hermann Kingwood at +$120.8M. Committed CSV artifacts at `artifacts/`; reproduce with `uv run python scripts/build_gap_dataset.py`.
+
+**M4 — Community benefit gap.** `crosswalk` package ships the bundled CBI CCN↔EIN mapping (3,523 hospitals, 2,385 EINs, frozen at Dec 6 2024); `analytics.community_benefit_gap()` joins HCRIS S-10 to 990 Schedule H by EIN.
 
 **M3 — IRS Form 990 Schedule H parser.** Bulk-XML download, index CSV reader, and Schedule H extraction with cheap byte-level pre-filter. 19 fields per filing including Part I line 7a-k net community benefit amounts, Part III bad debt, and Part V hospital facility count. Verified on `2024_TEOS_XML_01A`: 21 hospital filers extracted including Corewell Health (21 facilities, $823M community benefit). TY2022 bootstrap.
 
