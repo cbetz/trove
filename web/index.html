@@ -26,19 +26,31 @@
     a { color: inherit; }
     a:hover { opacity: 0.7; }
     code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
+    pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
+    pre code { background: none; padding: 0; }
+    .demo-comment { color: var(--muted); }
   </style>
 </head>
 <body>
   <h1>trove</h1>
   <p class="tagline">Open-source parsers, agents, and visualizations for underused healthcare datasets.</p>
-  <p><span class="status">M0 · scaffold</span></p>
+  <p><span class="status">M2 · semantic dictionary</span></p>
+
+  <section>
+    <h2>What works today</h2>
+    <p>Three lines of Python turn a raw 130 MB HCRIS ZIP into a hospital-report DataFrame with named columns:</p>
+<pre><code>files = parse_zip(download_year(2023))
+wide  = pivot_wide(files)
+wide[["hospital_name", "total_beds", "net_patient_revenue"]]</code></pre>
+    <p>Validated on all 6,105 hospital reports in FY2023 — NYP, NYU Langone, Stanford, and Cleveland Clinic surface at the top of net patient revenue with bed counts matching public reporting.</p>
+  </section>
 
   <section>
     <h2>Phase 1 datasets</h2>
     <ul>
-      <li>CMS Medicare Cost Reports (HCRIS, form 2552-10)</li>
-      <li>IRS Form 990 — Schedule H (hospital community benefit)</li>
-      <li>CCN ↔ EIN crosswalk for joining the two</li>
+      <li>CMS Medicare Cost Reports (HCRIS, form 2552-10) — <span class="demo-comment">parser + 15-variable dictionary shipped</span></li>
+      <li>IRS Form 990 — Schedule H (hospital community benefit) — <span class="demo-comment">M3</span></li>
+      <li>CCN ↔ EIN crosswalk for joining the two — <span class="demo-comment">M4</span></li>
     </ul>
   </section>
 
