@@ -6,7 +6,11 @@ readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
 authors = [{ name = "Chris Betz" }]
-dependencies = []
+dependencies = [
+    "pandas>=2.2",
+    "pyarrow>=18",
+    "lxml>=5",
+]
 
 [build-system]
 requires = ["hatchling"]
