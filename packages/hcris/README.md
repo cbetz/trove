@@ -4,7 +4,7 @@ Parser for CMS Medicare Cost Reports (HCRIS), Hospital form 2552-10.
 
 Raw HCRIS ships as three headerless CSVs per fiscal-year ZIP — `RPT`, `NMRC`, `ALPHA` — in a long-skinny `(rpt_rec_num, wksht_cd, line_num, clmn_num, value)` shape. Field semantics live in a CMS PDF (Provider Reimbursement Manual Chapter 40). This package turns the raw ZIPs into tidy DataFrames with the right dtypes and writes partitioned Parquet.
 
-**Status:** M2 — parser plus a 15-variable semantic dictionary for the fields most people actually want (hospital name, ownership, beds, discharges, revenue, operating expenses, uncompensated care). `pivot_wide()` turns the raw long-skinny NMRC/ALPHA into one row per report with named columns.
+**Status:** M2.5 — parser plus a 44-variable semantic dictionary. `pivot_wide()` turns the raw long-skinny NMRC/ALPHA into one row per report with named columns. Covers identity (name, ownership, chain), bed capacity (total, ICU/CCU/burn/surgical/other special-care via line-range sums), discharges and bed-days, revenue breakdown (G-2 inpatient/outpatient by line + total, G-3 net patient revenue, donations, investment income), expense (operating and other), Worksheet S-10 uncompensated care in detail (charity care charges/cost/partial payments, Medicare bad debt vs. non-Medicare, cost-to-charge ratio), and Medicare program cost and charges (D-series ranges).
 
 ## Usage
 
@@ -27,9 +27,29 @@ write_parquet(files, year=2023, out_dir="data/parquet/hcris")
 
 ## Dictionary
 
-15 seed variables covering identity (hospital name, ownership, chain), capacity (total/grand-total beds, bed days, discharges), revenue and expense (net patient revenue, operating expenses, other income/expense), and S-10 uncompensated care (charity, bad debt, total uncompensated).
+44 variables in `hcris/dictionaries/2552-10.yaml`. Variable codes (worksheet, line, column) come from CMS Provider Reimbursement Manual Chapter 40 — public domain. Names and descriptions are trove's authorship. Add more by appending entries to the YAML.
 
-The dictionary lives at `hcris/dictionaries/2552-10.yaml`. Variable codes (worksheet, line, column) come from CMS Provider Reimbursement Manual Chapter 40 — public domain. Names and descriptions are trove's authorship. Add more variables by appending entries to the YAML.
+Scalar entries reference a single cell:
+
+```yaml
+- name: total_beds
+  source: nmrc
+  wksht_cd: S300001
+  line_num: 1400
+  clmn_num: 200
+```
+
+Range entries sum across a line range (used for ICU/CCU bed sub-categories and Medicare program charge rollups):
+
+```yaml
+- name: icu_beds
+  source: nmrc
+  wksht_cd: S300001
+  line_num: 800
+  line_num_end: 899
+  clmn_num: 200
+  aggregation: sum
+```
 
 ```python
 from hcris import load_dictionary
@@ -53,6 +73,6 @@ for v in load_dictionary():
 
 ## Not yet supported
 
-- **Ranged dictionary variables** — dictionary entries with `line_num_end` (e.g. sum of line 2500–3099) are parsed but not yet resolved; they're skipped by `resolve_numeric`.
 - **Forms other than 2552-10** (SNF 2540, HHA 1728, Hospice, RHC, Renal) and the pre-2010 2552-96 format. Adding a form is a new YAML + the same parse/resolve path.
 - **Ownership-code labels** — `ownership_type` returns the raw CMS code (`"2"`, `"10"`) rather than a human label. Translation table coming.
+- **Aggregations other than `sum`** — `mean`, `max`, `first`, etc. would let us express other range semantics. Not needed yet; add when a variable calls for it.

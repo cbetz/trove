@@ -15,29 +15,38 @@ def resolve_numeric(
 ) -> pd.DataFrame:
     """Return a tidy DataFrame of (rpt_rec_num, variable_name, value) from NMRC.
 
-    Only dictionary entries with ``source == "nmrc"`` are considered. Rows in
-    ``nmrc`` that don't match a dictionary entry are dropped — the dictionary
-    is expected to be partial; this function is the point of narrowing.
+    Scalar dictionary entries yield one row per report. Range entries
+    (``line_num_end`` set, ``aggregation="sum"``) are expanded across the
+    range and summed per report. Rows that don't match any entry are dropped.
     """
     if dictionary is None:
         dictionary = load_dictionary()
-    lookup = _build_lookup(dictionary, source="nmrc")
+    lookup = _build_numeric_lookup(dictionary)
     if lookup.empty:
         return nmrc.head(0).assign(variable_name=pd.Series(dtype="string"))
     merged = nmrc.merge(lookup, on=["wksht_cd", "line_num", "clmn_num"], how="inner")
-    return merged[["rpt_rec_num", "variable_name", "itm_val_num"]].rename(
-        columns={"itm_val_num": "value"}
+    # groupby().sum() collapses range entries to one row per (report, variable)
+    # and is a no-op for scalar entries (which already have one row).
+    result = (
+        merged.groupby(["rpt_rec_num", "variable_name"], as_index=False)["itm_val_num"]
+        .sum()
+        .rename(columns={"itm_val_num": "value"})
     )
+    return result
 
 
 def resolve_alpha(
     alpha: pd.DataFrame,
     dictionary: Sequence[Variable] | None = None,
 ) -> pd.DataFrame:
-    """Return a tidy DataFrame of (rpt_rec_num, variable_name, value) from ALPHA."""
+    """Return a tidy DataFrame of (rpt_rec_num, variable_name, value) from ALPHA.
+
+    Only scalar entries are supported for alpha — ranges don't make sense
+    for string fields.
+    """
     if dictionary is None:
         dictionary = load_dictionary()
-    lookup = _build_lookup(dictionary, source="alpha")
+    lookup = _build_alpha_lookup(dictionary)
     if lookup.empty:
         return alpha.head(0).assign(variable_name=pd.Series(dtype="string"))
     merged = alpha.merge(lookup, on=["wksht_cd", "line_num", "clmn_num"], how="inner")
@@ -46,20 +55,38 @@ def resolve_alpha(
     )
 
 
-def _build_lookup(dictionary: Sequence[Variable], source: str) -> pd.DataFrame:
+def _build_numeric_lookup(dictionary: Sequence[Variable]) -> pd.DataFrame:
     rows: list[dict[str, str]] = []
     for v in dictionary:
-        if v.source != source:
+        if v.source != "nmrc":
             continue
-        if v.line_num_end is not None:
-            # Range variables require aggregation — deferred to a later milestone.
+        if v.line_num_end is None:
+            rows.append(_row(v, v.line_num))
             continue
-        rows.append(
-            {
-                "wksht_cd": v.wksht_cd,
-                "line_num": v.line_num,
-                "clmn_num": v.clmn_num,
-                "variable_name": v.name,
-            }
-        )
+        # Range — expand to one lookup row per line in [line_num, line_num_end].
+        if v.aggregation != "sum":
+            raise ValueError(
+                f"variable {v.name!r}: unsupported aggregation {v.aggregation!r}; "
+                "only 'sum' is currently supported for range variables"
+            )
+        for line in range(int(v.line_num), int(v.line_num_end) + 1):
+            rows.append(_row(v, f"{line:05d}"))
     return pd.DataFrame(rows, columns=["wksht_cd", "line_num", "clmn_num", "variable_name"])
+
+
+def _build_alpha_lookup(dictionary: Sequence[Variable]) -> pd.DataFrame:
+    rows: list[dict[str, str]] = []
+    for v in dictionary:
+        if v.source != "alpha" or v.line_num_end is not None:
+            continue
+        rows.append(_row(v, v.line_num))
+    return pd.DataFrame(rows, columns=["wksht_cd", "line_num", "clmn_num", "variable_name"])
+
+
+def _row(v: Variable, line_num: str) -> dict[str, str]:
+    return {
+        "wksht_cd": v.wksht_cd,
+        "line_num": line_num,
+        "clmn_num": v.clmn_num,
+        "variable_name": v.name,
+    }

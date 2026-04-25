@@ -55,28 +55,25 @@ def fy2023_wide(fy2023):
     return pivot_wide(fy2023)
 
 
-def test_fy2023_pivot_all_15_variables_resolve(fy2023_wide) -> None:
+def test_fy2023_pivot_all_variables_resolve(fy2023_wide) -> None:
     """Every seed variable should resolve on at least some FY2023 reports."""
-    expected = {
-        "hospital_name",
-        "ownership_type",
-        "chain_name",
-        "total_beds",
-        "total_beds_grand",
-        "total_discharges",
-        "total_bed_days_available",
-        "inpatient_bed_days_utilized",
-        "net_patient_revenue",
-        "total_operating_expenses",
-        "other_income",
-        "total_other_expenses",
-        "total_bad_debt",
-        "charity_care_cost",
-        "uncompensated_care_cost",
-    }
+    from hcris import load_dictionary
+
+    dictionary = load_dictionary()
+    expected = {v.name for v in dictionary}
     assert expected.issubset(set(fy2023_wide.columns))
     for col in expected:
         assert fy2023_wide[col].notna().any(), f"{col} didn't resolve on any report"
+
+
+def test_fy2023_range_variable_icu_beds(fy2023_wide) -> None:
+    """Range variables sum ICU bed sub-categories across all lines in 800-899."""
+    icu = fy2023_wide["icu_beds"].dropna()
+    coverage = len(icu) / len(fy2023_wide)
+    # Roughly half of hospitals report ICU beds — small/rural hospitals often don't.
+    assert 0.3 < coverage < 0.8, f"icu_beds coverage {coverage:.0%} outside plausible range"
+    assert icu.max() > 100, "largest hospitals should report >100 ICU beds"
+    assert (icu > 0).all(), "ICU bed counts should all be positive"
 
 
 def test_fy2023_pivot_coverage_for_identity_fields(fy2023_wide) -> None:

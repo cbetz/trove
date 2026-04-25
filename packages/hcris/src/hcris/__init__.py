@@ -7,7 +7,7 @@ from hcris.parse import HcrisFiles, parse_zip
 from hcris.pivot import pivot_wide
 from hcris.resolve import resolve_alpha, resolve_numeric
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = [
     "HcrisFiles",
