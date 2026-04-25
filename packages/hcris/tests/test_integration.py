@@ -10,7 +10,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from hcris import parse_zip
+from hcris import parse_zip, pivot_wide
 
 FY2023_ZIP = Path("data/raw/hcris/HOSP10FY2023.zip")
 
@@ -48,3 +48,49 @@ def test_fy2023_invariants_hold(fy2023) -> None:
     assert fy2023.nmrc["itm_val_num"].notna().all()
     assert set(fy2023.nmrc["rpt_rec_num"]).issubset(rpt_ids)
     assert set(fy2023.alpha["rpt_rec_num"]).issubset(rpt_ids)
+
+
+@pytest.fixture(scope="module")
+def fy2023_wide(fy2023):
+    return pivot_wide(fy2023)
+
+
+def test_fy2023_pivot_all_15_variables_resolve(fy2023_wide) -> None:
+    """Every seed variable should resolve on at least some FY2023 reports."""
+    expected = {
+        "hospital_name",
+        "ownership_type",
+        "chain_name",
+        "total_beds",
+        "total_beds_grand",
+        "total_discharges",
+        "total_bed_days_available",
+        "inpatient_bed_days_utilized",
+        "net_patient_revenue",
+        "total_operating_expenses",
+        "other_income",
+        "total_other_expenses",
+        "total_bad_debt",
+        "charity_care_cost",
+        "uncompensated_care_cost",
+    }
+    assert expected.issubset(set(fy2023_wide.columns))
+    for col in expected:
+        assert fy2023_wide[col].notna().any(), f"{col} didn't resolve on any report"
+
+
+def test_fy2023_pivot_coverage_for_identity_fields(fy2023_wide) -> None:
+    """Identity fields should be present on every report."""
+    assert fy2023_wide["hospital_name"].notna().all()
+    assert fy2023_wide["ownership_type"].notna().all()
+
+
+def test_fy2023_nyp_is_biggest_hospital(fy2023_wide) -> None:
+    """New York Presbyterian has had the largest net patient revenue for years.
+
+    A useful vibe check: if the top 1 isn't a major AMC, the resolver is broken.
+    """
+    top1 = fy2023_wide.nlargest(1, "net_patient_revenue").iloc[0]
+    assert "PRESBYTERIAN" in top1["hospital_name"].upper()
+    assert top1["net_patient_revenue"] > 5e9
+    assert top1["total_beds"] > 2000

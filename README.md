@@ -13,9 +13,9 @@ On top of those: a Claude skill bundle (`skills/hcris-analyst`) and a static Obs
 
 ## Status
 
-**M1 — HCRIS parser (Hospital 2552-10).** Download, parse, and write partitioned Parquet for FY2015→latest. Sacarny's invariants enforced (unique `rpt_rec_num` per year, no null NMRC values, NMRC/ALPHA IDs subset of RPT). No semantic field dictionary yet — that's M2.
+**M2 — HCRIS semantic dictionary.** 15 seed variables that turn opaque `(S300001, 1400, 200)` tuples into `total_beds=450`. `pivot_wide()` returns one row per hospital-report with named columns. Validated end-to-end on real FY2023: NYP, NYU Langone, Stanford, Cleveland Clinic all surface at the top of net patient revenue with plausible bed counts.
 
-See `packages/hcris/README.md` for usage.
+See `packages/hcris/README.md` for usage. `scripts/demo_hospital_summary.py` for the before/after showcase.
 
 ## Dev setup
 

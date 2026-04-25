@@ -174,17 +174,19 @@ wheels = [
 
 [[package]]
 name = "hcris"
-version = "0.1.0"
+version = "0.2.0"
 source = { editable = "packages/hcris" }
 dependencies = [
     { name = "pandas" },
     { name = "pyarrow" },
+    { name = "pyyaml" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "pandas", specifier = ">=2.2" },
     { name = "pyarrow", specifier = ">=18" },
+    { name = "pyyaml", specifier = ">=6" },
 ]
 
 [[package]]
