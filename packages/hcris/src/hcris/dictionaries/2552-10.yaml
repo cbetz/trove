@@ -144,3 +144,261 @@ variables:
     line_num: 3000
     clmn_num: 100
     description: Total cost of uncompensated care reported on Worksheet S-10 (2010 format only).
+
+  # --- Charity care detail (Worksheet S-10) ---
+
+  - name: charity_care_initial_charges
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 2000
+    clmn_num: 300
+    description: Initial obligation-of-patients charges for charity care and uninsured discounts.
+
+  - name: charity_care_cost_before_payments
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 2100
+    clmn_num: 300
+    description: Cost of charity care and uninsured discounts before subtracting partial patient payments.
+
+  - name: charity_care_partial_payments
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 2200
+    clmn_num: 300
+    description: Partial payments received from patients approved for charity care.
+
+  # --- Bad debt detail (Worksheet S-10) ---
+
+  - name: medicare_bad_debt_reimbursable
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 2700
+    clmn_num: 100
+    description: Portion of bad debt that is Medicare-reimbursable.
+
+  - name: non_medicare_bad_debt_expense
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 2800
+    clmn_num: 100
+    description: Non-Medicare bad debt expense (total bad debt minus Medicare-reimbursable portion).
+
+  - name: non_medicare_bad_debt_cost
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    line_num: 2900
+    clmn_num: 100
+    description: Cost of non-Medicare bad debt after applying the cost-to-charge ratio.
+
+  - name: cost_to_charge_ratio
+    source: nmrc
+    type: ratio
+    wksht_cd: S100001
+    line_num: 100
+    clmn_num: 100
+    description: Hospital-wide cost-to-charge ratio used to translate Worksheet S-10 charges into costs.
+
+  # --- G-2 Part I inpatient revenue breakdown (column 100) ---
+
+  - name: inpatient_revenue_hospital
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 100
+    clmn_num: 100
+    description: Inpatient hospital revenue (acute-care component of the facility).
+
+  - name: inpatient_revenue_general
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 1000
+    clmn_num: 100
+    description: Inpatient general service revenue (hospital + IPF + IRF + SNF + subproviders).
+
+  - name: inpatient_revenue_intensive_care
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 1600
+    clmn_num: 100
+    description: Inpatient intensive-care-type revenue (ICU, CCU, burn, surgical IC, and others).
+
+  - name: inpatient_revenue_routine
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 1700
+    clmn_num: 100
+    description: Inpatient routine-care revenue (sum of general and intensive-care routine revenue).
+
+  - name: inpatient_revenue_ancillary
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 1800
+    clmn_num: 100
+    description: Inpatient ancillary services revenue.
+
+  - name: inpatient_revenue_other
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 1900
+    clmn_num: 100
+    description: Inpatient outpatient-services revenue (services rendered to inpatients through outpatient departments).
+
+  - name: inpatient_total_revenue
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 2800
+    clmn_num: 100
+    description: Inpatient total patient revenue across all service lines.
+
+  # --- G-2 Part I outpatient revenue (column 200) ---
+
+  - name: outpatient_revenue_ancillary
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 1800
+    clmn_num: 200
+    description: Outpatient ancillary services revenue.
+
+  - name: outpatient_revenue_other
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 1900
+    clmn_num: 200
+    description: Outpatient outpatient-services revenue (non-ancillary outpatient visits).
+
+  - name: outpatient_total_revenue
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 2800
+    clmn_num: 200
+    description: Outpatient total patient revenue.
+
+  - name: total_patient_revenue
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G200000
+    line_num: 2800
+    clmn_num: 300
+    description: Grand total patient revenue (sum of inpatient and outpatient).
+
+  # --- G-3 additional income lines ---
+
+  - name: donations
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G300000
+    line_num: 600
+    clmn_num: 100
+    description: Charitable donations reported on Worksheet G-3.
+
+  - name: investment_income
+    source: nmrc
+    type: currency_usd
+    wksht_cd: G300000
+    line_num: 700
+    clmn_num: 100
+    description: Investment income reported on Worksheet G-3.
+
+  # --- S-3 Part I special-care bed breakdown (column 200) ---
+
+  - name: beds_adult_and_pediatric
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 100
+    clmn_num: 200
+    description: Adult and pediatric beds (Worksheet S-3 Part I line 1).
+
+  - name: icu_beds
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 800
+    line_num_end: 899
+    clmn_num: 200
+    aggregation: sum
+    description: Total intensive-care-unit beds, summed across all ICU subcategory lines.
+
+  - name: ccu_beds
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 900
+    line_num_end: 999
+    clmn_num: 200
+    aggregation: sum
+    description: Total coronary-care-unit beds, summed across all CCU subcategory lines.
+
+  - name: burn_icu_beds
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 1000
+    line_num_end: 1099
+    clmn_num: 200
+    aggregation: sum
+    description: Total burn-intensive-care-unit beds.
+
+  - name: surgical_icu_beds
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 1100
+    line_num_end: 1199
+    clmn_num: 200
+    aggregation: sum
+    description: Total surgical-intensive-care-unit beds.
+
+  - name: other_special_care_beds
+    source: nmrc
+    type: int
+    wksht_cd: S300001
+    line_num: 1200
+    line_num_end: 1299
+    clmn_num: 200
+    aggregation: sum
+    description: Total other special-care beds (NICU, pediatric ICU, trauma, etc.).
+
+  # --- Medicare program cost and charges (Worksheets D-1 and D-3) ---
+
+  - name: medicare_inpatient_operating_cost
+    source: nmrc
+    type: currency_usd
+    wksht_cd: D10A181
+    line_num: 5300
+    clmn_num: 100
+    description: Medicare inpatient program operating cost (Worksheet D-1 Part II).
+
+  - name: medicare_inpatient_routine_charges
+    source: nmrc
+    type: currency_usd
+    wksht_cd: D30A180
+    line_num: 3000
+    line_num_end: 3599
+    clmn_num: 200
+    aggregation: sum
+    description: Medicare inpatient program routine service charges, summed across department lines.
+
+  - name: medicare_inpatient_ancillary_net_charges
+    source: nmrc
+    type: currency_usd
+    wksht_cd: D30A180
+    line_num: 20200
+    clmn_num: 200
+    description: Medicare inpatient program ancillary service net charges (Worksheet D-3).
