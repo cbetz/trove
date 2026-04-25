@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
+import struct
 import zipfile
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
+import inflate64
 import pandas as pd
 from lxml import etree
+
+# IRS bulk ZIPs starting with the 2025 release year use DEFLATE64 (compress_type
+# 9), which Python's stdlib zipfile can index but cannot decompress.
+ZIP_DEFLATED64 = 9
 
 from form990.download import download_index, download_zip
 from form990.index import filter_990s_for_tax_year, read_index
@@ -61,8 +67,11 @@ def parse_tax_year(
         parts.append(parse_zip(zip_path))
 
     if not parts:
-        return pd.DataFrame(columns=list(OUTPUT_COLUMNS))
+        df = pd.DataFrame(columns=list(OUTPUT_COLUMNS))
+        df["release_year"] = pd.Series(dtype="Int64")
+        return df
     df = pd.concat(parts, ignore_index=True)
+    df["release_year"] = pd.Series([release_year] * len(df), dtype="Int64")
     return df[df["tax_year"] == tax_year].reset_index(drop=True)
 
 
@@ -72,13 +81,28 @@ def iter_schedule_h_filings(zip_path: Path) -> Iterator[dict[str, Any]]:
         for info in zf.infolist():
             if not info.filename.endswith(".xml"):
                 continue
-            with zf.open(info) as f:
-                blob = f.read()
+            blob = _read_zip_entry(zf, info)
             if _SCH_H_MARKER not in blob:
                 continue
             row = _extract(blob)
             if row is not None:
                 yield row
+
+
+def _read_zip_entry(zf: zipfile.ZipFile, info: zipfile.ZipInfo) -> bytes:
+    if info.compress_type != ZIP_DEFLATED64:
+        return zf.read(info)
+    fp = zf.fp
+    if fp is None:
+        raise RuntimeError("ZipFile has no open file handle")
+    fp.seek(info.header_offset)
+    local_header = fp.read(30)
+    if local_header[:4] != b"PK\x03\x04":
+        raise zipfile.BadZipFile(f"bad local file header at {info.header_offset}")
+    fname_len, extra_len = struct.unpack("<HH", local_header[26:30])
+    fp.read(fname_len + extra_len)
+    compressed = fp.read(info.compress_size)
+    return inflate64.Inflater().inflate(compressed)
 
 
 def _extract(xml_blob: bytes) -> dict[str, Any] | None:

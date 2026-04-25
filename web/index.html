@@ -111,7 +111,7 @@
   </section>
 
   <section>
-    <h2>Search 1,317 hospital systems</h2>
+    <h2>Search 1,334 hospital systems</h2>
     <div class="search">
       <input id="q" type="search" placeholder="Try “Memorial Hermann”, “Yale”, “Cleveland Clinic”, or an EIN…" autocomplete="off" spellcheck="false">
       <span class="search-meta" id="search-meta"></span>
@@ -199,7 +199,7 @@ let SELECTED_EIN = null;
 const PAGE_TOP_N = 50;
 
 async function init() {
-  const res = await fetch("./data/community_benefit_gap_2022.json?v=20260425");
+  const res = await fetch("./data/community_benefit_gap_2022.json?v=20260425b");
   DATA = await res.json();
   renderHero();
   bindControls();

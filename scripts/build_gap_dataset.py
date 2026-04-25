@@ -26,7 +26,7 @@ from hcris import pivot_wide
 ARTIFACTS_DIR = Path("artifacts")
 PARQUET_DIR = Path("data/parquet")
 TAX_YEAR = 2022
-RELEASE_YEAR = 2024
+RELEASE_YEARS = (2024, 2025, 2026)
 HCRIS_FY = 2023
 
 
@@ -34,15 +34,21 @@ def main() -> None:
     print(f"Loading HCRIS FY{HCRIS_FY}...")
     hcris_wide = pivot_wide(parse_hcris(f"data/raw/hcris/HOSP10FY{HCRIS_FY}.zip"))
 
-    print(f"Ingesting TY{TAX_YEAR} Schedule H from {RELEASE_YEAR} release...")
+    print(f"Ingesting TY{TAX_YEAR} Schedule H from releases {RELEASE_YEARS}...")
     sched_h_path = PARQUET_DIR / "form990" / "schedule_h" / f"year={TAX_YEAR}" / "part.parquet"
-    if sched_h_path.exists():
+    if sched_h_path.exists() and "release_year" in pd.read_parquet(sched_h_path, columns=None).columns:
         print(f"  using cached {sched_h_path}")
         sched_h = pd.read_parquet(sched_h_path)
     else:
-        sched_h = parse_tax_year(tax_year=TAX_YEAR, release_year=RELEASE_YEAR)
+        parts = []
+        for release in RELEASE_YEARS:
+            print(f"  release {release}:")
+            parts.append(parse_tax_year(tax_year=TAX_YEAR, release_year=release))
+        sched_h = pd.concat(parts, ignore_index=True)
         write_990_parquet(sched_h, tax_year=TAX_YEAR, out_dir=PARQUET_DIR / "form990")
     print(f"  {len(sched_h):,} filings, {sched_h['ein'].nunique():,} unique EINs")
+    by_release = sched_h.groupby("release_year", dropna=False).size().to_dict()
+    print(f"  by release year: {by_release}")
 
     print("Loading CBI crosswalk...")
     cw = load_seed()
