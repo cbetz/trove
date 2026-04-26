@@ -21,7 +21,25 @@ TAX_YEAR = 2022
 
 
 def main() -> None:
-    df = pd.read_csv(CSV_IN, dtype={"ein": str})
+    raw = pd.read_csv(CSV_IN, dtype={"ein": str}, parse_dates=["hcris_fy_end_dt", "sched_h_tax_period_end"])
+    matched_count = len(raw)
+
+    # Computable = both 7a (990) and S-10 (HCRIS) are present so charity_gap is defined.
+    df = raw[
+        raw["hcris_charity_care_cost"].notna()
+        & raw["sched_h_financial_assistance_at_cost"].notna()
+    ].copy()
+    computable_count = len(df)
+
+    df["months_apart"] = (df["hcris_fy_end_dt"] - df["sched_h_tax_period_end"]).abs().dt.days / 30.44
+    aligned_count = int((df["months_apart"] <= 1).sum())
+    aligned_material = df[
+        (df["months_apart"] <= 1)
+        & (df["hcris_charity_care_cost"].abs() >= 500_000)
+        & (df["sched_h_financial_assistance_at_cost"].abs() >= 500_000)
+    ]
+    aligned_material_count = len(aligned_material)
+
     df["gap_pct"] = _gap_pct(df)
     df = df.sort_values("gap_pct", ascending=False, key=lambda s: s.abs())
 
@@ -31,8 +49,8 @@ def main() -> None:
             "system": r.sched_h_organization_name,
             "facility": r.hospital_name,
             "ccns": int(r.ccn_count),
-            "period_end": r.sched_h_tax_period_end,
-            "hcris_fy_end": r.hcris_fy_end_dt,
+            "period_end": r.sched_h_tax_period_end.strftime("%Y-%m-%d") if pd.notna(r.sched_h_tax_period_end) else None,
+            "hcris_fy_end": r.hcris_fy_end_dt.strftime("%Y-%m-%d") if pd.notna(r.hcris_fy_end_dt) else None,
             "hcris_charity": _num(r.hcris_charity_care_cost),
             "hcris_uncomp": _num(r.hcris_uncompensated_care_cost),
             "hcris_opex": _num(r.hcris_total_operating_expenses),
@@ -46,16 +64,26 @@ def main() -> None:
         for r in df.itertuples(index=False)
     ]
 
-    top = df.iloc[0]
+    aligned_material_sorted = aligned_material.sort_values(
+        "charity_gap", ascending=False, key=lambda s: s.abs()
+    )
+    top = aligned_material_sorted.iloc[0]
+    median_aligned_pct = float(_gap_pct(aligned_material).abs().median()) if len(aligned_material) else 0
+    big_gaps = int((_gap_pct(aligned_material).abs() >= 0.5).sum())
     totals = {
-        "systems": int(len(df)),
-        "absolute_gap_usd": _num(df["charity_gap"].abs().sum()),
-        "total_community_benefit_usd": _num(df["sched_h_total_community_benefit"].sum()),
-        "pct_hcris_higher": round(float((df["charity_gap"] > 0).mean()), 4),
-        "median_abs_gap_usd": _num(df["charity_gap"].abs().median()),
-        "top_gap_system": top.sched_h_organization_name,
-        "top_gap_facility": top.hospital_name,
-        "top_gap_usd": _num(top.charity_gap),
+        "matched": matched_count,
+        "computable": computable_count,
+        "aligned": aligned_count,
+        "aligned_material": aligned_material_count,
+        "matched_minus_computable": matched_count - computable_count,
+        "aligned_minus_material": aligned_count - aligned_material_count,
+        "median_aligned_material_gap_pct": round(median_aligned_pct, 4),
+        "aligned_material_big_gaps": big_gaps,
+        "absolute_gap_usd_aligned_material": _num(aligned_material["charity_gap"].abs().sum()),
+        "total_cb_usd_aligned_material": _num(aligned_material["sched_h_total_community_benefit"].sum()),
+        "top_aligned_system": top.sched_h_organization_name,
+        "top_aligned_facility": top.hospital_name,
+        "top_aligned_gap_usd": _num(top.charity_gap),
     }
 
     bundle = {"tax_year": TAX_YEAR, "totals": totals, "rows": rows}

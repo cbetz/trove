@@ -129,12 +129,13 @@
     <p>Every nonprofit U.S. hospital files Worksheet S-10 with CMS and Schedule H with the IRS. Both forms have a charity-care line that's intended to capture the cost of care provided to patients who couldn't pay — but the rules, scope, and accounting treatment diverge enough that the two numbers can legitimately differ. They are <em>related</em> measures of the same underlying activity, not the same number. trove makes the comparison computable across hospital systems for tax year 2022 so the divergences are visible.</p>
     <p>This is a side-by-side reconciliation tool, not an accusation engine. A nonzero gap is a starting point for review, not evidence of misconduct — many divergences are explained by definitional differences (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume. The interesting cases are the ones that <em>aren't</em> explained by those.</p>
     <p><strong>Each row is one nonprofit hospital system</strong> — one IRS Employer Identification Number (EIN) — aggregating the underlying CMS Worksheet S-10 numbers across every CCN-keyed facility that files under that EIN. The 990 figure comes from Schedule H Part I line 7a (financial assistance at cost). The HCRIS figure is Worksheet S-10 charity care cost.</p>
-    <p><strong>Default view: well-aligned, comparable systems only.</strong> HCRIS uses a federal-fiscal-year reporting cycle, not a fiscal period; for many hospitals, CMS reporting cycle "FY2023" actually contains a report covering a 12-month period that doesn't overlap with their TY2022 990 at all. The default filter restricts to systems where the two filings cover the same period (within 1 month) <em>and</em> both report at least $500K — the only subset where the comparison is genuinely apples-to-apples. Toggle the filters off if you want the unfiltered view.</p>
+    <p><strong>Default view: aligned + material systems.</strong> HCRIS uses a federal-fiscal-year reporting cycle, not a fiscal period; for many hospitals, CMS reporting cycle "FY2023" actually contains a report covering a 12-month period that doesn't overlap with their TY2022 990 at all. Two separate filters apply by default: <em>aligned periods</em> (HCRIS fiscal year end ≈ 990 tax period end, within 1 month) — what makes the comparison meaningful — and <em>both filings ≥ $500K</em>, a materiality floor to reduce noise from very small filings. Alignment establishes comparability; the dollar threshold is just a signal-to-noise filter. Toggle either off independently.</p>
+    <p><strong>The funnel:</strong> 1,334 EIN-matched systems → 1,295 computable (39 have blank Schedule H 7a) → 370 also period-aligned within 1 month → 228 with both filings ≥ $500K. The 142 aligned-but-below-$500K systems are visible when you turn the materiality filter off.</p>
     <div class="stats" id="stats">
       <div class="stat">
         <div class="stat-num" id="stat-systems">—</div>
-        <div class="stat-label">Aligned, comparable systems</div>
-        <div class="stat-sub">Of <span id="stat-total">—</span> total matched. Periods within 1 month and both filings ≥ $500K.</div>
+        <div class="stat-label">Aligned + material systems</div>
+        <div class="stat-sub">Of <span id="stat-computable">—</span> computable (<span id="stat-matched">—</span> matched, <span id="stat-noncomp">—</span> with blank 990 7a).</div>
       </div>
       <div class="stat">
         <div class="stat-num" id="stat-median">—</div>
@@ -203,7 +204,8 @@
         <li>For calendar-year hospitals, "FY2023" mostly contains their CY2023 report (ending Dec 2023).</li>
         <li>For October–September hospitals, "FY2023" mostly contains their report ending September 2023.</li>
       </ul>
-      <p>None of those periods perfectly aligns with 990 Tax Year 2022 (which itself varies by filer fiscal calendar). The default filter restricts to systems where the two filings actually cover the same period — about <strong>17%</strong> of the 1,334 matched systems. The rest are visible if you turn the alignment filter off, but those rows are comparing different years and shouldn't be trusted as direct comparisons.</p>
+      <p>None of those periods perfectly aligns with 990 Tax Year 2022 (which itself varies by filer fiscal calendar). About <strong>28%</strong> of the 1,295 computable matched systems are period-aligned within 1 month; the remaining ~64% are exactly 12 months off. The page distinguishes alignment (which establishes comparability) from materiality (the $500K filter, which is a noise floor). The default applies both — 228 systems — but you can turn either filter off independently. The misaligned rows are visible when you do, but they're flagged inline because they're comparing different years and shouldn't be read as direct comparisons.</p>
+      <p><strong>Note:</strong> "alignment" here is a heuristic based on the two filings' end dates, not a proof of period overlap. Hospitals occasionally report stub periods or change fiscal calendars; the end-date proxy is correct for the vast majority but isn't a substitute for reading the filings directly.</p>
       <p><strong>Coming in v2:</strong> per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to find the report whose period actually matches each hospital's TY2022 990. This will substantially expand the well-aligned set.</p>
     </details>
     <details style="margin-top: 0.85rem;">
@@ -318,13 +320,12 @@ function computeDerived() {
 
 function renderHero() {
   const t = DATA.totals;
-  $("#stat-total").textContent = t.systems.toLocaleString();
-  const subset = DATA.rows.filter(r => r._comparable && r._aligned);
-  $("#stat-systems").textContent = subset.length.toLocaleString();
-  const medianAbsPct = median(subset.map(r => Math.abs(r.gap_pct))) || 0;
-  $("#stat-median").textContent = `${(medianAbsPct * 100).toFixed(0)}%`;
-  const big = subset.filter(r => Math.abs(r.gap_pct) >= 0.5).length;
-  $("#stat-big").textContent = big.toLocaleString();
+  $("#stat-matched").textContent = t.matched.toLocaleString();
+  $("#stat-computable").textContent = t.computable.toLocaleString();
+  $("#stat-noncomp").textContent = t.matched_minus_computable.toLocaleString();
+  $("#stat-systems").textContent = t.aligned_material.toLocaleString();
+  $("#stat-median").textContent = `${Math.round(t.median_aligned_material_gap_pct * 100)}%`;
+  $("#stat-big").textContent = t.aligned_material_big_gaps.toLocaleString();
 }
 
 function median(xs) {
@@ -426,7 +427,7 @@ function render() {
   if (QUERY) {
     metaText = `${total.toLocaleString()} match${total === 1 ? "" : "es"} · sorted by ${sortLabel}`;
   } else {
-    metaText = `${total.toLocaleString()} of ${DATA.totals.systems.toLocaleString()} systems (${filterLabel}) · sorted by ${sortLabel}`;
+    metaText = `${total.toLocaleString()} of ${DATA.totals.computable.toLocaleString()} computable systems (${filterLabel}) · sorted by ${sortLabel}`;
   }
   $("#search-meta").textContent = metaText;
 

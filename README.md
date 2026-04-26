@@ -6,16 +6,22 @@ Open-source parsers, agents, and visualizations for underused healthcare dataset
 
 A side-by-side comparison tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both lines are *intended* to capture the cost of care provided to patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ — often by a lot.
 
-For tax year 2022, with HCRIS reports paired only when the two filings cover the same fiscal period (within 1 month) and both report ≥ $500K, the dataset has **228 hospital systems** where the comparison is genuinely apples-to-apples. Among those:
+For tax year 2022, the funnel:
 
-- The **median proportional gap is 25%** — typical disagreement is large.
-- **53 systems (23% of the subset)** disagree by more than 50% — the cases worth a closer look.
-- **Largest aligned-period dollar gap:** Orlando Health — $143M HCRIS vs. $73M IRS = +$71M / 49%.
+- **1,334 systems matched** at the EIN level (HCRIS CCNs rolled up to a 990 EIN via CBI's crosswalk).
+- **1,295 computable** (39 systems have a blank Schedule H 7a, so a charity_gap can't be defined).
+- **370 also period-aligned** within 1 month (HCRIS fiscal-year end ≈ 990 tax-period end). Alignment is what makes the comparison meaningful — most of the rest are 12 months out of phase because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period covered.
+- **228 also material** — both filings ≥ $500K. The dollar threshold is a noise floor, not a comparability test; the 142 aligned-but-sub-$500K systems are visible on the site when you toggle materiality off.
+
+Among the 228 aligned + material systems:
+
+- **Median proportional gap: 25%** — typical disagreement is large.
+- **53 systems (23%)** disagree by more than 50%.
+- **Largest aligned-period $ gap:** Yale New Haven Hospital — $36M HCRIS vs. $113M IRS = −$78M / -68%.
+- **Largest aligned-period positive gap:** Orlando Health — $143M HCRIS vs. $73M IRS = +$71M / 49%.
 - **Largest aligned-period proportional gap:** Western Regional Medical Center — $18M HCRIS vs. $1M IRS = +94%.
 
-The full matched set is 1,334 systems, but most are misaligned by 12 months because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period. The site shows the misaligned rows when you toggle the filter off, but they're flagged in the leaderboard.
-
-**→ Search the 228 aligned systems (or the full 1,334) at [troveproject.com](https://troveproject.com).**
+**→ Search the 228 aligned systems (or the full 1,295 computable) at [troveproject.com](https://troveproject.com).**
 
 Full table: [`artifacts/community_benefit_gap_2022.csv`](artifacts/community_benefit_gap_2022.csv) · Top 50: [`artifacts/community_benefit_gap_2022_top50.csv`](artifacts/community_benefit_gap_2022_top50.csv) · Method and caveats: [`artifacts/community_benefit_gap_2022_summary.md`](artifacts/community_benefit_gap_2022_summary.md).
 

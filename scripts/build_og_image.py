@@ -31,20 +31,10 @@ SFMONO = "/System/Library/Fonts/SFNSMono.ttf"
 
 def main() -> None:
     bundle = json.loads(JSON_IN.read_text())
-    rows = bundle["rows"]
-
-    # Compute the same headline stats the page does.
-    aligned_comparable = [
-        r for r in rows
-        if r.get("hcris_charity") and r.get("fa_990")
-        and abs(r["hcris_charity"]) >= 500_000
-        and abs(r["fa_990"]) >= 500_000
-        and _months_between(r.get("hcris_fy_end"), r.get("period_end")) <= 1
-    ]
-    n = len(aligned_comparable)
-    pcts = sorted(abs(r["gap_pct"]) for r in aligned_comparable)
-    median_pct = pcts[len(pcts) // 2] if pcts else 0
-    big = sum(1 for p in pcts if p >= 0.5)
+    totals = bundle["totals"]
+    n = totals["aligned_material"]
+    median_pct = totals["median_aligned_material_gap_pct"]
+    big = totals["aligned_material_big_gaps"]
 
     img = Image.new("RGB", (WIDTH, HEIGHT), BG)
     draw = ImageDraw.Draw(img)
@@ -101,15 +91,6 @@ def _font(path: str, size: int, idx: int = 0) -> ImageFont.FreeTypeFont:
         return ImageFont.truetype(path, size, index=idx)
     except (OSError, IndexError):
         return ImageFont.load_default()
-
-
-def _months_between(a: str | None, b: str | None) -> float:
-    if not a or not b:
-        return 999
-    from datetime import date
-    da = date(*[int(x) for x in a.split("-")])
-    db = date(*[int(x) for x in b.split("-")])
-    return abs((da - db).days) / 30.44
 
 
 if __name__ == "__main__":

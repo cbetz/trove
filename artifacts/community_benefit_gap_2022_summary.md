@@ -4,9 +4,13 @@ Third published version (M4.3). Adds source-XML validation, per-row fiscal-year 
 
 ## Headline caveat — read this first
 
-The full dataset includes **1,334 matched systems** but only **228 of them** have HCRIS and 990 periods that overlap (within 1 month) AND both filings reporting ≥ $500K. The other 1,106 are matched correctly at the EIN level but compare different fiscal periods — for many systems, HCRIS "FY2023" data covers a 12-month period that doesn't overlap with their TY2022 990 at all. The aligned subset is the apples-to-apples view; the rest are useful for inspection but should not be treated as direct comparisons.
+The full dataset includes **1,334 matched systems** at the EIN level. Of those:
 
-The full CSV below contains every matched row including misaligned ones; use the `hcris_fy_end_dt` and `sched_h_tax_period_end` columns to filter to overlapping periods.
+- **1,295 are computable** — both Schedule H 7a (financial assistance at cost) and HCRIS S-10 (charity care cost) are present so a `charity_gap` is defined. The other 39 have a blank 990 7a and are matched but not compared.
+- **370 of the 1,295 (29%) are period-aligned** within 1 month — HCRIS fiscal-year end ≈ 990 tax-period end. Alignment is what establishes that the two filings cover the same fiscal year; without it, you're comparing different years. The remaining ~64% of computable rows are exactly 12 months apart because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period covered.
+- **228 of the 370 also have both filings ≥ $500K**. This is a *materiality / noise floor*, not a comparability test — the 142 aligned-but-sub-$500K systems are equally comparable, just smaller in dollar terms.
+
+The full CSV below contains every matched row, computable and not; use `hcris_fy_end_dt`, `sched_h_tax_period_end`, and the presence/absence of `sched_h_financial_assistance_at_cost` to filter as appropriate.
 
 ## Method
 
@@ -18,37 +22,42 @@ Positive gap → the hospital reports more charity care to CMS than to the IRS.
 
 ## Headline numbers
 
-**Aligned + comparable subset (the apples-to-apples view, 228 systems):**
+**Aligned + material subset (228 systems — the apples-to-apples view):**
 
-- **228 hospital systems** with HCRIS and 990 fiscal periods overlapping within 1 month and both filings ≥ $500K
+- HCRIS and 990 fiscal periods overlap within 1 month, and both filings ≥ $500K
 - Median absolute proportional gap: **25.1%** (typical disagreement is large)
 - **53 systems (23%)** disagree by more than 50% — the cases worth a closer look
-- **$1.08B** total absolute gap on this subset against **$14.21B** community benefit reported (7.6%)
+- **$1.08B** total absolute gap on this subset against **$14.21B** Schedule H community benefit reported (7.6% in dispute)
 
-**Full matched set (1,334 systems, including misaligned periods):**
+**Aligned-only subset (370 systems, including 142 below the $500K materiality floor):**
 
-- 1,334 systems matched (from 1,481 unique TY2022 990 EINs and 1,730 CCNs in the join)
-- $60.54B total community benefit reported on Schedule H (Part I 7k, sum across systems)
-- $5.14B total absolute charity-care gap (including the misaligned cases — read with caution)
-- 807 systems (60%) report MORE charity care to CMS than to the IRS
-- 477 systems (36%) report MORE financial assistance to the IRS than charity care to CMS
+- HCRIS and 990 periods within 1 month
+- 27.7% of the 1,334 matched / 28.6% of the 1,295 computable
+
+**Full matched set (1,334 systems, mostly misaligned by 12 months):**
+
+- 1,334 matched (from 1,481 unique TY2022 990 EINs and 1,730 CCNs in the join)
+- 1,295 computable; 39 have a blank Schedule H 7a
+- 855 of the computable set are 11–13 months off — comparing different years
+- $60.54B total Schedule H community benefit reported across all matched
+- The "$5B absolute gap on the full set" figure that earlier versions of this dataset published is structurally misleading because most of those dollars come from misaligned-period comparisons. The aligned-subset $1.08B / 7.6%-of-CB figure is the defensible version.
 
 ## Top 10 — aligned periods, ranked by absolute dollar gap
 
-These are the cases where HCRIS and 990 cover the same fiscal year and both reported ≥ $500K. Largest absolute disagreements:
+These are the cases where HCRIS and 990 cover the same fiscal year and both reported ≥ $500K. Largest absolute disagreements (signed):
 
 | EIN | Hospital | CCNs | HCRIS S-10 charity | 990 Sched H 7a | Gap |
 |-----|----------|------|--------------------|----------------|-----|
+| 060646652 | Yale New Haven Hospital | 1 | $35.6M | $113.1M | **−$77.5M** |
 | 591726273 | Orlando Health Inc | 2 | $143.2M | $72.6M | **+$70.6M** |
+| 581954432 | Northside Hospital Inc | 5 | $293.1M | $358.6M | **−$65.5M** |
 | 593458145 | Florida Health Sciences Center (Tampa General) | 1 | $102.4M | $51.0M | **+$51.3M** |
+| 590910342 | Baptist Hospital of Miami | 1 | $27.3M | $69.1M | **−$41.8M** |
+| 900656139 | Mass General Brigham | 10 | $76.5M | $110.9M | **−$34.4M** |
 | 811723202 | Prisma Health-Upstate | 7 | $143.2M | $109.1M | **+$34.0M** |
 | 592650456 | Lakeland Regional Medical Center | 1 | $49.3M | $15.6M | **+$33.6M** |
-| 912155626 | UMass Memorial Health Care & Affiliates | 4 | $27.8M | $6.4M | **+$21.4M** |
-| 590747311 | Southern Baptist Hospital of Florida (Baptist Health Jax) | 1 | $52.6M | $34.8M | **+$17.8M** |
-| 582296052 | Prisma Health-Midlands | 3 | $63.8M | $46.5M | **+$17.3M** |
-| 320197974 | Western Regional Medical Center | 1 | $18.1M | $1.1M | **+$16.9M** |
-| 752051646 | Cook Children's Medical Center | 1 | $26.8M | $11.3M | **+$15.5M** |
-| 370813229 | OSF Healthcare System | 13 | $42.4M | $27.6M | **+$14.8M** |
+| 566017737 | WakeMed | 2 | $89.4M | $116.0M | **−$26.7M** |
+| 912155626 | UMass Memorial Health Care | 4 | $27.8M | $6.4M | **+$21.4M** |
 
 ## Top 10 — aligned periods, ranked by proportional gap
 
@@ -85,7 +94,7 @@ The data is a **starting point** for review, not a definitive accusation. The va
 
 ## Coverage and caveats
 
-- **Fiscal-year alignment:** The biggest caveat. HCRIS labels reports by federal fiscal reporting cycle, not fiscal period. Of 1,334 matched systems, only 386 (29%) have HCRIS and 990 periods within 1 month; 860 (64%) are exactly 12 months apart because their HCRIS "FY2023" report covers the year following their TY2022 990. The site at troveproject.com surfaces this per-row and defaults to the aligned subset. **v2 (planned):** per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to expand the well-aligned set substantially.
+- **Fiscal-year alignment:** The biggest caveat. HCRIS labels reports by federal fiscal reporting cycle, not fiscal period. Of 1,295 computable systems, 370 (29%) have HCRIS and 990 periods within 1 month; 855 (66%) are exactly 12 months apart because their HCRIS "FY2023" report covers the year following their TY2022 990. The alignment heuristic is end-date-based — a proxy for period overlap, not a proof of it. The site at troveproject.com surfaces this per-row and defaults to the aligned subset. **v2 (planned):** per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to expand the well-aligned set substantially.
 - **Validation:** spot-checked 6 EINs (Memorial Hermann, St Jude, Yale, Western Regional, UVA Prince William, CHI St Vincent) against the source IRS XML — exact-to-the-dollar matches in all cases. Parser is verified clean. Bug reports welcome at github.com/cbetz/trove/issues.
 - **Crosswalk coverage:** ~3,079 of 6,042 HCRIS hospitals appear in the CBI Dec 2024 crosswalk; the other ~50% are mostly for-profit and government hospitals (no 990) or hospitals not in CBI's frozen vintage. 1,334 of 1,481 unique TY2022 990 EINs match the crosswalk.
 - **Release-year scope:** TY2022 ingest now spans the 2024, 2025, and 2026 IRS release years (29 ZIPs total). TY2022 amendments filed after the 2026 quarterly cutoff aren't ingested.
