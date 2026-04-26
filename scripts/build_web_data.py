@@ -31,7 +31,9 @@ def main() -> None:
     ].copy()
     computable_count = len(df)
 
-    df["months_apart"] = (df["hcris_fy_end_dt"] - df["sched_h_tax_period_end"]).abs().dt.days / 30.44
+    df["months_apart"] = (
+        (df["hcris_fy_end_dt"] - df["sched_h_tax_period_end"]).abs().dt.days / 30.44
+    ).round()
     aligned_count = int((df["months_apart"] <= 1).sum())
     aligned_material = df[
         (df["months_apart"] <= 1)

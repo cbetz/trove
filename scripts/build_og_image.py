@@ -62,7 +62,7 @@ def main() -> None:
         stats_x_starts,
         [str(n), f"{round(median_pct * 100)}%", str(big)],
         [
-            "ALIGNED, COMPARABLE\nSYSTEMS",
+            "ALIGNED + MATERIAL\nSYSTEMS",
             "MEDIAN GAP\nON THIS SUBSET",
             "DISAGREE BY\nMORE THAN HALF",
         ],
