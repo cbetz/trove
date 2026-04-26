@@ -4,7 +4,7 @@ Open-source parsers, agents, and visualizations for underused healthcare dataset
 
 ## What this is
 
-A side-by-side comparison tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both forms are *supposed* to report the same underlying figure, but the rules diverge enough that the numbers often don't match.
+A side-by-side comparison tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both lines are *intended* to capture the cost of care provided to patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ — often by a lot.
 
 For tax year 2022, with HCRIS reports paired only when the two filings cover the same fiscal period (within 1 month) and both report ≥ $500K, the dataset has **228 hospital systems** where the comparison is genuinely apples-to-apples. Among those:
 

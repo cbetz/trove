@@ -4,24 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>trove — compare hospital charity care reporting (CMS vs. IRS)</title>
-  <meta name="description" content="A side-by-side comparison tool for the charity care numbers that 1,334 nonprofit U.S. hospitals report to CMS and to the IRS for tax year 2022. Many disagree.">
+  <meta name="description" content="A side-by-side comparison tool for the charity-care numbers that nonprofit U.S. hospitals report to CMS and to the IRS for tax year 2022. 228 well-aligned systems, 25% median disagreement.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta property="og:type" content="website">
   <meta property="og:title" content="trove — compare hospital charity care reporting (CMS vs. IRS)">
-  <meta property="og:description" content="A side-by-side comparison tool for the charity care numbers that 1,334 nonprofit U.S. hospitals report to CMS and to the IRS for tax year 2022. Many disagree.">
+  <meta property="og:description" content="A side-by-side comparison tool for the charity-care numbers that nonprofit U.S. hospitals report to CMS and to the IRS for tax year 2022. 228 well-aligned systems, 25% median disagreement.">
   <meta property="og:url" content="https://troveproject.com/">
+  <meta property="og:image" content="https://troveproject.com/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://troveproject.com/og.png">
   <style>
     :root {
       color-scheme: light dark;
-      --muted: #888;
-      --border: rgba(127, 127, 127, 0.25);
+      --muted: #5a5a5a;
+      --border: rgba(127, 127, 127, 0.3);
       --row-hover: rgba(127, 127, 127, 0.08);
       --row-active: rgba(127, 127, 127, 0.18);
-      --pos: #b8551a;
-      --neg: #2c6cb0;
+      --pos: #a04413;
+      --neg: #1f5793;
       --warn-bg: rgba(184, 85, 26, 0.06);
     }
     @media (prefers-color-scheme: dark) {
-      :root { --pos: #ee9457; --neg: #6fa6dd; --warn-bg: rgba(238, 148, 87, 0.08); }
+      :root { --muted: #adadad; --pos: #f0a26b; --neg: #82b6e6; --warn-bg: rgba(238, 148, 87, 0.08); }
     }
     * { box-sizing: border-box; }
     body {
@@ -120,7 +126,7 @@
   </header>
 
   <section class="narrow lede">
-    <p>Every nonprofit U.S. hospital files Worksheet S-10 with CMS and Schedule H with the IRS. Both forms ask, in different language, for the same number: the cost of charity care provided to patients who couldn't pay. The forms aren't required to match, and they often don't. trove makes the comparison computable across hospital systems for tax year 2022.</p>
+    <p>Every nonprofit U.S. hospital files Worksheet S-10 with CMS and Schedule H with the IRS. Both forms have a charity-care line that's intended to capture the cost of care provided to patients who couldn't pay — but the rules, scope, and accounting treatment diverge enough that the two numbers can legitimately differ. They are <em>related</em> measures of the same underlying activity, not the same number. trove makes the comparison computable across hospital systems for tax year 2022 so the divergences are visible.</p>
     <p>This is a side-by-side reconciliation tool, not an accusation engine. A nonzero gap is a starting point for review, not evidence of misconduct — many divergences are explained by definitional differences (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume. The interesting cases are the ones that <em>aren't</em> explained by those.</p>
     <p><strong>Each row is one nonprofit hospital system</strong> — one IRS Employer Identification Number (EIN) — aggregating the underlying CMS Worksheet S-10 numbers across every CCN-keyed facility that files under that EIN. The 990 figure comes from Schedule H Part I line 7a (financial assistance at cost). The HCRIS figure is Worksheet S-10 charity care cost.</p>
     <p><strong>Default view: well-aligned, comparable systems only.</strong> HCRIS uses a federal-fiscal-year reporting cycle, not a fiscal period; for many hospitals, CMS reporting cycle "FY2023" actually contains a report covering a 12-month period that doesn't overlap with their TY2022 990 at all. The default filter restricts to systems where the two filings cover the same period (within 1 month) <em>and</em> both report at least $500K — the only subset where the comparison is genuinely apples-to-apples. Toggle the filters off if you want the unfiltered view.</p>
@@ -408,7 +414,14 @@ function render() {
     : ALIGNED_ONLY ? "aligned periods"
     : COMPARABLE_ONLY ? "both filings ≥ $500K"
     : "all matched";
-  const sortLabel = RANK_MODE === "pct" ? "absolute % gap" : "absolute $ gap";
+  const sortLabels = {
+    gap_pct: "absolute % gap",
+    gap: "absolute $ gap",
+    hcris_charity: "HCRIS S-10",
+    fa_990: "990 7a",
+    system: "hospital system name",
+  };
+  const sortLabel = `${sortLabels[SORT.key] || SORT.key} (${SORT.dir})`;
   let metaText;
   if (QUERY) {
     metaText = `${total.toLocaleString()} match${total === 1 ? "" : "es"} · sorted by ${sortLabel}`;

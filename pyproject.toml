@@ -12,6 +12,7 @@ members = ["packages/*"]
 
 [dependency-groups]
 dev = [
+    "pillow>=12.2.0",
     "pytest>=8",
     "ruff>=0.8",
 ]

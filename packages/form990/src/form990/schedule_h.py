@@ -3,8 +3,11 @@
 Each Part I line-7 group has the shape ``Form990SchHPartIGroup1Type`` with
 child elements ``TotalCommunityBenefitExpnsAmt`` (gross),
 ``DirectOffsettingRevenueAmt``, ``NetCommunityBenefitExpnsAmt`` (net), and
-``TotalExpensePct``. The headline number for cross-reference against HCRIS is
-the NET amount on line 7k (``TotalCommunityBenefitsGrp``).
+``TotalExpensePct``. The headline number for cross-reference against HCRIS
+Worksheet S-10 charity care is the NET amount on **line 7a**
+(``FinancialAssistanceAtCostTyp``); line 7k
+(``TotalCommunityBenefitsGrp``) is the broader Schedule H total community
+benefit roll-up.
 """
 
 from __future__ import annotations
