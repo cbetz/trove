@@ -18,6 +18,8 @@
   <style>
     :root {
       color-scheme: light dark;
+      --bg: #ffffff;
+      --fg: #111111;
       --muted: #5a5a5a;
       --border: rgba(127, 127, 127, 0.3);
       --row-hover: rgba(127, 127, 127, 0.08);
@@ -27,7 +29,7 @@
       --warn-bg: rgba(184, 85, 26, 0.06);
     }
     @media (prefers-color-scheme: dark) {
-      :root { --muted: #adadad; --pos: #f0a26b; --neg: #82b6e6; --warn-bg: rgba(238, 148, 87, 0.08); }
+      :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; --pos: #f0a26b; --neg: #82b6e6; --warn-bg: rgba(238, 148, 87, 0.08); }
     }
     * { box-sizing: border-box; }
     body {
@@ -35,6 +37,8 @@
       padding: 4rem 1.5rem 6rem;
       max-width: 64rem;
       font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--bg);
+      color: var(--fg);
     }
     .narrow { max-width: 44rem; }
     h1 { font-size: 2.75rem; margin: 0 0 0.5rem; letter-spacing: -0.03em; font-weight: 700; }
@@ -130,7 +134,7 @@
     <p>This is a side-by-side reconciliation tool, not an accusation engine. A nonzero gap is a starting point for review, not evidence of misconduct — many divergences are explained by definitional differences (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume. The interesting cases are the ones that <em>aren't</em> explained by those.</p>
     <p><strong>Each row is one nonprofit hospital system</strong> — one IRS Employer Identification Number (EIN) — aggregating the underlying CMS Worksheet S-10 numbers across every CCN-keyed facility that files under that EIN. The 990 figure comes from Schedule H Part I line 7a (financial assistance at cost). The HCRIS figure is Worksheet S-10 charity care cost.</p>
     <p><strong>Default view: aligned + material systems.</strong> HCRIS uses a federal-fiscal-year reporting cycle, not a fiscal period; for many hospitals, CMS reporting cycle "FY2023" actually contains a report covering a 12-month period that doesn't overlap with their TY2022 990 at all. Two separate filters apply by default: <em>aligned periods</em> (HCRIS fiscal year end ≈ 990 tax period end, within 1 month) — what makes the comparison meaningful — and <em>both filings ≥ $500K</em>, a materiality floor to reduce noise from very small filings. Alignment establishes comparability; the dollar threshold is just a signal-to-noise filter. Toggle either off independently.</p>
-    <p><strong>The funnel:</strong> 1,334 EIN-matched systems → 1,295 computable (39 have blank Schedule H 7a) → 370 also period-aligned within 1 month → 228 with both filings ≥ $500K. The 142 aligned-but-below-$500K systems are visible when you turn the materiality filter off.</p>
+    <p><strong>The funnel:</strong> 1,334 EIN-matched systems → 1,295 computable (39 have blank Schedule H 7a) → 372 also period-aligned within 1 month → 228 with both filings ≥ $500K. The 144 aligned-but-below-$500K systems are visible when you turn the materiality filter off.</p>
     <div class="stats" id="stats">
       <div class="stat">
         <div class="stat-num" id="stat-systems">—</div>
@@ -153,7 +157,7 @@
   <section>
     <div class="callout">
       <strong>How to read the leaderboard.</strong>
-      <p>The default view filters to <em>aligned, comparable</em> systems: HCRIS fiscal year end ≈ 990 tax period end (within 1 month) and both filings report ≥ $500K of charity care. The default sort ranks those by absolute proportional gap — the hospitals where both regulators heard a real number but the numbers disagree most. Click any row to see the underlying numbers, period alignment, and a link to the actual 990 filing on ProPublica.</p>
+      <p>The default view filters to <em>aligned + material</em> systems: HCRIS fiscal year end ≈ 990 tax period end (within 1 month) and both filings report ≥ $500K of charity care. The default sort ranks those by absolute proportional gap — the hospitals where both regulators heard a real number but the numbers disagree most. Click any row to see the underlying numbers, period alignment, and a link to the actual 990 filing on ProPublica.</p>
       <p>A row appearing high here means: (a) we matched the system across HCRIS and 990 correctly, (b) the periods cover the same year, and (c) the two filings still disagree. It does not mean the hospital is hiding charity care — see the methodology below for the dozen reasons two filings can legitimately diverge.</p>
     </div>
 
@@ -204,7 +208,7 @@
         <li>For calendar-year hospitals, "FY2023" mostly contains their CY2023 report (ending Dec 2023).</li>
         <li>For October–September hospitals, "FY2023" mostly contains their report ending September 2023.</li>
       </ul>
-      <p>None of those periods perfectly aligns with 990 Tax Year 2022 (which itself varies by filer fiscal calendar). About <strong>28%</strong> of the 1,295 computable matched systems are period-aligned within 1 month; the remaining ~64% are exactly 12 months off. The page distinguishes alignment (which establishes comparability) from materiality (the $500K filter, which is a noise floor). The default applies both — 228 systems — but you can turn either filter off independently. The misaligned rows are visible when you do, but they're flagged inline because they're comparing different years and shouldn't be read as direct comparisons.</p>
+      <p>None of those periods perfectly aligns with 990 Tax Year 2022 (which itself varies by filer fiscal calendar). About <strong>29%</strong> of the 1,295 computable matched systems are period-aligned within 1 month; about 65% are exactly 12 months off. The page distinguishes alignment (which establishes comparability) from materiality (the $500K filter, which is a noise floor). The default applies both — 228 systems — but you can turn either filter off independently. The misaligned rows are visible when you do, but they're flagged inline because they're comparing different years and shouldn't be read as direct comparisons.</p>
       <p><strong>Note:</strong> "alignment" here is a heuristic based on the two filings' end dates, not a proof of period overlap. Hospitals occasionally report stub periods or change fiscal calendars; the end-date proxy is correct for the vast majority but isn't a substitute for reading the filings directly.</p>
       <p><strong>Coming in v2:</strong> per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to find the report whose period actually matches each hospital's TY2022 990. This will substantially expand the well-aligned set.</p>
     </details>
@@ -411,7 +415,7 @@ function render() {
   const visible = showAll ? all : all.slice(0, LIMIT);
 
   const filterLabel = ALIGNED_ONLY && COMPARABLE_ONLY
-    ? "aligned + comparable"
+    ? "aligned + material"
     : ALIGNED_ONLY ? "aligned periods"
     : COMPARABLE_ONLY ? "both filings ≥ $500K"
     : "all matched";

@@ -10,8 +10,8 @@ For tax year 2022, the funnel:
 
 - **1,334 systems matched** at the EIN level (HCRIS CCNs rolled up to a 990 EIN via CBI's crosswalk).
 - **1,295 computable** (39 systems have a blank Schedule H 7a, so a charity_gap can't be defined).
-- **370 also period-aligned** within 1 month (HCRIS fiscal-year end ≈ 990 tax-period end). Alignment is what makes the comparison meaningful — most of the rest are 12 months out of phase because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period covered.
-- **228 also material** — both filings ≥ $500K. The dollar threshold is a noise floor, not a comparability test; the 142 aligned-but-sub-$500K systems are visible on the site when you toggle materiality off.
+- **372 also period-aligned** within 1 month (HCRIS fiscal-year end ≈ 990 tax-period end). Alignment is what makes the comparison meaningful — most of the rest are 12 months out of phase because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period covered.
+- **228 also material** — both filings ≥ $500K. The dollar threshold is a noise floor, not a comparability test; the 144 aligned-but-sub-$500K systems are visible on the site when you toggle materiality off.
 
 Among the 228 aligned + material systems:
 
@@ -21,7 +21,7 @@ Among the 228 aligned + material systems:
 - **Largest aligned-period positive gap:** Orlando Health — $143M HCRIS vs. $73M IRS = +$71M / 49%.
 - **Largest aligned-period proportional gap:** Western Regional Medical Center — $18M HCRIS vs. $1M IRS = +94%.
 
-**→ Search the 228 aligned systems (or the full 1,295 computable) at [troveproject.com](https://troveproject.com).**
+**→ Search the 228 aligned + material systems (or the full 1,295 computable) at [troveproject.com](https://troveproject.com).**
 
 Full table: [`artifacts/community_benefit_gap_2022.csv`](artifacts/community_benefit_gap_2022.csv) · Top 50: [`artifacts/community_benefit_gap_2022_top50.csv`](artifacts/community_benefit_gap_2022_top50.csv) · Method and caveats: [`artifacts/community_benefit_gap_2022_summary.md`](artifacts/community_benefit_gap_2022_summary.md).
 
@@ -67,7 +67,7 @@ scripts/          Build + demo scripts
 
 ## Status
 
-- **M4.3** — Validation pass against IRS source XML (6 spot-checks, all exact); per-row alignment signals (HCRIS fiscal year end vs. 990 tax period end); default view filtered to aligned + comparable subset (228 systems); ProPublica deep links per row.
+- **M4.3** — Validation pass against IRS source XML (6 spot-checks, all exact); per-row alignment signals (HCRIS fiscal year end vs. 990 tax period end); default view filtered to aligned + material subset (228 systems); ProPublica deep links per row.
 - **M4.2** — TY2022 ingest expanded to 2024+2025+2026 IRS release years (late filers and amendments). Form990 parser now handles DEFLATE64 ZIPs (introduced by IRS in 2025 release).
 - **M4.1** — first published TY2022 gap dataset from the 2024 release year alone (1,317 systems).
 - **M4** — `crosswalk` package + `analytics.community_benefit_gap()`.
