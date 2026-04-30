@@ -227,14 +227,29 @@
         <li>Per-hospital HCRIS year matching (<strong>v2</strong>) to expand the well-aligned subset substantially.</li>
         <li>Earlier tax years (TY2018–TY2021) for trend analysis.</li>
         <li>BMF-based crosswalk reconciliation to close the ~20% unmatched-EIN gap.</li>
-        <li>A Claude skill (<code>hcris-analyst</code>) that answers ad-hoc queries against the bundles in natural language.</li>
-        <li>FDA Summary Basis of Approvals as a Phase 2 dataset.</li>
+        <li>FDA approval review documents as a Phase 2 dataset.</li>
       </ul>
     </details>
   </section>
 
   <section class="narrow">
-    <h2>Reproduce</h2>
+    <h2>Query with Claude</h2>
+    <p>The <code>hcris-analyst</code> Claude skill answers natural-language questions about hospital financials by translating them into DuckDB queries against the Parquet bundles served from this site. Drop the bundle into your Claude skills directory:</p>
+<pre><code>git clone https://github.com/cbetz/trove
+cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
+    <p>Then ask things like:</p>
+    <ul>
+      <li><em>"Show me a profile of New York-Presbyterian"</em></li>
+      <li><em>"Which nonprofit hospitals have the biggest aligned-period charity gaps?"</em></li>
+      <li><em>"Compare Yale-New Haven to other major teaching hospitals"</em></li>
+      <li><em>"What does Worksheet S-10 line 23 mean?"</em></li>
+      <li><em>"Did Memorial Hermann amend their TY2022 990?"</em></li>
+    </ul>
+    <p>The bundle includes a field dictionary, peer-cohort definitions, Schedule H field map, and runnable example queries. Source at <a href="https://github.com/cbetz/trove/tree/main/skills/hcris-analyst">github.com/cbetz/trove/tree/main/skills/hcris-analyst</a>.</p>
+  </section>
+
+  <section class="narrow">
+    <h2>Reproduce the dataset</h2>
 <pre><code>git clone https://github.com/cbetz/trove
 cd trove &amp;&amp; uv sync --all-packages
 uv run python scripts/build_gap_dataset.py</code></pre>
