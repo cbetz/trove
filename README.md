@@ -67,6 +67,7 @@ scripts/          Build + demo scripts
 
 ## Status
 
+- **M5** — `hcris-analyst` Claude skill shipped. Natural-language queries against HCRIS + 990 + the gap dataset, powered by DuckDB-over-HTTPS against three Parquet bundles served from troveproject.com (`hcris_2023_wide.parquet`, `schedule_h_2022.parquet`, `community_benefit_gap_2022.parquet`). Skill bundle at [`skills/hcris-analyst/`](skills/hcris-analyst/) includes the SKILL.md and reference docs (field dictionary, peer-cohort definitions, Schedule H map, runnable example queries).
 - **M4.3** — Validation pass against IRS source XML (6 spot-checks, all exact); per-row alignment signals (HCRIS fiscal year end vs. 990 tax period end); default view filtered to aligned + material subset (228 systems); ProPublica deep links per row.
 - **M4.2** — TY2022 ingest expanded to 2024+2025+2026 IRS release years (late filers and amendments). Form990 parser now handles DEFLATE64 ZIPs (introduced by IRS in 2025 release).
 - **M4.1** — first published TY2022 gap dataset from the 2024 release year alone (1,317 systems).

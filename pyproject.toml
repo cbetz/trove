@@ -12,6 +12,7 @@ members = ["packages/*"]
 
 [dependency-groups]
 dev = [
+    "duckdb>=1.5.2",
     "pillow>=12.2.0",
     "pytest>=8",
     "ruff>=0.8",
