@@ -41,7 +41,7 @@ Phase 1 packages:
 - **`form990`** — IRS Form 990 Schedule H parser. Bulk-XML download, index reader, and 19 fields per filing including Part I 7a–k community benefit amounts and Part III bad debt.
 - **`crosswalk`** — CCN ↔ EIN crosswalk (3,523 hospitals, 2,385 EINs) — the bridge that makes HCRIS-to-990 joins possible. Bundled from Community Benefit Insight.
 - **`analytics`** — composed queries. `community_benefit_gap()` is the headline primitive.
-- **`sdoh`** — Social Determinants of Health enrichments. v0.1 ships county-level Area Deprivation Index aggregation from UW's Neighborhood Atlas block-group release. Used to attach a "service-area deprivation" signal to each hospital row.
+- **`sdoh`** — Social Determinants of Health enrichments. v0.1 ships county-level Area Deprivation Index aggregation from UW's Neighborhood Atlas block-group release (cite: Kind AJH, Buckingham W. *N Engl J Med* 2018;378:2456-2458). Used to attach a "service-area deprivation" signal to each hospital row.
 
 On top of those: a Claude skill bundle (`skills/hcris-analyst`, in progress) and a static Observable-style site (`web/`, deployed to Vercel).
 
@@ -81,6 +81,11 @@ scripts/          Build + demo scripts
 
 Per-package detail in `packages/*/README.md`.
 
-## License
+## License and citations
 
-MIT. Source data (CMS HCRIS, IRS 990) is US government work and public domain.
+trove code is **MIT-licensed**. Underlying data sources have their own licensing and citation requirements:
+
+- **CMS HCRIS** — US government work, public domain. No citation required; suggested phrasing: "CMS Healthcare Cost Report Information System (HCRIS), Hospital form 2552-10".
+- **IRS Form 990 e-file** — US government work, public domain. Suggested: "IRS Tax-Exempt Organization Form 990 e-file (Schedule H)".
+- **CCN ↔ EIN crosswalk** — derived from Community Benefit Insight (RTI International, funded by RWJF, frozen Dec 6 2024). Suggested: "Community Benefit Insight; RTI Press 10.3768/rtipress.2023.op.0080.2302".
+- **Area Deprivation Index** — derived (county-level aggregates) from the University of Wisconsin Neighborhood Atlas block-group ADI release. Raw block-group data is **not redistributed** by trove — users with `data/raw/adi/` populated have downloaded it themselves under UW's terms. Required citation: **Kind AJH, Buckingham W. Making Neighborhood Disadvantage Metrics Accessible: The Neighborhood Atlas. *N Engl J Med* 2018;378:2456-2458.** See `packages/sdoh/README.md` for the full licensing posture.
