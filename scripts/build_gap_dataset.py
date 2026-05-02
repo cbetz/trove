@@ -22,12 +22,14 @@ from form990 import parse_tax_year
 from form990 import write_parquet as write_990_parquet
 from hcris import parse_zip as parse_hcris
 from hcris import pivot_wide
+from sdoh import county_adi_from_block_group
 
 ARTIFACTS_DIR = Path("artifacts")
 PARQUET_DIR = Path("data/parquet")
 TAX_YEAR = 2022
 RELEASE_YEARS = (2024, 2025, 2026)
 HCRIS_FY = 2023
+ADI_BG_CSV = Path("data/raw/adi/US_2023_ADI_Census_Block_Group_v4_0_1.csv")
 
 
 def main() -> None:
@@ -52,6 +54,14 @@ def main() -> None:
 
     print("Loading CBI crosswalk...")
     cw = load_seed()
+    if ADI_BG_CSV.exists():
+        print("  enriching crosswalk with county-level ADI...")
+        county_adi = county_adi_from_block_group(ADI_BG_CSV)
+        cw = cw.merge(county_adi, on="county_fips", how="left")
+        coverage = cw["adi_natrank"].notna().sum()
+        print(f"  ADI coverage: {coverage:,} of {len(cw):,} crosswalk rows")
+    else:
+        print(f"  ADI source not found at {ADI_BG_CSV}; skipping SDOH enrichment")
 
     print("Computing gap...")
     gap = community_benefit_gap(hcris_wide, sched_h, cw)

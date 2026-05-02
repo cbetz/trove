@@ -30,7 +30,11 @@ def community_benefit_gap(
     - ``community_benefit_pct_of_expenses`` — Schedule H total community benefit
       divided by HCRIS total operating expenses (sanity check on the 7k ratio)
     """
-    cw = crosswalk[["ccn", "ein"]].dropna()
+    cw_cols = ["ccn", "ein"]
+    for opt in ("adi_natrank", "adi_state_decile"):
+        if opt in crosswalk.columns:
+            cw_cols.append(opt)
+    cw = crosswalk[cw_cols].dropna(subset=["ccn", "ein"])
 
     aggs: dict[str, tuple[str, str]] = {
         "ccn_count": ("ccn", "nunique"),
@@ -41,6 +45,12 @@ def community_benefit_gap(
     }
     if "fy_end_dt" in hcris_wide.columns:
         aggs["hcris_fy_end_dt"] = ("fy_end_dt", "max")
+    # Optional SDOH enrichments — present when the caller has joined county-level
+    # ADI onto the crosswalk before passing it in.
+    if "adi_natrank" in crosswalk.columns:
+        aggs["adi_natrank"] = ("adi_natrank", "median")
+    if "adi_state_decile" in crosswalk.columns:
+        aggs["adi_state_decile"] = ("adi_state_decile", "median")
 
     by_system = (
         hcris_wide.merge(cw, left_on="prvdr_num", right_on="ccn", how="inner")

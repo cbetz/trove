@@ -41,6 +41,7 @@ Phase 1 packages:
 - **`form990`** — IRS Form 990 Schedule H parser. Bulk-XML download, index reader, and 19 fields per filing including Part I 7a–k community benefit amounts and Part III bad debt.
 - **`crosswalk`** — CCN ↔ EIN crosswalk (3,523 hospitals, 2,385 EINs) — the bridge that makes HCRIS-to-990 joins possible. Bundled from Community Benefit Insight.
 - **`analytics`** — composed queries. `community_benefit_gap()` is the headline primitive.
+- **`sdoh`** — Social Determinants of Health enrichments. v0.1 ships county-level Area Deprivation Index aggregation from UW's Neighborhood Atlas block-group release. Used to attach a "service-area deprivation" signal to each hospital row.
 
 On top of those: a Claude skill bundle (`skills/hcris-analyst`, in progress) and a static Observable-style site (`web/`, deployed to Vercel).
 
@@ -55,7 +56,7 @@ uv run ruff check
 ## Layout
 
 ```
-packages/         Python libraries (hcris, form990, crosswalk, analytics)
+packages/         Python libraries (hcris, form990, crosswalk, analytics, sdoh)
 skills/           Claude skill bundles
 web/              Static site at troveproject.com
 pipelines/        ETL orchestration — TBD
@@ -67,6 +68,7 @@ scripts/          Build + demo scripts
 
 ## Status
 
+- **M5.1** — `sdoh` package added. County-level Area Deprivation Index attached to every gap-dataset row (~98% coverage); surfaced on the troveproject.com detail card with national-percentile + state-decile + a one-line interpretation. Skill references updated so `hcris-analyst` can use ADI as a peer-cohort dimension. Raw block-group ADI data is gitignored per UW's terms; we publish only derived per-system aggregates.
 - **M5** — `hcris-analyst` Claude skill shipped. Natural-language queries against HCRIS + 990 + the gap dataset, powered by DuckDB-over-HTTPS against three Parquet bundles served from troveproject.com (`hcris_2023_wide.parquet`, `schedule_h_2022.parquet`, `community_benefit_gap_2022.parquet`). Skill bundle at [`skills/hcris-analyst/`](skills/hcris-analyst/) includes the SKILL.md and reference docs (field dictionary, peer-cohort definitions, Schedule H map, runnable example queries).
 - **M4.3** — Validation pass against IRS source XML (6 spot-checks, all exact); per-row alignment signals (HCRIS fiscal year end vs. 990 tax period end); default view filtered to aligned + material subset (228 systems); ProPublica deep links per row.
 - **M4.2** — TY2022 ingest expanded to 2024+2025+2026 IRS release years (late filers and amendments). Form990 parser now handles DEFLATE64 ZIPs (introduced by IRS in 2025 release).
