@@ -80,8 +80,8 @@ LIMIT 20;
 | `sched_h_tax_period_end` | End date of the 990 tax period. |
 | `charity_gap` | `hcris_charity_care_cost - sched_h_financial_assistance_at_cost`. NULL if either side is blank. |
 | `community_benefit_pct_of_expenses` | `sched_h_total_community_benefit / hcris_total_operating_expenses` — sanity check on the 7k ratio against HCRIS expenses. |
-| `adi_natrank` | County-level Area Deprivation Index, national percentile (1-100, higher = more deprivation). Median across the system's CCN home counties. ~98% of rows populated. |
-| `adi_state_decile` | Same as above but as a state-specific decile (1-10). |
+| `adi_natrank` | County-level Area Deprivation Index, national percentile (1-100, higher = more deprivation). Median across the system's CCN home counties. ~98% of rows populated. **Cite when quoting:** Kind AJH, Buckingham W. *N Engl J Med* 2018;378:2456-2458. |
+| `adi_state_decile` | Same as above but as a state-specific decile (1-10). Same citation as `adi_natrank`. |
 
 ## The alignment filter
 
