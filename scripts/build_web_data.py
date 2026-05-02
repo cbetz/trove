@@ -62,6 +62,8 @@ def main() -> None:
             "gap": _num(r.charity_gap),
             "gap_pct": _num(r.gap_pct, decimals=4),
             "cb_pct": _num(r.community_benefit_pct_of_expenses, decimals=4),
+            "adi_natrank": _num(getattr(r, "adi_natrank", None), decimals=1),
+            "adi_state_decile": _num(getattr(r, "adi_state_decile", None), decimals=1),
         }
         for r in df.itertuples(index=False)
     ]
