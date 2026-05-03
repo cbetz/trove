@@ -62,13 +62,14 @@ Both work in any environment with bash / Python and DuckDB available. If the use
 
 ## Sources and citations
 
-When you produce output that quotes data values, cite the source bundle and (for ADI) the underlying paper.
+When you produce output that quotes data values, cite the source bundle.
 
 - **HCRIS** — CMS Healthcare Cost Report Information System, Hospital form 2552-10. Public domain.
 - **IRS 990 Schedule H** — IRS Tax-Exempt Organization Form 990 e-file. Public domain.
 - **CCN ↔ EIN crosswalk** — Community Benefit Insight (RTI International / RWJF), Dec 2024 vintage. Cite: RTI Press DOI 10.3768/rtipress.2023.op.0080.2302.
-- **Area Deprivation Index (county-level aggregates)** — derived from UW Neighborhood Atlas's 2023 block-group release. **Required citation: Kind AJH, Buckingham W. Making Neighborhood Disadvantage Metrics Accessible: The Neighborhood Atlas. *N Engl J Med* 2018;378:2456-2458.** Don't quote ADI numbers without this citation.
+
+The public bundles do **not** include Area Deprivation Index (ADI) — UW's Neighborhood Atlas terms are non-sublicensable, so derived ADI columns can't be redistributed via troveproject.com. Users who download the trove repo and the ADI block-group data themselves (with a UW account) get ADI in their *local* gap parquet via `packages/sdoh/`, but the public skill can't query it. SDOH context for the public skill is on the v2 roadmap, likely via CDC's Social Vulnerability Index (which is fully open).
 
 ## Skill version
 
-v1.1, May 2026 (added ADI). Bug reports and questions: github.com/cbetz/trove/issues.
+v1, May 2026. Bug reports and questions: github.com/cbetz/trove/issues.

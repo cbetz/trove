@@ -124,37 +124,6 @@ LIMIT 10;
 
 Often a flag for either a children's/specialty hospital where 7k is dominated by research+education, or a rollup mismatch (multi-CCN system whose HCRIS reports are partial).
 
-## 8. Charity-care intensity by service-area deprivation
-
-**Q:** "Are hospitals in high-deprivation areas providing more charity care, proportionally?"
-
-```sql
-WITH banded AS (
-  SELECT
-    CASE
-      WHEN adi_natrank >= 80 THEN 'high (80-100)'
-      WHEN adi_natrank >= 60 THEN 'moderately above (60-79)'
-      WHEN adi_natrank >= 40 THEN 'near median (40-59)'
-      WHEN adi_natrank >= 20 THEN 'below average (20-39)'
-      WHEN adi_natrank IS NOT NULL THEN 'low (1-19)'
-      ELSE 'unknown'
-    END AS adi_band,
-    hcris_charity_care_cost,
-    hcris_total_operating_expenses
-  FROM read_parquet('https://troveproject.com/data/community_benefit_gap_2022.parquet')
-  WHERE hcris_total_operating_expenses > 1e6
-)
-SELECT
-  adi_band,
-  COUNT(*) AS n_systems,
-  ROUND(MEDIAN(hcris_charity_care_cost / hcris_total_operating_expenses) * 100, 2) AS median_charity_pct
-FROM banded
-GROUP BY adi_band
-ORDER BY median_charity_pct DESC NULLS LAST;
-```
-
-This is the kind of question ADI is for — it lets you put a single number on "the hospital's service population is or isn't economically stressed" so you can read other numbers in that context.
-
 ## When the question doesn't have a SQL answer
 
 Some questions are about the data structure or method, not the data values. Examples:

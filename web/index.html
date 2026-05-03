@@ -213,13 +213,6 @@
       <p><strong>Coming in v2:</strong> per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to find the report whose period actually matches each hospital's TY2022 990. This will substantially expand the well-aligned set.</p>
     </details>
     <details style="margin-top: 0.85rem;">
-      <summary>Service area ADI (Area Deprivation Index)</summary>
-      <p>Each row's detail card shows a county-level Area Deprivation Index for the hospital's home county, derived from the University of Wisconsin Neighborhood Atlas's 2023 block-group ADI release. ADI is a composite of income, education, employment, and housing indicators; higher percentile = more deprivation.</p>
-      <p>What we publish is the <em>median of the national-percentile ADI scores across the county's block groups</em> — a "typical block-group score for this county," <em>not</em> a single composite rank of the county itself among all counties. We aggregate ranks rather than ranking aggregates because that's what the underlying data supports.</p>
-      <p>Coverage: 1,307 of 1,334 matched systems have ADI data. The remaining 27 either lack a `county_fips` in the crosswalk or fall in counties where ADI is fully suppressed. Citation: <a href="https://www.nejm.org/doi/full/10.1056/NEJMp1802313">Kind &amp; Buckingham, NEJM 2018</a>; raw block-group data downloaded from the <a href="https://www.neighborhoodatlas.medicine.wisc.edu/">UW Neighborhood Atlas</a> (registration required).</p>
-      <p><strong>Caveat:</strong> county aggregation loses within-county variation. A hospital in a high-deprivation neighborhood of an otherwise-affluent county shows up with the county median, not its actual neighborhood. For most hospitals the county aggregate is reasonable; for urban counties with sharp socioeconomic gradients (NYC, LA, SF), it's a coarse approximation. v2 may add ZIP-level resolution.</p>
-    </details>
-    <details style="margin-top: 0.85rem;">
       <summary>Coverage and known limits</summary>
       <ul>
         <li><strong>Crosswalk:</strong> 3,079 of 6,042 HCRIS hospitals appear in CBI's December 2024 crosswalk; the unmatched ~50% are mostly for-profit and government hospitals (no 990) plus hospitals not in CBI's frozen vintage. Of 1,481 unique TY2022 990 EINs ingested, 1,334 match the crosswalk.</li>
@@ -263,8 +256,8 @@ uv run python scripts/build_gap_dataset.py</code></pre>
   </section>
 
   <footer>
-    <p><strong>v1.1 · TY2022 ingest, ADI added · May 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a>. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
-    <p>ADI data: Kind AJH, Buckingham W. Making Neighborhood Disadvantage Metrics Accessible: <a href="https://www.nejm.org/doi/full/10.1056/NEJMp1802313">The Neighborhood Atlas</a>. <em>N Engl J Med</em> 2018;378:2456-2458. Source: <a href="https://www.neighborhoodatlas.medicine.wisc.edu/">UW Neighborhood Atlas</a>. Crosswalk: <a href="https://www.communitybenefitinsight.org/">Community Benefit Insight</a> (RTI / RWJF, frozen Dec 2024).</p>
+    <p><strong>v1 · TY2022 ingest · May 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a>. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <p>Crosswalk: <a href="https://www.communitybenefitinsight.org/">Community Benefit Insight</a> (RTI / RWJF, frozen Dec 2024).</p>
     <div class="row">
       <span>MIT code · public-domain data · <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a></span>
       <span>
@@ -327,7 +320,7 @@ const ALIGNED_THRESHOLD_MONTHS = 1;
 const PAGE_TOP_N = 50;
 
 async function init() {
-  const res = await fetch("./data/community_benefit_gap_2022.json?v=20260502-adi");
+  const res = await fetch("./data/community_benefit_gap_2022.json?v=20260502b");
   DATA = await res.json();
   computeDerived();
   renderHero();
@@ -532,19 +525,6 @@ function renderDetail() {
   const oneZero = (r.hcris_charity === 0 || r.fa_990 === 0)
     ? "<strong>One side reports zero.</strong> Often a children's hospital or specialty hospital that doesn't bill Medicare in volume, where HCRIS S-10 charity care is legitimately zero."
     : null;
-  const adiSignal = r.adi_natrank != null
-    ? (() => {
-        const nat = Math.round(r.adi_natrank);
-        const dec = r.adi_state_decile != null ? Math.round(r.adi_state_decile) : null;
-        const band = nat >= 80 ? "high relative deprivation"
-          : nat >= 60 ? "moderately above-average deprivation"
-          : nat >= 40 ? "near-national-median deprivation"
-          : nat >= 20 ? "below-average deprivation"
-          : "low relative deprivation";
-        const decStr = dec != null ? ` · ${dec} of 10 within state` : "";
-        return `<strong>${nat}th national percentile${decStr}</strong> — ${band} in the system's home county`;
-      })()
-    : null;
 
   mount.innerHTML = `
     <div class="detail">
@@ -574,7 +554,6 @@ function renderDetail() {
         <div class="signal"><span class="signal-label">Interpretation:</span><span>${interp}.</span></div>
         <div class="signal"><span class="signal-label">Period alignment:</span><span>${periodSignal}.</span></div>
         <div class="signal"><span class="signal-label">Aggregation:</span><span>${ccnSignal}.</span></div>
-        ${adiSignal ? `<div class="signal"><span class="signal-label">Service area (ADI):</span><span>${adiSignal}.</span></div>` : ""}
         ${oneZero ? `<div class="signal"><span class="signal-label">Note:</span><span>${oneZero}</span></div>` : ""}
       </div>
       <div class="detail-links">
