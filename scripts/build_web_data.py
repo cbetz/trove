@@ -62,6 +62,11 @@ def main() -> None:
             "gap": _num(r.charity_gap),
             "gap_pct": _num(r.gap_pct, decimals=4),
             "cb_pct": _num(r.community_benefit_pct_of_expenses, decimals=4),
+            "svi_overall_pct": _num(getattr(r, "svi_overall_pct", None), decimals=1),
+            "svi_socio_pct": _num(getattr(r, "svi_socio_pct", None), decimals=1),
+            "svi_household_pct": _num(getattr(r, "svi_household_pct", None), decimals=1),
+            "svi_minority_pct": _num(getattr(r, "svi_minority_pct", None), decimals=1),
+            "svi_housing_pct": _num(getattr(r, "svi_housing_pct", None), decimals=1),
         }
         for r in df.itertuples(index=False)
     ]

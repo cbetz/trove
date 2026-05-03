@@ -213,6 +213,12 @@
       <p><strong>Coming in v2:</strong> per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to find the report whose period actually matches each hospital's TY2022 990. This will substantially expand the well-aligned set.</p>
     </details>
     <details style="margin-top: 0.85rem;">
+      <summary>Service area (Social Vulnerability Index)</summary>
+      <p>Each row's detail card shows a county-level Social Vulnerability Index for the hospital's home county, sourced from CDC/ATSDR's 2022 SVI release. SVI is a composite of 16 census variables across four themes (socioeconomic status; household characteristics including age, disability, single-parent, English-language proficiency; racial &amp; ethnic minority status; housing type &amp; transportation). Higher percentile = more vulnerable.</p>
+      <p>What the page shows is the overall summary rank (<code>RPL_THEMES</code>) on a 0-100 scale. Coverage in our data is ~98% of matched systems — the remaining ~2% lack a `county_fips` in the crosswalk. CDC's SVI is US-government work and public domain; we redistribute the derived per-system column without restriction. Source: <a href="https://www.atsdr.cdc.gov/place-health/php/svi/index.html">CDC/ATSDR SVI</a>.</p>
+      <p><strong>Caveats:</strong> (1) SVI is not the same thing as ADI. SVI weighs minority status and housing factors; ADI is built more around income/employment/education. The same county can land at very different points on the two indices. (2) County aggregation loses within-county variation — a hospital in a high-vulnerability neighborhood of a low-vulnerability county shows up with the county summary, not its actual neighborhood. v2 may add tract-level resolution.</p>
+    </details>
+    <details style="margin-top: 0.85rem;">
       <summary>Coverage and known limits</summary>
       <ul>
         <li><strong>Crosswalk:</strong> 3,079 of 6,042 HCRIS hospitals appear in CBI's December 2024 crosswalk; the unmatched ~50% are mostly for-profit and government hospitals (no 990) plus hospitals not in CBI's frozen vintage. Of 1,481 unique TY2022 990 EINs ingested, 1,334 match the crosswalk.</li>
@@ -256,8 +262,8 @@ uv run python scripts/build_gap_dataset.py</code></pre>
   </section>
 
   <footer>
-    <p><strong>v1 · TY2022 ingest · May 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a>. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
-    <p>Crosswalk: <a href="https://www.communitybenefitinsight.org/">Community Benefit Insight</a> (RTI / RWJF, frozen Dec 2024).</p>
+    <p><strong>v1.1 · TY2022 ingest, SVI added · May 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a>. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <p>Crosswalk: <a href="https://www.communitybenefitinsight.org/">Community Benefit Insight</a> (RTI / RWJF, frozen Dec 2024). SVI: <a href="https://www.atsdr.cdc.gov/place-health/php/svi/index.html">CDC/ATSDR Social Vulnerability Index 2022</a>.</p>
     <div class="row">
       <span>MIT code · public-domain data · <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a></span>
       <span>
@@ -301,6 +307,16 @@ const monthsBetween = (a, b) => {
   if (Number.isNaN(da.getTime()) || Number.isNaN(db.getTime())) return null;
   return Math.round(Math.abs((da - db) / (1000 * 60 * 60 * 24 * 30.44)));
 };
+const ordinal = (n) => {
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1: return `${n}st`;
+    case 2: return `${n}nd`;
+    case 3: return `${n}rd`;
+    default: return `${n}th`;
+  }
+};
 const formatMonth = (s) => {
   if (!s) return "—";
   const d = new Date(s);
@@ -320,7 +336,7 @@ const ALIGNED_THRESHOLD_MONTHS = 1;
 const PAGE_TOP_N = 50;
 
 async function init() {
-  const res = await fetch("./data/community_benefit_gap_2022.json?v=20260502b");
+  const res = await fetch("./data/community_benefit_gap_2022.json?v=20260502-svi");
   DATA = await res.json();
   computeDerived();
   renderHero();
@@ -525,6 +541,17 @@ function renderDetail() {
   const oneZero = (r.hcris_charity === 0 || r.fa_990 === 0)
     ? "<strong>One side reports zero.</strong> Often a children's hospital or specialty hospital that doesn't bill Medicare in volume, where HCRIS S-10 charity care is legitimately zero."
     : null;
+  const sviSignal = r.svi_overall_pct != null
+    ? (() => {
+        const pct = Math.round(r.svi_overall_pct);
+        const band = pct >= 80 ? "high social vulnerability"
+          : pct >= 60 ? "moderately above-average vulnerability"
+          : pct >= 40 ? "near-national-median vulnerability"
+          : pct >= 20 ? "below-average vulnerability"
+          : "low social vulnerability";
+        return `<strong>${ordinal(pct)} national percentile</strong> — ${band} in the system's home county`;
+      })()
+    : null;
 
   mount.innerHTML = `
     <div class="detail">
@@ -554,6 +581,7 @@ function renderDetail() {
         <div class="signal"><span class="signal-label">Interpretation:</span><span>${interp}.</span></div>
         <div class="signal"><span class="signal-label">Period alignment:</span><span>${periodSignal}.</span></div>
         <div class="signal"><span class="signal-label">Aggregation:</span><span>${ccnSignal}.</span></div>
+        ${sviSignal ? `<div class="signal"><span class="signal-label">Service area (SVI):</span><span>${sviSignal}.</span></div>` : ""}
         ${oneZero ? `<div class="signal"><span class="signal-label">Note:</span><span>${oneZero}</span></div>` : ""}
       </div>
       <div class="detail-links">

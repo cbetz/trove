@@ -22,7 +22,7 @@ from form990 import parse_tax_year
 from form990 import write_parquet as write_990_parquet
 from hcris import parse_zip as parse_hcris
 from hcris import pivot_wide
-from sdoh import county_adi_from_block_group
+from sdoh import county_adi_from_block_group, load_svi_county
 
 ARTIFACTS_DIR = Path("artifacts")
 PARQUET_DIR = Path("data/parquet")
@@ -30,6 +30,7 @@ TAX_YEAR = 2022
 RELEASE_YEARS = (2024, 2025, 2026)
 HCRIS_FY = 2023
 ADI_BG_CSV = Path("data/raw/adi/US_2023_ADI_Census_Block_Group_v4_0_1.csv")
+SVI_COUNTY_CSV = Path("data/raw/svi/SVI_2022_US_county.csv")
 
 
 def main() -> None:
@@ -54,14 +55,29 @@ def main() -> None:
 
     print("Loading CBI crosswalk...")
     cw = load_seed()
+    if SVI_COUNTY_CSV.exists():
+        print("  enriching crosswalk with CDC SVI 2022 (public)...")
+        svi = load_svi_county(SVI_COUNTY_CSV)[
+            [
+                "county_fips",
+                "svi_overall_pct",
+                "svi_socio_pct",
+                "svi_household_pct",
+                "svi_minority_pct",
+                "svi_housing_pct",
+            ]
+        ]
+        cw = cw.merge(svi, on="county_fips", how="left")
+        print(f"  SVI coverage: {cw['svi_overall_pct'].notna().sum():,} of {len(cw):,}")
+    else:
+        print(f"  SVI source not found at {SVI_COUNTY_CSV}; skipping SVI enrichment")
     if ADI_BG_CSV.exists():
-        print("  enriching crosswalk with county-level ADI...")
+        print("  enriching crosswalk with UW ADI (local only — non-sublicensable)...")
         county_adi = county_adi_from_block_group(ADI_BG_CSV)
         cw = cw.merge(county_adi, on="county_fips", how="left")
-        coverage = cw["adi_natrank"].notna().sum()
-        print(f"  ADI coverage: {coverage:,} of {len(cw):,} crosswalk rows")
+        print(f"  ADI coverage: {cw['adi_natrank'].notna().sum():,} of {len(cw):,}")
     else:
-        print(f"  ADI source not found at {ADI_BG_CSV}; skipping SDOH enrichment")
+        print(f"  ADI source not found at {ADI_BG_CSV}; skipping ADI enrichment")
 
     print("Computing gap...")
     gap = community_benefit_gap(hcris_wide, sched_h, cw)

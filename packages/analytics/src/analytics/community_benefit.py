@@ -31,7 +31,15 @@ def community_benefit_gap(
       divided by HCRIS total operating expenses (sanity check on the 7k ratio)
     """
     cw_cols = ["ccn", "ein"]
-    for opt in ("adi_natrank", "adi_state_decile"):
+    for opt in (
+        "adi_natrank",
+        "adi_state_decile",
+        "svi_overall_pct",
+        "svi_socio_pct",
+        "svi_household_pct",
+        "svi_minority_pct",
+        "svi_housing_pct",
+    ):
         if opt in crosswalk.columns:
             cw_cols.append(opt)
     cw = crosswalk[cw_cols].dropna(subset=["ccn", "ein"])
@@ -45,12 +53,21 @@ def community_benefit_gap(
     }
     if "fy_end_dt" in hcris_wide.columns:
         aggs["hcris_fy_end_dt"] = ("fy_end_dt", "max")
-    # Optional SDOH enrichments — present when the caller has joined county-level
-    # ADI onto the crosswalk before passing it in.
-    if "adi_natrank" in crosswalk.columns:
-        aggs["adi_natrank"] = ("adi_natrank", "median")
-    if "adi_state_decile" in crosswalk.columns:
-        aggs["adi_state_decile"] = ("adi_state_decile", "median")
+    # Optional SDOH enrichments — present when the caller has joined county-
+    # level deprivation/vulnerability columns onto the crosswalk before passing
+    # it in. ADI is local-only (UW non-sublicensable terms); SVI is public
+    # (CDC, US gov work).
+    for sdoh_col in (
+        "adi_natrank",
+        "adi_state_decile",
+        "svi_overall_pct",
+        "svi_socio_pct",
+        "svi_household_pct",
+        "svi_minority_pct",
+        "svi_housing_pct",
+    ):
+        if sdoh_col in crosswalk.columns:
+            aggs[sdoh_col] = (sdoh_col, "median")
 
     by_system = (
         hcris_wide.merge(cw, left_on="prvdr_num", right_on="ccn", how="inner")

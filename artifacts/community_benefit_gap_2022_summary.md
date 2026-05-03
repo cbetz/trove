@@ -92,6 +92,12 @@ The data is a **starting point** for review, not a definitive accusation. The va
 - [`community_benefit_gap_2022.csv`](community_benefit_gap_2022.csv) — full 1,334-row table, sorted by absolute gap
 - [`community_benefit_gap_2022_top50.csv`](community_benefit_gap_2022_top50.csv) — leaderboard
 
+## Service-area SVI columns
+
+Each row carries `svi_overall_pct` (0-100 overall summary) plus four sub-theme percentiles: `svi_socio_pct`, `svi_household_pct`, `svi_minority_pct`, `svi_housing_pct`. These are county-level CDC/ATSDR Social Vulnerability Index 2022 ranks, joined onto the system via the home-county FIPS in the CBI crosswalk and aggregated via median across the system's CCN home counties when more than one county is involved. Coverage: ~98% of matched systems (the unmatched fraction lacks a `county_fips` in the crosswalk).
+
+CDC SVI is US government work, public-domain. Source: https://www.atsdr.cdc.gov/place-health/php/svi/index.html.
+
 ## Coverage and caveats
 
 - **Fiscal-year alignment:** The biggest caveat. HCRIS labels reports by federal fiscal reporting cycle, not fiscal period. Of 1,295 computable systems, 372 (29%) have HCRIS and 990 periods within 1 month; 835 (64%) are exactly 12 months apart because their HCRIS "FY2023" report covers the year following their TY2022 990. The alignment heuristic is end-date-based — a proxy for period overlap, not a proof of it. The site at troveproject.com surfaces this per-row and defaults to the aligned subset. **v2 (planned):** per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to expand the well-aligned set substantially.
