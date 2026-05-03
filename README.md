@@ -4,26 +4,20 @@ Open-source parsers, agents, and visualizations for underused healthcare dataset
 
 ## What this is
 
-A side-by-side comparison tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both lines are *intended* to capture the cost of care provided to patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ — often by a lot.
+A lookup tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both lines are *intended* to capture the cost of care provided to patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ — often by a lot.
+
+The site at [troveproject.com](https://troveproject.com) lets you search any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, the service-area Social Vulnerability Index, and a deep link to the actual 990 on ProPublica.
 
 For tax year 2022, the funnel:
 
 - **1,334 systems matched** at the EIN level (HCRIS CCNs rolled up to a 990 EIN via CBI's crosswalk).
 - **1,295 computable** (39 systems have a blank Schedule H 7a, so a charity_gap can't be defined).
-- **372 also period-aligned** within 1 month (HCRIS fiscal-year end ≈ 990 tax-period end). Alignment is what makes the comparison meaningful — most of the rest are 12 months out of phase because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period covered.
-- **228 also material** — both filings ≥ $500K. The dollar threshold is a noise floor, not a comparability test; the 144 aligned-but-sub-$500K systems are visible on the site when you toggle materiality off.
+- **372 period-aligned** within 1 month (HCRIS fiscal-year end ≈ 990 tax-period end). Alignment is what makes the comparison meaningful — most of the rest are 12 months out of phase because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period covered.
+- **228 also material** — both filings ≥ $500K. The dollar threshold is a noise floor, not a comparability test.
 
-Among the 228 aligned + material systems:
+Among the 228 aligned + material systems, the median proportional gap is **25%** (i.e., typical cross-form disagreement is large). 53 systems (23%) disagree by more than half. The full per-system data is in the published Parquet bundle and CSV artifact for anyone who wants to do their own analysis.
 
-- **Median proportional gap: 25%** — typical disagreement is large.
-- **53 systems (23%)** disagree by more than 50%.
-- **Largest aligned-period $ gap:** Yale New Haven Hospital — $36M HCRIS vs. $113M IRS = −$78M / -68%.
-- **Largest aligned-period positive gap:** Orlando Health — $143M HCRIS vs. $73M IRS = +$71M / 49%.
-- **Largest aligned-period proportional gap:** Western Regional Medical Center — $18M HCRIS vs. $1M IRS = +94%.
-
-**→ Search the 228 aligned + material systems (or the full 1,295 computable) at [troveproject.com](https://troveproject.com).**
-
-Full table: [`artifacts/community_benefit_gap_2022.csv`](artifacts/community_benefit_gap_2022.csv) · Top 50: [`artifacts/community_benefit_gap_2022_top50.csv`](artifacts/community_benefit_gap_2022_top50.csv) · Method and caveats: [`artifacts/community_benefit_gap_2022_summary.md`](artifacts/community_benefit_gap_2022_summary.md).
+Full data: [`artifacts/community_benefit_gap_2022.csv`](artifacts/community_benefit_gap_2022.csv) · Method and caveats: [`artifacts/community_benefit_gap_2022_summary.md`](artifacts/community_benefit_gap_2022_summary.md). The per-system artifact has all 1,334 rows including misaligned ones; use `hcris_fy_end_dt` and `sched_h_tax_period_end` to filter to overlapping periods.
 
 ## Reproduce
 
