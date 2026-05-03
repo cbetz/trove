@@ -116,7 +116,7 @@
 
   <section class="narrow lede">
     <p>Every nonprofit U.S. hospital files Worksheet S-10 with CMS and Schedule H with the IRS. Both forms have a charity-care line that's intended to capture the cost of care provided to patients who couldn't pay — but the rules, scope, and accounting treatment diverge enough that the two numbers can legitimately differ. They are <em>related</em> measures of the same underlying activity, not the same number.</p>
-    <p>trove lets you look up any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with the period-alignment context, the service-area Social Vulnerability Index, and a link to the actual 990 on ProPublica. <strong>This is a reference tool, not an accusation engine.</strong> A nonzero gap is a starting point for review, not evidence of misconduct — many divergences are explained by definitional differences (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume.</p>
+    <p>trove lets you look up any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with the period-alignment context, a home-county Social Vulnerability Index proxy, and a link to the actual 990 on ProPublica. <strong>This is a reference tool, not an accusation engine.</strong> A nonzero gap is a starting point for review, not evidence of misconduct — many divergences are explained by definitional differences (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume.</p>
     <p><strong>Each system is one IRS Employer Identification Number (EIN)</strong>, aggregating the underlying CMS Worksheet S-10 numbers across every CCN-keyed facility that files under that EIN. The 990 figure comes from Schedule H Part I line 7a (financial assistance at cost). The HCRIS figure is Worksheet S-10 charity care cost.</p>
     <div class="stats" id="stats">
       <div class="stat">
@@ -174,10 +174,11 @@
       <p><strong>Coming in v2:</strong> per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to find the report whose period actually matches each hospital's TY2022 990. This will substantially expand the well-aligned set.</p>
     </details>
     <details style="margin-top: 0.85rem;">
-      <summary>Service area (Social Vulnerability Index)</summary>
-      <p>Each row's detail card shows a county-level Social Vulnerability Index for the hospital's home county, sourced from CDC/ATSDR's 2022 SVI release. SVI is a composite of 16 census variables across four themes (socioeconomic status; household characteristics including age, disability, single-parent, English-language proficiency; racial &amp; ethnic minority status; housing type &amp; transportation). Higher percentile = more vulnerable.</p>
-      <p>What the page shows is the overall summary rank (<code>RPL_THEMES</code>) on a 0-100 scale. Coverage in our data is ~98% of matched systems — the remaining ~2% lack a `county_fips` in the crosswalk. CDC's SVI is US-government work and public domain; we redistribute the derived per-system column without restriction. Source: <a href="https://www.atsdr.cdc.gov/place-health/php/svi/index.html">CDC/ATSDR SVI</a>.</p>
-      <p><strong>Caveats:</strong> (1) SVI is not the same thing as ADI. SVI weighs minority status and housing factors; ADI is built more around income/employment/education. The same county can land at very different points on the two indices. (2) County aggregation loses within-county variation — a hospital in a high-vulnerability neighborhood of a low-vulnerability county shows up with the county summary, not its actual neighborhood. v2 may add tract-level resolution.</p>
+      <summary>Home-county SVI proxy (Social Vulnerability Index)</summary>
+      <p>Each detail card shows a Social Vulnerability Index value for the hospital's <em>home county</em>, sourced from CDC/ATSDR's 2022 SVI release. SVI is a composite of 16 census variables across four themes (socioeconomic status; household characteristics including age, disability, single-parent, English-language proficiency; racial &amp; ethnic minority status; housing type &amp; transportation). Higher percentile = more vulnerable.</p>
+      <p>What the page shows is the overall summary rank (<code>RPL_THEMES</code>) on a 0-100 scale, sourced from the county FIPS of the hospital's HCRIS-reporting facility. For multi-facility systems where the facilities are in different counties, we take the median across those home-county SVI values. <strong>This is a proxy, not a true service-area measure</strong> — actual catchment areas can extend well beyond the home county, and within-county variation is invisible at this resolution.</p>
+      <p>Coverage: ~98% of matched systems. CDC's SVI is US-government work and public domain. Source: <a href="https://www.atsdr.cdc.gov/place-health/php/svi/index.html">CDC/ATSDR SVI</a>.</p>
+      <p><strong>Other caveats:</strong> SVI is not the same thing as ADI. SVI weighs minority status and housing factors; ADI is built more around income/employment/education. The same county can land at very different points on the two indices. v2 may add tract-level resolution and a true catchment-area weighting.</p>
     </details>
     <details style="margin-top: 0.85rem;">
       <summary>Coverage and known limits</summary>
@@ -207,7 +208,7 @@ cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
     <p>Then ask things like:</p>
     <ul>
       <li><em>"Show me a profile of New York-Presbyterian"</em></li>
-      <li><em>"Which nonprofit hospitals have the biggest aligned-period charity gaps?"</em></li>
+      <li><em>"Compare Yale-New Haven to other major teaching hospitals on charity care intensity"</em></li>
       <li><em>"Compare Yale-New Haven to other major teaching hospitals"</em></li>
       <li><em>"What does Worksheet S-10 line 23 mean?"</em></li>
       <li><em>"Did Memorial Hermann amend their TY2022 990?"</em></li>
@@ -399,7 +400,10 @@ function renderDetail() {
           : pct >= 40 ? "near-national-median vulnerability"
           : pct >= 20 ? "below-average vulnerability"
           : "low social vulnerability";
-        return `<strong>${ordinal(pct)} national percentile</strong> — ${band} in the system's home county`;
+        const facility_note = r.ccns > 1
+          ? "median across the system's facility home counties"
+          : "the facility's home county";
+        return `<strong>${ordinal(pct)} national percentile</strong> — ${band} (${facility_note})`;
       })()
     : null;
 
@@ -431,7 +435,7 @@ function renderDetail() {
         <div class="signal"><span class="signal-label">Interpretation:</span><span>${interp}.</span></div>
         <div class="signal"><span class="signal-label">Period alignment:</span><span>${periodSignal}.</span></div>
         <div class="signal"><span class="signal-label">Aggregation:</span><span>${ccnSignal}.</span></div>
-        ${sviSignal ? `<div class="signal"><span class="signal-label">Service area (SVI):</span><span>${sviSignal}.</span></div>` : ""}
+        ${sviSignal ? `<div class="signal"><span class="signal-label">Home-county SVI:</span><span>${sviSignal}.</span></div>` : ""}
         ${oneZero ? `<div class="signal"><span class="signal-label">Note:</span><span>${oneZero}</span></div>` : ""}
       </div>
       <div class="detail-links">

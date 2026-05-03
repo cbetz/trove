@@ -43,7 +43,9 @@ def main() -> None:
     aligned_material_count = len(aligned_material)
 
     df["gap_pct"] = _gap_pct(df)
-    df = df.sort_values("gap_pct", ascending=False, key=lambda s: s.abs())
+    # Sort alphabetically by system name so search results aren't implicitly
+    # ranked by gap size — this is a lookup tool, not a leaderboard.
+    df = df.sort_values("sched_h_organization_name", na_position="last")
 
     rows = [
         {
