@@ -42,37 +42,23 @@ Positive gap → the hospital reports more charity care to CMS than to the IRS.
 - $60.54B total Schedule H community benefit reported across all matched
 - The "$5B absolute gap on the full set" figure that earlier versions of this dataset published is structurally misleading because most of those dollars come from misaligned-period comparisons. The aligned-subset $1.08B / 7.6%-of-CB figure is the defensible version.
 
-## Top 10 — aligned periods, ranked by absolute dollar gap
+## Distribution of disagreement on the aligned + material subset (228 systems)
 
-These are the cases where HCRIS and 990 cover the same fiscal year and both reported ≥ $500K. Largest absolute disagreements (signed):
+This is a lookup tool, not a leaderboard — the per-row data is in the CSV, but we don't publish a curated "top hospitals by gap" ranking. Distribution of the disagreement instead:
 
-| EIN | Hospital | CCNs | HCRIS S-10 charity | 990 Sched H 7a | Gap |
-|-----|----------|------|--------------------|----------------|-----|
-| 060646652 | Yale New Haven Hospital | 1 | $35.6M | $113.1M | **−$77.5M** |
-| 591726273 | Orlando Health Inc | 2 | $143.2M | $72.6M | **+$70.6M** |
-| 581954432 | Northside Hospital Inc | 5 | $293.1M | $358.6M | **−$65.5M** |
-| 593458145 | Florida Health Sciences Center (Tampa General) | 1 | $102.4M | $51.0M | **+$51.3M** |
-| 590910342 | Baptist Hospital of Miami | 1 | $27.3M | $69.1M | **−$41.8M** |
-| 900656139 | Mass General Brigham | 10 | $76.5M | $110.9M | **−$34.4M** |
-| 811723202 | Prisma Health-Upstate | 7 | $143.2M | $109.1M | **+$34.0M** |
-| 592650456 | Lakeland Regional Medical Center | 1 | $49.3M | $15.6M | **+$33.6M** |
-| 566017737 | WakeMed | 2 | $89.4M | $116.0M | **−$26.7M** |
-| 912155626 | UMass Memorial Health Care | 4 | $27.8M | $6.4M | **+$21.4M** |
+**Absolute dollar gap (`|charity_gap|`):**
 
-## Top 10 — aligned periods, ranked by proportional gap
+| P25 | P50 (median) | P75 | P90 | Max |
+|-----|--------------|-----|-----|-----|
+| $0.3M | $1.2M | $4.3M | $12.4M | $77.5M |
 
-| EIN | Hospital | CCNs | HCRIS S-10 charity | 990 Sched H 7a | % gap |
-|-----|----------|------|--------------------|----------------|-------|
-| 320197974 | Western Regional Medical Center | 1 | $18.1M | $1.1M | **+93.7%** |
-| 941634554 | Oroville Hospital | 1 | $1.1M | $8.8M | **−87.4%** |
-| 721025017 | Baton Rouge General Medical Center | 1 | $1.8M | $12.1M | **−85.1%** |
-| 060646844 | Saint Mary's Hospital | 1 | $3.4M | $0.5M | **+84.7%** |
-| 060646659 | Greenwich Hospital | 1 | $4.0M | $23.6M | **−83.1%** |
-| 951903935 | PIH Health Downey Hospital | 1 | $2.8M | $0.6M | **+80.0%** |
-| 060646704 | Lawrence Memorial Hospital | 1 | $4.8M | $21.1M | **−77.3%** |
-| 912155626 | UMass Memorial Health Care | 4 | $27.8M | $6.4M | **+77.0%** |
-| 222674014 | Exeter Hospital | 1 | $2.5M | $0.6M | **+76.8%** |
-| 010211501 | Eastern Maine Medical Center | 1 | $7.6M | $1.8M | **+76.6%** |
+**Proportional gap (`|charity_gap| / max(HCRIS, 990)`):**
+
+| P25 | P50 (median) | P75 | P90 | Max |
+|-----|--------------|-----|-----|-----|
+| 12.0% | 25.1% | 46.7% | 62.8% | 93.7% |
+
+The full per-system data is in `community_benefit_gap_2022.csv` for anyone who wants to compute their own top-N or filter to a specific cohort. The site at troveproject.com lets you look up any specific hospital by name or EIN to see its detail card.
 
 ## How to read the gap
 
@@ -89,8 +75,7 @@ The data is a **starting point** for review, not a definitive accusation. The va
 
 ## Files
 
-- [`community_benefit_gap_2022.csv`](community_benefit_gap_2022.csv) — full 1,334-row table, sorted by absolute gap
-- [`community_benefit_gap_2022_top50.csv`](community_benefit_gap_2022_top50.csv) — leaderboard
+- [`community_benefit_gap_2022.csv`](community_benefit_gap_2022.csv) — full 1,334-row table (alphabetical by system name)
 
 ## Service-area SVI columns
 

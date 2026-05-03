@@ -32,9 +32,9 @@ SFMONO = "/System/Library/Fonts/SFNSMono.ttf"
 def main() -> None:
     bundle = json.loads(JSON_IN.read_text())
     totals = bundle["totals"]
-    n = totals["aligned_material"]
+    computable = totals["computable"]
+    aligned = totals["aligned_material"]
     median_pct = totals["median_aligned_material_gap_pct"]
-    big = totals["aligned_material_big_gaps"]
 
     img = Image.new("RGB", (WIDTH, HEIGHT), BG)
     draw = ImageDraw.Draw(img)
@@ -50,21 +50,21 @@ def main() -> None:
     draw.text((pad, pad - 10), "trove", font=title_font, fill=FG)
 
     body = (
-        "A side-by-side comparison of what nonprofit U.S. hospitals\n"
-        "report as charity care to two regulators (CMS vs. IRS) —\n"
-        "for tax year 2022."
+        "Look up any of 1,295 nonprofit U.S. hospital systems and see\n"
+        "what they reported as charity care to CMS (Worksheet S-10)\n"
+        "vs. the IRS (990 Schedule H) for tax year 2022."
     )
     draw.text((pad, pad + 110), body, font=body_font, fill=MUTED, spacing=10)
 
-    stats_y = pad + 290
+    stats_y = pad + 300
     stats_x_starts = [pad, pad + 360, pad + 720]
     for x, num, label in zip(
         stats_x_starts,
-        [str(n), f"{round(median_pct * 100)}%", str(big)],
+        [f"{computable:,}", f"{aligned:,}", f"{round(median_pct * 100)}%"],
         [
-            "ALIGNED + MATERIAL\nSYSTEMS",
-            "MEDIAN GAP\nON THIS SUBSET",
-            "DISAGREE BY\nMORE THAN HALF",
+            "HOSPITAL SYSTEMS\nSEARCHABLE",
+            "APPLES-TO-APPLES\nCOMPARABLE",
+            "MEDIAN GAP\nON THAT SUBSET",
         ],
     ):
         draw.text((x, stats_y), num, font=stat_num_font, fill=ACCENT)
@@ -83,7 +83,7 @@ def main() -> None:
     PNG_OUT.parent.mkdir(parents=True, exist_ok=True)
     img.save(PNG_OUT, "PNG", optimize=True)
     print(f"  → {PNG_OUT} ({PNG_OUT.stat().st_size / 1024:.1f} KB)")
-    print(f"  stats: {n} systems, {round(median_pct * 100)}% median, {big} big gaps")
+    print(f"  stats: {computable:,} searchable, {aligned:,} comparable, {round(median_pct * 100)}% median")
 
 
 def _font(path: str, size: int, idx: int = 0) -> ImageFont.FreeTypeFont:

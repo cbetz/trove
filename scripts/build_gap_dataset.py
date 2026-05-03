@@ -98,21 +98,19 @@ def main() -> None:
     pq.write_table(pa.Table.from_pandas(gap, preserve_index=False), parquet_out)
     print(f"  → {parquet_out}")
 
-    # Persist as CSV artifacts (committable, GitHub-viewable).
+    # Persist as CSV artifact (committable, GitHub-viewable).
     # Strip ADI columns before publication: UW's Neighborhood Atlas terms
     # are non-sublicensable, so derived ADI numbers must not appear in
     # publicly redistributable bundles. Run locally to get them in the
     # gitignored Parquet above.
+    # Sort alphabetically by system name (not by gap) so the published
+    # CSV doesn't read as a curated "biggest gaps" leaderboard.
     public = gap.drop(columns=[c for c in ("adi_natrank", "adi_state_decile") if c in gap.columns])
+    public = public.sort_values("sched_h_organization_name", na_position="last")
     ARTIFACTS_DIR.mkdir(exist_ok=True)
     full_csv = ARTIFACTS_DIR / f"community_benefit_gap_{TAX_YEAR}.csv"
     public.to_csv(full_csv, index=False, float_format="%.0f")
     print(f"  → {full_csv} ({full_csv.stat().st_size / 1024:.1f} KB)")
-
-    top50 = public.head(50)
-    top50_csv = ARTIFACTS_DIR / f"community_benefit_gap_{TAX_YEAR}_top50.csv"
-    top50.to_csv(top50_csv, index=False, float_format="%.0f")
-    print(f"  → {top50_csv} ({top50_csv.stat().st_size / 1024:.1f} KB)")
 
 
 if __name__ == "__main__":

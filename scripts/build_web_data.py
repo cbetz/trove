@@ -71,10 +71,6 @@ def main() -> None:
         for r in df.itertuples(index=False)
     ]
 
-    aligned_material_sorted = aligned_material.sort_values(
-        "charity_gap", ascending=False, key=lambda s: s.abs()
-    )
-    top = aligned_material_sorted.iloc[0]
     median_aligned_pct = float(_gap_pct(aligned_material).abs().median()) if len(aligned_material) else 0
     big_gaps = int((_gap_pct(aligned_material).abs() >= 0.5).sum())
     totals = {
@@ -88,9 +84,6 @@ def main() -> None:
         "aligned_material_big_gaps": big_gaps,
         "absolute_gap_usd_aligned_material": _num(aligned_material["charity_gap"].abs().sum()),
         "total_cb_usd_aligned_material": _num(aligned_material["sched_h_total_community_benefit"].sum()),
-        "top_aligned_system": top.sched_h_organization_name,
-        "top_aligned_facility": top.hospital_name,
-        "top_aligned_gap_usd": _num(top.charity_gap),
     }
 
     bundle = {"tax_year": TAX_YEAR, "totals": totals, "rows": rows}
