@@ -80,6 +80,8 @@ LIMIT 20;
 | `sched_h_tax_period_end` | End date of the 990 tax period. |
 | `charity_gap` | `hcris_charity_care_cost - sched_h_financial_assistance_at_cost`. NULL if either side is blank. |
 | `community_benefit_pct_of_expenses` | `sched_h_total_community_benefit / hcris_total_operating_expenses` — sanity check on the 7k ratio against HCRIS expenses. |
+| `svi_overall_pct` | CDC Social Vulnerability Index 2022, county-level overall summary percentile (0-100, higher = more vulnerable). Median across the system's CCN home counties. ~98% coverage. |
+| `svi_socio_pct`, `svi_household_pct`, `svi_minority_pct`, `svi_housing_pct` | The four SVI sub-themes: socioeconomic status, household characteristics (age/disability/single-parent/ESL), racial & ethnic minority status, housing type & transportation. Same scale and source. |
 
 ## The alignment filter
 

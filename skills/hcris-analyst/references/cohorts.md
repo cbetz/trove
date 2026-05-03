@@ -15,6 +15,7 @@ When the user asks for "peer comparisons" or "how does X stack up," construct a 
 | **Urban / rural** | `urban` (CBI crosswalk) | Boolean. |
 | **System chain** | `chain_name` (HCRIS, when present) | For "how does this hospital compare to others in the same system" questions. |
 | **Disproportionate share** | (HCRIS Worksheet S-2) | DSH-eligible hospitals have meaningfully different patient mix. |
+| **Service-area vulnerability (SVI)** | `svi_overall_pct` (0-100) on the gap dataset, with sub-themes `svi_socio_pct`, `svi_household_pct`, `svi_minority_pct`, `svi_housing_pct` | Useful as an interpretation lens for charity-care numbers — a hospital's charity-care obligation is partly a function of the population it serves. Most useful in *bands*: "low" (≤20), "moderate" (40–60), "high" (≥80). County-level aggregate; loses within-county variation in urban areas. SVI weighs minority status and housing factors more heavily than other deprivation indices, so urban diverse counties may rank "high" even when median income is decent. |
 
 ## Useful canned cohorts
 
@@ -22,6 +23,7 @@ When the user asks for "peer comparisons" or "how does X stack up," construct a 
 - **Academic medical centers**: teaching status = true AND total_beds >= 500. ~150 facilities. The "famous hospital" set most public discourse focuses on.
 - **Small rural / critical access**: `total_beds < 50 AND ownership_type IN ('1','2')`. Different operational economics; their charity-care cost dollar figures look small but proportions can be large.
 - **Children's hospitals**: from the CBI crosswalk. About 80 facilities. Should be analyzed separately for charity-care because they don't bill Medicare in volume.
+- **Hospitals serving high-vulnerability areas**: `svi_overall_pct >= 80` on the gap dataset. Useful when looking at safety-net obligations or community-benefit profiles in context. Pair with bed count to separate "small rural hospital in vulnerable county" from "big urban safety-net hospital in vulnerable county."
 
 ## Useful HCRIS aggregate metrics for benchmarking
 
