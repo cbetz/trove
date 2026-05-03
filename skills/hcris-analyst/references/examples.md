@@ -124,7 +124,7 @@ LIMIT 10;
 
 Often a flag for either a children's/specialty hospital where 7k is dominated by research+education, or a rollup mismatch (multi-CCN system whose HCRIS reports are partial).
 
-## 8. Charity-care intensity by service-area vulnerability
+## 8. Charity-care intensity by home-county vulnerability (SVI proxy)
 
 **Q:** "Are hospitals in high-vulnerability areas providing more charity care, proportionally?"
 

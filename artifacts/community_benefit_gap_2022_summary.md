@@ -77,9 +77,11 @@ The data is a **starting point** for review, not a definitive accusation. The va
 
 - [`community_benefit_gap_2022.csv`](community_benefit_gap_2022.csv) — full 1,334-row table (alphabetical by system name)
 
-## Service-area SVI columns
+## Home-county SVI columns (proxy)
 
-Each row carries `svi_overall_pct` (0-100 overall summary) plus four sub-theme percentiles: `svi_socio_pct`, `svi_household_pct`, `svi_minority_pct`, `svi_housing_pct`. These are county-level CDC/ATSDR Social Vulnerability Index 2022 ranks, joined onto the system via the home-county FIPS in the CBI crosswalk and aggregated via median across the system's CCN home counties when more than one county is involved. Coverage: ~98% of matched systems (the unmatched fraction lacks a `county_fips` in the crosswalk).
+Each row carries `svi_overall_pct` (0-100 overall summary) plus four sub-theme percentiles: `svi_socio_pct`, `svi_household_pct`, `svi_minority_pct`, `svi_housing_pct`. These are county-level CDC/ATSDR Social Vulnerability Index 2022 ranks, joined onto the system via the home county of each HCRIS-reporting facility, then aggregated via median across the system's facility-county SVI values for multi-county systems. Coverage: ~98% of matched systems (the unmatched fraction lacks a `county_fips` in the crosswalk).
+
+This is a **home-county proxy**, not a true catchment-area measure. Hospital service areas typically extend beyond the home county, and within-county variation is invisible at this resolution. Treat as a directional indicator of the population the hospital is most likely serving.
 
 CDC SVI is US government work, public-domain. Source: https://www.atsdr.cdc.gov/place-health/php/svi/index.html.
 

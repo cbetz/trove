@@ -6,7 +6,7 @@ Open-source parsers, agents, and visualizations for underused healthcare dataset
 
 A lookup tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both lines are *intended* to capture the cost of care provided to patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ — often by a lot.
 
-The site at [troveproject.com](https://troveproject.com) lets you search any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, the service-area Social Vulnerability Index, and a deep link to the actual 990 on ProPublica.
+The site at [troveproject.com](https://troveproject.com) lets you search any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, a home-county Social Vulnerability Index proxy, and a deep link to the actual 990 on ProPublica.
 
 For tax year 2022, the funnel:
 
@@ -35,7 +35,7 @@ Phase 1 packages:
 - **`form990`** — IRS Form 990 Schedule H parser. Bulk-XML download, index reader, and 19 fields per filing including Part I 7a–k community benefit amounts and Part III bad debt.
 - **`crosswalk`** — CCN ↔ EIN crosswalk (3,523 hospitals, 2,385 EINs) — the bridge that makes HCRIS-to-990 joins possible. Bundled from Community Benefit Insight.
 - **`analytics`** — composed queries. `community_benefit_gap()` is the headline primitive.
-- **`sdoh`** — Social Determinants of Health enrichments. v0.2 ships **CDC Social Vulnerability Index 2022 county-level** (public domain — included in the public bundles) and **UW Area Deprivation Index** county aggregation (local-only — UW's terms are non-sublicensable). Both attach a "service-area" signal to each hospital row; the public site shows SVI, and a user with their own UW ADI download gets ADI in their local pipeline.
+- **`sdoh`** — Social Determinants of Health enrichments. v0.2 ships **CDC Social Vulnerability Index 2022 county-level** (public domain — included in the public bundles) and **UW Area Deprivation Index** county aggregation (local-only — UW's terms are non-sublicensable). Both attach a home-county vulnerability/deprivation proxy to each hospital row; the public site shows SVI, and a user with their own UW ADI download gets ADI in their local pipeline.
 
 On top of those: a Claude skill bundle (`skills/hcris-analyst`, in progress) and a static Observable-style site (`web/`, deployed to Vercel).
 
