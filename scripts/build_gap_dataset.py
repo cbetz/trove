@@ -75,19 +75,25 @@ def main() -> None:
     print(f"  Systems with HCRIS > 990: {pos.sum()} ({pos.mean() * 100:.0f}%)")
     print(f"  Systems with 990 > HCRIS: {neg.sum()} ({neg.mean() * 100:.0f}%)")
 
-    # Persist as Parquet (gitignored, full fidelity)
+    # Persist as Parquet (gitignored, full fidelity — includes ADI when present.
+    # Local users with their own UW Neighborhood Atlas license can use this).
     parquet_out = PARQUET_DIR / "community_benefit_gap" / f"year={TAX_YEAR}" / "part.parquet"
     parquet_out.parent.mkdir(parents=True, exist_ok=True)
     pq.write_table(pa.Table.from_pandas(gap, preserve_index=False), parquet_out)
     print(f"  → {parquet_out}")
 
-    # Persist as CSV artifacts (committable, GitHub-viewable)
+    # Persist as CSV artifacts (committable, GitHub-viewable).
+    # Strip ADI columns before publication: UW's Neighborhood Atlas terms
+    # are non-sublicensable, so derived ADI numbers must not appear in
+    # publicly redistributable bundles. Run locally to get them in the
+    # gitignored Parquet above.
+    public = gap.drop(columns=[c for c in ("adi_natrank", "adi_state_decile") if c in gap.columns])
     ARTIFACTS_DIR.mkdir(exist_ok=True)
     full_csv = ARTIFACTS_DIR / f"community_benefit_gap_{TAX_YEAR}.csv"
-    gap.to_csv(full_csv, index=False, float_format="%.0f")
+    public.to_csv(full_csv, index=False, float_format="%.0f")
     print(f"  → {full_csv} ({full_csv.stat().st_size / 1024:.1f} KB)")
 
-    top50 = gap.head(50)
+    top50 = public.head(50)
     top50_csv = ARTIFACTS_DIR / f"community_benefit_gap_{TAX_YEAR}_top50.csv"
     top50.to_csv(top50_csv, index=False, float_format="%.0f")
     print(f"  → {top50_csv} ({top50_csv.stat().st_size / 1024:.1f} KB)")

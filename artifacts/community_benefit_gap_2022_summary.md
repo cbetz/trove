@@ -92,12 +92,6 @@ The data is a **starting point** for review, not a definitive accusation. The va
 - [`community_benefit_gap_2022.csv`](community_benefit_gap_2022.csv) — full 1,334-row table, sorted by absolute gap
 - [`community_benefit_gap_2022_top50.csv`](community_benefit_gap_2022_top50.csv) — leaderboard
 
-## Service-area ADI columns
-
-Each row also carries `adi_natrank` (1-100, national percentile) and `adi_state_decile` (1-10), aggregated to the system's home county FIPS via the median of underlying block-group ranks. Derived from the University of Wisconsin Neighborhood Atlas 2023 block-group ADI release (`https://www.neighborhoodatlas.medicine.wisc.edu/`). Coverage: 1,307 of 1,334 matched systems. trove redistributes the derived per-system aggregates only, not the raw 242k-row block-group file (UW restricts that).
-
-**Required citation:** Kind AJH, Buckingham W. Making Neighborhood Disadvantage Metrics Accessible: The Neighborhood Atlas. *N Engl J Med* 2018;378:2456-2458.
-
 ## Coverage and caveats
 
 - **Fiscal-year alignment:** The biggest caveat. HCRIS labels reports by federal fiscal reporting cycle, not fiscal period. Of 1,295 computable systems, 372 (29%) have HCRIS and 990 periods within 1 month; 835 (64%) are exactly 12 months apart because their HCRIS "FY2023" report covers the year following their TY2022 990. The alignment heuristic is end-date-based — a proxy for period overlap, not a proof of it. The site at troveproject.com surfaces this per-row and defaults to the aligned subset. **v2 (planned):** per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to expand the well-aligned set substantially.
