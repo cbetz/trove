@@ -185,7 +185,7 @@
       <ul>
         <li><strong>Crosswalk:</strong> 3,079 of 6,042 HCRIS hospitals appear in CBI's December 2024 crosswalk; the unmatched ~50% are mostly for-profit and government hospitals (no 990) plus hospitals not in CBI's frozen vintage. Of 1,481 unique TY2022 990 EINs ingested, 1,334 match the crosswalk.</li>
         <li><strong>Time window:</strong> HCRIS Fiscal Year 2023 paired with 990 Tax Year 2022, ingested across IRS release years 2024, 2025, and 2026. TY2022 amendments filed after the 2026 quarterly cutoff aren't included.</li>
-        <li><strong>Validation:</strong> 6 spot-checked EINs (Memorial Hermann, St Jude, Yale, Western Regional, UVA Prince William, CHI St Vincent) match the IRS source XML exact-to-the-dollar. Parser is verified clean. Not a guarantee that every row is parsed correctly — bug reports welcome at the GitHub issues link.</li>
+        <li><strong>Validation:</strong> 6 spot-checked EINs match the IRS source XML exact-to-the-dollar; parser is verified clean. The specific EINs and the per-filing line-7a values from each are listed in the <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">methodology artifact</a>. Not a guarantee that every row is parsed correctly — bug reports welcome at the GitHub issues link.</li>
         <li><strong>Not a watchlist.</strong> The page is a per-hospital lookup tool, not a ranked list. A nonzero gap on any given hospital is a starting point for review, not a definitive accusation. The value is making the cross-form comparison computable at all, where previously every researcher had to reconstruct it from raw filings.</li>
       </ul>
     </details>
@@ -207,11 +207,11 @@
 cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
     <p>Then ask things like:</p>
     <ul>
-      <li><em>"Show me a profile of New York-Presbyterian"</em></li>
-      <li><em>"Compare Yale-New Haven to other major teaching hospitals on charity care intensity"</em></li>
-      <li><em>"Compare Yale-New Haven to other major teaching hospitals"</em></li>
+      <li><em>"Show me a profile of [hospital name, CCN, or EIN]"</em></li>
+      <li><em>"Compare [hospital] to its peer teaching hospitals on charity-care intensity"</em></li>
       <li><em>"What does Worksheet S-10 line 23 mean?"</em></li>
-      <li><em>"Did Memorial Hermann amend their TY2022 990?"</em></li>
+      <li><em>"Why might HCRIS S-10 charity care differ from Schedule H 7a for the same hospital?"</em></li>
+      <li><em>"Has [hospital] amended its TY2022 990 across IRS release years?"</em></li>
     </ul>
     <p>The bundle includes a field dictionary, peer-cohort definitions, Schedule H field map, and runnable example queries. Source at <a href="https://github.com/cbetz/trove/tree/main/skills/hcris-analyst">github.com/cbetz/trove/tree/main/skills/hcris-analyst</a>.</p>
   </section>
