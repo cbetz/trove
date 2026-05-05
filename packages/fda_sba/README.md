@@ -2,7 +2,7 @@
 
 Index of recent FDA novel drug approvals (NMEs + novel BLA approvals) with links to their approval-package documents on accessdata.fda.gov. Source: FDA's annual "Novel Drug Approvals" pages.
 
-**Status:** v0.1 — index only, no document extraction. Each row carries enough metadata to *find* the approval package (drug name, active ingredient, application number, approval date, indication) and direct links to the drugs@FDA detail page where the actual PDFs live. Sponsor isn't extracted in v0.1; it's available on each drug's drugs@FDA application-overview page.
+**Status:** v0.2 — index only, no document extraction. Each row carries enough metadata to *find* the approval package (drug name, active ingredient, sponsor, application number, approval date, indication) and direct links to the drugs@FDA detail page where the actual PDFs live. Sponsor is parsed from each drug's drugs@FDA application-overview page; v0.2 added it as a per-row field.
 
 ## What's covered
 
@@ -38,6 +38,7 @@ df.head()
 | `year` | Calendar year of the FDA novel-drug approvals page |
 | `drug_name` | FDA brand name (as listed in the FDA novel-drug page) |
 | `active_ingredient` | International nonproprietary or USAN name |
+| `sponsor` | Company that holds the application (parsed from drugs@FDA overview, v0.2) |
 | `approval_date` | Approval date (date type) |
 | `indication` | Short indication string from FDA's page |
 | `application_number` | NDA or BLA number, parsed from the label PDF URL when present |

@@ -22,7 +22,7 @@ from pathlib import Path
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-from fda_sba import build_index
+from fda_sba import build_index, enrich_with_sponsor
 
 YEARS = (2021, 2022, 2023, 2024)
 ARTIFACTS_DIR = Path("artifacts")
@@ -38,6 +38,11 @@ def main() -> None:
     print("  by year:")
     for year, count in df.groupby("year").size().sort_index(ascending=False).items():
         print(f"    {year}: {count}")
+
+    print("Enriching with sponsor (drugs@FDA overview, cached per app)...")
+    df = enrich_with_sponsor(df, cache_dir=RAW_CACHE / "overview")
+    coverage = df["sponsor"].notna().sum()
+    print(f"  sponsor coverage: {coverage:,}/{len(df):,}")
 
     # Persist as Parquet partitioned by year (gitignored)
     for year, sub in df.groupby("year"):
@@ -83,6 +88,7 @@ def _row_to_json(r) -> dict:
         "year": int(r.year),
         "drug_name": _str(r.drug_name),
         "active_ingredient": _str(r.active_ingredient),
+        "sponsor": _str(getattr(r, "sponsor", None)),
         "approval_date": r.approval_date.isoformat() if r.approval_date else None,
         "indication": _str(r.indication),
         "application_number": _str(r.application_number),

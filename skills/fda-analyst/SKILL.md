@@ -50,7 +50,7 @@ duckdb.sql("""
 
 ## How to answer well
 
-1. **Find the application first.** Use the index to locate the drug's application number, approval date, and `drugs_at_fda_url`. Always anchor your answer to the specific application, not to memory. (Sponsor isn't in the index — fetch it from the drugs@FDA overview page if needed.)
+1. **Find the application first.** Use the index to locate the drug's application number, sponsor, approval date, and `drugs_at_fda_url`. Always anchor your answer to the specific application, not to memory.
 2. **Read the actual approval package, not the label.** The label is what the drug company says; the medical / statistical / pharmacology reviews are what the FDA reviewers wrote. For "what was the basis for approval," read the medical review. For "what trials and endpoints," read the medical review or the statistical review. The Drugs@FDA application overview at `drugs_at_fda_url` lists every PDF the FDA released.
 3. **Fetch the relevant PDF at query time.** Don't try to pre-load entire approval packages — they're large and most of the content isn't relevant to any one question. Pick the right document for the question (see `references/document_types.md`) and fetch that one.
 4. **Quote and cite.** When you reproduce a fact from a review document, name the document (e.g., "Medical Review for NDA 218710, page 47") so the user can verify.

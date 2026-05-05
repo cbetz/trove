@@ -13,6 +13,7 @@
 | `year` | Calendar year of the FDA novel-drug-approvals page |
 | `drug_name` | FDA brand name |
 | `active_ingredient` | International nonproprietary or USAN name |
+| `sponsor` | Company that holds the application, parsed from drugs@FDA. Title-cased from FDA's all-caps stored form ("IONIS PHARMS INC" → "Ionis Pharms INC"). 191 of 192 rows populated. |
 | `approval_date` | Approval date |
 | `indication` | FDA-approved use string from the FDA novel-drug page |
 | `application_number` | NDA or BLA application number (6 digits) |
@@ -73,4 +74,4 @@ PDFs at accessdata.fda.gov are public, no auth, often 1–10 MB each. Fetch with
 - **Document text content.** The bundle is metadata; document text is in the PDFs at FDA. Fetch at query time.
 - **Older approvals (pre-2021).** Out of scope for v0.1.
 - **Generic (ANDA) and supplemental (sNDA) approvals.** The bundle covers FDA's "Novel Drug Approvals" curated lists only.
-- **Sponsor name.** Not present in v0.1 — we scrape FDA's novel-drug pages, which list drug name + active ingredient + date but not sponsor. The Drugs@FDA application overview includes sponsor; fetch from there if you need it.
+- **Sponsor name.** Now in the index (added in v0.2). Sourced from each drug's drugs@FDA application overview page.
