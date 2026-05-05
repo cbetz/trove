@@ -9,9 +9,20 @@ Claude skill bundles that wrap trove's data so an agent can answer natural-langu
 
 Each skill is self-contained: a `SKILL.md` (frontmatter + instructions), a `references/` directory (data layout, glossary, examples, etc.), and no Python dependencies. The skills query trove's published Parquet bundles directly over HTTPS via DuckDB or fetch FDA PDFs at runtime — no local trove install required.
 
-## Install (Claude Code)
+## Install (Claude Code, plugin path)
 
-Both skills are filesystem-installable today. From a terminal:
+trove is packaged as a Claude Code plugin in this repo (`.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json`). Inside Claude Code:
+
+```
+/plugin marketplace add cbetz/trove
+/plugin install trove@trove
+```
+
+This is the canonical install path. Plugin install gives you versioning, namespaced commands (`/trove:hcris-analyst`, `/trove:fda-analyst`), and auto-updates from git. The plugin will also be listed in the official marketplace at <https://claude.com/plugins> once Anthropic completes the submission review.
+
+## Install (Claude Code, filesystem path)
+
+If you'd rather copy the skill directories directly (bypasses the plugin layer, useful for development or for environments without the plugin command):
 
 ```bash
 git clone https://github.com/cbetz/trove
@@ -19,30 +30,17 @@ cp -r trove/skills/hcris-analyst ~/.claude/skills/
 cp -r trove/skills/fda-analyst ~/.claude/skills/
 ```
 
-Restart Claude Code (or the host running the agent), and the skills will be loaded. Each skill's `description` field tells Claude when to invoke — you don't need to call them by name.
+Restart Claude Code and the skills load. Each skill's `description` field tells Claude when to invoke — no need to call them by name.
 
-To install just one skill, copy only that subdirectory.
-
-To install for a single project rather than user-wide, use `.claude/skills/` inside the project root instead of `~/.claude/skills/`.
+To install just one skill, copy only that subdirectory. To install for a single project rather than user-wide, use `.claude/skills/` inside the project root instead of `~/.claude/skills/`.
 
 ## Install (Claude.ai)
 
-Claude.ai supports skills via uploaded skill bundles. Zip the skill directory you want and upload through the Claude.ai skills UI.
+Claude.ai supports skills via uploaded skill bundles. Zip the skill directory you want and upload through the Claude.ai skills UI:
 
 ```bash
 cd skills && zip -r hcris-analyst.zip hcris-analyst
 ```
-
-## Plugin marketplace (planned)
-
-The Claude plugin marketplace at <https://claude.com/plugins> is the canonical distribution path going forward. Trove will be packaged as a plugin and submitted to the marketplace as a follow-up; once that lands, the install will simplify to:
-
-```
-/plugin marketplace add cbetz/trove
-/plugin install trove
-```
-
-Until then, the filesystem-copy method above is the supported install path.
 
 ## What each skill needs
 

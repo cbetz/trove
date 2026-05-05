@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-marketplace.json",
+  "name": "trove",
+  "owner": {
+    "name": "Chris Betz",
+    "url": "https://github.com/cbetz"
+  },
+  "description": "Reference tools for underused public healthcare data — Claude skills over FDA drug approvals and nonprofit hospital reporting (CMS Cost Reports + IRS 990 Schedule H).",
+  "plugins": [
+    {
+      "name": "trove",
+      "source": "./",
+      "description": "Two Claude skills for looking up underused public healthcare data: hcris-analyst (CMS Worksheet S-10 vs. IRS 990 Schedule H, side-by-side) and fda-analyst (FDA novel drug approvals + approval-package documents).",
+      "version": "1.0.0",
+      "author": { "name": "Chris Betz" },
+      "homepage": "https://troveproject.com",
+      "repository": "https://github.com/cbetz/trove",
+      "license": "MIT",
+      "keywords": [
+        "healthcare",
+        "hospital",
+        "fda",
+        "drug-approvals",
+        "990",
+        "irs",
+        "cms",
+        "hcris",
+        "charity-care",
+        "public-data"
+      ]
+    }
+  ]
+}
