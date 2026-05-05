@@ -10,7 +10,7 @@ Two areas live in v1:
 
 ### [/drugs](https://troveproject.com/drugs/) — FDA drug approvals
 
-Look up any FDA Novel Drug Approval from 2021–2024 (192 drugs). Each row carries the application number, approval date, indication, and a deep link to the drugs@FDA application overview where every approval-package document lives (medical review, statistical review, pharmacology review, etc.). About two-thirds of rows also include a direct link to the FDA-approved label PDF. Companion Claude skill `fda-analyst` reads those PDFs at query time when a user asks about a specific approval.
+Look up any FDA Novel Drug Approval from 2021–2024 (192 drugs). Each row carries the application number, sponsor, approval date, indication, and a deep link to the drugs@FDA application overview where every approval-package document lives (medical review, statistical review, pharmacology review, etc.). About two-thirds of rows also include a direct link to the FDA-approved label PDF. Companion Claude skill `fda-analyst` reads those PDFs at query time when a user asks about a specific approval.
 
 Sources: FDA's annual *Novel Drug Approvals* curated lists; drugs@FDA database. US government work, public domain.
 

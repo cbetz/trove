@@ -135,7 +135,7 @@
     <h2>Look up a drug</h2>
     <div class="search-box">
       <div class="search">
-        <input id="q" type="search" placeholder="Search by drug name, active ingredient, application number, or indication…" autocomplete="off" spellcheck="false">
+        <input id="q" type="search" placeholder="Search by drug name, active ingredient, sponsor, or application number…" autocomplete="off" spellcheck="false">
       </div>
       <div id="matches" class="matches" hidden></div>
     </div>
@@ -152,8 +152,8 @@
     </details>
     <details style="margin-top: 0.85rem;">
       <summary>What this index gives you and what it doesn't</summary>
-      <p><strong>Gives you:</strong> drug name, active ingredient, approval date, indication summary, application number (NDA/BLA), and a deep link to the drugs@FDA application overview where every approval-package document lives. About two-thirds of rows also have a direct link to the FDA-approved label PDF (when FDA's annual page links to one); the rest link directly to the drugs@FDA overview.</p>
-      <p><strong>Doesn't give you:</strong> sponsor (available on each drug's drugs@FDA overview page; not in the v0.1 index). Pre-extracted content from the medical / statistical / pharmacology / chemistry reviews — those are large, varied PDFs and pre-extracting them is a separate project. The companion Claude skill <code>fda-analyst</code> reads those PDFs at query time when a user asks about a specific approval.</p>
+      <p><strong>Gives you:</strong> drug name, active ingredient, sponsor, approval date, indication summary, application number (NDA/BLA), and a deep link to the drugs@FDA application overview where every approval-package document lives. About two-thirds of rows also have a direct link to the FDA-approved label PDF (when FDA's annual page links to one); the rest link directly to the drugs@FDA overview.</p>
+      <p><strong>Doesn't give you:</strong> pre-extracted content from the medical / statistical / pharmacology / chemistry reviews — those are large, varied PDFs and pre-extracting them is a separate project. The companion Claude skill <code>fda-analyst</code> reads those PDFs at query time when a user asks about a specific approval.</p>
       <p><strong>Doesn't cover:</strong> 2020 and earlier approvals (FDA archived the 2020 page; older years would need OCR), device approvals, generic approvals (ANDAs), and supplemental approvals (additional indications for already-approved drugs).</p>
     </details>
     <details style="margin-top: 0.85rem;">
@@ -235,6 +235,7 @@ function findMatches() {
   return DATA.rows.filter(r =>
     (r.drug_name && r.drug_name.toLowerCase().includes(QUERY)) ||
     (r.active_ingredient && r.active_ingredient.toLowerCase().includes(QUERY)) ||
+    (r.sponsor && r.sponsor.toLowerCase().includes(QUERY)) ||
     (r.application_number && r.application_number.includes(QUERY)) ||
     (r.indication && r.indication.toLowerCase().includes(QUERY))
   ).slice(0, MAX_MATCHES);
@@ -267,12 +268,19 @@ function render() {
   if (matches.length === 0) {
     matchesEl.innerHTML = `<div class="match-empty">No matches for &ldquo;${escapeHtml(QUERY)}&rdquo;.</div>`;
   } else {
-    matchesEl.innerHTML = matches.map(r => `
+    matchesEl.innerHTML = matches.map(r => {
+      const subline = [
+        r.active_ingredient,
+        r.sponsor,
+        `${r.application_type || ""} ${r.application_number || ""}`.trim(),
+        `approved ${formatDate(r.approval_date)}`,
+      ].filter(Boolean).map(escapeHtml).join(" · ");
+      return `
       <button class="match" data-key="${r.application_number || r.drug_name}">
         <div class="match-name">${escapeHtml(r.drug_name || "(unknown)")}</div>
-        <div class="match-sub">${escapeHtml(r.active_ingredient || "")} · ${r.application_type || ""} ${escapeHtml(r.application_number || "")} · approved ${formatDate(r.approval_date)}</div>
-      </button>
-    `).join("");
+        <div class="match-sub">${subline}</div>
+      </button>`;
+    }).join("");
     matchesEl.querySelectorAll(".match").forEach(btn => {
       btn.addEventListener("click", () => {
         const key = btn.dataset.key;
@@ -304,6 +312,7 @@ function renderDetail() {
       <p class="detail-title">${escapeHtml(r.drug_name || "(unknown)")}</p>
       <p class="detail-sub">${escapeHtml(r.active_ingredient || "")}</p>
       <div class="detail-meta">
+        <div class="meta-row"><span class="meta-label">Sponsor</span><span>${escapeHtml(r.sponsor || "—")}</span></div>
         <div class="meta-row"><span class="meta-label">Application</span><span>${escapeHtml(r.application_type || "")} ${escapeHtml(r.application_number || "—")}</span></div>
         <div class="meta-row"><span class="meta-label">Approval date</span><span>${formatDate(r.approval_date)}</span></div>
         <div class="meta-row"><span class="meta-label">Approval year</span><span>${r.year}</span></div>
