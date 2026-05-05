@@ -17,9 +17,9 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 JSON_IN = Path("web/data/community_benefit_gap_2022.json")
-PNG_OUT = Path("web/og.png")
+PNG_OUT = Path("web/og.jpg")
 
-WIDTH, HEIGHT = 1200, 630
+WIDTH, HEIGHT = 1200, 630  # 1.91:1 — the OG / X-card standard
 BG = (14, 14, 14)
 FG = (240, 240, 240)
 MUTED = (170, 170, 170)
@@ -81,7 +81,9 @@ def main() -> None:
     )
 
     PNG_OUT.parent.mkdir(parents=True, exist_ok=True)
-    img.save(PNG_OUT, "PNG", optimize=True)
+    # JPG instead of PNG: X's card crawler is pickier about PNG metadata
+    # in some cases. JPG at quality 92 looks identical for this content.
+    img.save(PNG_OUT, "JPEG", quality=92, optimize=True)
     print(f"  → {PNG_OUT} ({PNG_OUT.stat().st_size / 1024:.1f} KB)")
     print(f"  stats: {computable:,} searchable, {aligned:,} comparable, {round(median_pct * 100)}% median")
 
