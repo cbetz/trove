@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>trove — look up FDA drug approvals (NMEs, 2021–2024)</title>
-  <meta name="description" content="Look up any FDA novel drug approval from 2021–2024 and find the approval package — application number, label PDF, and direct links to every document FDA released.">
+  <meta name="description" content="Look up any FDA novel drug approval from 2021–2024 and find the approval package — application number, approval date, indication, and direct links to every document FDA released.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta property="og:type" content="website">
   <meta property="og:title" content="trove — look up FDA drug approvals (NMEs, 2021–2024)">
-  <meta property="og:description" content="Look up any FDA novel drug approval from 2021–2024 and find the approval package — application number, label PDF, and direct links to every document FDA released.">
+  <meta property="og:description" content="Look up any FDA novel drug approval from 2021–2024 and find the approval package — application number, approval date, indication, and direct links to every document FDA released.">
   <meta property="og:url" content="https://troveproject.com/drugs/">
   <meta property="og:image" content="https://troveproject.com/og.jpg?v=20260505b">
   <meta property="og:image:secure_url" content="https://troveproject.com/og.jpg?v=20260505b">
@@ -106,7 +106,7 @@
   <header>
     <p class="breadcrumb"><a href="/">trove</a> / FDA drug approvals</p>
     <h1>FDA drug approvals</h1>
-    <p class="tagline">Look up an FDA novel drug approval and find its evidence base.</p>
+    <p class="tagline">Look up an FDA novel drug approval and find its approval package.</p>
   </header>
 
   <section class="lede">
@@ -135,7 +135,7 @@
     <h2>Look up a drug</h2>
     <div class="search-box">
       <div class="search">
-        <input id="q" type="search" placeholder="Search by drug name, active ingredient, sponsor, or application number…" autocomplete="off" spellcheck="false">
+        <input id="q" type="search" placeholder="Search by drug name, active ingredient, application number, or indication…" autocomplete="off" spellcheck="false">
       </div>
       <div id="matches" class="matches" hidden></div>
     </div>
@@ -152,7 +152,7 @@
     </details>
     <details style="margin-top: 0.85rem;">
       <summary>What this index gives you and what it doesn't</summary>
-      <p><strong>Gives you:</strong> drug name, active ingredient, approval date, indication summary, application number (NDA/BLA), direct link to the FDA-approved label PDF (when FDA's annual page links to one), and a deep link to the drugs@FDA application overview where every approval-package document lives.</p>
+      <p><strong>Gives you:</strong> drug name, active ingredient, approval date, indication summary, application number (NDA/BLA), and a deep link to the drugs@FDA application overview where every approval-package document lives. About two-thirds of rows also have a direct link to the FDA-approved label PDF (when FDA's annual page links to one); the rest link directly to the drugs@FDA overview.</p>
       <p><strong>Doesn't give you:</strong> sponsor (available on each drug's drugs@FDA overview page; not in the v0.1 index). Pre-extracted content from the medical / statistical / pharmacology / chemistry reviews — those are large, varied PDFs and pre-extracting them is a separate project. The companion Claude skill <code>fda-analyst</code> reads those PDFs at query time when a user asks about a specific approval.</p>
       <p><strong>Doesn't cover:</strong> 2020 and earlier approvals (FDA archived the 2020 page; older years would need OCR), device approvals, generic approvals (ANDAs), and supplemental approvals (additional indications for already-approved drugs).</p>
     </details>
