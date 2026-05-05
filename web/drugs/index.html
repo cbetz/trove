@@ -4,11 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>trove — look up FDA drug approvals (NMEs, 2021–2024)</title>
-  <meta name="description" content="Look up any FDA novel drug approval from 2021–2024. See the sponsor, application number, label PDF, and links to every document in the approval package.">
+  <meta name="description" content="Look up any FDA novel drug approval from 2021–2024 and find the approval package — application number, label PDF, and direct links to every document FDA released.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta property="og:type" content="website">
   <meta property="og:title" content="trove — look up FDA drug approvals (NMEs, 2021–2024)">
-  <meta property="og:description" content="Look up any FDA novel drug approval from 2021–2024. See the sponsor, application number, label PDF, and links to every document in the approval package.">
+  <meta property="og:description" content="Look up any FDA novel drug approval from 2021–2024 and find the approval package — application number, label PDF, and direct links to every document FDA released.">
   <meta property="og:url" content="https://troveproject.com/drugs/">
   <meta property="og:image" content="https://troveproject.com/og.jpg?v=20260505b">
   <meta property="og:image:secure_url" content="https://troveproject.com/og.jpg?v=20260505b">
@@ -110,8 +110,8 @@
   </header>
 
   <section class="lede">
-    <p>The FDA publishes an "Approval Package" for each newly approved drug — the medical review, statistical review, pharmacology review, chemistry review, label, and other documents that describe the basis for the agency's decision. Those documents are public and on accessdata.fda.gov, but the path from "drug name" to "the actual evidence" is several clicks of guesswork through FDA's site.</p>
-    <p>trove indexes FDA's annual <em>novel drug approvals</em> (curated NMEs and novel BLAs) for the last four years. Search for a drug, see its sponsor and approval date, and click straight through to the FDA's full approval-package overview where every PDF lives. <strong>This is a reference index, not a clinical resource.</strong> The approval package is the source of truth.</p>
+    <p>The FDA publishes an "Approval Package" for each newly approved drug — the medical review, statistical review, pharmacology review, chemistry review, label, and other documents that describe the basis for the agency's decision. Those documents are public and on accessdata.fda.gov, but the path from "drug name" to "the approval package" is several clicks of guesswork through FDA's site.</p>
+    <p>trove indexes FDA's annual <em>novel drug approvals</em> (curated NMEs and novel BLAs) for 2021–2024. Search for a drug, see its application number and approval date, and click straight through to the FDA's full approval-package overview where every PDF lives. <strong>This is a reference index, not a clinical resource.</strong> The approval package itself is the source of truth.</p>
     <div class="stats" id="stats">
       <div class="stat">
         <div class="stat-num" id="stat-drugs">—</div>
@@ -152,8 +152,8 @@
     </details>
     <details style="margin-top: 0.85rem;">
       <summary>What this index gives you and what it doesn't</summary>
-      <p><strong>Gives you:</strong> drug name, active ingredient, sponsor (when present in FDA's lists), approval date, indication summary, application number (NDA/BLA), direct link to the FDA-approved label PDF, link to the drugs@FDA application overview where every approval-package document lives.</p>
-      <p><strong>Doesn't give you:</strong> pre-extracted content from the medical / statistical / pharmacology / chemistry reviews. Those are large, varied PDFs and pre-extracting them is a separate project. The companion Claude skill <code>fda-analyst</code> reads those PDFs at query time when a user asks about a specific approval.</p>
+      <p><strong>Gives you:</strong> drug name, active ingredient, approval date, indication summary, application number (NDA/BLA), direct link to the FDA-approved label PDF (when FDA's annual page links to one), and a deep link to the drugs@FDA application overview where every approval-package document lives.</p>
+      <p><strong>Doesn't give you:</strong> sponsor (available on each drug's drugs@FDA overview page; not in the v0.1 index). Pre-extracted content from the medical / statistical / pharmacology / chemistry reviews — those are large, varied PDFs and pre-extracting them is a separate project. The companion Claude skill <code>fda-analyst</code> reads those PDFs at query time when a user asks about a specific approval.</p>
       <p><strong>Doesn't cover:</strong> 2020 and earlier approvals (FDA archived the 2020 page; older years would need OCR), device approvals, generic approvals (ANDAs), and supplemental approvals (additional indications for already-approved drugs).</p>
     </details>
     <details style="margin-top: 0.85rem;">

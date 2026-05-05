@@ -2,12 +2,13 @@
 
 Index of recent FDA novel drug approvals (NMEs + novel BLA approvals) with links to their approval-package documents on accessdata.fda.gov. Source: FDA's annual "Novel Drug Approvals" pages.
 
-**Status:** v0.1 — index only, no document extraction. Each row carries enough metadata to *find* the approval package (drug name, active ingredient, sponsor, application number, approval date, indication) and direct links to the drugs@FDA detail page where the actual PDFs live.
+**Status:** v0.1 — index only, no document extraction. Each row carries enough metadata to *find* the approval package (drug name, active ingredient, application number, approval date, indication) and direct links to the drugs@FDA detail page where the actual PDFs live. Sponsor isn't extracted in v0.1; it's available on each drug's drugs@FDA application-overview page.
 
 ## What's covered
 
-- **Last 5 years of FDA Novel Drug Approvals** (calendar years 2020–2024). FDA's annual "novel drug" lists curate the meaningful approvals — new molecular entities (NMEs) approved via NDA, plus novel BLA approvals. We scrape those lists rather than scraping every FDA approval, because they're the curated set most public discourse cares about.
-- ~250 drugs total across 5 years.
+- **Calendar years 2021–2024** of FDA's annual *Novel Drug Approvals* lists. Those lists curate the meaningful approvals — new molecular entities (NMEs) approved via NDA, plus novel BLA approvals. We scrape the curated lists rather than every FDA approval, because they're the set most public discourse cares about.
+- 192 drugs total across 4 years.
+- 2020 isn't included — FDA's 2020 page isn't reachable on the current site. Pre-2020 needs a different source (Wayback Machine or alternative).
 - Each row includes a direct link to the drugs@FDA application overview, which is FDA's index of every PDF document FDA released for that approval (label, medical review, statistical review, pharmacology review, chemistry review, etc.).
 
 ## What's not covered (v0.1)
@@ -49,9 +50,10 @@ df.head()
 
 - Novel Drug Approvals for 2024: https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2024
 - Novel Drug Approvals for 2023: https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2023
-- (etc., one page per year)
+- Novel Drug Approvals for 2022: https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2022
+- Novel Drug Approvals for 2021: https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2021
 
-These pages are HTML tables. trove fetches the raw HTML, parses with `lxml`, and produces tidy records. The HTML structure has been stable across years.
+These pages are HTML tables. trove fetches the raw HTML, parses with `lxml`, and produces tidy records. The HTML structure has been stable across the four years we cover.
 
 ## Licensing
 
