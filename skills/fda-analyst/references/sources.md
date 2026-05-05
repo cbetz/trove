@@ -2,9 +2,28 @@
 
 ## The bundle
 
-`https://troveproject.com/data/fda_approvals_nme_recent.parquet` (and the same data as JSON at `…fda_approvals_nme_recent.json`).
+- Parquet: `https://troveproject.com/data/fda_approvals_nme_recent.parquet`
+- JSON: `https://troveproject.com/data/fda_approvals_nme_recent.json`
 
-192 rows × 10 columns covering FDA Novel Drug Approvals for calendar years 2021–2024.
+192 rows covering FDA Novel Drug Approvals for calendar years 2021–2024.
+
+## JSON envelope shape
+
+The JSON is **not** a top-level array. It's an object:
+
+```json
+{
+  "totals": {
+    "drugs": 192,
+    "year_min": 2021,
+    "year_max": 2024,
+    "by_year": {"2021": 50, "2022": 37, "2023": 55, "2024": 50}
+  },
+  "rows": [ /* one object per drug */ ]
+}
+```
+
+When iterating, use `data["rows"]`, not `data` directly.
 
 ## Columns
 
@@ -24,6 +43,10 @@
 
 ## Query patterns
 
+DuckDB is the canonical query path, but **don't assume it's installed.** Many environments have only `curl` and `python3` stdlib. The fallback below is fully equivalent for lookup-style queries.
+
+### With DuckDB (CLI or Python)
+
 **Find a drug by name:**
 
 ```sql
@@ -41,11 +64,28 @@ WHERE LOWER(indication) LIKE '%cystic fibrosis%'
 ORDER BY approval_date DESC;
 ```
 
-**By application type:**
+### Without DuckDB (curl + python3 stdlib only)
 
-```sql
-SELECT application_type, COUNT(*) FROM read_parquet('https://troveproject.com/data/fda_approvals_nme_recent.parquet')
-GROUP BY application_type;
+Equally fast for the lookup queries this skill does most often. **Note the JSON envelope** — iterate `data["rows"]`, not `data`.
+
+```bash
+curl -s 'https://troveproject.com/data/fda_approvals_nme_recent.json' \
+  | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+hits = [r for r in data['rows']
+        if 'hemophilia' in (r.get('drug_name') or '').lower()
+        or 'hemophilia' in (r.get('active_ingredient') or '').lower()]
+for r in hits:
+    print(r['drug_name'], r['application_type'], r['application_number'], r['approval_date'])
+"
+```
+
+For a single drug lookup, the smallest working invocation:
+
+```bash
+curl -s 'https://troveproject.com/data/fda_approvals_nme_recent.json' \
+  | python3 -c "import json,sys; d=json.load(sys.stdin); print([r for r in d['rows'] if 'tryngolza' in (r.get('drug_name') or '').lower()])"
 ```
 
 ## The actual approval-package documents

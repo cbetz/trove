@@ -8,10 +8,32 @@ DuckDB can query Parquet files over HTTPS natively. Treat each URL below as a vi
 |-----|-------------|-------------|
 | `https://troveproject.com/data/hcris_2023_wide.parquet` | HCRIS Hospital 2552-10, FY2023, pivoted wide. One row per CCN-keyed facility, every dictionary variable as a named column. | ~6,100 × 48 |
 | `https://troveproject.com/data/schedule_h_2022.parquet` | IRS 990 Schedule H filings for tax year 2022. One row per filing (originals + amendments — dedupe per EIN if needed). | ~1,500 × 23 |
-| `https://troveproject.com/data/community_benefit_gap_2022.parquet` | Pre-joined gap dataset: HCRIS S-10 charity care summed per EIN, joined to Schedule H 7a, with `charity_gap` and `hcris_fy_end_dt` for alignment filtering. | 1,334 × 14 |
+| `https://troveproject.com/data/community_benefit_gap_2022.parquet` | Pre-joined gap dataset: HCRIS S-10 charity care summed per EIN, joined to Schedule H 7a, with `charity_gap` and `hcris_fy_end_dt` for alignment filtering. | 1,334 × 19 |
 | `https://troveproject.com/data/community_benefit_gap_2022.json` | Same gap dataset, JSON (UI-shaped — non-computable rows excluded, includes `gap_pct`). Use the Parquet for analysis; this is for the web UI. | 1,295 |
 
+## JSON envelope shape
+
+The JSON bundle is **not** a top-level array. It's an object:
+
+```json
+{
+  "totals": {
+    "matched": 1334,
+    "computable": 1295,
+    "aligned": 372,
+    "aligned_material": 228,
+    "median_aligned_material_gap_pct": 0.2509,
+    "aligned_material_big_gaps": 53
+  },
+  "rows": [ /* one object per system, alphabetical */ ]
+}
+```
+
+When iterating, use `data["rows"]`, not `data` directly.
+
 ## Query patterns
+
+DuckDB is the canonical query path. For environments without DuckDB, use the curl + python3 stdlib fallback at the bottom of this section — fully equivalent for lookup queries against the JSON.
 
 **Bash (DuckDB CLI):**
 
@@ -93,6 +115,25 @@ SELECT *,
 FROM read_parquet('https://troveproject.com/data/community_benefit_gap_2022.parquet')
 WHERE ROUND(ABS(EXTRACT(EPOCH FROM (hcris_fy_end_dt - sched_h_tax_period_end))) / 2629800) <= 1
 ```
+
+## Without DuckDB (curl + python3 stdlib only)
+
+If DuckDB isn't installed, fetch the JSON envelope and iterate `rows` directly. Equivalent to the SQL above for lookup-style queries:
+
+```bash
+curl -s 'https://troveproject.com/data/community_benefit_gap_2022.json' \
+  | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+rows = [r for r in data['rows']
+        if 'yale' in (r.get('system') or '').lower()
+        or 'yale' in (r.get('facility') or '').lower()]
+for r in rows[:5]:
+    print(r['system'], r['ein'], r['hcris_charity'], r['fa_990'], r['gap'])
+"
+```
+
+This works without any Python packages — just python3 stdlib. Performance is fine for lookup queries against ~1,300 rows; if you need analytical SQL (joins, aggregations), use DuckDB.
 
 ## Local Python access (alternative to HTTPS)
 

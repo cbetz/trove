@@ -28,23 +28,77 @@ For most "tell me about this drug's approval" questions, fetch in this order:
 
 Don't fetch documents you don't need. Each PDF is 50–500 pages.
 
-## Filename conventions
+## How to actually fetch a review PDF
 
-Approval-package PDFs at accessdata.fda.gov follow patterns like:
+The drugs@FDA application overview at `drugs_at_fda_url` is **not a flat list of PDFs.** It links to a per-application Table-of-Contents page (`{appl_no}Orig1s000TOC.html`), and that TOC page is **JavaScript-rendered** — fetching the HTML with `curl` shows template strings (`' + pdfBaseName + 'Approv.pdf'`), not real URLs. So you can't simply scrape the TOC for PDF links.
+
+**The reliable path is to probe candidate filenames via `HEAD` requests** and fetch the first one that returns 200. The pattern is:
 
 ```
-{appl_no}Orig1s000Approv.pdf      ← Approval Letter
-{appl_no}Orig1s000lbl.pdf          ← Label (also: lbledt.pdf for redacted)
-{appl_no}Orig1s000MedR.pdf         ← Medical Review (varies: also MultiR, CDTL)
-{appl_no}Orig1s000StatR.pdf        ← Statistical Review
-{appl_no}Orig1s000PharmR.pdf       ← Pharmacology Review
-{appl_no}Orig1s000ChemR.pdf        ← Chemistry Review
-{appl_no}Orig1s000ClinPharmR.pdf   ← Clinical Pharmacology Review
-{appl_no}Orig1s000RiskR.pdf        ← Risk Assessment / Office Director Memo
-{appl_no}OrigTOC.pdf               ← Table of contents for the package
+https://www.accessdata.fda.gov/drugsatfda_docs/{type}/{year}/{appl_no}Orig1s000{suffix}.pdf
 ```
 
-The actual filenames vary — some applications have "MultiR" instead of separate MedR/StatR/PharmR, some bundle multiple disciplines into one "Cross-Discipline Team Leader Review." When in doubt, fetch the application overview at `drugs_at_fda_url` and look at the document list.
+where:
+- `{type}` is `nda` or `bla` (use `nda` for both unless you confirm otherwise — FDA stores BLAs under `nda/` for some applications)
+- `{year}` is **the year FDA published the package**, which is often the approval year *or the year after*. Probe both `approval_year` and `approval_year+1`.
+- `{suffix}` is the document code (see "What suffix to look for" below).
+
+### Example: a working probe loop in bash
+
+```bash
+APPL_NO=218614  # Tryngolza
+for year in 2024 2025; do
+  for suffix in IntegratedR MultidisciplineR MedR StatR PharmR ClinPharmR ChemR RiskR Approv lbl AdminCorres OtherR; do
+    url="https://www.accessdata.fda.gov/drugsatfda_docs/nda/$year/${APPL_NO}Orig1s000${suffix}.pdf"
+    code=$(curl -sI -o /dev/null -w "%{http_code}" "$url")
+    [ "$code" = "200" ] && echo "$url"
+  done
+done
+```
+
+### What suffix to look for, by question
+
+For "what was the basis for approval?" the answer is *some* form of clinical review. FDA has used three formats over time, and the right one to look for depends on the approval year:
+
+| Approval era | Primary clinical-review suffix | What it is |
+|--------------|--------------------------------|------------|
+| **2021–2023** (mostly) | `MultidisciplineR.pdf` | Single consolidated review across disciplines |
+| **2023–2024+** (newer) | `IntegratedR.pdf` | The Integrated Review format — clinical + statistical + clinical pharm in one doc |
+| **older / split format** | `MedR.pdf` + `StatR.pdf` + `PharmR.pdf` | Separate per-discipline reviews |
+
+Probe in this order: `IntegratedR` → `MultidisciplineR` → `MedR`. The first one that returns 200 is the right document.
+
+### Other suffixes worth knowing
+
+| Suffix | Document |
+|--------|----------|
+| `Approv.pdf` | Approval letter (short — regulatory pathway, conditions, post-marketing requirements) |
+| `lbl.pdf` | The FDA-approved label (USPI). Also `lbledt.pdf` (redacted), `Corrected_lbl.pdf` |
+| `RiskR.pdf` | Risk assessment / Office Director memo (high-level decision rationale) |
+| `ChemR.pdf` | Chemistry Manufacturing Controls review |
+| `ClinPharmR.pdf` | Clinical pharmacology / PK |
+| `OtherR.pdf` | Catch-all for additional review documents |
+| `AdminCorres.pdf` | Administrative correspondence |
+
+### Validated working examples
+
+These were probed and confirmed to return 200 (May 2026):
+
+```
+# Tryngolza (NDA 218614, approved Dec 2024 — Integrated Review format):
+https://www.accessdata.fda.gov/drugsatfda_docs/nda/2025/218614Orig1s000IntegratedR.pdf
+https://www.accessdata.fda.gov/drugsatfda_docs/nda/2025/218614Orig1s000Approv.pdf
+https://www.accessdata.fda.gov/drugsatfda_docs/nda/2025/218614Orig1s000lbl.pdf
+
+# Alyftrek (NDA 218710, approved Dec 2024 — Integrated Review format):
+https://www.accessdata.fda.gov/drugsatfda_docs/nda/2025/218710Orig1s000IntegratedR.pdf
+
+# Saphnelo (BLA 761123, approved Aug 2021 — older Multidiscipline Review format):
+https://www.accessdata.fda.gov/drugsatfda_docs/nda/2021/761123Orig1s000MultidisciplineR.pdf
+https://www.accessdata.fda.gov/drugsatfda_docs/nda/2021/761123Orig1s000Approv.pdf
+```
+
+Use the probe loop above; don't assume a specific filename for a drug you haven't checked.
 
 ## Regulatory designations
 

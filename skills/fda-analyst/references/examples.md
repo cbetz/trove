@@ -27,15 +27,36 @@ ORDER BY approval_date DESC;
 
 **Q:** "What was the basis for [drug] approval — what trials, what endpoints?"
 
-1. Find the drug in the index, get its `drugs_at_fda_url`.
-2. Fetch the application overview HTML (or open it in a browser).
-3. Find the Medical Review PDF link.
-4. Fetch and read the Medical Review. Focus on:
-   - Section labeled "Clinical Trials" or "Efficacy"
+The drugs@FDA overview links to a JS-rendered TOC page that you can't reliably scrape. The reliable path is **probing** for the right review-document filename. See `document_types.md` "How to actually fetch a review PDF" for the full pattern; the short version:
+
+1. Look the drug up in the index. Get `application_number` and `approval_date`.
+2. Probe candidate filenames via `HEAD` requests, in this order: `IntegratedR.pdf` (2024+), `MultidisciplineR.pdf` (2021–2023), `MedR.pdf` (older split format). Try both `approval_year` and `approval_year+1` as the URL year subdirectory.
+3. The first one returning 200 is the clinical review document. Fetch it.
+4. Read the Clinical Trials / Efficacy section. Focus on:
    - The pivotal trial(s) — design (RCT vs. single-arm), N, comparator, duration
    - Primary endpoint(s) and effect size
    - Key safety findings
 5. Quote with the document name and approximate page when you cite specifics.
+
+**Worked example for Tryngolza (NDA 218614, approved Dec 2024):**
+
+```bash
+# Step 1: confirm it's in the index
+curl -s 'https://troveproject.com/data/fda_approvals_nme_recent.json' \
+  | python3 -c "import json,sys; d=json.load(sys.stdin); print([r for r in d['rows'] if 'tryngolza' in (r.get('drug_name') or '').lower()])"
+
+# Step 2: probe for the review (2024 approval, so try 2024 + 2025 subdirs)
+for year in 2024 2025; do
+  for suffix in IntegratedR MultidisciplineR MedR; do
+    url="https://www.accessdata.fda.gov/drugsatfda_docs/nda/$year/218614Orig1s000${suffix}.pdf"
+    code=$(curl -sI -o /dev/null -w "%{http_code}" "$url")
+    [ "$code" = "200" ] && echo "$url"
+  done
+done
+# → returns: https://www.accessdata.fda.gov/drugsatfda_docs/nda/2025/218614Orig1s000IntegratedR.pdf
+
+# Step 3: fetch and read the IntegratedR PDF
+```
 
 ## 4. Adverse events FDA flagged
 
