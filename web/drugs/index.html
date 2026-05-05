@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>trove — look up FDA drug approvals (NMEs, 2021–2024)</title>
+  <meta name="description" content="Look up any FDA novel drug approval from 2021–2024. See the sponsor, application number, label PDF, and links to every document in the approval package.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="trove — look up FDA drug approvals (NMEs, 2021–2024)">
+  <meta property="og:description" content="Look up any FDA novel drug approval from 2021–2024. See the sponsor, application number, label PDF, and links to every document in the approval package.">
+  <meta property="og:url" content="https://troveproject.com/drugs/">
+  <meta property="og:image" content="https://troveproject.com/og.jpg?v=20260505b">
+  <meta property="og:image:secure_url" content="https://troveproject.com/og.jpg?v=20260505b">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="trove — reference tools for underused healthcare data.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="trove — look up FDA drug approvals (NMEs, 2021–2024)">
+  <meta name="twitter:description" content="Look up any FDA novel drug approval from 2021–2024.">
+  <meta name="twitter:image" content="https://troveproject.com/og.jpg?v=20260505b">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff;
+      --fg: #111111;
+      --muted: #5a5a5a;
+      --border: rgba(127, 127, 127, 0.3);
+      --row-hover: rgba(127, 127, 127, 0.08);
+      --pos: #a04413;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; --pos: #f0a26b; }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0 auto;
+      padding: 4rem 1.5rem 6rem;
+      max-width: 44rem;
+      font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    h1 { font-size: 2.75rem; margin: 0 0 0.5rem; letter-spacing: -0.03em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.1rem; }
+    .breadcrumb { color: var(--muted); margin: 0 0 1rem; font-size: 0.9em; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 0.85rem; font-weight: 600; }
+    section { margin-top: 3rem; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+    code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
+    pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
+    pre code { background: none; padding: 0; }
+
+    .lede p { margin: 0.85em 0; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 2rem 0 0; }
+    .stat { border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.1rem; }
+    .stat-num { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; }
+    .stat-label { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
+    .stat-sub { color: var(--muted); font-size: 0.85em; margin-top: 0.4rem; line-height: 1.45; }
+    @media (max-width: 640px) {
+      .stats { grid-template-columns: 1fr; }
+      h1 { font-size: 2.25rem; }
+    }
+
+    .search-box { position: relative; }
+    .search { display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); border-radius: 6px; padding: 0.7rem 0.95rem; }
+    .search::before { content: "›"; color: var(--muted); font-weight: 700; }
+    .search input { flex: 1; border: 0; background: transparent; font: inherit; color: inherit; outline: none; padding: 0; }
+
+    .matches { margin-top: 0.6rem; border: 1px solid var(--border); border-radius: 6px; max-height: 24rem; overflow-y: auto; background: var(--bg); }
+    .match { display: block; width: 100%; text-align: left; padding: 0.7rem 0.95rem; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; border-bottom: 1px solid var(--border); }
+    .match:last-child { border-bottom: 0; }
+    .match:hover, .match:focus { background: var(--row-hover); outline: none; }
+    .match-name { font-weight: 600; }
+    .match-sub { color: var(--muted); font-size: 0.85em; margin-top: 0.15rem; }
+    .match-empty { padding: 1rem; color: var(--muted); text-align: center; font-style: italic; }
+    .empty-hint { color: var(--muted); margin: 1rem 0 0; font-size: 0.95em; }
+
+    .detail { border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem 1.5rem 1.25rem; margin-top: 1.5rem; }
+    .detail-title { font-size: 1.4rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+    .detail-sub { color: var(--muted); font-size: 0.95em; margin: 0.25rem 0 0; }
+    .detail-meta { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr; gap: 0.5rem; font-size: 0.93em; }
+    .meta-row { display: flex; gap: 0.6rem; align-items: baseline; }
+    .meta-label { color: var(--muted); white-space: nowrap; min-width: 11rem; font-size: 0.85em; text-transform: uppercase; letter-spacing: 0.05em; }
+    .indication { font-size: 1rem; line-height: 1.5; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .indication-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.4rem; font-weight: 600; }
+    .links { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .links a { display: block; padding: 0.4rem 0; }
+    @media (max-width: 640px) { .meta-label { min-width: auto; } }
+
+    details { border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1.1rem; }
+    details summary { cursor: pointer; font-weight: 600; }
+    details[open] summary { margin-bottom: 0.85rem; }
+    details p, details ul { margin: 0.5rem 0; }
+    details ul { padding-left: 1.25rem; }
+
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer p { margin: 0 0 0.5rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <p class="breadcrumb"><a href="/">trove</a> / FDA drug approvals</p>
+    <h1>FDA drug approvals</h1>
+    <p class="tagline">Look up an FDA novel drug approval and find its evidence base.</p>
+  </header>
+
+  <section class="lede">
+    <p>The FDA publishes an "Approval Package" for each newly approved drug — the medical review, statistical review, pharmacology review, chemistry review, label, and other documents that describe the basis for the agency's decision. Those documents are public and on accessdata.fda.gov, but the path from "drug name" to "the actual evidence" is several clicks of guesswork through FDA's site.</p>
+    <p>trove indexes FDA's annual <em>novel drug approvals</em> (curated NMEs and novel BLAs) for the last four years. Search for a drug, see its sponsor and approval date, and click straight through to the FDA's full approval-package overview where every PDF lives. <strong>This is a reference index, not a clinical resource.</strong> The approval package is the source of truth.</p>
+    <div class="stats" id="stats">
+      <div class="stat">
+        <div class="stat-num" id="stat-drugs">—</div>
+        <div class="stat-label">Novel approvals indexed</div>
+        <div class="stat-sub">Drugs from FDA's <em>Novel Drug Approvals</em> annual lists, 2021–2024.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-years">—</div>
+        <div class="stat-label">Approval years covered</div>
+        <div class="stat-sub">Calendar years <span id="stat-year-range">—</span>. 2020 archived on FDA's site; pre-2020 out of scope for v0.1.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-recent">—</div>
+        <div class="stat-label">Most recent year</div>
+        <div class="stat-sub">Approvals in the most recent calendar year covered.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Look up a drug</h2>
+    <div class="search-box">
+      <div class="search">
+        <input id="q" type="search" placeholder="Search by drug name, active ingredient, sponsor, or application number…" autocomplete="off" spellcheck="false">
+      </div>
+      <div id="matches" class="matches" hidden></div>
+    </div>
+    <p class="empty-hint" id="empty-hint">Type a drug name above. The tool covers 192 novel drug approvals from 2021–2024.</p>
+    <div id="detail-mount"></div>
+  </section>
+
+  <section>
+    <h2>Method, sources, and what this doesn't show</h2>
+    <details>
+      <summary>How "novel drug approval" is defined here</summary>
+      <p>FDA publishes a curated list each year called <em>Novel Drug Approvals</em> — first-time approvals of meaningful new drugs (mostly NMEs and a handful of novel BLAs). That curated list, not every FDA approval, is what trove indexes. It's the set most public discourse cares about; routine approvals (label changes, generics, supplemental indications) aren't included.</p>
+      <p>Source pages: <a href="https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2024">2024</a>, <a href="https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2023">2023</a>, <a href="https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2022">2022</a>, <a href="https://www.fda.gov/drugs/novel-drug-approvals-fda/novel-drug-approvals-2021">2021</a>.</p>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>What this index gives you and what it doesn't</summary>
+      <p><strong>Gives you:</strong> drug name, active ingredient, sponsor (when present in FDA's lists), approval date, indication summary, application number (NDA/BLA), direct link to the FDA-approved label PDF, link to the drugs@FDA application overview where every approval-package document lives.</p>
+      <p><strong>Doesn't give you:</strong> pre-extracted content from the medical / statistical / pharmacology / chemistry reviews. Those are large, varied PDFs and pre-extracting them is a separate project. The companion Claude skill <code>fda-analyst</code> reads those PDFs at query time when a user asks about a specific approval.</p>
+      <p><strong>Doesn't cover:</strong> 2020 and earlier approvals (FDA archived the 2020 page; older years would need OCR), device approvals, generic approvals (ANDAs), and supplemental approvals (additional indications for already-approved drugs).</p>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>What's coming next</summary>
+      <ul>
+        <li>Earlier years (back to ~2015) once we figure out the right way to source pre-2020 approvals.</li>
+        <li>Light pre-extraction from the approval-package PDFs — primary endpoints, regulatory pathway (priority review / breakthrough / accelerated), key adverse-event signals at approval.</li>
+        <li>Indication tagging via ICD-10 / MeSH for cohort queries.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section>
+    <h2>Query with Claude</h2>
+    <p>The <code>fda-analyst</code> skill answers natural-language questions about a specific approval by fetching the relevant PDFs from FDA and reading them at query time.</p>
+<pre><code>git clone https://github.com/cbetz/trove
+cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
+    <p>Then ask things like:</p>
+    <ul>
+      <li><em>"What was the basis for [drug name] approval — what trials, what endpoints?"</em></li>
+      <li><em>"What adverse events did the FDA flag in the medical review for [drug]?"</em></li>
+      <li><em>"Was [drug] approved via accelerated approval? What was the pathway?"</em></li>
+      <li><em>"Compare the regulatory pathways used for [drug A] and [drug B]."</em></li>
+    </ul>
+  </section>
+
+  <footer>
+    <p><strong>v0.1 · 2021–2024 ingest · May 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Not affiliated with my employer; opinions my own. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <p>Source: U.S. Food and Drug Administration, <a href="https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda">Novel Drug Approvals</a>; <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">Drugs@FDA database</a>. US government work, public domain.</p>
+  </footer>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const titleCase = (s) => {
+  if (!s) return "";
+  const letters = s.match(/[a-zA-Z]/g);
+  if (!letters) return s;
+  const upper = letters.filter(c => c === c.toUpperCase()).length;
+  if (upper / letters.length < 0.8) return s;
+  return s.replace(/\w\S*/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
+};
+const formatDate = (s) => {
+  if (!s) return "—";
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? s : d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+};
+
+let DATA = null;
+let QUERY = "";
+let SELECTED = null;
+const MAX_MATCHES = 8;
+
+async function init() {
+  const res = await fetch("/data/fda_approvals_nme_recent.json?v=20260505");
+  DATA = await res.json();
+  renderHero();
+  bindControls();
+  render();
+}
+
+function renderHero() {
+  const t = DATA.totals;
+  $("#stat-drugs").textContent = t.drugs.toLocaleString();
+  $("#stat-years").textContent = (t.year_max - t.year_min + 1).toString();
+  $("#stat-year-range").textContent = `${t.year_min}–${t.year_max}`;
+  $("#stat-recent").textContent = (t.by_year[t.year_max] || 0).toLocaleString();
+}
+
+function bindControls() {
+  $("#q").addEventListener("input", (e) => {
+    QUERY = e.target.value.trim().toLowerCase();
+    SELECTED = null;
+    render();
+  });
+}
+
+function findMatches() {
+  if (!QUERY) return [];
+  return DATA.rows.filter(r =>
+    (r.drug_name && r.drug_name.toLowerCase().includes(QUERY)) ||
+    (r.active_ingredient && r.active_ingredient.toLowerCase().includes(QUERY)) ||
+    (r.application_number && r.application_number.includes(QUERY)) ||
+    (r.indication && r.indication.toLowerCase().includes(QUERY))
+  ).slice(0, MAX_MATCHES);
+}
+
+function render() {
+  const matchesEl = $("#matches");
+  const detailMount = $("#detail-mount");
+  const hint = $("#empty-hint");
+
+  if (SELECTED) {
+    matchesEl.hidden = true;
+    matchesEl.innerHTML = "";
+    hint.hidden = true;
+    renderDetail();
+    return;
+  }
+
+  detailMount.innerHTML = "";
+
+  if (!QUERY) {
+    matchesEl.hidden = true;
+    matchesEl.innerHTML = "";
+    hint.hidden = false;
+    return;
+  }
+
+  hint.hidden = true;
+  const matches = findMatches();
+  if (matches.length === 0) {
+    matchesEl.innerHTML = `<div class="match-empty">No matches for &ldquo;${escapeHtml(QUERY)}&rdquo;.</div>`;
+  } else {
+    matchesEl.innerHTML = matches.map(r => `
+      <button class="match" data-key="${r.application_number || r.drug_name}">
+        <div class="match-name">${escapeHtml(r.drug_name || "(unknown)")}</div>
+        <div class="match-sub">${escapeHtml(r.active_ingredient || "")} · ${r.application_type || ""} ${escapeHtml(r.application_number || "")} · approved ${formatDate(r.approval_date)}</div>
+      </button>
+    `).join("");
+    matchesEl.querySelectorAll(".match").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.key;
+        SELECTED = DATA.rows.find(r => (r.application_number || r.drug_name) === key);
+        render();
+        document.getElementById("detail-mount").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+    });
+  }
+  matchesEl.hidden = false;
+}
+
+function renderDetail() {
+  const mount = $("#detail-mount");
+  const r = SELECTED;
+  if (!r) { mount.innerHTML = ""; return; }
+  const links = [];
+  if (r.drugs_at_fda_url) {
+    links.push(`<a href="${r.drugs_at_fda_url}" target="_blank" rel="noopener">↗ Drugs@FDA: full approval-package overview (every PDF the FDA released)</a>`);
+  }
+  if (r.label_pdf_url) {
+    links.push(`<a href="${r.label_pdf_url}" target="_blank" rel="noopener">↗ FDA-approved label (PDF)</a>`);
+  }
+  if (r.trials_snapshot_url) {
+    links.push(`<a href="${r.trials_snapshot_url}" target="_blank" rel="noopener">↗ FDA Drug Trials Snapshot</a>`);
+  }
+  mount.innerHTML = `
+    <div class="detail">
+      <p class="detail-title">${escapeHtml(r.drug_name || "(unknown)")}</p>
+      <p class="detail-sub">${escapeHtml(r.active_ingredient || "")}</p>
+      <div class="detail-meta">
+        <div class="meta-row"><span class="meta-label">Application</span><span>${escapeHtml(r.application_type || "")} ${escapeHtml(r.application_number || "—")}</span></div>
+        <div class="meta-row"><span class="meta-label">Approval date</span><span>${formatDate(r.approval_date)}</span></div>
+        <div class="meta-row"><span class="meta-label">Approval year</span><span>${r.year}</span></div>
+      </div>
+      <div class="indication">
+        <div class="indication-label">FDA-approved use</div>
+        ${escapeHtml(r.indication || "—")}
+      </div>
+      ${links.length ? `<div class="links">${links.join("")}</div>` : ""}
+    </div>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+init().catch(err => {
+  $("#empty-hint").innerHTML = `Failed to load data: ${escapeHtml(err.message)}`;
+  $("#empty-hint").hidden = false;
+});
+</script>
+</body>
+</html>

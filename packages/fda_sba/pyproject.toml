@@ -1,0 +1,21 @@
+[project]
+name = "fda_sba"
+version = "0.1.0"
+description = "Index of FDA novel drug approvals (NMEs and BLAs) and links to their approval-package documents."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "Chris Betz" }]
+dependencies = [
+    "pandas>=2.2",
+    "pyarrow>=18",
+    "lxml>=5",
+    "cssselect>=1.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fda_sba"]

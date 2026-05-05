@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>trove — look up a hospital's CMS-vs-IRS charity-care reporting</title>
+  <meta name="description" content="Look up any of 1,295 nonprofit U.S. hospital systems and see what they reported as charity care to CMS (Worksheet S-10) vs. the IRS (Form 990 Schedule H) for tax year 2022.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="trove — look up a hospital's CMS-vs-IRS charity-care reporting">
+  <meta property="og:description" content="Look up any of 1,295 nonprofit U.S. hospital systems and see what they reported as charity care to CMS (Worksheet S-10) vs. the IRS (Form 990 Schedule H) for tax year 2022.">
+  <meta property="og:url" content="https://troveproject.com/hospitals/">
+  <meta property="og:image" content="https://troveproject.com/og.jpg?v=20260505a">
+  <meta property="og:image:secure_url" content="https://troveproject.com/og.jpg?v=20260505a">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="trove — look up any of 1,295 nonprofit U.S. hospital systems and see what they reported as charity care to CMS vs. the IRS for tax year 2022.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="trove — look up a hospital's CMS-vs-IRS charity-care reporting">
+  <meta name="twitter:description" content="Look up any of 1,295 nonprofit U.S. hospital systems and see what they reported as charity care to CMS vs. the IRS for tax year 2022.">
+  <meta name="twitter:image" content="https://troveproject.com/og.jpg?v=20260505a">
+  <meta name="twitter:image:alt" content="trove — look up any of 1,295 nonprofit U.S. hospital systems and see what they reported as charity care to CMS vs. the IRS for tax year 2022.">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff;
+      --fg: #111111;
+      --muted: #5a5a5a;
+      --border: rgba(127, 127, 127, 0.3);
+      --row-hover: rgba(127, 127, 127, 0.08);
+      --row-active: rgba(127, 127, 127, 0.18);
+      --pos: #a04413;
+      --neg: #1f5793;
+      --warn-bg: rgba(184, 85, 26, 0.06);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; --pos: #f0a26b; --neg: #82b6e6; --warn-bg: rgba(238, 148, 87, 0.08); }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0 auto;
+      padding: 4rem 1.5rem 6rem;
+      max-width: 64rem;
+      font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    .narrow { max-width: 44rem; }
+    h1 { font-size: 2.75rem; margin: 0 0 0.5rem; letter-spacing: -0.03em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.1rem; }
+    .breadcrumb { color: var(--muted); margin: 0 0 1rem; font-size: 0.9em; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 0.85rem; font-weight: 600; }
+    section { margin-top: 3rem; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+    code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
+    pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
+    pre code { background: none; padding: 0; }
+
+    .lede p { margin: 0.85em 0; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin: 2rem 0 0; }
+    .stat { border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.1rem; }
+    .stat-num { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; }
+    .stat-label { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
+    .stat-sub { color: var(--muted); font-size: 0.85em; margin-top: 0.4rem; line-height: 1.45; }
+    @media (max-width: 640px) {
+      .stats { grid-template-columns: 1fr; }
+      h1 { font-size: 2.25rem; }
+    }
+
+    .search-box { position: relative; }
+    .search { display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--border); border-radius: 6px; padding: 0.7rem 0.95rem; }
+    .search::before { content: "›"; color: var(--muted); font-weight: 700; }
+    .search input { flex: 1; border: 0; background: transparent; font: inherit; color: inherit; outline: none; padding: 0; }
+
+    .matches { margin-top: 0.6rem; border: 1px solid var(--border); border-radius: 6px; max-height: 24rem; overflow-y: auto; background: var(--bg); }
+    .match { display: block; width: 100%; text-align: left; padding: 0.7rem 0.95rem; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; border-bottom: 1px solid var(--border); }
+    .match:last-child { border-bottom: 0; }
+    .match:hover, .match:focus { background: var(--row-hover); outline: none; }
+    .match-name { font-weight: 600; }
+    .match-sub { color: var(--muted); font-size: 0.85em; margin-top: 0.15rem; }
+    .match-empty { padding: 1rem; color: var(--muted); text-align: center; font-style: italic; }
+    .empty-hint { color: var(--muted); margin: 1rem 0 0; font-size: 0.95em; }
+    .pos { color: var(--pos); }
+    .neg { color: var(--neg); }
+
+    .detail { border: 1px solid var(--border); border-radius: 6px; padding: 1.5rem 1.5rem 1.25rem; margin-top: 1.5rem; }
+    .detail-title { font-size: 1.25rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+    .detail-sub { color: var(--muted); font-size: 0.9em; margin: 0.15rem 0 0; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.25rem; }
+    .detail-grid h3 { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 0.6rem; font-weight: 600; }
+    .detail-row { display: flex; justify-content: space-between; padding: 0.25rem 0; border-bottom: 1px dotted var(--border); font-variant-numeric: tabular-nums; }
+    .detail-row:last-child { border-bottom: 0; }
+    .detail-row span:first-child { color: var(--muted); }
+    .detail-gap { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: baseline; font-size: 1.1rem; font-weight: 700; }
+    .detail-signals { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr; gap: 0.5rem; font-size: 0.9em; }
+    .signal { display: flex; gap: 0.6rem; align-items: baseline; }
+    .signal-label { color: var(--muted); white-space: nowrap; min-width: 12rem; }
+    .detail-links { margin-top: 1rem; font-size: 0.9em; }
+    .detail-links a { margin-right: 1rem; }
+    @media (max-width: 640px) { .detail-grid { grid-template-columns: 1fr; } .signal-label { min-width: auto; } }
+
+    details { border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1.1rem; }
+    details summary { cursor: pointer; font-weight: 600; }
+    details[open] summary { margin-bottom: 0.85rem; }
+    details p, details ul { margin: 0.5rem 0; }
+    details ul { padding-left: 1.25rem; }
+
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer .row { display: flex; flex-wrap: wrap; gap: 0.85rem 1.5rem; justify-content: space-between; }
+    footer p { margin: 0 0 0.5rem; }
+
+    .empty { color: var(--muted); padding: 2rem; text-align: center; }
+    .loading { color: var(--muted); padding: 1.5rem 0; }
+  </style>
+</head>
+<body>
+  <header class="narrow">
+    <p class="breadcrumb"><a href="/">trove</a> / hospital reporting comparison</p>
+    <h1>Hospital reporting comparison</h1>
+    <p class="tagline">CMS Worksheet S-10 vs. IRS Form 990 Schedule H, tax year 2022.</p>
+  </header>
+
+  <section class="narrow lede">
+    <p>Every nonprofit U.S. hospital files Worksheet S-10 with CMS and Schedule H with the IRS. Both forms have a charity-care line that's intended to capture the cost of care provided to patients who couldn't pay — but the rules, scope, and accounting treatment diverge enough that the two numbers can legitimately differ. They are <em>related</em> measures of the same underlying activity, not the same number.</p>
+    <p>trove lets you look up any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, a home-county Social Vulnerability Index (SVI) proxy for the population the hospital serves, and a link to the actual 990 on ProPublica. <strong>This is only a reference tool.</strong> A nonzero gap is a starting point for review. Many divergences are explained by definitional differences (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume.</p>
+    <p><strong>Each system is one IRS Employer Identification Number (EIN)</strong>, aggregating the underlying CMS Worksheet S-10 numbers across every CCN-keyed facility that files under that EIN. The 990 figure comes from Schedule H Part I line 7a (financial assistance at cost). The HCRIS figure is Worksheet S-10 charity care cost.</p>
+    <div class="stats" id="stats">
+      <div class="stat">
+        <div class="stat-num" id="stat-computable">—</div>
+        <div class="stat-label">Hospital systems searchable</div>
+        <div class="stat-sub">Computable matches across HCRIS, IRS 990 Schedule H, and the CBI crosswalk for tax year 2022.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-systems">—</div>
+        <div class="stat-label">With apples-to-apples comparison</div>
+        <div class="stat-sub">Both filings cover the same fiscal year (within 1 month) and exceed $500K — the subset where the comparison is meaningful as a direct number-to-number lookup.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-median">—</div>
+        <div class="stat-label">Median gap on this subset</div>
+        <div class="stat-sub">Typical disagreement between what a hospital reports to CMS vs. the IRS for the same year.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="narrow">
+    <h2>Look up a hospital</h2>
+    <div class="search-box">
+      <div class="search">
+        <input id="q" type="search" placeholder="Search by system name, facility name, or EIN…" autocomplete="off" spellcheck="false">
+      </div>
+      <div id="matches" class="matches" hidden></div>
+    </div>
+    <p class="empty-hint" id="empty-hint">Type a hospital name above. The tool covers 1,295 nonprofit hospital systems for tax year 2022.</p>
+    <div id="detail-mount"></div>
+  </section>
+
+  <section class="narrow">
+    <h2>Method, definitions, and what this doesn't show</h2>
+    <details>
+      <summary>Why HCRIS S-10 charity care cost ≠ Schedule H Part I 7a, even when both are reported correctly</summary>
+      <ul>
+        <li><strong>Definitional differences.</strong> Schedule H 7a excludes some categories that HCRIS S-10 may include — Medicaid shortfall handling, partial-payment netting, charity-vs.-uninsured-discount classification.</li>
+        <li><strong>Cost-to-charge ratio (CCR) handling.</strong> HCRIS S-10 applies a hospital-wide CCR; Schedule H allows different cost-step-down approaches.</li>
+        <li><strong>Charity care policy boundaries.</strong> Hospitals can categorize the same patient case as charity care, bad debt, or contractual allowance — moving cost between lines.</li>
+        <li><strong>Multi-facility aggregation.</strong> A single 990 EIN often covers several HCRIS-reporting facilities. Summing facility-level charity care up to the system level can smooth or amplify reporting differences across facilities.</li>
+        <li><strong>Non-Medicare hospitals.</strong> Children's hospitals, specialty cancer centers, and some teaching hospitals don't bill Medicare in volume, so HCRIS S-10 charity care can legitimately be near zero while Schedule H reports millions.</li>
+      </ul>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>The HCRIS-vs-990 fiscal year alignment problem</summary>
+      <p>HCRIS uses the federal fiscal year as a reporting cycle, not as a fiscal period. The file labeled "FY2023" contains hospital reports submitted during federal fiscal year 2023 — but the periods those reports cover vary by hospital fiscal calendar:</p>
+      <ul>
+        <li>For July–June fiscal-year hospitals, "FY2023" mostly contains their report for the year that <em>ended</em> June 2024.</li>
+        <li>For calendar-year hospitals, "FY2023" mostly contains their CY2023 report (ending Dec 2023).</li>
+        <li>For October–September hospitals, "FY2023" mostly contains their report ending September 2023.</li>
+      </ul>
+      <p>None of those periods perfectly aligns with 990 Tax Year 2022 (which itself varies by filer fiscal calendar). About <strong>29%</strong> of the 1,295 computable matched systems are period-aligned within 1 month; about 65% are exactly 12 months off. When you look up a hospital, the detail card shows the period-alignment status as a per-row signal — an aligned hospital has the two filings covering the same fiscal year, and a misaligned hospital is comparing different years. Don't read a misaligned row as a direct number-to-number comparison.</p>
+      <p><strong>Note:</strong> "alignment" here is a heuristic based on the two filings' end dates, not a proof of period overlap. Hospitals occasionally report stub periods or change fiscal calendars; the end-date proxy is correct for the vast majority but isn't a substitute for reading the filings directly.</p>
+      <p><strong>Coming in v2:</strong> per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to find the report whose period actually matches each hospital's TY2022 990. This will substantially expand the well-aligned set.</p>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>Home-county SVI proxy (Social Vulnerability Index)</summary>
+      <p>Each detail card shows a Social Vulnerability Index value for the hospital's <em>home county</em>, sourced from CDC/ATSDR's 2022 SVI release. SVI is a composite of 16 census variables across four themes (socioeconomic status; household characteristics including age, disability, single-parent, English-language proficiency; racial &amp; ethnic minority status; housing type &amp; transportation). Higher percentile = more vulnerable.</p>
+      <p>What the page shows is the overall summary rank (<code>RPL_THEMES</code>) on a 0-100 scale, sourced from the county FIPS of the hospital's HCRIS-reporting facility. For multi-facility systems where the facilities are in different counties, we take the median across those home-county SVI values. <strong>This is a proxy, not a true service-area measure</strong> — actual catchment areas can extend well beyond the home county, and within-county variation is invisible at this resolution.</p>
+      <p>Coverage: ~98% of matched systems. CDC's SVI is US-government work and public domain. Source: <a href="https://www.atsdr.cdc.gov/place-health/php/svi/index.html">CDC/ATSDR SVI</a>.</p>
+      <p><strong>Other caveats:</strong> SVI is not the same thing as ADI. SVI weighs minority status and housing factors; ADI is built more around income/employment/education. The same county can land at very different points on the two indices. v2 may add tract-level resolution and a true catchment-area weighting.</p>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>Coverage and known limits</summary>
+      <ul>
+        <li><strong>Crosswalk:</strong> 3,079 of 6,042 HCRIS hospitals appear in CBI's December 2024 crosswalk; the unmatched ~50% are mostly for-profit and government hospitals (no 990) plus hospitals not in CBI's frozen vintage. Of 1,481 unique TY2022 990 EINs ingested, 1,334 match the crosswalk.</li>
+        <li><strong>Time window:</strong> HCRIS Fiscal Year 2023 paired with 990 Tax Year 2022, ingested across IRS release years 2024, 2025, and 2026. TY2022 amendments filed after the 2026 quarterly cutoff aren't included.</li>
+        <li><strong>Validation:</strong> 6 spot-checked EINs match the IRS source XML exact-to-the-dollar; parser is verified clean. The specific EINs and the per-filing line-7a values from each are listed in the <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">methodology artifact</a>. Not a guarantee that every row is parsed correctly — bug reports welcome at the GitHub issues link.</li>
+        <li><strong>The page is a per-hospital lookup tool.</strong> Each hospital appears in its own detail card on user request. A nonzero gap on any given hospital is a starting point for review. The value is making the cross-form comparison computable at all, where previously every researcher had to reconstruct it from raw filings.</li>
+      </ul>
+    </details>
+    <details style="margin-top: 0.85rem;">
+      <summary>What's coming next</summary>
+      <ul>
+        <li>Per-hospital HCRIS year matching (<strong>v2</strong>) to expand the well-aligned subset substantially.</li>
+        <li>Earlier tax years (TY2018–TY2021) for trend analysis.</li>
+        <li>BMF-based crosswalk reconciliation to close the ~20% unmatched-EIN gap.</li>
+        <li>FDA approval review documents as a Phase 2 dataset.</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="narrow">
+    <h2>Query with Claude</h2>
+    <p>The <code>hcris-analyst</code> Claude skill answers natural-language questions about hospital financials by translating them into DuckDB queries against the Parquet bundles served from this site. Drop the bundle into your Claude skills directory:</p>
+<pre><code>git clone https://github.com/cbetz/trove
+cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
+    <p>Then ask things like:</p>
+    <ul>
+      <li><em>"Show me a profile of [hospital name, CCN, or EIN]"</em></li>
+      <li><em>"Compare [hospital] to its peer teaching hospitals on charity-care intensity"</em></li>
+      <li><em>"What does Worksheet S-10 line 23 mean?"</em></li>
+      <li><em>"Why might HCRIS S-10 charity care differ from Schedule H 7a for the same hospital?"</em></li>
+      <li><em>"Has [hospital] amended its TY2022 990 across IRS release years?"</em></li>
+    </ul>
+    <p>The bundle includes a field dictionary, peer-cohort definitions, Schedule H field map, and runnable example queries. Source at <a href="https://github.com/cbetz/trove/tree/main/skills/hcris-analyst">github.com/cbetz/trove/tree/main/skills/hcris-analyst</a>.</p>
+  </section>
+
+  <section class="narrow">
+    <h2>Reproduce the dataset</h2>
+<pre><code>git clone https://github.com/cbetz/trove
+cd trove &amp;&amp; uv sync --all-packages
+uv run python scripts/build_gap_dataset.py</code></pre>
+  </section>
+
+  <footer>
+    <p><strong>v1.1 · TY2022 ingest, SVI added · May 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Not affiliated with my employer; opinions my own. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <p>Crosswalk: <a href="https://www.communitybenefitinsight.org/">Community Benefit Insight</a> (RTI / RWJF, frozen Dec 2024). SVI: <a href="https://www.atsdr.cdc.gov/place-health/php/svi/index.html">CDC/ATSDR Social Vulnerability Index 2022</a>.</p>
+    <div class="row">
+      <span>MIT code · public-domain data · <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a></span>
+      <span>
+        <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022.csv">CSV</a> ·
+        <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">Summary</a>
+      </span>
+    </div>
+  </footer>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const usd = (v) => {
+  if (v == null || Number.isNaN(v)) return "—";
+  const sign = v < 0 ? "−" : "";
+  const a = Math.abs(v);
+  if (a >= 1e9) return `${sign}$${(a/1e9).toFixed(1)}B`;
+  if (a >= 1e6) return `${sign}$${(a/1e6).toFixed(1)}M`;
+  if (a >= 1e3) return `${sign}$${(a/1e3).toFixed(0)}K`;
+  return `${sign}$${a.toFixed(0)}`;
+};
+const usdSigned = (v) => {
+  if (v == null || Number.isNaN(v)) return "—";
+  if (v === 0) return "$0";
+  return (v > 0 ? "+" : "") + usd(v);
+};
+const pct = (v, decimals = 1) => {
+  if (v == null || Number.isNaN(v)) return "—";
+  return `${(v >= 0 ? "+" : "")}${(v * 100).toFixed(decimals)}%`;
+};
+const titleCase = (s) => {
+  if (!s) return "";
+  const letters = s.match(/[a-zA-Z]/g);
+  if (!letters) return s;
+  const upper = letters.filter(c => c === c.toUpperCase()).length;
+  if (upper / letters.length < 0.8) return s;
+  return s.replace(/\w\S*/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
+};
+const monthsBetween = (a, b) => {
+  if (!a || !b) return null;
+  const da = new Date(a), db = new Date(b);
+  if (Number.isNaN(da.getTime()) || Number.isNaN(db.getTime())) return null;
+  return Math.round(Math.abs((da - db) / (1000 * 60 * 60 * 24 * 30.44)));
+};
+const ordinal = (n) => {
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1: return `${n}st`;
+    case 2: return `${n}nd`;
+    case 3: return `${n}rd`;
+    default: return `${n}th`;
+  }
+};
+const formatMonth = (s) => {
+  if (!s) return "—";
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? s : d.toLocaleDateString("en-US", { year: "numeric", month: "short" });
+};
+
+let DATA = null;
+let QUERY = "";
+let SELECTED_EIN = null;
+const MAX_MATCHES = 8;
+
+async function init() {
+  const res = await fetch("/data/community_benefit_gap_2022.json?v=20260505-multi");
+  DATA = await res.json();
+  renderHero();
+  bindControls();
+  render();
+}
+
+function renderHero() {
+  const t = DATA.totals;
+  $("#stat-computable").textContent = t.computable.toLocaleString();
+  $("#stat-systems").textContent = t.aligned_material.toLocaleString();
+  $("#stat-median").textContent = `${Math.round(t.median_aligned_material_gap_pct * 100)}%`;
+}
+
+function bindControls() {
+  $("#q").addEventListener("input", (e) => {
+    QUERY = e.target.value.trim().toLowerCase();
+    SELECTED_EIN = null;
+    render();
+  });
+}
+
+function findMatches() {
+  if (!QUERY) return [];
+  return DATA.rows
+    .filter(r =>
+      (r.system && r.system.toLowerCase().includes(QUERY)) ||
+      (r.facility && r.facility.toLowerCase().includes(QUERY)) ||
+      (r.ein && r.ein.includes(QUERY))
+    )
+    .slice(0, MAX_MATCHES);
+}
+
+function render() {
+  const matchesEl = $("#matches");
+  const detailMount = $("#detail-mount");
+  const hint = $("#empty-hint");
+
+  if (SELECTED_EIN) {
+    matchesEl.hidden = true;
+    matchesEl.innerHTML = "";
+    hint.hidden = true;
+    renderDetail();
+    return;
+  }
+
+  detailMount.innerHTML = "";
+
+  if (!QUERY) {
+    matchesEl.hidden = true;
+    matchesEl.innerHTML = "";
+    hint.hidden = false;
+    return;
+  }
+
+  hint.hidden = true;
+  const matches = findMatches();
+  if (matches.length === 0) {
+    matchesEl.innerHTML = `<div class="match-empty">No matches for &ldquo;${escapeHtml(QUERY)}&rdquo;.</div>`;
+  } else {
+    matchesEl.innerHTML = matches.map(r => `
+      <button class="match" data-ein="${r.ein}">
+        <div class="match-name">${escapeHtml(titleCase(r.system || "(unknown)"))}</div>
+        <div class="match-sub">${escapeHtml(titleCase(r.facility || ""))}${r.ccns > 1 ? ` · ${r.ccns} facilities` : ""} · EIN ${r.ein}</div>
+      </button>
+    `).join("");
+    matchesEl.querySelectorAll(".match").forEach(btn => {
+      btn.addEventListener("click", () => {
+        SELECTED_EIN = btn.dataset.ein;
+        render();
+        document.getElementById("detail-mount").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+    });
+  }
+  matchesEl.hidden = false;
+}
+
+function renderDetail() {
+  const mount = $("#detail-mount");
+  if (!SELECTED_EIN) { mount.innerHTML = ""; return; }
+  const r = DATA.rows.find(x => x.ein === SELECTED_EIN);
+  if (!r) { mount.innerHTML = ""; return; }
+  const gapClass = r.gap > 0 ? "pos" : r.gap < 0 ? "neg" : "";
+  const interp = r.gap > 0
+    ? "Reports more charity care to CMS than financial assistance to the IRS"
+    : r.gap < 0
+      ? "Reports more financial assistance to the IRS than charity care to CMS"
+      : "Reports identical amounts to both";
+  const months = monthsBetween(r.hcris_fy_end, r.period_end);
+  const propublicaUrl = `https://projects.propublica.org/nonprofits/organizations/${parseInt(r.ein, 10)}`;
+  const ccnSignal = r.ccns > 1
+    ? `${r.ccns} facilities rolled up under one EIN — system-level aggregation may smooth facility-level reporting differences`
+    : `1 facility — clean unit-of-analysis match`;
+  const periodSignal = months == null
+    ? "fiscal-year alignment unknown"
+    : months === 0
+      ? "HCRIS fiscal year and 990 tax period end the same month"
+      : `${months}-month gap between HCRIS fiscal year end and 990 tax period end`;
+  const oneZero = (r.hcris_charity === 0 || r.fa_990 === 0)
+    ? "<strong>One side reports zero.</strong> Often a children's hospital or specialty hospital that doesn't bill Medicare in volume, where HCRIS S-10 charity care is legitimately zero."
+    : null;
+  const sviSignal = r.svi_overall_pct != null
+    ? (() => {
+        const pct = Math.round(r.svi_overall_pct);
+        const band = pct >= 80 ? "high social vulnerability"
+          : pct >= 60 ? "moderately above-average vulnerability"
+          : pct >= 40 ? "near-national-median vulnerability"
+          : pct >= 20 ? "below-average vulnerability"
+          : "low social vulnerability";
+        const facility_note = r.ccns > 1
+          ? "median across the system's facility home counties"
+          : "the facility's home county";
+        return `<strong>${ordinal(pct)} national percentile</strong> — ${band} (${facility_note})`;
+      })()
+    : null;
+
+  mount.innerHTML = `
+    <div class="detail">
+      <p class="detail-title">${escapeHtml(titleCase(r.system || "(unknown)"))}</p>
+      <p class="detail-sub">${escapeHtml(titleCase(r.facility || ""))} · EIN ${r.ein} · ${r.ccns} CCN${r.ccns === 1 ? "" : "s"}</p>
+      <div class="detail-grid">
+        <div>
+          <h3>HCRIS Worksheet S-10 (CMS)</h3>
+          <div class="detail-row"><span>Charity care cost</span><span>${usd(r.hcris_charity)}</span></div>
+          <div class="detail-row"><span>Uncompensated care cost</span><span>${usd(r.hcris_uncomp)}</span></div>
+          <div class="detail-row"><span>Total operating expenses</span><span>${usd(r.hcris_opex)}</span></div>
+          <div class="detail-row"><span>Fiscal year end</span><span>${formatMonth(r.hcris_fy_end)}</span></div>
+        </div>
+        <div>
+          <h3>990 Schedule H (IRS)</h3>
+          <div class="detail-row"><span>Financial assistance at cost (7a)</span><span>${usd(r.fa_990)}</span></div>
+          <div class="detail-row"><span>Total community benefit (7k)</span><span>${usd(r.cb_990)}</span></div>
+          <div class="detail-row"><span>Total expenses</span><span>${usd(r.exp_990)}</span></div>
+          <div class="detail-row"><span>Tax period end</span><span>${formatMonth(r.period_end)}</span></div>
+        </div>
+      </div>
+      <div class="detail-gap">
+        <span>Gap (HCRIS − 990)</span>
+        <span class="${gapClass}">${usdSigned(r.gap)} <span style="font-weight: 400; color: var(--muted); font-size: 0.85em;">(${pct(r.gap_pct)})</span></span>
+      </div>
+      <div class="detail-signals">
+        <div class="signal"><span class="signal-label">Interpretation:</span><span>${interp}.</span></div>
+        <div class="signal"><span class="signal-label">Period alignment:</span><span>${periodSignal}.</span></div>
+        <div class="signal"><span class="signal-label">Aggregation:</span><span>${ccnSignal}.</span></div>
+        ${sviSignal ? `<div class="signal"><span class="signal-label">Home-county SVI:</span><span>${sviSignal}.</span></div>` : ""}
+        ${oneZero ? `<div class="signal"><span class="signal-label">Note:</span><span>${oneZero}</span></div>` : ""}
+      </div>
+      <div class="detail-links">
+        <a href="${propublicaUrl}" target="_blank" rel="noopener">View 990 on ProPublica Nonprofit Explorer ↗</a>
+      </div>
+    </div>`;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+init().catch(err => {
+  $("#empty-hint").innerHTML = `Failed to load data: ${escapeHtml(err.message)}`;
+  $("#empty-hint").hidden = false;
+});
+</script>
+</body>
+</html>
