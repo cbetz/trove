@@ -47,12 +47,24 @@ uv run python scripts/build_fda_index.py
 
 - **`fda_sba`** — Scrapes FDA's annual *Novel Drug Approvals* pages (curated NMEs and novel BLAs), extracts application number / drug name / active ingredient / approval date / indication, and emits links to the approval-package PDFs. v0.1 covers 2021–2024 (~192 drugs).
 
-**Skills (drop into `~/.claude/skills/`):**
-
-- `skills/hcris-analyst/` — natural-language queries over the HCRIS + 990 + crosswalk bundle.
-- `skills/fda-analyst/` — questions about specific FDA drug approvals; reads approval-package PDFs at query time.
-
 **Site:** static, deployed to Vercel at troveproject.com.
+
+## Install the skills
+
+Both skills are filesystem-installable today (Claude plugin marketplace submission is planned as a follow-up). From a terminal:
+
+```bash
+git clone https://github.com/cbetz/trove
+cp -r trove/skills/hcris-analyst ~/.claude/skills/
+cp -r trove/skills/fda-analyst ~/.claude/skills/
+```
+
+Restart Claude Code and the skills are loaded. Each skill's `description` field tells Claude when to invoke — you don't call them by name.
+
+- `skills/hcris-analyst/` — natural-language queries over hospital reporting (HCRIS Worksheet S-10 + IRS 990 Schedule H + CCN↔EIN crosswalk + CDC SVI). Profile lookups, peer comparisons, glossary, gap detection.
+- `skills/fda-analyst/` — questions about specific FDA drug approvals. Reads approval-package PDFs at query time.
+
+For per-project install (`.claude/skills/` inside the repo), Claude.ai upload, or authoring a new skill, see [`skills/README.md`](skills/README.md).
 
 ## Dev setup
 
