@@ -10,11 +10,11 @@ Two areas live in v1:
 
 ### [/drugs](https://troveproject.com/drugs/) — FDA drug approvals
 
-Look up any FDA Novel Drug Approval from 2021–2024 (~192 drugs). Each row carries the application number, sponsor, approval date, indication, link to the FDA-approved label PDF, and a deep link to the drugs@FDA application overview where every approval-package document lives (medical review, statistical review, pharmacology review, etc.). Companion Claude skill `fda-analyst` reads those PDFs at query time when a user asks about a specific approval.
+Look up any FDA Novel Drug Approval from 2021–2024 (192 drugs). Each row carries the application number, approval date, indication, and a deep link to the drugs@FDA application overview where every approval-package document lives (medical review, statistical review, pharmacology review, etc.). About two-thirds of rows also include a direct link to the FDA-approved label PDF. Companion Claude skill `fda-analyst` reads those PDFs at query time when a user asks about a specific approval.
 
 Sources: FDA's annual *Novel Drug Approvals* curated lists; drugs@FDA database. US government work, public domain.
 
-### [/hospitals](https://troveproject.com/hospitals/) — hospital reporting comparison (CMS vs. IRS)
+### [/hospitals](https://troveproject.com/hospitals/) — hospital reporting (CMS + IRS)
 
 A lookup tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both lines are *intended* to capture the cost of care provided to patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ — often by a lot. Search any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, a home-county Social Vulnerability Index proxy, and a deep link to the actual 990 on ProPublica.
 
@@ -35,7 +35,7 @@ uv run python scripts/build_fda_index.py
 
 ## What's in the box
 
-**Hospital reporting comparison area:**
+**Hospital reporting area:**
 
 - **`hcris`** — CMS Medicare Cost Reports (form 2552-10) parser with a 44-variable semantic dictionary. Raw HCRIS ships as headerless long-skinny CSVs; this turns them into tidy DataFrames and partitioned Parquet.
 - **`form990`** — IRS Form 990 Schedule H parser. Bulk-XML download, index reader, and 19 fields per filing including Part I 7a–k community benefit amounts and Part III bad debt.
