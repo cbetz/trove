@@ -27,9 +27,14 @@ NME_PAGE_URL_TEMPLATE = (
 )
 USER_AGENT = "trove/fda_sba (+https://github.com/cbetz/trove)"
 
-# The label-PDF URL embeds the application number as the first numeric run,
-# e.g. `761315s000lbl.pdf` -> `761315`.
-_APPL_NO_RE = re.compile(r"/(\d{6})s\d{3}lbl\.pdf", re.I)
+# FDA links from the annual novel-drug-approvals page take two shapes:
+#   1. A direct label PDF URL: /drugsatfda_docs/label/2024/{appl_no}...lbl.pdf
+#      Variants: bare, Orig1s000, Orig1s000corrected, Corrected_, multi-app
+#      (comma-separated). We capture the first 6-digit run after the year.
+#   2. The drugs@FDA application overview URL with the app number as a query
+#      param: ?ApplNo=215866 or ?varApplNo=761180
+_APPL_NO_LABEL_RE = re.compile(r"/drugsatfda_docs/(?:label|nda|bla)/\d{4}/(\d{6})", re.I)
+_APPL_NO_QUERY_RE = re.compile(r"[Vv]ar[Aa]pplNo=(\d+)|[Aa]pplNo=(\d+)")
 
 
 def fetch_nme_year_html(
@@ -110,9 +115,12 @@ def _iter_rows(page_path: Path, year: int):
         drug_name = _clean(cells[1].text_content())
         if not drug_name:
             continue
-        label_anchor = cells[1].cssselect("a")
-        label_url = label_anchor[0].get("href") if label_anchor else None
-        appl_no = _appl_no_from_label_url(label_url)
+        anchor = cells[1].cssselect("a")
+        link_url = anchor[0].get("href") if anchor else None
+        appl_no = _appl_no_from_label_url(link_url)
+        # Only set label_pdf_url when the link is actually a label PDF;
+        # otherwise FDA points at the drugs@FDA overview directly.
+        label_url = link_url if _is_label_pdf_url(link_url) else None
         active = _clean(cells[2].text_content())
         approval_date = _clean(cells[3].text_content())
         use_cell = cells[4] if len(cells) > 4 else None
@@ -139,10 +147,21 @@ def _clean(s: str | None) -> str:
 
 
 def _appl_no_from_label_url(url: str | None) -> str | None:
+    """Extract the application number from either a label PDF URL or a
+    drugs@FDA application-overview URL."""
     if not url:
         return None
-    m = _APPL_NO_RE.search(url)
-    return m.group(1) if m else None
+    m = _APPL_NO_LABEL_RE.search(url)
+    if m:
+        return m.group(1)
+    m = _APPL_NO_QUERY_RE.search(url)
+    if m:
+        return m.group(1) or m.group(2)
+    return None
+
+
+def _is_label_pdf_url(url: str | None) -> bool:
+    return bool(url) and "/drugsatfda_docs/" in url and url.lower().endswith(".pdf")
 
 
 def _appl_type(appl_no: str | None) -> str | None:
@@ -163,14 +182,24 @@ def _drugs_at_fda_url(appl_no: str | None) -> str | None:
 
 
 def _strip_to_indication(cell) -> str:
-    """Pull the text indication out of a use cell, dropping trailing links."""
+    """Pull the text indication out of a use cell, dropping trailing links.
+
+    The cell typically looks like: indication text, optional <br>, then one or
+    more <a> tags (Drug Trials Snapshot, Press Release, etc.). We drop the
+    anchors entirely before extracting text — much more robust than regex-
+    matching the various link labels FDA uses ("Drug Trial Snapshot",
+    "Drug Trials Snapshots: VYLOY", "Press Release", "Approval History", ...).
+    """
     if cell is None:
         return ""
-    # The cell often contains: indication text, <br>, then a Drug Trials Snapshot link.
-    # text_content() concatenates everything; we trim the snapshot text off when present.
-    text = _clean(cell.text_content())
-    text = re.sub(r"\s*Drug Trials Snapshot\s*$", "", text, flags=re.I).strip()
-    return text
+    # Operate on a copy so we don't mutate the parsed tree.
+    from copy import deepcopy
+
+    cell = deepcopy(cell)
+    for a in cell.cssselect("a"):
+        # Remove the anchor and any tail text it leaves behind.
+        a.getparent().remove(a)
+    return _clean(cell.text_content())
 
 
 def _trials_snapshot_url(cell) -> str | None:
