@@ -4,40 +4,55 @@ Open-source parsers, agents, and visualizations for underused healthcare dataset
 
 ## What this is
 
-A lookup tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both lines are *intended* to capture the cost of care provided to patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ — often by a lot.
+trove builds open-source lookup tools, parsers, and Claude skills on top of public-domain healthcare datasets that are widely cited but rarely usable in their raw form. Site: [troveproject.com](https://troveproject.com).
 
-The site at [troveproject.com](https://troveproject.com) lets you search any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, a home-county Social Vulnerability Index proxy, and a deep link to the actual 990 on ProPublica.
+Two areas live in v1:
 
-For tax year 2022, the funnel:
+### [/drugs](https://troveproject.com/drugs/) — FDA drug approvals
 
-- **1,334 systems matched** at the EIN level (HCRIS CCNs rolled up to a 990 EIN via CBI's crosswalk).
-- **1,295 computable** (39 systems have a blank Schedule H 7a, so a charity_gap can't be defined).
-- **372 period-aligned** within 1 month (HCRIS fiscal-year end ≈ 990 tax-period end). Alignment is what makes the comparison meaningful — most of the rest are 12 months out of phase because HCRIS uses the federal-fiscal-year reporting cycle as its file naming, not the underlying period covered.
-- **228 also material** — both filings ≥ $500K. The dollar threshold is a noise floor, not a comparability test.
+Look up any FDA Novel Drug Approval from 2021–2024 (~192 drugs). Each row carries the application number, sponsor, approval date, indication, link to the FDA-approved label PDF, and a deep link to the drugs@FDA application overview where every approval-package document lives (medical review, statistical review, pharmacology review, etc.). Companion Claude skill `fda-analyst` reads those PDFs at query time when a user asks about a specific approval.
 
-Among the 228 aligned + material systems, the median proportional gap is **25%** (i.e., typical cross-form disagreement is large). 53 systems (23%) disagree by more than half. The full per-system data is in the published Parquet bundle and CSV artifact for anyone who wants to do their own analysis.
+Sources: FDA's annual *Novel Drug Approvals* curated lists; drugs@FDA database. US government work, public domain.
 
-Full data: [`artifacts/community_benefit_gap_2022.csv`](artifacts/community_benefit_gap_2022.csv) · Method and caveats: [`artifacts/community_benefit_gap_2022_summary.md`](artifacts/community_benefit_gap_2022_summary.md). The per-system artifact has all 1,334 rows including misaligned ones; use `hcris_fy_end_dt` and `sched_h_tax_period_end` to filter to overlapping periods.
+### [/hospitals](https://troveproject.com/hospitals/) — hospital reporting comparison (CMS vs. IRS)
+
+A lookup tool for the charity-care cost numbers that nonprofit U.S. hospitals report to two different regulators: CMS (Worksheet S-10 of the Medicare Cost Report) and the IRS (Form 990 Schedule H Part I line 7a). Both lines are *intended* to capture the cost of care provided to patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ — often by a lot. Search any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, a home-county Social Vulnerability Index proxy, and a deep link to the actual 990 on ProPublica.
+
+For tax year 2022, the funnel: **1,334 systems matched** at the EIN level → **1,295 computable** → **372 period-aligned within 1 month** → **228 also material** (both filings ≥ $500K). Among those 228, the median proportional gap is **25%**.
+
+Full data: [`artifacts/community_benefit_gap_2022.csv`](artifacts/community_benefit_gap_2022.csv) · Method: [`artifacts/community_benefit_gap_2022_summary.md`](artifacts/community_benefit_gap_2022_summary.md).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/cbetz/trove
 cd trove && uv sync --all-packages
+# /hospitals dataset:
 uv run python scripts/build_gap_dataset.py
+# /drugs dataset:
+uv run python scripts/build_fda_index.py
 ```
 
 ## What's in the box
 
-Phase 1 packages:
+**Hospital reporting comparison area:**
 
 - **`hcris`** — CMS Medicare Cost Reports (form 2552-10) parser with a 44-variable semantic dictionary. Raw HCRIS ships as headerless long-skinny CSVs; this turns them into tidy DataFrames and partitioned Parquet.
 - **`form990`** — IRS Form 990 Schedule H parser. Bulk-XML download, index reader, and 19 fields per filing including Part I 7a–k community benefit amounts and Part III bad debt.
-- **`crosswalk`** — CCN ↔ EIN crosswalk (3,523 hospitals, 2,385 EINs) — the bridge that makes HCRIS-to-990 joins possible. Bundled from Community Benefit Insight.
+- **`crosswalk`** — CCN ↔ EIN crosswalk (3,523 hospitals, 2,385 EINs). Bundled from Community Benefit Insight.
 - **`analytics`** — composed queries. `community_benefit_gap()` is the headline primitive.
-- **`sdoh`** — Social Determinants of Health enrichments. v0.2 ships **CDC Social Vulnerability Index 2022 county-level** (public domain — included in the public bundles) and **UW Area Deprivation Index** county aggregation (local-only — UW's terms are non-sublicensable). Both attach a home-county vulnerability/deprivation proxy to each hospital row; the public site shows SVI, and a user with their own UW ADI download gets ADI in their local pipeline.
+- **`sdoh`** — Social Determinants of Health enrichments. Ships **CDC Social Vulnerability Index 2022 county-level** (public domain — included in the public bundles) and **UW Area Deprivation Index** county aggregation (local-only — UW's terms are non-sublicensable).
 
-On top of those: a Claude skill bundle (`skills/hcris-analyst`, in progress) and a static Observable-style site (`web/`, deployed to Vercel).
+**FDA drug approvals area:**
+
+- **`fda_sba`** — Scrapes FDA's annual *Novel Drug Approvals* pages (curated NMEs and novel BLAs), extracts application number / drug name / active ingredient / approval date / indication, and emits links to the approval-package PDFs. v0.1 covers 2021–2024 (~192 drugs).
+
+**Skills (drop into `~/.claude/skills/`):**
+
+- `skills/hcris-analyst/` — natural-language queries over the HCRIS + 990 + crosswalk bundle.
+- `skills/fda-analyst/` — questions about specific FDA drug approvals; reads approval-package PDFs at query time.
+
+**Site:** static, deployed to Vercel at troveproject.com.
 
 ## Dev setup
 
@@ -50,7 +65,7 @@ uv run ruff check
 ## Layout
 
 ```
-packages/         Python libraries (hcris, form990, crosswalk, analytics, sdoh)
+packages/         Python libraries (hcris, form990, crosswalk, analytics, sdoh, fda_sba)
 skills/           Claude skill bundles
 web/              Static site at troveproject.com
 pipelines/        ETL orchestration — TBD
@@ -62,6 +77,7 @@ scripts/          Build + demo scripts
 
 ## Status
 
+- **M6** — Multi-area site: trove now has two live areas at troveproject.com (`/drugs` and `/hospitals`), each with its own search-first lookup page, methodology, and Claude skill. New `fda_sba` package indexes FDA Novel Drug Approvals 2021–2024 (~192 drugs); new `fda-analyst` Claude skill reads approval-package PDFs at query time. Adding more areas in the future is now a matter of adding a package + a page + a skill.
 - **M5.2** — CDC Social Vulnerability Index added to `sdoh` and wired through to the public bundles + the troveproject.com detail card. Each row now shows a "Service area (SVI)" signal: e.g. *"81st national percentile — high social vulnerability in the system's home county"*. SVI is fully public-domain, so unlike ADI this ships in the public CSV / Parquet / JSON. ADI capability remains in the local pipeline for users with their own UW license.
 - **M5.1** — `sdoh` package added with `county_adi_from_block_group()`. ADI flows through the *local* pipeline only — UW's non-sublicensable terms mean it can't be in the public bundles.
 - **M5** — `hcris-analyst` Claude skill shipped. Natural-language queries against HCRIS + 990 + the gap dataset, powered by DuckDB-over-HTTPS against three Parquet bundles served from troveproject.com (`hcris_2023_wide.parquet`, `schedule_h_2022.parquet`, `community_benefit_gap_2022.parquet`). Skill bundle at [`skills/hcris-analyst/`](skills/hcris-analyst/) includes the SKILL.md and reference docs (field dictionary, peer-cohort definitions, Schedule H map, runnable example queries).
