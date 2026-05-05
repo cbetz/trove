@@ -101,7 +101,10 @@
 
   <section>
     <h2>Claude skills</h2>
-    <p>Each area ships with a Claude skill that translates natural-language questions into queries over the area's published data. Drop a skill into your Claude skills directory and ask away:</p>
+    <p>Each area ships with a Claude skill that translates natural-language questions into queries over the area's published data. The skills are bundled as a Claude Code plugin:</p>
+<pre><code>/plugin marketplace add cbetz/trove
+/plugin install trove@trove</code></pre>
+    <p>Or copy the skill directories directly if you'd rather skip the plugin layer:</p>
 <pre><code>git clone https://github.com/cbetz/trove
 cp -r trove/skills/fda-analyst ~/.claude/skills/
 cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>

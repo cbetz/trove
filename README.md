@@ -51,7 +51,16 @@ uv run python scripts/build_fda_index.py
 
 ## Install the skills
 
-Both skills are filesystem-installable today (Claude plugin marketplace submission is planned as a follow-up). From a terminal:
+trove is packaged as a Claude Code plugin (`.claude-plugin/plugin.json`) containing both skills. Two install paths:
+
+**Plugin install (recommended once published to the official marketplace):**
+
+```
+/plugin marketplace add cbetz/trove
+/plugin install trove@trove
+```
+
+**Filesystem install (works today):**
 
 ```bash
 git clone https://github.com/cbetz/trove
@@ -59,7 +68,7 @@ cp -r trove/skills/hcris-analyst ~/.claude/skills/
 cp -r trove/skills/fda-analyst ~/.claude/skills/
 ```
 
-Restart Claude Code and the skills are loaded. Each skill's `description` field tells Claude when to invoke — you don't call them by name.
+Either way, restart Claude Code and both skills are loaded. Each skill's `description` field tells Claude when to invoke — you don't call them by name.
 
 - `skills/hcris-analyst/` — natural-language queries over hospital reporting (HCRIS Worksheet S-10 + IRS 990 Schedule H + CCN↔EIN crosswalk + CDC SVI). Profile lookups, peer comparisons, glossary, gap detection.
 - `skills/fda-analyst/` — questions about specific FDA drug approvals. Reads approval-package PDFs at query time.
