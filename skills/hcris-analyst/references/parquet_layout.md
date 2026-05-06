@@ -8,8 +8,8 @@ DuckDB can query Parquet files over HTTPS natively. Treat each URL below as a vi
 |-----|-------------|-------------|
 | `https://troveproject.com/data/hcris_2023_wide.parquet` | HCRIS Hospital 2552-10, FY2023, pivoted wide. One row per CCN-keyed facility, every dictionary variable as a named column. | ~6,100 × 48 |
 | `https://troveproject.com/data/schedule_h_2022.parquet` | IRS 990 Schedule H filings for tax year 2022. One row per filing (originals + amendments — dedupe per EIN if needed). | ~1,500 × 23 |
-| `https://troveproject.com/data/community_benefit_gap_2022.parquet` | Pre-joined gap dataset: HCRIS S-10 charity care summed per EIN, joined to Schedule H 7a, with `charity_gap` and `hcris_fy_end_dt` for alignment filtering. | 1,334 × 19 |
-| `https://troveproject.com/data/community_benefit_gap_2022.json` | Same gap dataset, JSON (UI-shaped — non-computable rows excluded, includes `gap_pct`). Use the Parquet for analysis; this is for the web UI. | 1,295 |
+| `https://troveproject.com/data/community_benefit_gap_2022.parquet` | Pre-joined matched hospital dataset: HCRIS S-10 charity care summed per EIN, joined to Schedule H 7a, with `charity_gap` and `hcris_fy_end_dt` for alignment filtering. | 1,334 × 19 |
+| `https://troveproject.com/data/community_benefit_gap_2022.json` | Same matched hospital dataset, JSON (UI-shaped — non-computable rows excluded, includes `gap_pct`). Use the Parquet for analysis; this is for the web UI. | 1,295 |
 
 ## JSON envelope shape
 
@@ -49,13 +49,29 @@ WHERE prvdr_num = '330101'"
 import duckdb
 
 duckdb.sql("""
-    SELECT system, hcris_charity, fa_990, charity_gap
+    SELECT sched_h_organization_name AS system,
+           hcris_charity_care_cost,
+           sched_h_financial_assistance_at_cost,
+           charity_gap AS cross_form_difference
+    FROM read_parquet('https://troveproject.com/data/community_benefit_gap_2022.parquet')
+    WHERE LOWER(sched_h_organization_name) LIKE '%yale%'
+       OR LOWER(hospital_name) LIKE '%yale%'
+    ORDER BY system
+""").df()
+```
+
+**Aligned cohort distribution:**
+
+```python
+duckdb.sql("""
+    SELECT
+      COUNT(*) AS n,
+      MEDIAN(ABS(charity_gap)) AS median_abs_difference,
+      PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY ABS(charity_gap)) AS p90_abs_difference
     FROM read_parquet('https://troveproject.com/data/community_benefit_gap_2022.parquet')
     WHERE ABS(EXTRACT(EPOCH FROM (hcris_fy_end_dt - sched_h_tax_period_end))/2629800) <= 1
       AND ABS(hcris_charity_care_cost) >= 500000
       AND ABS(sched_h_financial_assistance_at_cost) >= 500000
-    ORDER BY ABS(charity_gap) DESC
-    LIMIT 10
 """).df()
 ```
 
@@ -76,15 +92,15 @@ ORDER BY hcris.charity_care_cost DESC
 LIMIT 20;
 ```
 
-(The full CCN↔EIN crosswalk is bundled inside the `crosswalk` Python package — see "Local Python access" below — but the gap dataset already does the join for you.)
+(The full CCN↔EIN crosswalk is bundled inside the `crosswalk` Python package — see "Local Python access" below — but the matched hospital dataset already does the join for you.)
 
 ## Key joins
 
 - **HCRIS to crosswalk:** join `hcris_2023_wide.prvdr_num` to crosswalk `ccn`. Multi-facility systems will produce multiple rows per EIN.
 - **Schedule H to crosswalk:** join `schedule_h_2022.ein` to crosswalk `ein`.
-- **Closing the gap:** the pre-joined `community_benefit_gap_2022.parquet` already does both joins and aggregates HCRIS to the EIN level. Use that table for cross-form questions; use the raw HCRIS or Schedule H tables for facility-level or filing-level questions.
+- **Using the pre-joined table:** `community_benefit_gap_2022.parquet` already does both joins and aggregates HCRIS to the EIN level. Use that table for cross-form questions; use the raw HCRIS or Schedule H tables for facility-level or filing-level questions.
 
-## Important columns on the gap dataset
+## Important columns on the matched hospital dataset
 
 | Column | What it means |
 |--------|---------------|
@@ -100,9 +116,9 @@ LIMIT 20;
 | `sched_h_total_community_benefit` | Schedule H Part I line 7k (total community benefit). |
 | `sched_h_total_expenses` | Total expenses from main 990 (denominator for the 7k ratio). |
 | `sched_h_tax_period_end` | End date of the 990 tax period. |
-| `charity_gap` | `hcris_charity_care_cost - sched_h_financial_assistance_at_cost`. NULL if either side is blank. |
+| `charity_gap` | Cross-form difference: `hcris_charity_care_cost - sched_h_financial_assistance_at_cost`. NULL if either side is blank. |
 | `community_benefit_pct_of_expenses` | `sched_h_total_community_benefit / hcris_total_operating_expenses` — sanity check on the 7k ratio against HCRIS expenses. |
-| `svi_overall_pct` | CDC Social Vulnerability Index 2022, county-level overall summary percentile (0-100, higher = more vulnerable). Median across the system's CCN home counties. ~98% coverage. |
+| `svi_overall_pct` | CDC Social Vulnerability Index 2022, county-level overall summary percentile (0-100, higher = more vulnerable). Median across the system's CCN home counties. ~98% coverage. Home-county proxy only; not a service-area measure. |
 | `svi_socio_pct`, `svi_household_pct`, `svi_minority_pct`, `svi_housing_pct` | The four SVI sub-themes: socioeconomic status, household characteristics (age/disability/single-parent/ESL), racial & ethnic minority status, housing type & transportation. Same scale and source. |
 
 ## The alignment filter

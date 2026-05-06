@@ -27,11 +27,11 @@ These come from the parent 990, not Schedule H — they're useful as denominator
 
 ## Schedule H Part I line 7 — community benefit (NET column)
 
-Schedule H Part I has eleven line-7 categories, each broken into columns (a) activities, (b) persons served, (c) total expense, (d) offsetting revenue, (e) **net expense**, (f) percent of total expense. trove extracts column (e), the net amount, for every line — that's the figure used for cross-form comparisons.
+Schedule H Part I has eleven line-7 categories, each broken into columns (a) activities, (b) persons served, (c) total expense, (d) offsetting revenue, (e) **net expense**, (f) percent of total expense. trove extracts column (e), the net amount, for every line — that's the figure used for cross-form context.
 
 | Variable | Schedule H line | Notes |
 |----------|-----------------|-------|
-| `financial_assistance_at_cost` | **7a** | Charity-care cost. **The headline cross-reference against HCRIS Worksheet S-10 charity care.** This is the field that powers `analytics.community_benefit_gap()`. |
+| `financial_assistance_at_cost` | **7a** | Charity-care cost. **The cross-reference against HCRIS Worksheet S-10 charity care.** This is the field that powers `analytics.community_benefit_gap()`. |
 | `unreimbursed_medicaid` | 7b | Medicaid shortfall — Medicaid payments minus Medicaid cost. |
 | `unreimbursed_other_means_tested` | 7c | Other means-tested government programs (CHIP, etc.) net of payments. |
 | `total_financial_assistance` | 7d | Sum of 7a + 7b + 7c. |
