@@ -10,8 +10,8 @@
     {
       "name": "trove",
       "source": "./",
-      "description": "Two Claude skills for looking up underused public healthcare data: hcris-analyst (CMS Worksheet S-10 vs. IRS 990 Schedule H, side-by-side) and fda-analyst (FDA novel drug approvals + approval-package documents).",
-      "version": "1.0.0",
+      "description": "Two Claude skills for looking up underused public healthcare data: hcris-analyst (related CMS Worksheet S-10 and IRS 990 Schedule H charity-care fields side-by-side) and fda-analyst (FDA novel drug approvals + approval-package documents).",
+      "version": "1.0.1",
       "author": { "name": "Chris Betz" },
       "homepage": "https://troveproject.com",
       "repository": "https://github.com/cbetz/trove",
