@@ -21,9 +21,9 @@ LIMIT 5;
 
 If the user gives a name only and there are multiple matches, surface the candidates with bed counts and revenue and ask which one.
 
-## 2. Peer comparison
+## 2. Peer context
 
-**Q:** "How does Yale-New Haven compare to other major teaching hospitals?"
+**Q:** "Show Yale-New Haven alongside similar major teaching hospitals."
 
 ```sql
 WITH yale AS (
@@ -39,17 +39,17 @@ peers AS (
 SELECT
   prvdr_num, hospital_name, total_beds, net_patient_revenue,
   charity_care_cost,
-  charity_care_cost / total_operating_expenses AS charity_intensity
+  charity_care_cost / total_operating_expenses AS charity_care_ratio
 FROM peers
 UNION ALL SELECT prvdr_num, hospital_name, total_beds, net_patient_revenue,
   charity_care_cost, charity_care_cost / total_operating_expenses
 FROM yale
-ORDER BY charity_intensity DESC NULLS LAST;
+ORDER BY charity_care_ratio DESC NULLS LAST;
 ```
 
-## 3. Largest aligned-period community benefit gaps
+## 3. Aligned-period cross-form differences
 
-**Q:** "Which nonprofit hospitals report wildly different charity-care numbers to CMS vs. the IRS?"
+**Q:** "Show the aligned-period CMS and IRS charity-care fields for Yale-New Haven."
 
 ```sql
 SELECT
@@ -59,14 +59,17 @@ SELECT
   ccn_count,
   hcris_charity_care_cost,
   sched_h_financial_assistance_at_cost AS fa_990,
-  charity_gap,
-  charity_gap / GREATEST(ABS(hcris_charity_care_cost), ABS(sched_h_financial_assistance_at_cost)) AS gap_pct
+  charity_gap AS cross_form_difference,
+  charity_gap / GREATEST(ABS(hcris_charity_care_cost), ABS(sched_h_financial_assistance_at_cost)) AS difference_pct
 FROM read_parquet('https://troveproject.com/data/community_benefit_gap_2022.parquet')
 WHERE ROUND(ABS(EXTRACT(EPOCH FROM (hcris_fy_end_dt - sched_h_tax_period_end))) / 2629800) <= 1
   AND ABS(hcris_charity_care_cost) >= 500000
   AND ABS(sched_h_financial_assistance_at_cost) >= 500000
-ORDER BY ABS(charity_gap) DESC
-LIMIT 20;
+  AND (
+    LOWER(sched_h_organization_name) LIKE '%yale%'
+    OR LOWER(hospital_name) LIKE '%yale%'
+  )
+ORDER BY system;
 ```
 
 ## 4. Field glossary lookup
@@ -104,11 +107,11 @@ ORDER BY uncompensated_care_cost DESC
 LIMIT 10;
 ```
 
-The expected top of this list is the public safety-net systems: Harris Health (Houston), Dallas County Hosp. Dist., JPS Health (Tarrant), University Health (Bexar), Grady Memorial.
+Use this as a descriptive HCRIS-only query. Do not mix it with Schedule H fields unless the question specifically requires cross-form context.
 
-## 7. Hospitals where Schedule H 7k > HCRIS operating expenses
+## 7. Rows where Schedule H 7k is high relative to HCRIS operating expenses
 
-**Q:** "Are there any hospitals where the IRS-reported community benefit ratio looks too high?"
+**Q:** "Show rows where Schedule H total community benefit is high relative to HCRIS operating expenses."
 
 ```sql
 SELECT ein, sched_h_organization_name,
@@ -122,11 +125,11 @@ ORDER BY ratio DESC
 LIMIT 10;
 ```
 
-Often a flag for either a children's/specialty hospital where 7k is dominated by research+education, or a rollup mismatch (multi-CCN system whose HCRIS reports are partial).
+Often this reflects a children's/specialty hospital where 7k is dominated by research+education, or a rollup mismatch (multi-CCN system whose HCRIS reports are partial). Treat it as a data-context question, not a conclusion.
 
-## 8. Charity-care intensity by home-county vulnerability (SVI proxy)
+## 8. Charity-care cost ratio by home-county SVI band
 
-**Q:** "Are hospitals in high-vulnerability areas providing more charity care, proportionally?"
+**Q:** "How do charity-care cost ratios vary by home-county SVI band?"
 
 ```sql
 WITH banded AS (
@@ -153,7 +156,7 @@ GROUP BY svi_band
 ORDER BY median_charity_pct DESC NULLS LAST;
 ```
 
-This is the kind of question SVI is for — it lets you put a single number on "the hospital's service population is or isn't socially vulnerable" so you can read other numbers in that context. Sub-theme columns (`svi_socio_pct`, `svi_minority_pct`, etc.) let you decompose: a county can rank high on SVI overall because of housing stress *or* because of minority population, and those tell different stories about the hospital's environment.
+SVI supports coarse geographic context only. This is a home-county proxy, not a service-area measure, and it should not be used to judge adequacy of charity care. Sub-theme columns (`svi_socio_pct`, `svi_minority_pct`, etc.) can explain why a county ranks high on SVI overall.
 
 ## When the question doesn't have a SQL answer
 

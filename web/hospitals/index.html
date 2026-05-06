@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>trove — look up a hospital's CMS-vs-IRS charity-care reporting</title>
-  <meta name="description" content="Look up any of 1,295 nonprofit U.S. hospital systems and see what they reported as charity care to CMS (Worksheet S-10) vs. the IRS (Form 990 Schedule H) for tax year 2022.">
+  <title>trove — side-by-side CMS and IRS hospital charity-care reporting</title>
+  <meta name="description" content="Look up related CMS Worksheet S-10 and IRS Form 990 Schedule H charity-care reporting fields for 1,295 nonprofit U.S. hospital systems, with filing-period context and source links.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="trove — look up a hospital's CMS-vs-IRS charity-care reporting">
-  <meta property="og:description" content="Look up any of 1,295 nonprofit U.S. hospital systems and see what they reported as charity care to CMS (Worksheet S-10) vs. the IRS (Form 990 Schedule H) for tax year 2022.">
+  <meta property="og:title" content="trove — side-by-side CMS and IRS hospital charity-care reporting">
+  <meta property="og:description" content="Look up related CMS Worksheet S-10 and IRS Form 990 Schedule H charity-care reporting fields for 1,295 nonprofit U.S. hospital systems, with filing-period context and source links.">
   <meta property="og:url" content="https://troveproject.com/hospitals/">
   <meta property="og:image" content="https://troveproject.com/og-20260505c.jpg">
   <meta property="og:image:secure_url" content="https://troveproject.com/og-20260505c.jpg">
@@ -17,8 +17,8 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="trove — reference tools for underused public healthcare data.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="trove — look up a hospital's CMS-vs-IRS charity-care reporting">
-  <meta name="twitter:description" content="Look up any of 1,295 nonprofit U.S. hospital systems and see what they reported as charity care to CMS vs. the IRS for tax year 2022.">
+  <meta name="twitter:title" content="trove — side-by-side CMS and IRS hospital charity-care reporting">
+  <meta name="twitter:description" content="Look up related CMS and IRS charity-care reporting fields for 1,295 nonprofit U.S. hospital systems, with filing-period context and source links.">
   <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
   <meta name="twitter:image:alt" content="trove — reference tools for underused public healthcare data.">
   <style>
@@ -126,7 +126,7 @@
 
   <section class="narrow lede">
     <p>Every nonprofit U.S. hospital files Worksheet S-10 with CMS and Schedule H with the IRS. Both forms have a charity-care line that's intended to capture the cost of care provided to patients who couldn't pay — but the rules, scope, and accounting treatment diverge enough that the two numbers can legitimately differ. They are <em>related</em> measures of the same underlying activity, not the same number.</p>
-    <p>trove lets you look up any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, a home-county Social Vulnerability Index (SVI) proxy for the population the hospital serves, and a link to the actual 990 on ProPublica. <strong>This is only a reference tool.</strong> A nonzero gap is a starting point for review. Many divergences are explained by definitional differences (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume.</p>
+    <p>trove lets you look up any of 1,295 nonprofit hospital systems for tax year 2022 and see the two filings side-by-side, with period-alignment context, a home-county Social Vulnerability Index (SVI) proxy, and a link to the actual 990 on ProPublica. <strong>This is only a reference tool.</strong> A nonzero difference does not by itself say whether either filing is wrong. Many differences are explained by definitions (Medicaid shortfall handling, partial-payment netting), timing (fiscal years that don't match calendar tax years), or the legitimate fact that some hospitals don't bill Medicare in volume.</p>
     <p><strong>Each system is one IRS Employer Identification Number (EIN)</strong>, aggregating the underlying CMS Worksheet S-10 numbers across every CCN-keyed facility that files under that EIN. The 990 figure comes from Schedule H Part I line 7a (financial assistance at cost). The HCRIS figure is Worksheet S-10 charity care cost.</p>
     <div class="stats" id="stats">
       <div class="stat">
@@ -136,13 +136,13 @@
       </div>
       <div class="stat">
         <div class="stat-num" id="stat-systems">—</div>
-        <div class="stat-label">With apples-to-apples comparison</div>
-        <div class="stat-sub">Both filings cover the same fiscal year (within 1 month) and exceed $500K — the subset where the comparison is meaningful as a direct number-to-number lookup.</div>
+        <div class="stat-label">With close period alignment</div>
+        <div class="stat-sub">Both filings cover the same fiscal year (within 1 month) and exceed $500K — the subset where a side-by-side view is most interpretable.</div>
       </div>
       <div class="stat">
         <div class="stat-num" id="stat-median">—</div>
-        <div class="stat-label">Median gap on this subset</div>
-        <div class="stat-sub">Typical disagreement between what a hospital reports to CMS vs. the IRS for the same year.</div>
+        <div class="stat-label">Median absolute difference</div>
+        <div class="stat-sub">Typical difference between two related, non-identical reporting measures in the aligned material subset.</div>
       </div>
     </div>
   </section>
@@ -179,14 +179,14 @@
         <li>For calendar-year hospitals, "FY2023" mostly contains their CY2023 report (ending Dec 2023).</li>
         <li>For October–September hospitals, "FY2023" mostly contains their report ending September 2023.</li>
       </ul>
-      <p>None of those periods perfectly aligns with 990 Tax Year 2022 (which itself varies by filer fiscal calendar). About <strong>29%</strong> of the 1,295 computable matched systems are period-aligned within 1 month; about 65% are exactly 12 months off. When you look up a hospital, the detail card shows the period-alignment status as a per-row signal — an aligned hospital has the two filings covering the same fiscal year, and a misaligned hospital is comparing different years. Don't read a misaligned row as a direct number-to-number comparison.</p>
+      <p>None of those periods perfectly aligns with 990 Tax Year 2022 (which itself varies by filer fiscal calendar). About <strong>29%</strong> of the 1,295 computable matched systems are period-aligned within 1 month; about 65% are exactly 12 months off. When you look up a hospital, the detail card shows the period-alignment status as a per-row signal — an aligned hospital has the two filings covering the same fiscal year, and a misaligned hospital is comparing different years. Don't use a misaligned row to infer a direct like-period difference.</p>
       <p><strong>Note:</strong> "alignment" here is a heuristic based on the two filings' end dates, not a proof of period overlap. Hospitals occasionally report stub periods or change fiscal calendars; the end-date proxy is correct for the vast majority but isn't a substitute for reading the filings directly.</p>
       <p><strong>Coming in v2:</strong> per-hospital matching across HCRIS reporting cycles 2022/2023/2024 to find the report whose period actually matches each hospital's TY2022 990. This will substantially expand the well-aligned set.</p>
     </details>
     <details style="margin-top: 0.85rem;">
       <summary>Home-county SVI proxy (Social Vulnerability Index)</summary>
       <p>Each detail card shows a Social Vulnerability Index value for the hospital's <em>home county</em>, sourced from CDC/ATSDR's 2022 SVI release. SVI is a composite of 16 census variables across four themes (socioeconomic status; household characteristics including age, disability, single-parent, English-language proficiency; racial &amp; ethnic minority status; housing type &amp; transportation). Higher percentile = more vulnerable.</p>
-      <p>What the page shows is the overall summary rank (<code>RPL_THEMES</code>) on a 0-100 scale, sourced from the county FIPS of the hospital's HCRIS-reporting facility. For multi-facility systems where the facilities are in different counties, we take the median across those home-county SVI values. <strong>This is a proxy, not a true service-area measure</strong> — actual catchment areas can extend well beyond the home county, and within-county variation is invisible at this resolution.</p>
+      <p>What the page shows is the overall summary rank (<code>RPL_THEMES</code>) on a 0-100 scale, sourced from the county FIPS of the hospital's HCRIS-reporting facility. For multi-facility systems where the facilities are in different counties, we take the median across those home-county SVI values. <strong>This is a proxy, not a true service-area measure</strong> — actual catchment areas can extend well beyond the home county, and within-county variation is invisible at this resolution. It should not be used to infer hospital service-area need or adequacy of charity care.</p>
       <p>Coverage: ~98% of matched systems. CDC's SVI is US-government work and public domain. Source: <a href="https://www.atsdr.cdc.gov/place-health/php/svi/index.html">CDC/ATSDR SVI</a>.</p>
       <p><strong>Other caveats:</strong> SVI is not the same thing as ADI. SVI weighs minority status and housing factors; ADI is built more around income/employment/education. The same county can land at very different points on the two indices. v2 may add tract-level resolution and a true catchment-area weighting.</p>
     </details>
@@ -196,7 +196,7 @@
         <li><strong>Crosswalk:</strong> 3,079 of 6,042 HCRIS hospitals appear in CBI's December 2024 crosswalk; the unmatched ~50% are mostly for-profit and government hospitals (no 990) plus hospitals not in CBI's frozen vintage. Of 1,481 unique TY2022 990 EINs ingested, 1,334 match the crosswalk.</li>
         <li><strong>Time window:</strong> HCRIS Fiscal Year 2023 paired with 990 Tax Year 2022, ingested across IRS release years 2024, 2025, and 2026. TY2022 amendments filed after the 2026 quarterly cutoff aren't included.</li>
         <li><strong>Validation:</strong> 6 spot-checked EINs match the IRS source XML exact-to-the-dollar; parser is verified clean. The specific EINs and the per-filing line-7a values from each are listed in the <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">methodology artifact</a>. Not a guarantee that every row is parsed correctly — bug reports welcome at the GitHub issues link.</li>
-        <li><strong>The page is a per-hospital lookup tool.</strong> Each hospital appears in its own detail card on user request. A nonzero gap on any given hospital is a starting point for review. The value is making the cross-form comparison computable at all, where previously every researcher had to reconstruct it from raw filings.</li>
+        <li><strong>The page is a per-hospital lookup tool.</strong> Each hospital appears in its own detail card on user request. A nonzero difference in any given row does not by itself say whether either filing is wrong. The value is making the cross-form view computable at all, where previously every researcher had to reconstruct it from raw filings.</li>
       </ul>
     </details>
     <details style="margin-top: 0.85rem;">
@@ -204,7 +204,7 @@
       <ul>
         <li>Per-hospital HCRIS year matching (<strong>v2</strong>) to expand the well-aligned subset substantially.</li>
         <li>Earlier tax years (TY2018–TY2021) for trend analysis.</li>
-        <li>BMF-based crosswalk reconciliation to close the ~20% unmatched-EIN gap.</li>
+        <li>BMF-based crosswalk reconciliation to close the ~20% unmatched-EIN remainder.</li>
         <li>FDA approval review documents as a Phase 2 dataset.</li>
       </ul>
     </details>
@@ -218,7 +218,7 @@ cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
     <p>Then ask things like:</p>
     <ul>
       <li><em>"Show me a profile of [hospital name, CCN, or EIN]"</em></li>
-      <li><em>"Compare [hospital] to its peer teaching hospitals on charity-care intensity"</em></li>
+      <li><em>"Show charity-care reporting context for [hospital] and similar teaching hospitals"</em></li>
       <li><em>"What does Worksheet S-10 line 23 mean?"</em></li>
       <li><em>"Why might HCRIS S-10 charity care differ from Schedule H 7a for the same hospital?"</em></li>
       <li><em>"Has [hospital] amended its TY2022 990 across IRS release years?"</em></li>
@@ -385,10 +385,10 @@ function renderDetail() {
   if (!r) { mount.innerHTML = ""; return; }
   const gapClass = r.gap > 0 ? "pos" : r.gap < 0 ? "neg" : "";
   const interp = r.gap > 0
-    ? "Reports more charity care to CMS than financial assistance to the IRS"
+    ? "HCRIS S-10 amount is higher than Schedule H line 7a"
     : r.gap < 0
-      ? "Reports more financial assistance to the IRS than charity care to CMS"
-      : "Reports identical amounts to both";
+      ? "Schedule H line 7a amount is higher than HCRIS S-10"
+      : "The two reported amounts are identical";
   const months = monthsBetween(r.hcris_fy_end, r.period_end);
   const propublicaUrl = `https://projects.propublica.org/nonprofits/organizations/${parseInt(r.ein, 10)}`;
   const ccnSignal = r.ccns > 1
@@ -398,18 +398,18 @@ function renderDetail() {
     ? "fiscal-year alignment unknown"
     : months === 0
       ? "HCRIS fiscal year and 990 tax period end the same month"
-      : `${months}-month gap between HCRIS fiscal year end and 990 tax period end`;
+      : `${months}-month difference between HCRIS fiscal year end and 990 tax period end`;
   const oneZero = (r.hcris_charity === 0 || r.fa_990 === 0)
-    ? "<strong>One side reports zero.</strong> Often a children's hospital or specialty hospital that doesn't bill Medicare in volume, where HCRIS S-10 charity care is legitimately zero."
+    ? "<strong>One field is zero.</strong> Often a children's hospital or specialty hospital that doesn't bill Medicare in volume, where the HCRIS S-10 amount can legitimately be zero."
     : null;
   const sviSignal = r.svi_overall_pct != null
     ? (() => {
         const pct = Math.round(r.svi_overall_pct);
-        const band = pct >= 80 ? "high social vulnerability"
-          : pct >= 60 ? "moderately above-average vulnerability"
-          : pct >= 40 ? "near-national-median vulnerability"
-          : pct >= 20 ? "below-average vulnerability"
-          : "low social vulnerability";
+        const band = pct >= 80 ? "80th+ percentile SVI band"
+          : pct >= 60 ? "60th-79th percentile SVI band"
+          : pct >= 40 ? "40th-59th percentile SVI band"
+          : pct >= 20 ? "20th-39th percentile SVI band"
+          : "below-20th percentile SVI band";
         const facility_note = r.ccns > 1
           ? "median across the system's facility home counties"
           : "the facility's home county";
@@ -438,11 +438,11 @@ function renderDetail() {
         </div>
       </div>
       <div class="detail-gap">
-        <span>Gap (HCRIS − 990)</span>
+        <span>Difference (HCRIS − 990)</span>
         <span class="${gapClass}">${usdSigned(r.gap)} <span style="font-weight: 400; color: var(--muted); font-size: 0.85em;">(${pct(r.gap_pct)})</span></span>
       </div>
       <div class="detail-signals">
-        <div class="signal"><span class="signal-label">Interpretation:</span><span>${interp}.</span></div>
+        <div class="signal"><span class="signal-label">Cross-form readout:</span><span>${interp}.</span></div>
         <div class="signal"><span class="signal-label">Period alignment:</span><span>${periodSignal}.</span></div>
         <div class="signal"><span class="signal-label">Aggregation:</span><span>${ccnSignal}.</span></div>
         ${sviSignal ? `<div class="signal"><span class="signal-label">Home-county SVI:</span><span>${sviSignal}.</span></div>` : ""}

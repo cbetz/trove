@@ -8,5 +8,5 @@ Planned pages:
 
 - Hospital profile (financials, trends, peer compare)
 - State choropleth (operating margin, bed capacity)
-- Community-benefit-gap leaderboard
+- Hospital reporting lookup
 - Field glossary (searchable)
