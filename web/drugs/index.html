@@ -21,6 +21,44 @@
   <meta name="twitter:description" content="Look up any FDA novel drug approval from 2021–2024 and find the approval package.">
   <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
   <meta name="twitter:image:alt" content="trove — reference tools for underused public healthcare data.">
+  <link rel="canonical" href="https://troveproject.com/drugs/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "FDA novel drug approvals (NMEs, 2021–2024) — trove",
+    "description": "Lookup table of FDA novel drug approvals from 2021 through 2024, with sponsor, application number, key dates, the FDA-approved label, and links to every document in the FDA approval package (medical, statistical, pharmacology, and chemistry reviews).",
+    "url": "https://troveproject.com/drugs/",
+    "sameAs": "https://github.com/cbetz/trove",
+    "license": "https://opensource.org/licenses/MIT",
+    "isAccessibleForFree": true,
+    "keywords": ["FDA", "drug approvals", "NME", "novel drug approvals", "approval package", "FDA reviews", "public health data"],
+    "creator": {
+      "@type": "Person",
+      "name": "Chris Betz",
+      "url": "https://github.com/cbetz"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "trove",
+      "url": "https://troveproject.com/"
+    },
+    "temporalCoverage": "2021/2024",
+    "spatialCoverage": "United States",
+    "distribution": [
+      {
+        "@type": "DataDownload",
+        "encodingFormat": "application/x-parquet",
+        "contentUrl": "https://troveproject.com/data/fda_novel_approvals.parquet"
+      },
+      {
+        "@type": "DataDownload",
+        "encodingFormat": "application/json",
+        "contentUrl": "https://troveproject.com/data/fda_novel_approvals.json"
+      }
+    ]
+  }
+  </script>
   <style>
     :root {
       color-scheme: light dark;
@@ -335,5 +373,7 @@ init().catch(err => {
   $("#empty-hint").hidden = false;
 });
 </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>

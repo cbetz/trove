@@ -21,6 +21,44 @@
   <meta name="twitter:description" content="Open-source lookup tools for underused public-domain healthcare datasets. Currently: FDA drug approvals and nonprofit hospital reporting (CMS Cost Reports + IRS 990 Schedule H).">
   <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
   <meta name="twitter:image:alt" content="trove — reference tools for underused public healthcare data.">
+  <link rel="canonical" href="https://troveproject.com/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://troveproject.com/#org",
+        "name": "trove",
+        "url": "https://troveproject.com/",
+        "sameAs": ["https://github.com/cbetz/trove"],
+        "founder": {
+          "@type": "Person",
+          "name": "Chris Betz",
+          "url": "https://github.com/cbetz"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://troveproject.com/#website",
+        "url": "https://troveproject.com/",
+        "name": "trove",
+        "description": "Reference tools for underused public-domain healthcare data.",
+        "publisher": {"@id": "https://troveproject.com/#org"}
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "trove (Claude Code plugin)",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Cross-platform (Claude Code)",
+        "url": "https://github.com/cbetz/trove",
+        "license": "https://opensource.org/licenses/MIT",
+        "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+        "author": {"@id": "https://troveproject.com/#org"}
+      }
+    ]
+  }
+  </script>
   <style>
     :root {
       color-scheme: light dark;
@@ -119,5 +157,8 @@ cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
   <footer>
     <p><strong>v1.2 · multi-area · May 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Not affiliated with my employer; opinions my own. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
   </footer>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>

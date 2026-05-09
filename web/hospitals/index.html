@@ -21,6 +21,55 @@
   <meta name="twitter:description" content="Look up related CMS and IRS charity-care reporting fields for 1,295 nonprofit U.S. hospital systems, with filing-period context and source links.">
   <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
   <meta name="twitter:image:alt" content="trove — reference tools for underused public healthcare data.">
+  <link rel="canonical" href="https://troveproject.com/hospitals/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "name": "Nonprofit U.S. hospital community-benefit reporting (TY2022 / FY2023) — trove",
+    "description": "Side-by-side CMS Worksheet S-10 and IRS Form 990 Schedule H charity-care fields for 1,295 nonprofit U.S. hospital systems matched at the EIN level, with filing-period alignment signals and home-county CDC Social Vulnerability Index proxy.",
+    "url": "https://troveproject.com/hospitals/",
+    "sameAs": "https://github.com/cbetz/trove",
+    "license": "https://opensource.org/licenses/MIT",
+    "isAccessibleForFree": true,
+    "keywords": ["HCRIS", "Medicare Cost Reports", "IRS 990", "Schedule H", "charity care", "community benefit", "nonprofit hospitals", "Worksheet S-10", "CMS", "public health data"],
+    "creator": {
+      "@type": "Person",
+      "name": "Chris Betz",
+      "url": "https://github.com/cbetz"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "trove",
+      "url": "https://troveproject.com/"
+    },
+    "temporalCoverage": "2022/2023",
+    "spatialCoverage": "United States",
+    "distribution": [
+      {
+        "@type": "DataDownload",
+        "encodingFormat": "application/x-parquet",
+        "contentUrl": "https://troveproject.com/data/community_benefit_gap_2022.parquet"
+      },
+      {
+        "@type": "DataDownload",
+        "encodingFormat": "text/csv",
+        "contentUrl": "https://troveproject.com/data/community_benefit_gap_2022.csv"
+      },
+      {
+        "@type": "DataDownload",
+        "encodingFormat": "application/x-parquet",
+        "contentUrl": "https://troveproject.com/data/hcris_2023_wide.parquet"
+      },
+      {
+        "@type": "DataDownload",
+        "encodingFormat": "application/x-parquet",
+        "contentUrl": "https://troveproject.com/data/schedule_h_2022.parquet"
+      }
+    ],
+    "citation": "RTI Press DOI 10.3768/rtipress.2023.op.0080.2302 (CCN↔EIN crosswalk via Community Benefit Insight)"
+  }
+  </script>
   <style>
     :root {
       color-scheme: light dark;
@@ -463,5 +512,7 @@ init().catch(err => {
   $("#empty-hint").hidden = false;
 });
 </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
 </body>
 </html>
