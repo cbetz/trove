@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>trove — Claude Code skills for healthcare data</title>
+  <meta name="description" content="Two Claude Code skills that turn natural-language questions into queries over real healthcare data: fda-analyst (FDA novel drug approvals 2021–2024) and hcris-analyst (CMS Cost Reports + IRS 990 Schedule H).">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://troveproject.com/skills/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="trove — Claude Code skills for healthcare data">
+  <meta property="og:description" content="Two Claude Code skills that turn natural-language questions into queries over real healthcare data: fda-analyst and hcris-analyst.">
+  <meta property="og:url" content="https://troveproject.com/skills/">
+  <meta property="og:image" content="https://troveproject.com/og-20260505c.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="trove — Claude Code skills for healthcare data">
+  <meta name="twitter:description" content="Two Claude Code skills that turn natural-language questions into queries over real healthcare data.">
+  <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "trove", "item": "https://troveproject.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Claude Code skills", "item": "https://troveproject.com/skills/"}
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "trove (Claude Code plugin)",
+    "url": "https://troveproject.com/skills/",
+    "sameAs": "https://github.com/cbetz/trove",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform (Claude Code)",
+    "softwareVersion": "1.0.1",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {
+      "@type": "Person",
+      "name": "Chris Betz",
+      "url": "https://github.com/cbetz"
+    },
+    "description": "Two Claude Code skills for underused public healthcare data. fda-analyst answers questions about FDA novel drug approvals 2021–2024 from the actual approval-package documents. hcris-analyst queries CMS Worksheet S-10 and IRS Form 990 Schedule H side-by-side for U.S. nonprofit hospitals."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "fda-analyst (Claude Code skill)",
+    "url": "https://troveproject.com/skills/fda-analyst/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform (Claude Code)",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "description": "A Claude Code skill for FDA novel drug approvals (2021–2024). Answers natural-language questions by reading the actual FDA approval-package documents — medical review, statistical review, pharmacology review, chemistry review."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "hcris-analyst (Claude Code skill)",
+    "url": "https://troveproject.com/skills/hcris-analyst/",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform (Claude Code)",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "description": "A Claude Code skill for U.S. nonprofit hospital financials. Queries CMS Medicare Cost Reports (HCRIS) and IRS Form 990 Schedule H side-by-side over published Parquet bundles using DuckDB."
+  }
+]
+  </script>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff;
+      --fg: #111111;
+      --muted: #5a5a5a;
+      --border: rgba(127, 127, 127, 0.3);
+      --row-hover: rgba(127, 127, 127, 0.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0 auto;
+      padding: 4rem 1.5rem 6rem;
+      max-width: 44rem;
+      font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--bg);
+      color: var(--fg);
+    }
+    .breadcrumb { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.9em; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h1 { font-size: 2.75rem; margin: 0 0 0.5rem; letter-spacing: -0.03em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.1rem; }
+    section { margin-top: 3rem; }
+    h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 0.85rem; font-weight: 600; }
+    h3 { font-size: 1rem; margin: 0 0 0.5rem; font-weight: 700; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+    code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
+    pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
+    pre code { background: none; padding: 0; }
+
+    .skill-card {
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.1s ease;
+      margin-top: 1rem;
+    }
+    .skill-card:hover { background: var(--row-hover); opacity: 1; }
+    .skill-tag { display: inline-block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .skill-name { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.4rem; letter-spacing: -0.01em; }
+    .skill-desc { color: var(--muted); font-size: 0.95em; margin: 0; }
+    .skill-examples { margin: 0.85rem 0 0; padding: 0; list-style: none; font-size: 0.92em; }
+    .skill-examples li { color: var(--muted); margin: 0.2rem 0; }
+    .skill-examples li::before { content: "→ "; }
+
+    details { border: 1px solid var(--border); border-radius: 6px; padding: 0.75rem 1.1rem; margin-top: 0.85rem; }
+    details summary { cursor: pointer; font-weight: 600; }
+    details[open] summary { margin-bottom: 0.85rem; }
+    details p, details ul { margin: 0.5rem 0; }
+    details ul { padding-left: 1.25rem; }
+
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer p { margin: 0 0 0.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 2.1rem; } }
+  </style>
+</head>
+<body>
+  <p class="breadcrumb"><a href="/">trove</a> / Claude Code skills</p>
+
+  <header>
+    <h1>Claude Code skills</h1>
+    <p class="tagline">Two skills for asking natural-language questions over real public-domain healthcare data.</p>
+  </header>
+
+  <section>
+    <p>trove ships two <a href="https://docs.claude.com/en/docs/claude-code/skills">Claude Code skills</a> packaged as a single plugin. Each skill teaches Claude how to query a specific healthcare dataset, how to interpret the fields, and how to cite the source documents — so answers are grounded in real data rather than what an LLM half-remembers from training.</p>
+  </section>
+
+  <section>
+    <h2>Install</h2>
+    <p>Add the trove marketplace, then install the plugin:</p>
+<pre><code>/plugin marketplace add cbetz/trove
+/plugin install trove@trove</code></pre>
+    <p>Or copy the skill directories directly if you'd rather skip the plugin layer:</p>
+<pre><code>git clone https://github.com/cbetz/trove
+cp -r trove/skills/fda-analyst ~/.claude/skills/
+cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
+    <p>Both work in Claude Code, Claude Desktop, and any other tool that loads the Claude Code skill format.</p>
+  </section>
+
+  <section>
+    <h2>The two skills</h2>
+    <a class="skill-card" href="/skills/fda-analyst/">
+      <span class="skill-tag">v0.1 · 192 FDA approvals indexed</span>
+      <p class="skill-name">fda-analyst</p>
+      <p class="skill-desc">Answer questions about FDA novel drug approvals (2021–2024) — the basis for approval, the trials, the endpoints, the regulatory pathway, adverse events the FDA flagged in the medical review. The skill fetches the actual approval-package PDFs at query time rather than relying on training data.</p>
+      <ul class="skill-examples">
+        <li><em>What was the basis for Lenmeldy's approval?</em></li>
+        <li><em>What adverse events did the FDA flag in the Elahere medical review?</em></li>
+        <li><em>What regulatory pathway did Krazati use?</em></li>
+      </ul>
+    </a>
+    <a class="skill-card" href="/skills/hcris-analyst/">
+      <span class="skill-tag">v1.1 · 1,295 hospital systems · SVI context</span>
+      <p class="skill-name">hcris-analyst</p>
+      <p class="skill-desc">Answer questions about U.S. nonprofit hospital financials, beds, staffing, charity care, and community benefit by querying CMS Medicare Cost Reports (HCRIS) and IRS Form 990 Schedule H side-by-side. Handles cross-form alignment, definitional caveats, and home-county Social Vulnerability Index context.</p>
+      <ul class="skill-examples">
+        <li><em>Show me a profile of New York-Presbyterian.</em></li>
+        <li><em>What does Worksheet S-10 line 23 column 1 mean?</em></li>
+        <li><em>Show the aligned-period CMS and IRS charity-care fields for Yale-New Haven.</em></li>
+      </ul>
+    </a>
+  </section>
+
+  <section>
+    <h2>What is a Claude Code skill?</h2>
+    <details>
+      <summary>Skill vs. tool vs. agent — the short version</summary>
+      <p>A <strong>Claude Code skill</strong> is a folder of instructions and reference documents that teaches Claude how to do a specific task. Each skill has a <code>SKILL.md</code> file describing when to invoke it, plus a <code>references/</code> folder with deeper docs Claude reads as needed. Skills don't add new code execution capabilities to Claude — they steer how Claude uses tools it already has (file system, bash, web fetch, etc.).</p>
+      <p>The trove skills don't bundle their own data or query engine. They tell Claude where the published Parquet files live (on troveproject.com), how to query them with DuckDB (a CLI most engineers already have), how to read the fields, and how to cite back to the right source document. The data itself is public; the skill is the operating manual.</p>
+    </details>
+    <details>
+      <summary>Why ship data as a skill instead of a chatbot?</summary>
+      <p>A skill runs inside the user's own Claude Code or Claude Desktop session. That means: their context, their conversation, their data flow — no server in the middle. It also means the user can install one skill or both, use them alongside whatever else they're working on, and audit exactly what's being read and queried.</p>
+      <p>This shape is good for reference data. The user knows their question better than a generic chatbot does, and Claude is good at translating natural-language questions into structured queries when it has the right field map.</p>
+    </details>
+    <details>
+      <summary>What if I don't use Claude Code?</summary>
+      <p>The data is the same regardless of how you access it. The published Parquet and JSON bundles work in any environment that speaks DuckDB or HTTP: <code>duckdb -c "SELECT … FROM read_parquet('https://troveproject.com/data/…')"</code> from a terminal, or fetch the JSON in Python or JavaScript directly. The skill format just makes the data convenient inside a Claude session.</p>
+    </details>
+  </section>
+
+  <section>
+    <h2>Try it without installing</h2>
+    <p>If you want to see the underlying data without installing a skill:</p>
+    <ul>
+      <li><a href="/drugs/">Browse the FDA drug approvals index</a> — search any of 192 NMEs by name, see the approval package.</li>
+      <li><a href="/hospitals/">Browse the hospital reporting index</a> — look up any of 1,295 nonprofit U.S. hospital systems.</li>
+      <li><a href="https://github.com/cbetz/trove">Read the source on GitHub</a> — parsers, build scripts, raw artifacts, MIT-licensed.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>trove is built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Not affiliated with my employer; opinions my own. Bugs and questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+  </footer>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>hcris-analyst — Claude Code skill for HCRIS + IRS 990 Schedule H — trove</title>
+  <meta name="description" content="A Claude Code skill for U.S. nonprofit hospital financials. Queries CMS Medicare Cost Reports (HCRIS) and IRS Form 990 Schedule H side-by-side over published Parquet bundles using DuckDB. Handles cross-form alignment, definitional caveats, and home-county SVI context.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://troveproject.com/skills/hcris-analyst/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="hcris-analyst — Claude Code skill for HCRIS + IRS 990 Schedule H">
+  <meta property="og:description" content="A Claude Code skill that queries CMS Worksheet S-10 and IRS Form 990 Schedule H side-by-side for U.S. nonprofit hospitals.">
+  <meta property="og:url" content="https://troveproject.com/skills/hcris-analyst/">
+  <meta property="og:image" content="https://troveproject.com/og-20260505c.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="hcris-analyst — Claude Code skill for HCRIS + IRS 990 Schedule H">
+  <meta name="twitter:description" content="A Claude Code skill that queries CMS Worksheet S-10 and IRS Form 990 Schedule H side-by-side for U.S. nonprofit hospitals.">
+  <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "hcris-analyst",
+    "url": "https://troveproject.com/skills/hcris-analyst/",
+    "sameAs": "https://github.com/cbetz/trove/tree/main/skills/hcris-analyst",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform (Claude Code)",
+    "softwareVersion": "1.1",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {
+      "@type": "Person",
+      "name": "Chris Betz",
+      "url": "https://github.com/cbetz"
+    },
+    "description": "A Claude Code skill for U.S. nonprofit hospital financials. Queries CMS Medicare Cost Reports (HCRIS) and IRS Form 990 Schedule H side-by-side over published Parquet bundles using DuckDB."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "trove", "item": "https://troveproject.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Claude Code skills", "item": "https://troveproject.com/skills/"},
+      {"@type": "ListItem", "position": 3, "name": "hcris-analyst", "item": "https://troveproject.com/skills/hcris-analyst/"}
+    ]
+  }
+]
+  </script>
+  <style>
+    :root { color-scheme: light dark; --bg: #ffffff; --fg: #111111; --muted: #5a5a5a; --border: rgba(127, 127, 127, 0.3); }
+    @media (prefers-color-scheme: dark) { :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; } }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; padding: 4rem 1.5rem 6rem; max-width: 44rem; font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg); color: var(--fg); }
+    .breadcrumb { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.9em; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h1 { font-size: 2.4rem; margin: 0 0 0.4rem; letter-spacing: -0.025em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.05rem; }
+    section { margin-top: 2.5rem; }
+    h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 0.85rem; font-weight: 600; }
+    h3 { font-size: 1rem; margin: 1.25rem 0 0.4rem; font-weight: 700; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+    code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
+    pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
+    pre code { background: none; padding: 0; }
+    ul { padding-left: 1.4rem; }
+    li { margin: 0.3rem 0; }
+    .examples li { margin: 0.5rem 0; }
+    .examples em { color: var(--muted); }
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer p { margin: 0 0 0.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 1.9rem; } }
+  </style>
+</head>
+<body>
+  <p class="breadcrumb"><a href="/">trove</a> / <a href="/skills/">Claude Code skills</a> / hcris-analyst</p>
+
+  <header>
+    <h1>hcris-analyst</h1>
+    <p class="tagline">A Claude Code skill for U.S. nonprofit hospital financials.</p>
+  </header>
+
+  <section>
+    <p>Two of the most cited datasets in U.S. hospital research — CMS Medicare Cost Reports (HCRIS) and IRS Form 990 Schedule H — describe overlapping things about the same hospitals using different field definitions, different fiscal periods, and different file formats. CMS ships 100,000-row long-skinny CSVs; the IRS ships 990s as XML bulk ZIPs. Joining them at the hospital level is real work.</p>
+    <p><code>hcris-analyst</code> is a Claude Code skill that queries the trove-published bundles where that work has already been done. It runs in your own Claude Code session, translates natural-language questions into DuckDB SQL, knows where the data lives, and handles the definitional caveats that trip up naive cross-form comparisons.</p>
+  </section>
+
+  <section>
+    <h2>Install</h2>
+<pre><code>/plugin marketplace add cbetz/trove
+/plugin install trove@trove</code></pre>
+    <p>Or copy the skill directory directly:</p>
+<pre><code>git clone https://github.com/cbetz/trove
+cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
+  </section>
+
+  <section>
+    <h2>Example prompts</h2>
+    <ul class="examples">
+      <li><em>"Show me a profile of New York-Presbyterian."</em></li>
+      <li><em>"What does Worksheet S-10 line 23 column 1 mean?"</em></li>
+      <li><em>"Show the aligned-period CMS and IRS charity-care fields for Yale-New Haven."</em></li>
+      <li><em>"Which hospitals provided the most uncompensated care in FY2023?"</em></li>
+      <li><em>"Did Memorial Hermann amend their TY2022 990?"</em></li>
+      <li><em>"How do charity-care cost ratios vary by home-county SVI band?"</em></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What this skill does</h2>
+    <ul>
+      <li><strong>Knows the bundles.</strong> Three Parquet files on troveproject.com: HCRIS FY2023 (Hospital 2552-10, wide format), IRS 990 Schedule H TY2022 (across 2024/2025/2026 IRS release years), and the joined community-benefit dataset.</li>
+      <li><strong>Translates questions to DuckDB SQL.</strong> Single-hospital lookups, peer cohorts, cross-form comparisons, field-glossary questions — the skill picks the right query shape and runs it against the bundles over HTTPS.</li>
+      <li><strong>Handles period alignment.</strong> HCRIS labels its bulk files by federal-fiscal-year reporting cycle, not period covered. For many hospitals "FY2023" data is 12 months later than the matching TY2022 990. The skill defaults to filtering on aligned-period rows for cross-form analyses and flags when comparisons are misaligned.</li>
+      <li><strong>Disambiguates names.</strong> "Memorial Hermann" matches a dozen rows; the skill surfaces candidates with bed counts and revenue and asks which one.</li>
+      <li><strong>Names the structural reasons</strong> when a cross-form difference looks suspicious. Children's hospitals, specialty cancer centers, and major non-Medicare-volume teaching hospitals legitimately report near-zero charity care on HCRIS S-10 while reporting substantial financial assistance on Schedule H 7a — the skill explains the pattern rather than presenting it as a finding.</li>
+      <li><strong>Carries SVI context.</strong> Each system carries CDC Social Vulnerability Index 2022 percentiles for its home county. Useful for coarse geographic context; not a service-area measure.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What this skill doesn't do</h2>
+    <ul>
+      <li><strong>Patient-level outcomes, quality metrics, or readmissions.</strong> Those live in CMS Care Compare / Hospital Compare, not HCRIS.</li>
+      <li><strong>For-profit and government hospitals' cross-form view.</strong> They're in HCRIS but don't file 990s, so the matched dataset only covers nonprofits. The skill can still answer HCRIS-only questions about them.</li>
+      <li><strong>Pre-TY2022 / pre-FY2023 trends.</strong> Earlier years are planned for v2 — not available now.</li>
+      <li><strong>Hospitals outside the U.S.</strong> HCRIS is CMS Medicare-specific.</li>
+      <li><strong>Definitive accusations from cross-form differences.</strong> The skill explains why HCRIS S-10 and Schedule H 7a legitimately differ rather than treating a gap as evidence of bad faith.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Coverage</h2>
+    <p>1,295 nonprofit U.S. hospital systems matched at the EIN level. HCRIS Hospital 2552-10, FY2023. IRS 990 Schedule H, TY2022 (across 2024/2025/2026 release years). CCN↔EIN crosswalk from Community Benefit Insight (RTI International / RWJF), December 2024 vintage. Browse the index at <a href="/hospitals/">/hospitals/</a>.</p>
+  </section>
+
+  <section>
+    <h2>Source and license</h2>
+    <p>MIT-licensed. Source code, parsers, raw artifacts: <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>. The data is U.S. government work, public domain — CMS HCRIS, IRS 990 e-file, and CDC SVI. The CCN↔EIN crosswalk is from Community Benefit Insight: RTI Press DOI 10.3768/rtipress.2023.op.0080.2302.</p>
+  </section>
+
+  <footer>
+    <p>One of two <a href="/skills/">Claude Code skills</a> from <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Bugs and questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+  </footer>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

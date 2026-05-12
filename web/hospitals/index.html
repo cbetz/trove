@@ -261,9 +261,9 @@
 
   <section class="narrow">
     <h2>Query with Claude</h2>
-    <p>The <code>hcris-analyst</code> Claude skill answers natural-language questions about hospital financials by translating them into DuckDB queries against the Parquet bundles served from this site. Drop the bundle into your Claude skills directory:</p>
-<pre><code>git clone https://github.com/cbetz/trove
-cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
+    <p>The <a href="/skills/hcris-analyst/"><code>hcris-analyst</code></a> Claude Code skill answers natural-language questions about hospital financials by translating them into DuckDB queries against the Parquet bundles served from this site. Install the trove plugin:</p>
+<pre><code>/plugin marketplace add cbetz/trove
+/plugin install trove@trove</code></pre>
     <p>Then ask things like:</p>
     <ul>
       <li><em>"Show me a profile of [hospital name, CCN, or EIN]"</em></li>
