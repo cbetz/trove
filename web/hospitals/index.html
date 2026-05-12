@@ -203,7 +203,7 @@
   </section>
 
   <section class="narrow">
-    <h2>Look up a hospital</h2>
+    <h2>Look up a nonprofit hospital's CMS and IRS filings</h2>
     <div class="search-box">
       <div class="search">
         <input id="q" type="search" placeholder="Search by system name, facility name, or EIN…" autocomplete="off" spellcheck="false">
@@ -215,7 +215,7 @@
   </section>
 
   <section class="narrow">
-    <h2>Method, definitions, and what this doesn't show</h2>
+    <h2>Method, field definitions, and HCRIS vs. Schedule H differences</h2>
     <details>
       <summary>Why HCRIS S-10 charity care cost ≠ Schedule H Part I 7a, even when both are reported correctly</summary>
       <ul>
@@ -266,7 +266,7 @@
   </section>
 
   <section class="narrow">
-    <h2>Query with Claude</h2>
+    <h2>Query hospital filings with Claude Code</h2>
     <p>The <a href="/skills/hcris-analyst/"><code>hcris-analyst</code></a> Claude Code skill answers natural-language questions about hospital financials by translating them into DuckDB queries against the Parquet bundles served from this site. Install the trove plugin:</p>
 <pre><code>/plugin marketplace add cbetz/trove
 /plugin install trove@trove</code></pre>
@@ -282,7 +282,7 @@
   </section>
 
   <section class="narrow">
-    <h2>Reproduce the dataset</h2>
+    <h2>Reproduce the HCRIS + Schedule H dataset</h2>
 <pre><code>git clone https://github.com/cbetz/trove
 cd trove &amp;&amp; uv sync --all-packages
 uv run python scripts/build_gap_dataset.py</code></pre>
