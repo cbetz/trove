@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>fda-analyst — Claude Code skill for FDA drug approvals — trove</title>
+  <meta name="description" content="A Claude Code skill for FDA novel drug approvals 2021–2024. Reads the actual medical / statistical / pharmacology / chemistry reviews from FDA's approval package at query time to answer questions about the basis for approval, trials, endpoints, and regulatory pathway.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://troveproject.com/skills/fda-analyst/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="fda-analyst — Claude Code skill for FDA drug approvals">
+  <meta property="og:description" content="A Claude Code skill that reads FDA approval-package documents to answer questions about the basis for approval, trials, endpoints, and regulatory pathway.">
+  <meta property="og:url" content="https://troveproject.com/skills/fda-analyst/">
+  <meta property="og:image" content="https://troveproject.com/og-20260505c.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="fda-analyst — Claude Code skill for FDA drug approvals">
+  <meta name="twitter:description" content="A Claude Code skill that reads FDA approval-package documents to answer questions about the basis for approval.">
+  <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "fda-analyst",
+    "url": "https://troveproject.com/skills/fda-analyst/",
+    "sameAs": "https://github.com/cbetz/trove/tree/main/skills/fda-analyst",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform (Claude Code)",
+    "softwareVersion": "0.1",
+    "license": "https://opensource.org/licenses/MIT",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "author": {
+      "@type": "Person",
+      "name": "Chris Betz",
+      "url": "https://github.com/cbetz"
+    },
+    "description": "A Claude Code skill for FDA novel drug approvals 2021–2024. Reads the actual medical, statistical, pharmacology, and chemistry reviews from FDA's approval package to answer questions about the basis for approval."
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "trove", "item": "https://troveproject.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Claude Code skills", "item": "https://troveproject.com/skills/"},
+      {"@type": "ListItem", "position": 3, "name": "fda-analyst", "item": "https://troveproject.com/skills/fda-analyst/"}
+    ]
+  }
+]
+  </script>
+  <style>
+    :root { color-scheme: light dark; --bg: #ffffff; --fg: #111111; --muted: #5a5a5a; --border: rgba(127, 127, 127, 0.3); }
+    @media (prefers-color-scheme: dark) { :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; } }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; padding: 4rem 1.5rem 6rem; max-width: 44rem; font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg); color: var(--fg); }
+    .breadcrumb { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.9em; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h1 { font-size: 2.4rem; margin: 0 0 0.4rem; letter-spacing: -0.025em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.05rem; }
+    section { margin-top: 2.5rem; }
+    h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 0.85rem; font-weight: 600; }
+    h3 { font-size: 1rem; margin: 1.25rem 0 0.4rem; font-weight: 700; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+    code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
+    pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
+    pre code { background: none; padding: 0; }
+    ul { padding-left: 1.4rem; }
+    li { margin: 0.3rem 0; }
+    .examples li { margin: 0.5rem 0; }
+    .examples em { color: var(--muted); }
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer p { margin: 0 0 0.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 1.9rem; } }
+  </style>
+</head>
+<body>
+  <p class="breadcrumb"><a href="/">trove</a> / <a href="/skills/">Claude Code skills</a> / fda-analyst</p>
+
+  <header>
+    <h1>fda-analyst</h1>
+    <p class="tagline">A Claude Code skill for FDA novel drug approvals.</p>
+  </header>
+
+  <section>
+    <p>The FDA publishes an <em>approval package</em> for each newly approved drug — medical review, statistical review, pharmacology review, chemistry review, label, and other documents that describe the basis for the agency's decision. The documents are public on accessdata.fda.gov, but the path from "drug name" to "the medical review that explains why this drug got approved" is several clicks of guesswork through FDA's site.</p>
+    <p><code>fda-analyst</code> is a Claude Code skill that knows where those documents live, how to identify the right one for a given question, and how to read and cite the relevant section. It runs in your own Claude Code or Claude Desktop session and fetches FDA PDFs at query time — no preloaded summaries, no training-data approximations.</p>
+  </section>
+
+  <section>
+    <h2>Install</h2>
+<pre><code>/plugin marketplace add cbetz/trove
+/plugin install trove@trove</code></pre>
+    <p>Or copy the skill directory directly:</p>
+<pre><code>git clone https://github.com/cbetz/trove
+cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
+  </section>
+
+  <section>
+    <h2>Example prompts</h2>
+    <ul class="examples">
+      <li><em>"What was the basis for Lenmeldy's approval — what trials, what endpoints?"</em></li>
+      <li><em>"What adverse events did the FDA flag in the Elahere medical review?"</em></li>
+      <li><em>"Was Krazati approved via accelerated approval? What was the pathway?"</em></li>
+      <li><em>"Compare the regulatory pathways used for Aduhelm and Leqembi."</em></li>
+      <li><em>"Which 2023 approvals used a single-arm trial as the pivotal evidence?"</em></li>
+      <li><em>"What was the primary endpoint in the Vyvgart approval?"</em></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What this skill does</h2>
+    <ul>
+      <li><strong>Finds the application.</strong> The skill queries trove's <a href="/drugs/">FDA approvals index</a> (a Parquet bundle with 192 NMEs from 2021–2024) to locate the application number, sponsor, and approval-package URL for the drug in question.</li>
+      <li><strong>Picks the right document.</strong> Different questions need different documents — the medical review for "basis for approval" and "adverse events", the statistical review for endpoint analyses, the pharmacology review for ADME, the chemistry review for manufacturing. The skill knows the mapping.</li>
+      <li><strong>Reads it at query time.</strong> No pre-extracted summaries. The skill fetches the PDF from accessdata.fda.gov, reads the relevant section, and quotes back with a citation.</li>
+      <li><strong>Cites the source.</strong> Answers reference the specific document and page so users can verify.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>What this skill doesn't do</h2>
+    <ul>
+      <li><strong>Clinical advice or dosing.</strong> It's a reference tool over public approval documents, not a substitute for the prescribing label or clinical judgment.</li>
+      <li><strong>Pre-2021 drugs.</strong> The current index covers 2021–2024. Earlier drugs aren't ingested yet.</li>
+      <li><strong>Devices, biosimilars, or generic (ANDA) approvals.</strong> The trove index covers FDA's curated <em>Novel Drug Approvals</em> lists (NMEs and novel BLAs) only.</li>
+      <li><strong>Real-time updates.</strong> The bundle is rebuilt on a release cycle, not continuously. Approvals within the last few weeks may not be in the current bundle.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Coverage</h2>
+    <p>192 FDA novel drug approvals from 2021–2024. Browse the index at <a href="/drugs/">/drugs/</a> — each drug has its own permalink page with the approval-package URL, e.g. <a href="/drugs/elahere/">/drugs/elahere/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/krazati/">/drugs/krazati/</a>.</p>
+  </section>
+
+  <section>
+    <h2>Source and license</h2>
+    <p>MIT-licensed. Source code, parser, raw artifacts: <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>. The data is U.S. government work, public domain — <a href="https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda">FDA Novel Drug Approvals</a> and <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">Drugs@FDA</a>.</p>
+  </section>
+
+  <footer>
+    <p>One of two <a href="/skills/">Claude Code skills</a> from <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Bugs and questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+  </footer>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

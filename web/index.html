@@ -138,14 +138,15 @@
   </section>
 
   <section>
-    <h2>Claude skills</h2>
-    <p>Each area ships with a Claude skill that translates natural-language questions into queries over the area's published data. The skills are bundled as a Claude Code plugin:</p>
+    <h2>Claude Code skills</h2>
+    <p>Each area ships with a <a href="/skills/">Claude Code skill</a> that translates natural-language questions into queries over the area's published data. The skills are bundled as a single Claude Code plugin:</p>
 <pre><code>/plugin marketplace add cbetz/trove
 /plugin install trove@trove</code></pre>
-    <p>Or copy the skill directories directly if you'd rather skip the plugin layer:</p>
-<pre><code>git clone https://github.com/cbetz/trove
-cp -r trove/skills/fda-analyst ~/.claude/skills/
-cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
+    <p>Skill details and example prompts:</p>
+    <ul>
+      <li><a href="/skills/fda-analyst/">fda-analyst</a> — reads FDA approval-package documents to answer questions about the basis for approval, trials, endpoints, and regulatory pathway.</li>
+      <li><a href="/skills/hcris-analyst/">hcris-analyst</a> — queries CMS Worksheet S-10 and IRS Form 990 Schedule H side-by-side for U.S. nonprofit hospitals, with home-county SVI context.</li>
+    </ul>
   </section>
 
   <section>

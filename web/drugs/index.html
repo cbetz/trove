@@ -207,9 +207,9 @@
 
   <section>
     <h2>Query with Claude</h2>
-    <p>The <code>fda-analyst</code> skill answers natural-language questions about a specific approval by fetching the relevant PDFs from FDA and reading them at query time.</p>
-<pre><code>git clone https://github.com/cbetz/trove
-cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
+    <p>The <a href="/skills/fda-analyst/"><code>fda-analyst</code></a> Claude Code skill answers natural-language questions about a specific approval by fetching the relevant PDFs from FDA and reading them at query time.</p>
+<pre><code>/plugin marketplace add cbetz/trove
+/plugin install trove@trove</code></pre>
     <p>Then ask things like:</p>
     <ul>
       <li><em>"What was the basis for [drug name] approval — what trials, what endpoints?"</em></li>

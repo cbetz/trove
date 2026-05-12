@@ -286,6 +286,9 @@ def main() -> None:
         ("", "1.0"),
         ("drugs/", "0.9"),
         ("hospitals/", "0.9"),
+        ("skills/", "0.9"),
+        ("skills/fda-analyst/", "0.8"),
+        ("skills/hcris-analyst/", "0.8"),
     ]
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
