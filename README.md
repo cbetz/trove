@@ -1,10 +1,17 @@
 # trove
 
-Open-source parsers, agents, and visualizations for underused healthcare datasets.
+**Reference tools for underused public healthcare data.** Open-source parsers, Parquet/JSON bundles, and [Claude Code skills](https://troveproject.com/skills/) for FDA novel drug approvals (NMEs) and U.S. nonprofit hospital reporting (CMS HCRIS Worksheet S-10 + IRS Form 990 Schedule H). Live at **[troveproject.com](https://troveproject.com)** — MIT-licensed.
+
+## Try it
+
+- **[troveproject.com/drugs/](https://troveproject.com/drugs/)** — search 192 FDA novel drug approvals from 2021–2024; click any record for its full approval package
+- **[troveproject.com/hospitals/](https://troveproject.com/hospitals/)** — look up 1,295 nonprofit U.S. hospital systems; HCRIS and 990 Schedule H side-by-side
+- **[troveproject.com/skills/](https://troveproject.com/skills/)** — install the trove Claude Code plugin (`fda-analyst` + `hcris-analyst`)
+- **[troveproject.com/docs/](https://troveproject.com/docs/)** — plain-language explainers: [what is HCRIS](https://troveproject.com/docs/hcris/), [what is IRS 990 Schedule H](https://troveproject.com/docs/schedule-h/), [what is an FDA novel drug approval](https://troveproject.com/docs/fda-nme/)
 
 ## What this is
 
-trove builds open-source lookup tools, parsers, and Claude skills on top of public-domain healthcare datasets that are widely cited but rarely usable in their raw form. Site: [troveproject.com](https://troveproject.com).
+trove builds open-source lookup tools, parsers, and Claude Code skills on top of public-domain healthcare datasets that are widely cited but rarely usable in their raw form. CMS publishes 100,000-row long-skinny CSVs. The IRS publishes 990s as XML in bulk ZIPs. The FDA scatters drug-approval reviews across hundreds of PDF directories. trove does the parsing, joining, and packaging so the data is browsable and queryable.
 
 Two areas live in v1:
 
