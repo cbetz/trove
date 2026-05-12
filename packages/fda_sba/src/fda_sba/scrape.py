@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable
-from datetime import date, datetime
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -80,7 +79,9 @@ def build_index(
     if not parts:
         return pd.DataFrame(columns=_OUTPUT_COLUMNS)
     df = pd.concat(parts, ignore_index=True)
-    return df.sort_values(["year", "approval_date"], ascending=[False, False]).reset_index(drop=True)
+    return df.sort_values(["year", "approval_date"], ascending=[False, False]).reset_index(
+        drop=True
+    )
 
 
 _OUTPUT_COLUMNS = (

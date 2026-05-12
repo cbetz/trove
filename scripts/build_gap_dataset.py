@@ -39,7 +39,10 @@ def main() -> None:
 
     print(f"Ingesting TY{TAX_YEAR} Schedule H from releases {RELEASE_YEARS}...")
     sched_h_path = PARQUET_DIR / "form990" / "schedule_h" / f"year={TAX_YEAR}" / "part.parquet"
-    if sched_h_path.exists() and "release_year" in pd.read_parquet(sched_h_path, columns=None).columns:
+    if (
+        sched_h_path.exists()
+        and "release_year" in pd.read_parquet(sched_h_path, columns=None).columns
+    ):
         print(f"  using cached {sched_h_path}")
         sched_h = pd.read_parquet(sched_h_path)
     else:

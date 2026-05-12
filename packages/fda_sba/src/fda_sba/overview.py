@@ -14,7 +14,6 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 import pandas as pd
-from lxml import html
 
 OVERVIEW_URL_TEMPLATE = (
     "https://www.accessdata.fda.gov/scripts/cder/daf/"
@@ -106,8 +105,26 @@ def _normalize(name: str) -> str:
     letters = [c for c in name if c.isalpha()]
     if letters and all(c.isupper() for c in letters):
         # Title-case all-caps names but keep recognized acronyms uppercase.
-        keep_upper = {"INC", "LLC", "LTD", "LP", "LLP", "PLC", "USA", "AG", "SA", "SAS",
-                      "SPA", "BV", "GMBH", "CO", "CORP", "AB", "AS", "OY"}
+        keep_upper = {
+            "INC",
+            "LLC",
+            "LTD",
+            "LP",
+            "LLP",
+            "PLC",
+            "USA",
+            "AG",
+            "SA",
+            "SAS",
+            "SPA",
+            "BV",
+            "GMBH",
+            "CO",
+            "CORP",
+            "AB",
+            "AS",
+            "OY",
+        }
         words = [w for w in re.split(r"\s+", name) if w]
         out = []
         for w in words:
