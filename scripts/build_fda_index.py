@@ -1,7 +1,13 @@
-"""Build the FDA novel drug approvals index.
+"""Build the FDA novel drug approvals index (CDER + CBER).
 
-Scrapes FDA's annual Novel Drug Approvals pages for the last 5 calendar
-years, parses each into a tidy DataFrame, and writes:
+Scrapes two FDA sources for the last 4 calendar years and writes:
+
+- CDER — annual Novel Drug Approvals pages (NMEs and novel BLAs from
+  the Center for Drug Evaluation and Research)
+- CBER — Approved Cellular and Gene Therapy Products page (cell and
+  gene therapies from the Center for Biologics Evaluation and Research)
+
+Outputs:
 
 - ``data/parquet/fda_sba/year=YYYY/part.parquet`` — full per-year data
   (gitignored)
@@ -21,7 +27,7 @@ from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
-from fda_sba import build_index, enrich_with_sponsor
+from fda_sba import build_index
 
 YEARS = (2021, 2022, 2023, 2024)
 ARTIFACTS_DIR = Path("artifacts")
@@ -31,17 +37,17 @@ RAW_CACHE = Path("data/raw/fda")
 
 
 def main() -> None:
-    print(f"Scraping FDA Novel Drug Approvals for {min(YEARS)}–{max(YEARS)}...")
+    print(f"Scraping FDA novel approvals (CDER + CBER) for {min(YEARS)}–{max(YEARS)}...")
     df = build_index(YEARS, cache_dir=RAW_CACHE)
     print(f"  {len(df):,} drug approvals across {df['year'].nunique()} years")
     print("  by year:")
     for year, count in df.groupby("year").size().sort_index(ascending=False).items():
         print(f"    {year}: {count}")
-
-    print("Enriching with sponsor (drugs@FDA overview, cached per app)...")
-    df = enrich_with_sponsor(df, cache_dir=RAW_CACHE / "overview")
-    coverage = df["sponsor"].notna().sum()
-    print(f"  sponsor coverage: {coverage:,}/{len(df):,}")
+    print("  by regulatory center:")
+    for center, count in df.groupby("regulatory_center").size().items():
+        print(f"    {center}: {count}")
+    sponsor_cov = df["sponsor"].notna().sum()
+    print(f"  sponsor coverage: {sponsor_cov:,}/{len(df):,}")
 
     # Persist as Parquet partitioned by year (gitignored)
     for year, sub in df.groupby("year"):
@@ -91,6 +97,7 @@ def _row_to_json(r) -> dict:
         "label_pdf_url": _str(r.label_pdf_url),
         "drugs_at_fda_url": _str(r.drugs_at_fda_url),
         "trials_snapshot_url": _str(r.trials_snapshot_url),
+        "regulatory_center": _str(getattr(r, "regulatory_center", None)),
     }
 
 

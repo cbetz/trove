@@ -77,15 +77,15 @@
         "name": "Where do I find FDA approval-package documents?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Approval packages live on accessdata.fda.gov. The Drugs@FDA application overview page for each approval (e.g. accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=XXXXXX) lists every document FDA released for that approval. The trove FDA index gives you the application overview URL for each of 192 novel drug approvals from 2021-2024 so you don't have to guess at it."
+          "text": "Approval packages live on accessdata.fda.gov for CDER products and on per-product pages under fda.gov/vaccines-blood-biologics/ for CBER cell and gene therapies. The trove FDA index gives you the right approval-package URL for each of 218 novel drug approvals from 2021-2024 (192 CDER + 26 CBER) so you don't have to guess at it."
         }
       },
       {
         "@type": "Question",
-        "name": "Why isn't Lenmeldy / Casgevy / Lyfgenia in trove's FDA index?",
+        "name": "Are CBER cell and gene therapy approvals in trove's FDA index?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Trove's FDA index mirrors FDA's curated Novel Drug Approvals page, which is published by CDER and excludes cell and gene therapy products regulated by CBER. Lenmeldy (atidarsagene autotemcel), Casgevy and Lyfgenia (sickle cell gene therapies), Beqvez, Hemgenix, Roctavian, and other recent gene therapies appear on FDA's separate Approved Cellular and Gene Therapy Products page. Adding a CBER source is planned for v0.2."
+          "text": "Yes, as of v0.2. Lenmeldy (atidarsagene autotemcel), Casgevy and Lyfgenia (sickle cell gene therapies), Beqvez, Hemgenix, Roctavian, Adstiladrin, and other recent CBER-regulated gene therapies are included alongside CDER novel drug approvals. Each row carries a regulatory_center column distinguishing CDER from CBER. The trove FDA index now covers 218 novel approvals from 2021-2024 — 192 CDER plus 26 CBER."
         }
       }
     ]
@@ -138,7 +138,7 @@
   <article>
     <p>Each year FDA publishes a curated list of <strong>Novel Drug Approvals</strong> — first-time approvals of drugs with active ingredients that have never been approved before. In 2024 the list had 50 drugs; in 2023, 55; 2022, 37; 2021, 50. These are mostly <strong>NMEs</strong> (New Molecular Entities, approved via NDA) plus a handful of <strong>novel BLAs</strong> (Biologics License Applications for first-of-kind biologics). The list excludes generics, biosimilars, new formulations of existing drugs, and supplemental approvals adding indications to already-approved drugs.</p>
     <p>The list is what most public discourse about "what drugs got approved this year" refers to. It's also the cohort with the largest, most-detailed approval packages on accessdata.fda.gov.</p>
-    <p class="callout"><strong>CDER vs. CBER scope.</strong> The Novel Drug Approvals page is curated by <strong>CDER</strong> (Center for Drug Evaluation and Research), which reviews small-molecule drugs and most antibody biologics. Cell and gene therapy products — Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, and other recent gene therapies — are regulated by <strong>CBER</strong> (Center for Biologics Evaluation and Research) and appear on a <a href="https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products">separate FDA page</a>. They are clinically significant but not on the CDER novel-drug list. Trove's index mirrors the CDER list and does not yet include CBER gene-therapy approvals; that's planned for v0.2.</p>
+    <p class="callout"><strong>CDER vs. CBER.</strong> The Novel Drug Approvals page is curated by <strong>CDER</strong> (Center for Drug Evaluation and Research), which reviews small-molecule drugs and most antibody biologics. Cell and gene therapy products — Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, and other recent gene therapies — are regulated by <strong>CBER</strong> (Center for Biologics Evaluation and Research) and appear on a <a href="https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products">separate FDA page</a>. As of v0.2, trove ingests both. Each row carries a <code>regulatory_center</code> column distinguishing CDER from CBER.</p>
 
     <h2>What an approval is</h2>
     <p>When the FDA approves a new drug for marketing in the U.S., several things happen at once:</p>
@@ -172,7 +172,7 @@
     <p>The specific pathways used for a given approval are documented in the medical review and the approval letter.</p>
 
     <h2>How to find an approval's documents</h2>
-    <p>FDA's <strong>Drugs@FDA</strong> database is the front door: search by drug name at <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">accessdata.fda.gov/scripts/cder/daf/</a>. Each approval has an application-overview page that lists every document FDA released for that application — original approval plus any post-approval supplements (label changes, new indications, manufacturing changes). The application-overview URL has the form <code>?event=overview.process&amp;ApplNo=XXXXXX</code>. The trove FDA index gives you the application overview URL directly for each of 192 novel drug approvals from 2021–2024.</p>
+    <p>FDA's front door for CDER products is the <strong>Drugs@FDA</strong> database at <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">accessdata.fda.gov/scripts/cder/daf/</a>. Each approval has an application-overview page that lists every document FDA released — original approval plus any post-approval supplements. The application-overview URL has the form <code>?event=overview.process&amp;ApplNo=XXXXXX</code>. For CBER cell and gene therapies, each product has its own page under <code>fda.gov/vaccines-blood-biologics/</code> that links to the package insert, approval letter, clinical review memo, and Summary Basis for Regulatory Action. The trove FDA index gives you the right URL for each of 218 novel drug approvals from 2021–2024 (192 CDER + 26 CBER) so you don't have to guess at it.</p>
 
     <h2>What's not on FDA's approval-package page</h2>
     <ul>
@@ -184,7 +184,7 @@
 
     <h2>How to use FDA approval-package data</h2>
     <ul>
-      <li><strong>Use trove's FDA novel drug approvals index</strong> — search any of 192 NMEs from 2021–2024 and click straight through to the approval package: <a href="/drugs/">/drugs/</a>. Each drug has its own permalink, e.g. <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>.</li>
+      <li><strong>Use trove's FDA novel drug approvals index</strong> — search any of 218 approvals from 2021–2024 (CDER NMEs + CBER cell/gene therapies) and click straight through to the approval package: <a href="/drugs/">/drugs/</a>. Each drug has its own permalink, e.g. <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/casgevy/">/drugs/casgevy/</a>.</li>
       <li><strong>Install the <a href="/skills/fda-analyst/">fda-analyst Claude Code skill</a></strong> to ask natural-language questions like <em>"What was the basis for Lenmeldy's approval?"</em> or <em>"What adverse events did the FDA flag in the Elahere medical review?"</em> The skill fetches and reads the relevant PDF at query time.</li>
       <li><strong>Browse Drugs@FDA directly</strong> at <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">accessdata.fda.gov</a> if you want to dig through everything yourself.</li>
     </ul>

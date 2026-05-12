@@ -21,6 +21,7 @@ Invoke when the user asks about:
 
 - **Clinical advice or dosing.** This is a reference tool over public approval documents, not a substitute for the prescribing label or clinical judgment.
 - **Drugs approved before 2021.** The current trove index covers 2021–2024 only. Earlier drugs aren't in the published bundle yet.
+- **Devices, biosimilars, generics, or supplemental approvals.** Out of scope. Vaccines and blood products are also out of scope — trove ingests only the CBER cell &amp; gene therapy page, not the broader CBER vaccines/blood list.
 - **Devices, biosimilars, or generic (ANDA) approvals.** Out of scope — the trove index covers FDA's curated "Novel Drug Approvals" lists (NMEs and novel BLAs).
 - **Questions that don't require the actual approval package** — labeling questions, prescribing information, formulary status, etc. Use FDA's public-facing tools or the prescribing label.
 
@@ -66,7 +67,7 @@ duckdb.sql("""
 ## Coverage
 
 - **2021–2024 calendar years** of FDA novel drug approvals (NMEs and novel BLAs from FDA's annual lists).
-- ~192 drugs total.
+- 218 drugs total (192 CDER + 26 CBER cell &amp; gene therapies). Each row carries a `regulatory_center` column.
 - Each drug has the metadata index plus a direct link to the drugs@FDA application overview where every approval-document PDF lives.
 
 ## Sources and citations

@@ -5,7 +5,7 @@
 - Parquet: `https://troveproject.com/data/fda_approvals_nme_recent.parquet`
 - JSON: `https://troveproject.com/data/fda_approvals_nme_recent.json`
 
-192 rows covering FDA Novel Drug Approvals for calendar years 2021–2024.
+218 rows covering FDA novel drug approvals for calendar years 2021–2024. v0.2 ingests both regulatory centers: 192 CDER (NMEs + novel antibody BLAs from the annual *Novel Drug Approvals* pages) plus 26 CBER (cell and gene therapies from the *Approved Cellular and Gene Therapy Products* page).
 
 ## JSON envelope shape
 
@@ -14,10 +14,10 @@ The JSON is **not** a top-level array. It's an object:
 ```json
 {
   "totals": {
-    "drugs": 192,
+    "drugs": 218,
     "year_min": 2021,
     "year_max": 2024,
-    "by_year": {"2021": 50, "2022": 37, "2023": 55, "2024": 50}
+    "by_year": {"2021": 55, "2022": 42, "2023": 61, "2024": 60}
   },
   "rows": [ /* one object per drug */ ]
 }
@@ -29,17 +29,18 @@ When iterating, use `data["rows"]`, not `data` directly.
 
 | Column | Description |
 |--------|-------------|
-| `year` | Calendar year of the FDA novel-drug-approvals page |
+| `year` | Calendar year of approval |
 | `drug_name` | FDA brand name |
 | `active_ingredient` | International nonproprietary or USAN name |
-| `sponsor` | Company that holds the application, parsed from drugs@FDA. Title-cased from FDA's all-caps stored form ("IONIS PHARMS INC" → "Ionis Pharms INC"). 191 of 192 rows populated. |
-| `approval_date` | Approval date |
-| `indication` | FDA-approved use string from the FDA novel-drug page |
-| `application_number` | NDA or BLA application number (6 digits) |
-| `application_type` | "NDA" or "BLA" (inferred from the application number prefix) |
-| `label_pdf_url` | Direct link to the FDA-approved label PDF |
-| `drugs_at_fda_url` | Direct link to the drugs@FDA application overview — lists every PDF in the approval package |
-| `trials_snapshot_url` | Drug Trials Snapshot URL (when FDA published one) |
+| `sponsor` | Company that holds the application. CDER: parsed from drugs@FDA, title-cased from FDA's all-caps stored form. CBER: parsed from the per-product page's "Manufacturer" field. 217 of 218 rows populated. |
+| `approval_date` | Approval date (for CBER, the *earliest* approval letter in the reverse-chronological history — i.e. the original approval, not later supplements) |
+| `indication` | FDA-approved use string |
+| `application_number` | NDA / BLA application number (6 digits). For CBER products this is the STN. |
+| `application_type` | "NDA" or "BLA". CBER products are always BLA. |
+| `label_pdf_url` | Direct link to the FDA-approved label PDF (CDER) or Package Insert (CBER). |
+| `drugs_at_fda_url` | CDER: drugs@FDA application-overview URL. CBER: per-product FDA page under `fda.gov/vaccines-blood-biologics/` — that page is the canonical hub for the approval letter, package insert, clinical review memo, and Summary Basis for Regulatory Action. |
+| `trials_snapshot_url` | Drug Trials Snapshot URL (CDER only; CBER doesn't publish Trials Snapshots — `null`) |
+| `regulatory_center` | `"CDER"` or `"CBER"`. CDER = small molecules + most antibody biologics. CBER = cell and gene therapies. |
 
 ## Query patterns
 

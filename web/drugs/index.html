@@ -155,7 +155,7 @@
 
   <section class="lede">
     <p>The FDA publishes an "Approval Package" for each newly approved drug — the medical review, statistical review, pharmacology review, chemistry review, label, and other documents that describe the basis for the agency's decision. Those documents are public and on accessdata.fda.gov, but the path from "drug name" to "the approval package" is several clicks of guesswork through FDA's site.</p>
-    <p>trove indexes FDA's annual <em>novel drug approvals</em> (curated NMEs and novel BLAs) for 2021–2024. Search for a drug, see its application number and approval date, and click straight through to the FDA's full approval-package overview where every PDF lives. <strong>This is a reference index, not a clinical resource.</strong> The approval package itself is the source of truth.</p>
+    <p>trove indexes FDA's <em>novel drug approvals</em> for 2021–2024 from both regulatory centers: CDER's annual NME/BLA lists and CBER's Approved Cellular and Gene Therapy Products page. Search for a drug, see its application number and approval date, and click straight through to the FDA's full approval-package overview where every PDF lives. <strong>This is a reference index, not a clinical resource.</strong> The approval package itself is the source of truth.</p>
     <p>New to FDA approvals? Read <a href="/docs/fda-nme/">what is an FDA novel drug approval</a> for a plain-language explainer of NMEs, novel BLAs, and what's in an approval package.</p>
     <div class="stats" id="stats">
       <div class="stat">
@@ -184,7 +184,7 @@
       </div>
       <div id="matches" class="matches" hidden></div>
     </div>
-    <p class="empty-hint" id="empty-hint">Type a drug name above. The tool covers 192 novel drug approvals from 2021–2024.</p>
+    <p class="empty-hint" id="empty-hint">Type a drug name above. The tool covers 218 novel drug approvals from 2021–2024 (CDER + CBER).</p>
     <div id="detail-mount"></div>
   </section>
 
@@ -200,12 +200,11 @@
       <p><strong>Gives you:</strong> drug name, active ingredient, sponsor, approval date, indication summary, application number (NDA/BLA), and a deep link to the drugs@FDA application overview where every approval-package document lives. About two-thirds of rows also have a direct link to the FDA-approved label PDF (when FDA's annual page links to one); the rest link directly to the drugs@FDA overview.</p>
       <p><strong>Doesn't give you:</strong> pre-extracted content from the medical / statistical / pharmacology / chemistry reviews — those are large, varied PDFs and pre-extracting them is a separate project. The companion Claude skill <code>fda-analyst</code> reads those PDFs at query time when a user asks about a specific approval.</p>
       <p><strong>Doesn't cover:</strong> 2020 and earlier approvals (FDA archived the 2020 page; older years would need OCR), device approvals, generic approvals (ANDAs), and supplemental approvals (additional indications for already-approved drugs).</p>
-      <p><strong>Doesn't cover (CBER scope gap):</strong> the FDA <em>Novel Drug Approvals</em> page that trove ingests is curated by CDER — the FDA center that reviews small-molecule drugs and most antibody biologics. Cell and gene therapy products regulated by CBER (Center for Biologics Evaluation and Research) appear on a <a href="https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products" rel="noopener">separate FDA page</a> and are not yet in the trove index. That gap includes Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, and other recent gene therapies. Adding a CBER source is planned for v0.2.</p>
+      <p><strong>Two FDA centers, one combined index.</strong> CDER (Center for Drug Evaluation and Research) reviews small-molecule drugs and most antibody biologics; their curated <em>Novel Drug Approvals</em> page is the main feed. CBER (Center for Biologics Evaluation and Research) reviews cell and gene therapies; they appear on a <a href="https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products" rel="noopener">separate FDA page</a>. As of v0.2, trove ingests both. Each row carries a <code>regulatory_center</code> column. Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, and other recent gene therapies are now included.</p>
     </details>
     <details style="margin-top: 0.85rem;">
       <summary>What's coming next</summary>
       <ul>
-        <li><strong>CBER cell &amp; gene therapy approvals</strong> (Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, etc.) — currently outside the FDA Novel Drug Approvals page trove ingests. Adds a separate scraper with a <code>regulatory_center</code> column distinguishing CDER from CBER.</li>
         <li>Earlier years (back to ~2015) once we figure out the right way to source pre-2020 approvals.</li>
         <li>Light pre-extraction from the approval-package PDFs — primary endpoints, regulatory pathway (priority review / breakthrough / accelerated), key adverse-event signals at approval.</li>
         <li>Indication tagging via ICD-10 / MeSH for cohort queries.</li>
