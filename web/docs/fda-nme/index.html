@@ -79,6 +79,14 @@
           "@type": "Answer",
           "text": "Approval packages live on accessdata.fda.gov. The Drugs@FDA application overview page for each approval (e.g. accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=XXXXXX) lists every document FDA released for that approval. The trove FDA index gives you the application overview URL for each of 192 novel drug approvals from 2021-2024 so you don't have to guess at it."
         }
+      },
+      {
+        "@type": "Question",
+        "name": "Why isn't Lenmeldy / Casgevy / Lyfgenia in trove's FDA index?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Trove's FDA index mirrors FDA's curated Novel Drug Approvals page, which is published by CDER and excludes cell and gene therapy products regulated by CBER. Lenmeldy (atidarsagene autotemcel), Casgevy and Lyfgenia (sickle cell gene therapies), Beqvez, Hemgenix, Roctavian, and other recent gene therapies appear on FDA's separate Approved Cellular and Gene Therapy Products page. Adding a CBER source is planned for v0.2."
+        }
       }
     ]
   },
@@ -130,6 +138,7 @@
   <article>
     <p>Each year FDA publishes a curated list of <strong>Novel Drug Approvals</strong> — first-time approvals of drugs with active ingredients that have never been approved before. In 2024 the list had 50 drugs; in 2023, 55; 2022, 37; 2021, 50. These are mostly <strong>NMEs</strong> (New Molecular Entities, approved via NDA) plus a handful of <strong>novel BLAs</strong> (Biologics License Applications for first-of-kind biologics). The list excludes generics, biosimilars, new formulations of existing drugs, and supplemental approvals adding indications to already-approved drugs.</p>
     <p>The list is what most public discourse about "what drugs got approved this year" refers to. It's also the cohort with the largest, most-detailed approval packages on accessdata.fda.gov.</p>
+    <p class="callout"><strong>CDER vs. CBER scope.</strong> The Novel Drug Approvals page is curated by <strong>CDER</strong> (Center for Drug Evaluation and Research), which reviews small-molecule drugs and most antibody biologics. Cell and gene therapy products — Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, and other recent gene therapies — are regulated by <strong>CBER</strong> (Center for Biologics Evaluation and Research) and appear on a <a href="https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products">separate FDA page</a>. They are clinically significant but not on the CDER novel-drug list. Trove's index mirrors the CDER list and does not yet include CBER gene-therapy approvals; that's planned for v0.2.</p>
 
     <h2>What an approval is</h2>
     <p>When the FDA approves a new drug for marketing in the U.S., several things happen at once:</p>

@@ -200,10 +200,12 @@
       <p><strong>Gives you:</strong> drug name, active ingredient, sponsor, approval date, indication summary, application number (NDA/BLA), and a deep link to the drugs@FDA application overview where every approval-package document lives. About two-thirds of rows also have a direct link to the FDA-approved label PDF (when FDA's annual page links to one); the rest link directly to the drugs@FDA overview.</p>
       <p><strong>Doesn't give you:</strong> pre-extracted content from the medical / statistical / pharmacology / chemistry reviews — those are large, varied PDFs and pre-extracting them is a separate project. The companion Claude skill <code>fda-analyst</code> reads those PDFs at query time when a user asks about a specific approval.</p>
       <p><strong>Doesn't cover:</strong> 2020 and earlier approvals (FDA archived the 2020 page; older years would need OCR), device approvals, generic approvals (ANDAs), and supplemental approvals (additional indications for already-approved drugs).</p>
+      <p><strong>Doesn't cover (CBER scope gap):</strong> the FDA <em>Novel Drug Approvals</em> page that trove ingests is curated by CDER — the FDA center that reviews small-molecule drugs and most antibody biologics. Cell and gene therapy products regulated by CBER (Center for Biologics Evaluation and Research) appear on a <a href="https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products" rel="noopener">separate FDA page</a> and are not yet in the trove index. That gap includes Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, and other recent gene therapies. Adding a CBER source is planned for v0.2.</p>
     </details>
     <details style="margin-top: 0.85rem;">
       <summary>What's coming next</summary>
       <ul>
+        <li><strong>CBER cell &amp; gene therapy approvals</strong> (Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, etc.) — currently outside the FDA Novel Drug Approvals page trove ingests. Adds a separate scraper with a <code>regulatory_center</code> column distinguishing CDER from CBER.</li>
         <li>Earlier years (back to ~2015) once we figure out the right way to source pre-2020 approvals.</li>
         <li>Light pre-extraction from the approval-package PDFs — primary endpoints, regulatory pathway (priority review / breakthrough / accelerated), key adverse-event signals at approval.</li>
         <li>Indication tagging via ICD-10 / MeSH for cohort queries.</li>
