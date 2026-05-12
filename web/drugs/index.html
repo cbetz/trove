@@ -332,6 +332,10 @@ function render() {
   matchesEl.hidden = false;
 }
 
+function slugify(s) {
+  return (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 function renderDetail() {
   const mount = $("#detail-mount");
   const r = SELECTED;
@@ -346,6 +350,7 @@ function renderDetail() {
   if (r.trials_snapshot_url) {
     links.push(`<a href="${r.trials_snapshot_url}" target="_blank" rel="noopener">↗ FDA Drug Trials Snapshot</a>`);
   }
+  const permalink = `/drugs/${slugify(r.drug_name)}/`;
   mount.innerHTML = `
     <div class="detail">
       <p class="detail-title">${escapeHtml(r.drug_name || "(unknown)")}</p>
@@ -355,6 +360,7 @@ function renderDetail() {
         <div class="meta-row"><span class="meta-label">Application</span><span>${escapeHtml(r.application_type || "")} ${escapeHtml(r.application_number || "—")}</span></div>
         <div class="meta-row"><span class="meta-label">Approval date</span><span>${formatDate(r.approval_date)}</span></div>
         <div class="meta-row"><span class="meta-label">Approval year</span><span>${r.year}</span></div>
+        <div class="meta-row"><span class="meta-label">Permalink</span><a href="${permalink}">${permalink}</a></div>
       </div>
       <div class="indication">
         <div class="indication-label">FDA-approved use</div>
