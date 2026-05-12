@@ -301,6 +301,10 @@ def main() -> None:
         ("skills/", "0.9"),
         ("skills/fda-analyst/", "0.8"),
         ("skills/hcris-analyst/", "0.8"),
+        ("docs/", "0.8"),
+        ("docs/hcris/", "0.8"),
+        ("docs/schedule-h/", "0.8"),
+        ("docs/fda-nme/", "0.8"),
     ]
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
