@@ -118,7 +118,7 @@ cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
   <section>
     <h2>What this skill does</h2>
     <ul>
-      <li><strong>Finds the application.</strong> The skill queries trove's <a href="/drugs/">FDA approvals index</a> (a Parquet bundle with 192 NMEs from 2021–2024) to locate the application number, sponsor, and approval-package URL for the drug in question.</li>
+      <li><strong>Finds the application.</strong> The skill queries trove's <a href="/drugs/">FDA approvals index</a> (a Parquet bundle with 218 novel drug approvals from 2021–2024 — CDER NMEs plus CBER cell &amp; gene therapies) to locate the application number, sponsor, and approval-package URL for the drug in question.</li>
       <li><strong>Picks the right document.</strong> Different questions need different documents — the medical review for "basis for approval" and "adverse events", the statistical review for endpoint analyses, the pharmacology review for ADME, the chemistry review for manufacturing. The skill knows the mapping.</li>
       <li><strong>Reads it at query time.</strong> No pre-extracted summaries. The skill fetches the PDF from accessdata.fda.gov, reads the relevant section, and quotes back with a citation.</li>
       <li><strong>Cites the source.</strong> Answers reference the specific document and page so users can verify.</li>
@@ -137,7 +137,7 @@ cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
 
   <section>
     <h2>Coverage</h2>
-    <p>192 FDA novel drug approvals from 2021–2024. Browse the index at <a href="/drugs/">/drugs/</a> — each drug has its own permalink page with the approval-package URL, e.g. <a href="/drugs/elahere/">/drugs/elahere/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/krazati/">/drugs/krazati/</a>.</p>
+    <p>218 FDA novel drug approvals from 2021–2024 — 192 CDER (small molecules + most antibody biologics) plus 26 CBER (cell &amp; gene therapies). Browse the index at <a href="/drugs/">/drugs/</a> — each drug has its own permalink page with the approval-package URL, e.g. <a href="/drugs/elahere/">/drugs/elahere/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/casgevy/">/drugs/casgevy/</a>.</p>
   </section>
 
   <section>

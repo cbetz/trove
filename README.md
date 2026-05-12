@@ -4,7 +4,7 @@
 
 ## Try it
 
-- **[troveproject.com/drugs/](https://troveproject.com/drugs/)** — search 192 FDA novel drug approvals from 2021–2024; click any record for its full approval package
+- **[troveproject.com/drugs/](https://troveproject.com/drugs/)** — search 218 FDA novel drug approvals from 2021–2024 (CDER NMEs + CBER cell &amp; gene therapies); click any record for its full approval package
 - **[troveproject.com/hospitals/](https://troveproject.com/hospitals/)** — look up 1,295 nonprofit U.S. hospital systems; HCRIS and 990 Schedule H side-by-side
 - **[troveproject.com/skills/](https://troveproject.com/skills/)** — install the trove Claude Code plugin (`fda-analyst` + `hcris-analyst`)
 - **[troveproject.com/docs/](https://troveproject.com/docs/)** — plain-language explainers: [what is HCRIS](https://troveproject.com/docs/hcris/), [what is IRS 990 Schedule H](https://troveproject.com/docs/schedule-h/), [what is an FDA novel drug approval](https://troveproject.com/docs/fda-nme/)
@@ -17,11 +17,9 @@ Two areas live in v1:
 
 ### [/drugs](https://troveproject.com/drugs/) — FDA drug approvals
 
-Look up any FDA Novel Drug Approval from 2021–2024 (192 drugs). Each row carries the application number, sponsor, approval date, indication, and a deep link to the drugs@FDA application overview where every approval-package document lives (medical review, statistical review, pharmacology review, etc.). About two-thirds of rows also include a direct link to the FDA-approved label PDF. Companion Claude skill `fda-analyst` reads those PDFs at query time when a user asks about a specific approval.
+Look up any FDA novel drug approval from 2021–2024 (218 drugs). v0.2 ingests both FDA regulatory centers: **CDER** (192 NMEs and novel antibody BLAs from the annual *Novel Drug Approvals* lists) plus **CBER** (26 cell and gene therapy approvals — Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, Adstiladrin, etc.). Each row carries application number, sponsor, approval date, indication, a `regulatory_center` column, and a deep link to either the drugs@FDA application overview (CDER) or the per-product FDA page (CBER) where every approval-package document lives. Companion Claude skill `fda-analyst` reads those PDFs at query time.
 
-Sources: FDA's annual *Novel Drug Approvals* curated lists; drugs@FDA database. US government work, public domain.
-
-**Scope note:** the *Novel Drug Approvals* page is curated by CDER and excludes CBER-regulated cell and gene therapy products. Trove's v0.1 mirrors that list, so Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, and other recent gene therapies are not yet included. Adding a CBER source is planned for v0.2.
+Sources: FDA's annual *Novel Drug Approvals* curated lists (CDER); *Approved Cellular and Gene Therapy Products* page (CBER); drugs@FDA database. US government work, public domain.
 
 ### [/hospitals](https://troveproject.com/hospitals/) — hospital reporting (CMS + IRS)
 
@@ -54,7 +52,7 @@ uv run python scripts/build_fda_index.py
 
 **FDA drug approvals area:**
 
-- **`fda_sba`** — Scrapes FDA's annual *Novel Drug Approvals* pages (curated NMEs and novel BLAs from CDER), extracts application number / drug name / active ingredient / approval date / indication, and emits links to the approval-package PDFs. v0.1 covers 2021–2024 (~192 drugs). CBER cell &amp; gene therapy approvals (Lenmeldy, Casgevy, Lyfgenia, etc.) are tracked separately by FDA and not yet ingested — planned for v0.2.
+- **`fda_sba`** — Scrapes FDA's novel-approval sources from both CDER (annual *Novel Drug Approvals* pages) and CBER (*Approved Cellular and Gene Therapy Products* page). Extracts application number / drug name / active ingredient / approval date / sponsor / indication / `regulatory_center`, and emits links to the approval-package PDFs. v0.2 covers 2021–2024 (218 drugs: 192 CDER + 26 CBER).
 
 **Site:** static, deployed to Vercel at troveproject.com.
 
