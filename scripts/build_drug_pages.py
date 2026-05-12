@@ -172,6 +172,7 @@ cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
   <footer>
     <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> at <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
     <p>Source: U.S. Food and Drug Administration, <a href="https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda">Novel Drug Approvals</a>; <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">Drugs@FDA database</a>. US government work, public domain.</p>
+    <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
   </footer>
 
   <script defer src="/_vercel/insights/script.js"></script>
