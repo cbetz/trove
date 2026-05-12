@@ -192,7 +192,9 @@ def build_jsonld(r: dict, canonical: str) -> str:
         "manufacturer": {
             "@type": "Organization",
             "name": title_case(r.get("sponsor")),
-        } if r.get("sponsor") else None,
+        }
+        if r.get("sponsor")
+        else None,
         "description": r.get("indication"),
         "isProprietary": True,
     }
@@ -203,7 +205,12 @@ def build_jsonld(r: dict, canonical: str) -> str:
         "@type": "BreadcrumbList",
         "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "trove", "item": f"{SITE}/"},
-            {"@type": "ListItem", "position": 2, "name": "FDA drug approvals", "item": f"{SITE}/drugs/"},
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "FDA drug approvals",
+                "item": f"{SITE}/drugs/",
+            },
             {"@type": "ListItem", "position": 3, "name": r["drug_name"], "item": canonical},
         ],
     }
@@ -225,7 +232,11 @@ def build_link_items(r: dict) -> str:
         items.append(
             f'    <li><a href="{esc(r["trials_snapshot_url"])}" rel="noopener" target="_blank">↗ FDA Drug Trials Snapshot</a></li>'
         )
-    return "\n".join(items) if items else '    <li><span style="color: var(--muted);">No FDA links available for this row.</span></li>'
+    return (
+        "\n".join(items)
+        if items
+        else '    <li><span style="color: var(--muted);">No FDA links available for this row.</span></li>'
+    )
 
 
 def build_page(r: dict) -> tuple[str, str]:
@@ -291,8 +302,10 @@ def main() -> None:
         ("skills/fda-analyst/", "0.8"),
         ("skills/hcris-analyst/", "0.8"),
     ]
-    lines = ['<?xml version="1.0" encoding="UTF-8"?>',
-             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
     for path, priority in top_level:
         lines += [
             "  <url>",

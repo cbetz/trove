@@ -109,7 +109,10 @@ def main() -> None:
     JPG_OUT.parent.mkdir(parents=True, exist_ok=True)
     img.save(JPG_OUT, "JPEG", quality=92, optimize=True)
     print(f"  → {JPG_OUT} ({JPG_OUT.stat().st_size / 1024:.1f} KB)")
-    print(f"  stats: {fda_count} drugs ({fda_year_min}–{fda_year_max}), {hospitals_count:,} hospitals (TY2022)")
+    print(
+        f"  stats: {fda_count} drugs ({fda_year_min}–{fda_year_max}), "
+        f"{hospitals_count:,} hospitals (TY2022)"
+    )
 
 
 def _draw_area(

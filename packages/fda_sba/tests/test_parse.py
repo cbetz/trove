@@ -46,9 +46,12 @@ def fda_year_page(tmp_path: Path) -> Path:
 
 
 def test_appl_no_extracted_from_label_url() -> None:
-    assert _appl_no_from_label_url(
-        "https://www.accessdata.fda.gov/drugsatfda_docs/label/2024/761315s000lbl.pdf"
-    ) == "761315"
+    assert (
+        _appl_no_from_label_url(
+            "https://www.accessdata.fda.gov/drugsatfda_docs/label/2024/761315s000lbl.pdf"
+        )
+        == "761315"
+    )
     assert _appl_no_from_label_url("https://example.com/no-match.pdf") is None
     assert _appl_no_from_label_url(None) is None
 

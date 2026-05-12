@@ -19,7 +19,6 @@ import json
 import math
 from pathlib import Path
 
-import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 from fda_sba import build_index, enrich_with_sponsor
@@ -60,9 +59,7 @@ def main() -> None:
     # Web Parquet bundle
     WEB_DATA.mkdir(parents=True, exist_ok=True)
     web_pq = WEB_DATA / "fda_approvals_nme_recent.parquet"
-    pq.write_table(
-        pa.Table.from_pandas(df, preserve_index=False), web_pq, compression="zstd"
-    )
+    pq.write_table(pa.Table.from_pandas(df, preserve_index=False), web_pq, compression="zstd")
     print(f"  → {web_pq} ({web_pq.stat().st_size / 1024:.1f} KB)")
 
     # Web JSON bundle for the lookup page
@@ -72,9 +69,7 @@ def main() -> None:
             "drugs": int(len(df)),
             "year_min": int(df["year"].min()),
             "year_max": int(df["year"].max()),
-            "by_year": {
-                int(y): int(c) for y, c in df.groupby("year").size().items()
-            },
+            "by_year": {int(y): int(c) for y, c in df.groupby("year").size().items()},
         },
         "rows": rows,
     }

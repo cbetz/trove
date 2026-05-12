@@ -12,13 +12,13 @@ import inflate64
 import pandas as pd
 from lxml import etree
 
-# IRS bulk ZIPs starting with the 2025 release year use DEFLATE64 (compress_type
-# 9), which Python's stdlib zipfile can index but cannot decompress.
-ZIP_DEFLATED64 = 9
-
 from form990.download import download_index, download_zip
 from form990.index import filter_990s_for_tax_year, read_index
 from form990.schedule_h import OUTPUT_COLUMNS, PART_I_LINE_GROUPS
+
+# IRS bulk ZIPs starting with the 2025 release year use DEFLATE64 (compress_type
+# 9), which Python's stdlib zipfile can index but cannot decompress.
+ZIP_DEFLATED64 = 9
 
 _NS_URI = "http://www.irs.gov/efile"
 _NSMAP = {"e": _NS_URI}

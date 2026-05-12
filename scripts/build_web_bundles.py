@@ -23,7 +23,6 @@ from pathlib import Path
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-
 from hcris import parse_zip as parse_hcris
 from hcris import pivot_wide
 
@@ -43,9 +42,7 @@ def main() -> None:
 
     print(f"Loading TY{TAX_YEAR} Schedule H...")
     if not SCHED_H_PARQUET.exists():
-        raise SystemExit(
-            f"missing {SCHED_H_PARQUET}; run scripts/build_gap_dataset.py first"
-        )
+        raise SystemExit(f"missing {SCHED_H_PARQUET}; run scripts/build_gap_dataset.py first")
     sched_h = pd.read_parquet(SCHED_H_PARQUET)
     _write(WEB_DATA / f"schedule_h_{TAX_YEAR}.parquet", sched_h)
 
