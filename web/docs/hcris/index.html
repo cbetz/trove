@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What is HCRIS? CMS Medicare Cost Reports explained — trove</title>
+  <meta name="description" content="HCRIS is the public CMS database of annual Medicare Cost Reports filed by every Medicare-participating hospital. Plain-language explainer covering Form 2552-10, Worksheet S-10 charity care, the long-skinny CSV format, and how to query it.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://troveproject.com/docs/hcris/">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="What is HCRIS? CMS Medicare Cost Reports explained">
+  <meta property="og:description" content="Plain-language explainer for HCRIS — the CMS public database of annual Medicare Cost Reports filed by every Medicare-participating hospital.">
+  <meta property="og:url" content="https://troveproject.com/docs/hcris/">
+  <meta property="og:image" content="https://troveproject.com/og-20260505c.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="What is HCRIS? CMS Medicare Cost Reports explained">
+  <meta name="twitter:description" content="Plain-language explainer for the CMS Medicare Cost Report system, Hospital 2552-10, and Worksheet S-10 charity care.">
+  <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
+  <script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "What is HCRIS? CMS Medicare Cost Reports explained",
+    "description": "Plain-language explainer for HCRIS, Form 2552-10, and Worksheet S-10 charity care.",
+    "url": "https://troveproject.com/docs/hcris/",
+    "author": {
+      "@type": "Person",
+      "name": "Chris Betz",
+      "url": "https://cbetz.com",
+      "sameAs": ["https://cbetz.com", "https://x.com/thechrisbetz", "https://github.com/cbetz"]
+    },
+    "publisher": {"@type": "Organization", "name": "trove", "url": "https://troveproject.com/"},
+    "datePublished": "2026-05-12",
+    "dateModified": "2026-05-12"
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What does HCRIS stand for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "HCRIS stands for the Healthcare Cost Report Information System. It's the CMS-operated public database where every Medicare-participating provider files an annual cost report describing its finances, utilization, and capacity."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is Form 2552-10?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Form 2552-10 is the specific CMS cost report form filed by hospitals. It is a multi-worksheet document covering bed counts, staffing, revenue, expenses, charity care, bad debt, and uncompensated care. Each hospital files one Form 2552-10 per fiscal year."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is Worksheet S-10?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Worksheet S-10 is the part of Form 2552-10 that captures charity care, bad debt, and uncompensated care. CMS uses line 23 column 3 (charity care cost) and line 30 (total uncompensated care cost) to allocate Medicare disproportionate-share hospital (DSH) payments."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I download HCRIS data?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "CMS publishes HCRIS bulk extracts as ZIP files of long-skinny CSVs at qualidigm.org and via CMS.gov. Each ZIP contains one row per (report, worksheet, line, column, value) tuple. Most analysts pivot the data into a wide table before analysis. The trove project does this for you and publishes the result as a Parquet bundle."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What years does HCRIS cover?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "HCRIS goes back decades, but CMS labels each release by the federal fiscal-year reporting cycle in which the report was filed, not the fiscal period the report covers. A 'FY2023' HCRIS file contains reports filed during federal FY2023, which mostly cover hospital fiscal years ending in calendar 2022."
+        }
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "trove", "item": "https://troveproject.com/"},
+      {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://troveproject.com/docs/"},
+      {"@type": "ListItem", "position": 3, "name": "HCRIS", "item": "https://troveproject.com/docs/hcris/"}
+    ]
+  }
+]
+  </script>
+  <style>
+    :root { color-scheme: light dark; --bg: #ffffff; --fg: #111111; --muted: #5a5a5a; --border: rgba(127, 127, 127, 0.3); --row-hover: rgba(127, 127, 127, 0.08); }
+    @media (prefers-color-scheme: dark) { :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; } }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; padding: 4rem 1.5rem 6rem; max-width: 44rem; font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg); color: var(--fg); }
+    .breadcrumb { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.9em; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h1 { font-size: 2.2rem; margin: 0 0 0.5rem; letter-spacing: -0.025em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.05rem; }
+    article p { margin: 1em 0; }
+    article h2 { font-size: 1.15rem; margin: 2.25rem 0 0.6rem; font-weight: 700; letter-spacing: -0.005em; }
+    article h3 { font-size: 1rem; margin: 1.5rem 0 0.4rem; font-weight: 700; }
+    article ul { padding-left: 1.4rem; }
+    article li { margin: 0.3rem 0; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+    code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
+    pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
+    .callout { border: 1px solid var(--border); border-radius: 6px; padding: 1rem 1.25rem; margin: 1.5rem 0; background: var(--row-hover); }
+    .callout p:first-child { margin-top: 0; }
+    .callout p:last-child { margin-bottom: 0; }
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer p { margin: 0 0 0.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 1.75rem; } }
+  </style>
+</head>
+<body>
+  <p class="breadcrumb"><a href="/">trove</a> / <a href="/docs/">Docs</a> / HCRIS</p>
+
+  <header>
+    <h1>What is HCRIS?</h1>
+    <p class="tagline">CMS Medicare Cost Reports — the financial filing every Medicare-participating hospital submits annually.</p>
+  </header>
+
+  <article>
+    <p><strong>HCRIS</strong> stands for the <strong>Healthcare Cost Report Information System</strong>. It's the public CMS database of annual Medicare Cost Reports — the financial, operational, and utilization filings that every Medicare-participating hospital is required to submit. HCRIS is one of the most widely cited datasets in U.S. hospital research, and one of the hardest to use in its raw form.</p>
+
+    <h2>Why HCRIS exists</h2>
+    <p>Medicare reimburses hospitals on the basis of their costs. To set rates and audit them, CMS requires every participating provider to file an annual cost report listing what they spent, what they earned, and on whom. The reports also feed Medicare's disproportionate-share hospital (DSH) payments, which compensate hospitals that serve a high share of low-income patients. The data is collected for regulatory purposes, but because the underlying filings are public, HCRIS has become the default source for almost any quantitative question about U.S. hospitals.</p>
+
+    <h2>What gets filed</h2>
+    <p>Hospitals file <strong>CMS Form 2552-10</strong>, a multi-worksheet document with several thousand line items spread across worksheets labeled S (general), A through F (cost centers and allocations), G (balance sheet), H (financial statements), I (capital costs), J through N (allocation of patient days and beds), and more. Other CMS provider types (skilled nursing facilities, home health agencies, hospices, federally qualified health centers) file their own variants. Trove focuses on Hospital 2552-10.</p>
+    <p>Among the many worksheets, a handful are disproportionately important for hospital research:</p>
+    <ul>
+      <li><strong>Worksheet S-3</strong> — bed counts, occupancy, discharges, employee FTEs.</li>
+      <li><strong>Worksheet S-10</strong> — charity care, bad debt, uncompensated care. Line 23 column 3 ("charity care cost") and line 30 ("total uncompensated care cost") are the most-quoted numbers in HCRIS.</li>
+      <li><strong>Worksheet G</strong> — balance sheet (assets, liabilities, fund balances).</li>
+      <li><strong>Worksheet G-3</strong> — net income, total revenue, total operating expenses.</li>
+    </ul>
+
+    <h2>Why HCRIS is hard to use</h2>
+    <p>CMS distributes HCRIS as bulk-extract ZIP files, where each ZIP contains a long-skinny CSV with one row per (report, worksheet, line, column, value) tuple. A single hospital's annual filing decomposes into tens of thousands of rows. To do anything analytical you have to pivot the data wide — joining the right (worksheet, line, column) triples to get something like "charity care cost in dollars" as a column.</p>
+    <p>The line and column codes are documented in CMS's Provider Reimbursement Manual (Pub. 15-2, Chapter 40), but the documentation is dense, and CMS occasionally renumbers lines across form revisions. Trove ships a 44-variable dictionary that names the most commonly used fields and resolves them to the right (worksheet, line, column) source.</p>
+
+    <h2>The "FY2023" labeling gotcha</h2>
+    <p class="callout">CMS labels HCRIS bulk files by <em>federal fiscal-year reporting cycle</em> — the federal fiscal year in which the report was filed — <em>not</em> by the period the report covers. A hospital with a December 31 fiscal-year end will file its calendar-2022 cost report in 2023, and that report appears in CMS's "FY2023" bulk. When comparing HCRIS to other datasets like IRS 990 Schedule H, this is the single biggest source of confusion: the same hospital's "FY2023 HCRIS" and "TY2022 990" are about the same fiscal year, but the labels don't tell you that. The trove community-benefit dataset addresses this by carrying both the HCRIS fiscal-year end and the 990 tax-period end on every row.</p>
+
+    <h2>What HCRIS doesn't include</h2>
+    <ul>
+      <li><strong>Quality and outcomes metrics.</strong> Readmissions, mortality, complication rates — those live in CMS Care Compare / Hospital Compare, not HCRIS.</li>
+      <li><strong>Patient-level data.</strong> HCRIS is hospital-level aggregates, not encounters.</li>
+      <li><strong>Hospitals that don't participate in Medicare.</strong> Veterans Affairs hospitals, military hospitals, some children's hospitals, and a handful of specialty centers are not in HCRIS or are partial.</li>
+      <li><strong>Nonprofit-specific community benefit detail.</strong> Charity care is in Worksheet S-10, but the broader "community benefit" framing — research, education, Medicaid shortfall, in-kind contributions — is reported separately on <a href="/docs/schedule-h/">IRS Form 990 Schedule H</a> for tax-exempt hospitals.</li>
+    </ul>
+
+    <h2>How to use HCRIS data</h2>
+    <p>Three reasonable paths, in order of effort:</p>
+    <ul>
+      <li><strong>Use trove's published Parquet bundle.</strong> Query directly with DuckDB over HTTPS: <code>SELECT * FROM read_parquet('https://troveproject.com/data/hcris_2023_wide.parquet')</code>. <a href="/hospitals/">Browse 1,295 nonprofit hospital systems</a> in the lookup tool.</li>
+      <li><strong>Install the <a href="/skills/hcris-analyst/">hcris-analyst Claude Code skill</a></strong> to ask questions in natural language: <em>"Show me a profile of New York-Presbyterian"</em> or <em>"Which hospitals provided the most uncompensated care in FY2023?"</em></li>
+      <li><strong>Download from CMS directly</strong> and pivot it yourself. The trove repo (<a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>) has the parser if you want to reproduce or extend the work.</li>
+    </ul>
+
+    <h2>Citations</h2>
+    <ul>
+      <li>CMS, <a href="https://www.cms.gov/data-research/statistics-trends-and-reports/cost-reports">Hospital Cost Report and Provider Cost Report</a>.</li>
+      <li>CMS Provider Reimbursement Manual, Pub. 15-2, Chapter 40 — Hospital and Hospital Health Care Complex Cost Report (Form CMS-2552-10).</li>
+      <li>HCRIS data is U.S. government work, public domain.</li>
+    </ul>
+  </article>
+
+  <footer>
+    <p>One of three trove dataset explainers. See also: <a href="/docs/schedule-h/">IRS 990 Schedule H</a> and <a href="/docs/fda-nme/">FDA novel drug approvals</a>.</p>
+    <p>Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Bugs and questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
+  </footer>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

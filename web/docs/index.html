@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>trove — docs and glossary for U.S. healthcare data</title>
+  <meta name="description" content="Plain-language explainers for the public-domain healthcare datasets trove indexes — CMS HCRIS Medicare Cost Reports, IRS Form 990 Schedule H community benefit, and FDA novel drug approval packages.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://troveproject.com/docs/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="trove — docs and glossary for U.S. healthcare data">
+  <meta property="og:description" content="Plain-language explainers for the public-domain healthcare datasets trove indexes — CMS HCRIS, IRS 990 Schedule H, and FDA novel drug approval packages.">
+  <meta property="og:url" content="https://troveproject.com/docs/">
+  <meta property="og:image" content="https://troveproject.com/og-20260505c.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="trove — docs and glossary for U.S. healthcare data">
+  <meta name="twitter:description" content="Plain-language explainers for CMS HCRIS, IRS 990 Schedule H, and FDA novel drug approval packages.">
+  <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "trove", "item": "https://troveproject.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Docs", "item": "https://troveproject.com/docs/"}
+  ]
+}
+  </script>
+  <style>
+    :root { color-scheme: light dark; --bg: #ffffff; --fg: #111111; --muted: #5a5a5a; --border: rgba(127, 127, 127, 0.3); --row-hover: rgba(127, 127, 127, 0.08); }
+    @media (prefers-color-scheme: dark) { :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; } }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; padding: 4rem 1.5rem 6rem; max-width: 44rem; font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg); color: var(--fg); }
+    .breadcrumb { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.9em; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h1 { font-size: 2.75rem; margin: 0 0 0.5rem; letter-spacing: -0.03em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.1rem; }
+    section { margin-top: 2.5rem; }
+    h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 0.85rem; font-weight: 600; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+
+    .doc-card { display: block; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; text-decoration: none; color: inherit; transition: background 0.1s ease; margin-top: 1rem; }
+    .doc-card:hover { background: var(--row-hover); opacity: 1; }
+    .doc-tag { display: inline-block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .doc-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.4rem; letter-spacing: -0.01em; }
+    .doc-sub { color: var(--muted); font-size: 0.95em; margin: 0; }
+
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer p { margin: 0 0 0.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 2.1rem; } }
+  </style>
+</head>
+<body>
+  <p class="breadcrumb"><a href="/">trove</a> / Docs</p>
+
+  <header>
+    <h1>Docs</h1>
+    <p class="tagline">Plain-language explainers for the datasets trove indexes.</p>
+  </header>
+
+  <section>
+    <p>Three of the most widely cited public-domain datasets in U.S. healthcare are also three of the least approachable. CMS Medicare Cost Reports are shipped as 100,000-row long-skinny CSVs. IRS Form 990 Schedule H is buried in XML bulk ZIPs. FDA approval packages are scattered across hundreds of PDF directories on accessdata.fda.gov. The data is public; learning what's in it is a project.</p>
+    <p>These pages explain what each dataset is, what's in it, and how to use it — in plain language, with citations.</p>
+  </section>
+
+  <section>
+    <h2>Datasets</h2>
+    <a class="doc-card" href="/docs/hcris/">
+      <span class="doc-tag">CMS</span>
+      <p class="doc-title">What is HCRIS?</p>
+      <p class="doc-sub">CMS Medicare Cost Reports — the financial filing every Medicare-participating hospital submits annually. Covers beds, staffing, revenue, costs, charity care, and uncompensated care via the Hospital 2552-10 form.</p>
+    </a>
+    <a class="doc-card" href="/docs/schedule-h/">
+      <span class="doc-tag">IRS</span>
+      <p class="doc-title">What is IRS Form 990 Schedule H?</p>
+      <p class="doc-sub">The community-benefit schedule that nonprofit hospitals attach to their annual Form 990 tax return. Covers financial assistance, Medicaid shortfall, research, education, and other categories that justify tax-exempt status.</p>
+    </a>
+    <a class="doc-card" href="/docs/fda-nme/">
+      <span class="doc-tag">FDA</span>
+      <p class="doc-title">What is an FDA novel drug approval?</p>
+      <p class="doc-sub">The annual curated list of meaningful first-time drug approvals (NMEs and novel BLAs), and the approval package each one ships with — medical, statistical, pharmacology, and chemistry reviews.</p>
+    </a>
+  </section>
+
+  <section>
+    <h2>Tools</h2>
+    <p>The docs explain the data. The tools let you query it.</p>
+    <ul>
+      <li><a href="/drugs/">Browse FDA drug approvals (2021–2024)</a> — 192 NMEs, search and detail pages.</li>
+      <li><a href="/hospitals/">Browse hospital reporting (TY2022 / FY2023)</a> — 1,295 nonprofit U.S. hospital systems, HCRIS + 990 side-by-side.</li>
+      <li><a href="/skills/">Install the Claude Code skills</a> — natural-language query over both datasets.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Docs are part of <a href="/">trove</a>, an open-source project by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical, legal, or financial advice. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
+  </footer>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>
