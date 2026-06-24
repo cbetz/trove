@@ -14,11 +14,11 @@ Each skill is self-contained: a `SKILL.md` (frontmatter + instructions), a `refe
 trove is packaged as a Claude Code plugin in this repo (`.claude-plugin/plugin.json` + `.claude-plugin/marketplace.json`). Inside Claude Code:
 
 ```
-/plugin marketplace add cbetz/trove
-/plugin install trove@trove
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install trove@claude-community
 ```
 
-This is the canonical install path. Plugin install gives you versioning, namespaced commands (`/trove:hcris-analyst`, `/trove:fda-analyst`), and auto-updates from git. The plugin will also be listed in the official marketplace at <https://claude.com/plugins> once Anthropic completes the submission review.
+This is the canonical install path through Anthropic's public community marketplace. Plugin install gives you versioning, namespaced commands (`/trove:hcris-analyst`, `/trove:fda-analyst`), and marketplace-managed updates. This is the community marketplace (`claude-community`), not the separate official `claude-plugins-official` marketplace.
 
 ## Install (Claude Code, filesystem path)
 

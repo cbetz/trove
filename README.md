@@ -60,12 +60,14 @@ uv run python scripts/build_fda_index.py
 
 trove is packaged as a Claude Code plugin (`.claude-plugin/plugin.json`) containing both skills. Two install paths:
 
-**Plugin install (recommended once published to the official marketplace):**
+**Plugin install (Claude Code, Anthropic community marketplace):**
 
 ```
-/plugin marketplace add cbetz/trove
-/plugin install trove@trove
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install trove@claude-community
 ```
+
+trove is listed in Anthropic's public community marketplace, not the separate official `claude-plugins-official` marketplace.
 
 **Filesystem install (works today):**
 

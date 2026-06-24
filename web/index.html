@@ -144,9 +144,10 @@
 
   <section>
     <h2>Claude Code skills</h2>
-    <p>Each area ships with a <a href="/skills/">Claude Code skill</a> that translates natural-language questions into queries over the area's published data. The skills are bundled as a single Claude Code plugin:</p>
-<pre><code>/plugin marketplace add cbetz/trove
-/plugin install trove@trove</code></pre>
+    <p>Each area ships with a <a href="/skills/">Claude Code skill</a> that translates natural-language questions into queries over the area's published data. The skills are bundled as a single Claude Code plugin in Anthropic's community marketplace:</p>
+<pre><code>/plugin marketplace add anthropics/claude-plugins-community
+/plugin install trove@claude-community</code></pre>
+    <p>This is the public community marketplace, not the separate official <code>claude-plugins-official</code> marketplace.</p>
     <p>Skill details and example prompts:</p>
     <ul>
       <li><a href="/skills/fda-analyst/">fda-analyst</a> — reads FDA approval-package documents to answer questions about the basis for approval, trials, endpoints, and regulatory pathway.</li>

@@ -267,9 +267,10 @@
 
   <section class="narrow">
     <h2>Query hospital filings with Claude Code</h2>
-    <p>The <a href="/skills/hcris-analyst/"><code>hcris-analyst</code></a> Claude Code skill answers natural-language questions about hospital financials by translating them into DuckDB queries against the Parquet bundles served from this site. Install the trove plugin:</p>
-<pre><code>/plugin marketplace add cbetz/trove
-/plugin install trove@trove</code></pre>
+    <p>The <a href="/skills/hcris-analyst/"><code>hcris-analyst</code></a> Claude Code skill answers natural-language questions about hospital financials by translating them into DuckDB queries against the Parquet bundles served from this site. Install the trove plugin from Anthropic's public community marketplace:</p>
+<pre><code>/plugin marketplace add anthropics/claude-plugins-community
+/plugin install trove@claude-community</code></pre>
+    <p>trove is listed in the community marketplace, not the separate official <code>claude-plugins-official</code> marketplace.</p>
     <p>Then ask things like:</p>
     <ul>
       <li><em>"Show me a profile of [hospital name, CCN, or EIN]"</em></li>
