@@ -34,6 +34,17 @@ Positive value → the HCRIS S-10 amount is higher than the Schedule H line 7a a
 - HCRIS and 990 periods within 1 month
 - 27.9% of the 1,334 matched / 28.7% of the 1,295 computable
 
+## The Charity Care Gap Index (clean subset — the headline "99 / 22")
+
+The aligned + material subset above (228 systems) still mixes multi-facility roll-ups and gross/net edge cases. The **Charity Care Gap Index** ([`charity_care_gap_index_2022.md`](charity_care_gap_index_2022.md)) is a stricter *nested subset* of it, built for a ranking that survives expert scrutiny. A hospital qualifies only if it is:
+
+1. a **single reporting facility** (`ccn_count == 1`) — the name is trustworthy and no aggregation smooths or amplifies the gap;
+2. **period-aligned** (HCRIS FY-end within 1 month of the 990 tax-period end);
+3. **material** — both figures ≥ **$1M** (a higher floor than the $500K used for the 228); and
+4. reporting the **same-scale entity** — the two forms' total expenses agree within 5%.
+
+**99 hospitals** clear all four tests; **22** differ by more than 50%. The comparison is **net-to-net**: the IRS side is Schedule H Part I line 7a **column (e)** (net community benefit expense for financial assistance), and the CMS side is the S-10 cost of charity care net of partial patient payments — so it is not a gross-vs-net artifact. Reproduce with `uv run python scripts/build_gap_index.py`.
+
 **Full matched set (1,334 systems, mostly misaligned by 12 months):**
 
 - 1,334 matched (from 1,481 unique TY2022 990 EINs and 1,730 CCNs in the join)
@@ -64,12 +75,12 @@ The full per-system data is in `community_benefit_gap_2022.csv` for anyone who w
 
 A positive value (HCRIS > 990) does not by itself say whether either filing is wrong. Plausible reasons the same hospital has different numbers on each form:
 
-- **Definitional differences.** Schedule H 7a excludes some categories that HCRIS S-10 may include (Medicaid shortfall handling, partial-payment netting, charity vs. uninsured discount classification).
+- **Definitional differences.** The two forms bound "financial assistance" / "charity care" differently (e.g., how uninsured discounts are classified, and where the charity/bad-debt/contractual-allowance boundary falls). Note: Medicaid shortfall is *not* part of this comparison — it lives on Schedule H line 7b, not 7a, and is not in the S-10 charity-care line.
 - **Time alignment.** Hospitals' fiscal years often don't match calendar tax years; we use the latest 990 per EIN by release-year then `tax_period_end`, but mismatch up to ~12 months is common.
 - **Cost-to-charge ratio (CCR) handling.** HCRIS S-10 applies a hospital-wide CCR; Schedule H allows different cost-step-down approaches.
 - **Charity care policy boundaries.** Hospitals can categorize the same patient case as charity care, bad debt, or contractual allowance — this changes which line each cost appears on.
 
-A negative value (990 > HCRIS) is often legitimate when a hospital files Schedule H but doesn't bill Medicare in volume — children's hospitals (St Jude, Texas Children's, Driscoll, Children's Mercy), specialty cancer centers (City of Hope), and major teaching hospitals with disproportionate non-Medicare populations all show this pattern.
+S-10 charity care is **all-payer**, so a large negative value (990 > HCRIS) is *not* explained by "the hospital doesn't bill much Medicare" — low Medicare volume does not shrink the S-10 charity-care line. The genuine mechanisms are (a) **S-10 data quality** — completeness and reliability of S-10 have been repeatedly questioned (e.g., by MedPAC), and some low-Medicare children's/specialty hospitals file no Medicare cost report at all or an S-10 with little in it; and (b) **system-wide costing methodology** — hospitals under one parent EIN often share a financial-assistance policy and Schedule H costing method, pushing all of a system's hospitals the same direction. Treat a near-zero S-10 as suspect rather than a true zero.
 
 The data is a side-by-side reference view, not a definitive accusation. The value is making the cross-form view computable at scale, where previously every researcher had to reconstruct it from raw filings.
 

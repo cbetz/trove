@@ -296,8 +296,10 @@ def main() -> None:
     today = datetime.now(UTC).strftime("%Y-%m-%d")
     top_level = [
         ("", "1.0"),
+        ("notes/charity-care-gap/", "0.9"),
         ("drugs/", "0.9"),
         ("hospitals/", "0.9"),
+        ("notes/", "0.8"),
         ("skills/", "0.9"),
         ("skills/fda-analyst/", "0.8"),
         ("skills/hcris-analyst/", "0.8"),

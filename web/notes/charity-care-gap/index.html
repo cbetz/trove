@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nonprofit hospitals report charity care to two federal regulators. The numbers don't match. | trove</title>
+  <meta name="description" content="Every nonprofit U.S. hospital reports its charity care to CMS and to the IRS. Yale New Haven told the IRS $113.1M and CMS $35.6M for the same year. I indexed the 99 hospitals where the comparison is clean — 22 differ by more than 50%.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.">
+  <meta property="og:description" content="Yale New Haven told the IRS it gave $113.1M in financial assistance and told CMS $35.6M — same hospital, same year. I indexed the 99 hospitals where the comparison is clean; 22 differ by more than 50%.">
+  <meta property="og:url" content="https://troveproject.com/notes/charity-care-gap/">
+  <meta property="og:image" content="https://troveproject.com/og-20260505c.jpg">
+  <meta property="og:image:secure_url" content="https://troveproject.com/og-20260505c.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.">
+  <meta name="twitter:description" content="Yale New Haven told the IRS $113.1M and CMS $35.6M for the same year. I indexed the 99 hospitals where the comparison is clean — 22 differ by more than 50%.">
+  <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
+  <link rel="canonical" href="https://troveproject.com/notes/charity-care-gap/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.",
+    "description": "A per-hospital comparison of charity-care cost as reported to CMS (Worksheet S-10) and to the IRS (Form 990 Schedule H) for tax year 2022.",
+    "author": {"@type": "Person", "name": "Chris Betz", "url": "https://cbetz.com"},
+    "publisher": {"@type": "Organization", "name": "trove", "url": "https://troveproject.com/"},
+    "mainEntityOfPage": "https://troveproject.com/notes/charity-care-gap/",
+    "datePublished": "2026-07-25",
+    "dateModified": "2026-07-25",
+    "isAccessibleForFree": true
+  }
+  </script>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #ffffff; --fg: #111111; --muted: #5a5a5a;
+      --border: rgba(127,127,127,0.3); --row-hover: rgba(127,127,127,0.08);
+      --pos: #a04413; --neg: #1f5793; --accent: rgba(127,127,127,0.12);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#111111; --fg:#f2f2f2; --muted:#adadad; --pos:#f0a26b; --neg:#82b6e6; --accent: rgba(255,255,255,0.06); }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; padding: 4rem 1.5rem 6rem; max-width: 44rem;
+      font: 16px/1.7 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--fg); }
+    .breadcrumb { color: var(--muted); margin: 0 0 1.5rem; font-size: 0.9em; font-family: ui-monospace, Menlo, monospace; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h1 { font-size: 2.1rem; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 0.5rem; font-weight: 800; }
+    .dek { color: var(--muted); font-size: 1.15rem; margin: 0 0 1.5rem; line-height: 1.4; }
+    .byline { color: var(--muted); font-size: 0.85rem; font-family: ui-monospace, Menlo, monospace; margin: 0 0 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+    h2 { font-size: 1.3rem; letter-spacing: -0.01em; margin: 2.5rem 0 0.75rem; font-weight: 700; }
+    p { margin: 1.1rem 0; }
+    a { color: inherit; }
+    strong { font-weight: 700; }
+    .callout { border-left: 3px solid var(--muted); padding: 0.25rem 0 0.25rem 1.1rem; margin: 1.5rem 0; color: var(--fg); }
+    .board-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin: 1.75rem 0; }
+    table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; min-width: 32rem;
+      font-family: ui-monospace, Menlo, monospace; font-size: 0.85rem; }
+    th { text-align: right; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted);
+      font-weight: 600; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); background: var(--accent); white-space: nowrap; }
+    th.l, td.l { text-align: left; }
+    td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+    tr:last-child td { border-bottom: 0; }
+    td.name { font-family: -apple-system, sans-serif; font-weight: 600; white-space: normal; }
+    .pos { color: var(--pos); } .neg { color: var(--neg); }
+    .cta { display: block; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; text-decoration: none; color: inherit; background: var(--accent); }
+    .cta:hover { background: var(--row-hover); }
+    .cta b { font-size: 1.1rem; }
+    .src { color: var(--muted); font-size: 0.9rem; }
+    footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-family: ui-monospace, Menlo, monospace; }
+    footer a { color: inherit; }
+  </style>
+</head>
+<body>
+  <p class="breadcrumb"><a href="/">trove</a> / <a href="/notes/">notes</a> / the charity-care gap</p>
+
+  <h1>Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.</h1>
+  <p class="dek">Yale New Haven Hospital told the IRS it provided $113.1M in financial assistance for its fiscal year ending September 2023, and told Medicare $35.6M in charity care for the same year, on a comparable ~$4.1B expense base. Large gaps like this are far from rare.</p>
+  <p class="byline">By Chris Betz · <time datetime="2026-07-25">July 25, 2026</time> · public-domain data, MIT-licensed code</p>
+
+  <p>Every nonprofit hospital in the United States reports the cost of the free and discounted care it gives patients who can't pay to <strong>two</strong> different federal regulators — for two different purposes, on two different forms:</p>
+  <p>To the <strong>IRS</strong>, on <strong>Schedule H</strong> of Form 990 — the "financial assistance at cost" line (Part I, line 7a) — which documents the community benefit that helps justify the hospital's tax exemption. And to <strong>CMS</strong>, on <strong>Worksheet S-10</strong> of the Medicare Cost Report — the "cost of charity care" line — which feeds Medicare's uncompensated-care (DSH) payments. Two different regulatory purposes, but both lines are meant to capture the same underlying thing: what it cost to treat patients who couldn't pay.</p>
+  <p>They are supposed to describe the same activity. For a lot of hospitals, they don't come close.</p>
+
+  <h2>The gap, for hospitals where the comparison is clean</h2>
+  <p>Comparing these two numbers naïvely is a trap. The biggest raw differences come from artifacts: a single 990 can cover a dozen hospitals reported under one name, and the two forms often cover fiscal years that are 12 months apart. So I filtered down to the hospitals where the comparison is genuinely apples-to-apples — a single reporting facility, both filings covering the same fiscal year, both numbers above $1M, and the two forms reporting a comparable total-expense base (within 5%). I also compare like with like: the <em>net</em> figure on each side — Schedule H line 7a column (e), net of offsetting revenue, against the S-10 cost of charity care net of partial patient payments — so this isn't a gross-versus-net illusion.</p>
+  <p><strong>99 hospitals</strong> clear that bar for tax year 2022. Among them, <strong>22 reported charity-care numbers to the two regulators that differ by more than 50%.</strong> A sample of the largest:</p>
+
+  <div class="board-scroll">
+    <table>
+      <thead>
+        <tr><th class="l">Hospital</th><th>Told the IRS</th><th>Told CMS</th><th>Difference</th><th>%</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="l name">Yale New Haven Hospital</td><td>$113.1M</td><td>$35.6M</td><td class="neg">−$77.5M</td><td>69%</td></tr>
+        <tr><td class="l name">Tampa General Hospital</td><td>$51.0M</td><td>$102.4M</td><td class="pos">+$51.3M</td><td>50%</td></tr>
+        <tr><td class="l name">Greenwich Hospital</td><td>$23.6M</td><td>$4.0M</td><td class="neg">−$19.6M</td><td>83%</td></tr>
+        <tr><td class="l name">Baptist Medical Center (Jacksonville)</td><td>$34.8M</td><td>$52.6M</td><td class="pos">+$17.8M</td><td>34%</td></tr>
+        <tr><td class="l name">Western Regional Medical Center</td><td>$1.1M</td><td>$18.1M</td><td class="pos">+$16.9M</td><td>94%</td></tr>
+        <tr><td class="l name">Lawrence &amp; Memorial Hospital</td><td>$21.1M</td><td>$4.8M</td><td class="neg">−$16.3M</td><td>77%</td></tr>
+        <tr><td class="l name">Cook Children's Medical Center</td><td>$11.3M</td><td>$26.8M</td><td class="pos">+$15.5M</td><td>58%</td></tr>
+        <tr><td class="l name">Bayfront Health St. Petersburg</td><td>$4.4M</td><td>$17.6M</td><td class="pos">+$13.2M</td><td>75%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="src">The full ranked index of all 99, and a searchable lookup of all 1,295 systems, is at <a href="/hospitals/">troveproject.com/hospitals</a>. The IRS figure for each hospital links to its actual 990 on ProPublica so you can check it yourself. (Figures are rounded to $0.1M; differences are computed from the exact values.)</p>
+
+  <p>Notice something in that list: Yale New Haven, Greenwich, and Lawrence &amp; Memorial — plus Bridgeport, just outside the top eight — are all part of Yale New Haven Health. Several hospitals in one system, all showing large same-direction gaps. That's exactly what you'd expect when a system applies one financial-assistance policy and one Schedule H costing method across all its hospitals: a methodological signature, not evidence that any one hospital did something wrong. But it's the kind of pattern the index surfaces that a single filing never would — a reason to ask a system how it costs financial assistance, not to assume the answer.</p>
+
+  <h2>A gap is not an accusation</h2>
+  <p>This is the part that matters, and it's why the tool leads with the source documents. A difference between these two numbers does <strong>not</strong> mean a hospital did anything wrong, and it is not evidence of fraud.</p>
+  <p>The two forms genuinely define and cost charity care differently: where the line falls between "charity care," "bad debt," and "contractual allowance"; how uninsured discounts are classified; and the cost-to-charge methods each form permits. On top of that, the reliability of S-10 charity-care reporting has been questioned for years — MedPAC has repeatedly flagged S-10 data quality — so in many cases the gap is simply that one figure, often the S-10 side, is incompletely reported. (A few children's and specialty hospitals bill so little Medicare that they file no Medicare cost report at all, or an S-10 with almost nothing in it — so a near-zero S-10 should be treated as suspect, not as a real zero.)</p>
+  <p>None of this is secret. That the S-10 and Schedule H charity-care figures diverge is <strong>a well-documented reporting inconsistency</strong>, not a novel finding: the GAO has noted there is no standard definition of uncompensated care across federal programs (GAO-16-568) and has separately scrutinized Schedule H reporting (GAO-20-679); the Congressional Research Service laid out the differing Medicare and IRS charity-care definitions (2018); and health-services researchers have compared the two sources (Zare et al., <em>Health Services Research</em>, 2022). What hasn't existed is a fast way to check it for a specific hospital, with a link to both filings. That's the whole point of this tool: not to accuse, but to make a known inconsistency legible — one hospital at a time.</p>
+
+  <h2>Why I built it</h2>
+  <p>The raw data is public but punishing. CMS ships the Medicare Cost Reports as headerless, 100,000-row "long-skinny" CSVs. The IRS publishes 990s as XML inside bulk ZIP files. Lining up a single hospital's two charity-care numbers means parsing both, matching CCNs to EINs, and reconciling fiscal calendars — hours of work per hospital. trove does that parsing and joining once, for everyone, and publishes the result as clean tables plus a Claude Code skill you can ask questions in plain English.</p>
+
+  <a class="cta" href="/hospitals/">
+    <b>Look up your hospital →</b><br>
+    Search 1,295 nonprofit hospital systems. See what each told the IRS vs. CMS, side by side, with links to both filings.
+  </a>
+
+  <p class="src">Data: CMS HCRIS Worksheet S-10 (FY2023) × IRS Form 990 Schedule H (TY2022), joined via the Community Benefit Insight CCN↔EIN crosswalk. Method and every caveat: <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">summary</a> · ranked index: <a href="https://github.com/cbetz/trove/blob/main/artifacts/charity_care_gap_index_2022.md">charity_care_gap_index_2022.md</a> · all code MIT-licensed at <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>.</p>
+
+  <footer>
+    <p>Built by Chris Betz on personal time. Not affiliated with my employer; opinions my own. A difference between two filings is not evidence that either one is wrong.</p>
+    <p><a href="/">← trove</a> · <a href="/hospitals/">hospital lookup</a> · <a href="https://github.com/cbetz/trove">source</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a></p>
+  </footer>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

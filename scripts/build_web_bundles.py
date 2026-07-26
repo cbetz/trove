@@ -12,6 +12,9 @@ parquet/CSV outputs of build_gap_dataset.py and writes:
   they want to dedupe further)
 - ``web/data/community_benefit_gap_2022.parquet`` — full matched gap
   dataset including non-computable rows
+- ``web/data/community_benefit_gap_2022.csv`` — the same table as CSV, copied
+  from ``artifacts/`` so the site's "download the data" link and the committed
+  artifact can never drift apart
 
 Re-run after ``build_gap_dataset.py`` to refresh.
 """
@@ -53,6 +56,12 @@ def main() -> None:
         parse_dates=["hcris_fy_end_dt", "sched_h_tax_period_end"],
     )
     _write(WEB_DATA / f"community_benefit_gap_{TAX_YEAR}.parquet", gap)
+
+    # The site links the CSV directly; copy rather than re-serialize so the
+    # published download is byte-identical to the committed artifact.
+    csv_out = WEB_DATA / GAP_CSV.name
+    csv_out.write_bytes(GAP_CSV.read_bytes())
+    print(f"  → {csv_out} ({csv_out.stat().st_size / 1024:.1f} KB, copied from {GAP_CSV})")
 
 
 def _write(path: Path, df: pd.DataFrame) -> None:

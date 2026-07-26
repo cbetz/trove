@@ -118,25 +118,30 @@
 <body>
   <header>
     <h1>trove</h1>
-    <p class="tagline">Reference tools for underused healthcare data.</p>
+    <p class="tagline">Public healthcare data that's usually unusable — parsed, joined, and queryable. Look it up, or ask Claude.</p>
   </header>
 
   <section>
-    <p>trove builds open-source lookup tools, parsers, and Claude skills on top of public-domain healthcare datasets that are widely cited but rarely usable in their raw form. Each area is search-first — type a name or identifier, see a single record at a time. The full data, parsers, and skills are MIT-licensed at <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>.</p>
+    <p>trove builds open-source lookup tools, parsers, and Claude skills on top of public-domain healthcare datasets that are widely cited but rarely usable in their raw form. The full data, parsers, and skills are MIT-licensed at <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>.</p>
+    <a class="area" href="/notes/charity-care-gap/" style="margin-top:1.5rem;">
+      <span class="area-tag">New · finding</span>
+      <p class="area-title">Hospitals report charity care to CMS and the IRS. The numbers don't match.</p>
+      <p class="area-sub">Yale New Haven told the IRS $113.1M and CMS $35.6M — same hospital, same year. Of the 99 hospitals where the comparison is clean, 22 differ by more than 50%. Read the finding →</p>
+    </a>
   </section>
 
   <section>
     <h2>Datasets covered</h2>
     <div class="areas">
-      <a class="area" href="/drugs/">
-        <span class="area-tag">v0.1 · NEW</span>
-        <p class="area-title">FDA drug approvals</p>
-        <p class="area-sub">Look up any FDA novel drug approval from 2021–2024 and find the approval package — sponsor, application number, key dates, the FDA-approved label, and a deep link to every document FDA released for that approval (medical review, statistical review, pharmacology review, chemistry review).</p>
-      </a>
       <a class="area" href="/hospitals/">
-        <span class="area-tag">v1.1</span>
+        <span class="area-tag">CMS × IRS · charity care</span>
         <p class="area-title">Hospital reporting</p>
-        <p class="area-sub">Look up related CMS Worksheet S-10 and IRS Form 990 Schedule H charity-care reporting fields for 1,295 nonprofit U.S. hospital systems, side-by-side, with filing-period context and a home-county Social Vulnerability Index proxy.</p>
+        <p class="area-sub">See what 1,295 nonprofit U.S. hospital systems told CMS (Worksheet S-10) vs. the IRS (990 Schedule H) about charity care, side by side — ranked by the size of the gap, with a link to each hospital's actual 990.</p>
+      </a>
+      <a class="area" href="/drugs/">
+        <span class="area-tag">FDA · 2021–2024</span>
+        <p class="area-title">FDA drug approvals</p>
+        <p class="area-sub">Look up any FDA novel drug approval from 2021–2024 and find the approval package — sponsor, application number, key dates, the FDA-approved label, and a deep link to every document FDA released (medical review, statistical review, pharmacology, chemistry). Then ask Claude to read them.</p>
       </a>
     </div>
     <p class="more">More areas coming. <a href="https://github.com/cbetz/trove/issues">Suggestions welcome.</a></p>
@@ -147,7 +152,7 @@
     <p>Each area ships with a <a href="/skills/">Claude Code skill</a> that translates natural-language questions into queries over the area's published data. The skills are bundled as a single Claude Code plugin in Anthropic's community marketplace:</p>
 <pre><code>/plugin marketplace add anthropics/claude-plugins-community
 /plugin install trove@claude-community</code></pre>
-    <p>This is the public community marketplace, not the separate official <code>claude-plugins-official</code> marketplace.</p>
+    <p>Listed in Anthropic's community plugin marketplace.</p>
     <p>Skill details and example prompts:</p>
     <ul>
       <li><a href="/skills/fda-analyst/">fda-analyst</a> — reads FDA approval-package documents to answer questions about the basis for approval, trials, endpoints, and regulatory pathway.</li>
@@ -172,7 +177,7 @@
   </section>
 
   <footer>
-    <p><strong>v1.2 · multi-area · May 2026.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Not affiliated with my employer; opinions my own. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <p><strong>Two live areas: hospital reporting and FDA drug approvals.</strong> Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Not affiliated with my employer; opinions my own. Bugs and methodology questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
     <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
   </footer>
 

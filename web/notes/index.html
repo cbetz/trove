@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>trove — notes: findings from public healthcare data</title>
+  <meta name="description" content="Findings from the public-domain healthcare datasets trove indexes — what shows up once CMS Medicare Cost Reports, IRS Form 990 Schedule H, and FDA approval packages are parsed and joined.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="canonical" href="https://troveproject.com/notes/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="trove — notes: findings from public healthcare data">
+  <meta property="og:description" content="Findings from the public-domain healthcare datasets trove indexes — CMS Medicare Cost Reports, IRS 990 Schedule H, and FDA approval packages.">
+  <meta property="og:url" content="https://troveproject.com/notes/">
+  <meta property="og:image" content="https://troveproject.com/og-20260505c.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="trove — notes: findings from public healthcare data">
+  <meta name="twitter:description" content="Findings from the public-domain healthcare datasets trove indexes.">
+  <meta name="twitter:image" content="https://troveproject.com/og-20260505c.jpg">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "trove", "item": "https://troveproject.com/"},
+    {"@type": "ListItem", "position": 2, "name": "Notes", "item": "https://troveproject.com/notes/"}
+  ]
+}
+  </script>
+  <style>
+    :root { color-scheme: light dark; --bg: #ffffff; --fg: #111111; --muted: #5a5a5a; --border: rgba(127, 127, 127, 0.3); --row-hover: rgba(127, 127, 127, 0.08); }
+    @media (prefers-color-scheme: dark) { :root { --bg: #111111; --fg: #f2f2f2; --muted: #adadad; } }
+    * { box-sizing: border-box; }
+    body { margin: 0 auto; padding: 4rem 1.5rem 6rem; max-width: 44rem; font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: var(--bg); color: var(--fg); }
+    .breadcrumb { color: var(--muted); margin: 0 0 1.25rem; font-size: 0.9em; }
+    .breadcrumb a { text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    h1 { font-size: 2.75rem; margin: 0 0 0.5rem; letter-spacing: -0.03em; font-weight: 700; }
+    .tagline { color: var(--muted); margin: 0 0 2rem; font-size: 1.1rem; }
+    section { margin-top: 2.5rem; }
+    h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 0 0 0.85rem; font-weight: 600; }
+    a { color: inherit; }
+    a:hover { opacity: 0.7; }
+
+    .doc-card { display: block; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; text-decoration: none; color: inherit; transition: background 0.1s ease; margin-top: 1rem; }
+    .doc-card:hover { background: var(--row-hover); opacity: 1; }
+    .doc-tag { display: inline-block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .doc-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.4rem; letter-spacing: -0.01em; }
+    .doc-sub { color: var(--muted); font-size: 0.95em; margin: 0; }
+
+    footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
+    footer p { margin: 0 0 0.5rem; }
+    @media (max-width: 640px) { h1 { font-size: 2.1rem; } }
+  </style>
+</head>
+<body>
+  <p class="breadcrumb"><a href="/">trove</a> / Notes</p>
+
+  <header>
+    <h1>Notes</h1>
+    <p class="tagline">What shows up once the data is parsed and joined.</p>
+  </header>
+
+  <section>
+    <p>trove exists to make widely cited but hard-to-use public healthcare data queryable. These notes are what turned up along the way — each one written from the published tables, with the filters stated and links to the underlying filings so you can check it yourself.</p>
+  </section>
+
+  <section>
+    <h2>Findings</h2>
+    <a class="doc-card" href="/notes/charity-care-gap/">
+      <span class="doc-tag">CMS × IRS · July 2026</span>
+      <p class="doc-title">Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.</p>
+      <p class="doc-sub">Yale New Haven Hospital reported $113.1M in financial assistance to the IRS and $35.6M in charity care to CMS for the same fiscal year, on a comparable expense base. Of the 99 hospitals where the comparison is genuinely apples-to-apples, 22 differ by more than 50%. A gap is not an accusation — the two forms define charity care differently — but until now there was no fast way to check it for a specific hospital.</p>
+    </a>
+  </section>
+
+  <section>
+    <h2>The tools behind them</h2>
+    <ul>
+      <li><a href="/hospitals/">Hospital reporting</a> — the ranked index plus a lookup of every matched nonprofit system, CMS and IRS side by side.</li>
+      <li><a href="/drugs/">FDA drug approvals</a> — every novel approval 2021–2024 and its approval package.</li>
+      <li><a href="/skills/">Claude Code skills</a> — ask questions over both datasets in plain English.</li>
+      <li><a href="/docs/">Docs</a> — plain-language explainers for each dataset.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>Notes are part of <a href="/">trove</a>, an open-source project by <a href="https://github.com/cbetz">Chris Betz</a>, written on personal time. Not affiliated with my employer; opinions my own. Not medical, legal, or financial advice. Corrections and methodology questions are welcome: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
+    <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
+  </footer>
+
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>
