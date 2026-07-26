@@ -1,4 +1,6 @@
+import numpy as np
 import pandas as pd
+import pytest
 from analytics import community_benefit_gap
 
 
@@ -118,3 +120,40 @@ def test_sorted_by_absolute_charity_gap() -> None:
     out = community_benefit_gap(_hcris_wide(), _schedule_h(), _crosswalk())
     abs_gaps = out["charity_gap"].abs().tolist()
     assert abs_gaps == sorted(abs_gaps, reverse=True)
+
+
+def test_community_benefit_ratios_are_percentages() -> None:
+    """Both ratios are 0-100 percentages, not fractions.
+
+    Regression test: these were emitted as fractions, and the published CSV's
+    blanket ``float_format="%.0f"`` then rounded every one of them to 0.
+    """
+    out = community_benefit_gap(_hcris_wide(), _schedule_h(), _crosswalk()).set_index("ein")
+    # Solo: 100M community benefit / 2B Schedule H expenses = 5%
+    assert out.loc["222222222", "community_benefit_pct_of_expenses"] == 5.0
+    # Same numerator over HCRIS opex (also 2B here) = 5%
+    assert out.loc["222222222", "community_benefit_pct_of_hcris_expenses"] == 5.0
+    # Big AMC: 800M / 6B Schedule H = 13.33%; 800M / 6B HCRIS opex = 13.33%
+    assert out.loc["111111111", "community_benefit_pct_of_expenses"] == pytest.approx(
+        13.333, abs=0.01
+    )
+    assert out.loc["111111111", "community_benefit_pct_of_hcris_expenses"] == pytest.approx(
+        13.333, abs=0.01
+    )
+
+
+def test_zero_expense_denominator_yields_nan_not_inf() -> None:
+    """A 0 expense base must produce a missing ratio, never ``inf``.
+
+    ``inf`` survives a CSV round-trip and poisons any downstream aggregate.
+    """
+    hcris = _hcris_wide()
+    hcris.loc[hcris["prvdr_num"] == "440039", "total_operating_expenses"] = 0.0
+    sched_h = _schedule_h()
+    sched_h.loc[sched_h["ein"] == "222222222", "total_expenses"] = 0.0
+
+    out = community_benefit_gap(hcris, sched_h, _crosswalk()).set_index("ein")
+    for col in ("community_benefit_pct_of_expenses", "community_benefit_pct_of_hcris_expenses"):
+        value = out.loc["222222222", col]
+        assert pd.isna(value), f"{col} should be NaN, got {value!r}"
+        assert not np.isinf(value)

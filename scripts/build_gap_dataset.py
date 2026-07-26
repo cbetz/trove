@@ -4,7 +4,9 @@ Produces:
 - ``data/parquet/form990/schedule_h/year=2022/part.parquet`` — Schedule H ingest (gitignored)
 - ``data/parquet/community_benefit_gap/year=2022/part.parquet`` — gap dataset (gitignored)
 - ``artifacts/community_benefit_gap_2022.csv`` — full table, GitHub-viewable
-- ``artifacts/community_benefit_gap_2022_top50.csv`` — leaderboard
+
+The ranked subset is built separately by ``scripts/build_gap_index.py``; this script
+deliberately sorts its output alphabetically (see the note by the CSV write).
 
 Usage: ``uv run python scripts/build_gap_dataset.py``
 """
@@ -112,8 +114,19 @@ def main() -> None:
     public = public.sort_values("sched_h_organization_name", na_position="last")
     ARTIFACTS_DIR.mkdir(exist_ok=True)
     full_csv = ARTIFACTS_DIR / f"community_benefit_gap_{TAX_YEAR}.csv"
-    public.to_csv(full_csv, index=False, float_format="%.0f")
+    # ``to_csv(float_format=...)`` applies one format to every float column at once.
+    # A blanket "%.0f" silently flattened the sub-100 ratio columns — a 12.9% ratio
+    # wrote as "0" for all but a handful of rows. Format the two families separately:
+    # dollars and percentiles as nullable integers, ratios to one decimal.
+    ratio_cols = [c for c in public.columns if c.startswith("community_benefit_pct_of")]
+    int_cols = [c for c in public.select_dtypes("number").columns if c not in ratio_cols]
+    public[ratio_cols] = public[ratio_cols].astype("Float64").round(1)
+    public[int_cols] = public[int_cols].round(0).astype("Int64")
+    public.to_csv(full_csv, index=False)
     print(f"  → {full_csv} ({full_csv.stat().st_size / 1024:.1f} KB)")
+    for c in ratio_cols:
+        ok = public[c].notna().sum()
+        print(f"    {c}: {ok:,} of {len(public):,} rows populated")
 
 
 if __name__ == "__main__":

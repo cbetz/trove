@@ -27,8 +27,15 @@ def community_benefit_gap(
     - ``sched_h_total_community_benefit``
     - ``sched_h_total_expenses``
     - ``charity_gap`` — HCRIS charity care minus Schedule H 7a financial assistance
-    - ``community_benefit_pct_of_expenses`` — Schedule H total community benefit
-      divided by HCRIS total operating expenses (sanity check on the 7k ratio)
+    - ``community_benefit_pct_of_expenses`` — Schedule H total community benefit as a
+      percentage (0-100) of Schedule H total expenses. Same-form denominator, so this
+      is the standard internally-consistent "community benefit as a share of expenses"
+      measure and it is the one to quote.
+    - ``community_benefit_pct_of_hcris_expenses`` — the same numerator over HCRIS total
+      operating expenses (0-100). Cross-form, so it inherits every scope difference
+      between the two filings; useful only as a sanity check on the 7k ratio, and
+      meaningless where the two forms cover different periods or different-scale
+      entities. Both are NaN rather than ``inf`` when the denominator is 0 or missing.
     """
     cw_cols = ["ccn", "ein"]
     for opt in (
@@ -109,8 +116,15 @@ def community_benefit_gap(
     joined["charity_gap"] = (
         joined["hcris_charity_care_cost"] - joined["sched_h_financial_assistance_at_cost"]
     )
+    # Percent, not a fraction, to match the column name and the SVI ``_pct`` columns.
+    # Zero denominators become NaN so the ratio is missing rather than ``inf``.
+    sched_denom = joined["sched_h_total_expenses"]
+    hcris_denom = joined["hcris_total_operating_expenses"]
     joined["community_benefit_pct_of_expenses"] = (
-        joined["sched_h_total_community_benefit"] / joined["hcris_total_operating_expenses"]
+        joined["sched_h_total_community_benefit"] / sched_denom.where(sched_denom != 0) * 100
+    )
+    joined["community_benefit_pct_of_hcris_expenses"] = (
+        joined["sched_h_total_community_benefit"] / hcris_denom.where(hcris_denom != 0) * 100
     )
 
     return joined.sort_values("charity_gap", ascending=False, key=lambda s: s.abs())

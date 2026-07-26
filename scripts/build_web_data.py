@@ -72,7 +72,8 @@ def main() -> None:
             "exp_990": _num(r.sched_h_total_expenses),
             "gap": _num(r.charity_gap),
             "gap_pct": _num(r.gap_pct, decimals=4),
-            "cb_pct": _num(r.community_benefit_pct_of_expenses, decimals=4),
+            # Percent (0-100) of the same form's total expenses, not a fraction.
+            "cb_pct": _num(r.community_benefit_pct_of_expenses, decimals=1),
             "svi_overall_pct": _num(getattr(r, "svi_overall_pct", None), decimals=1),
             "svi_socio_pct": _num(getattr(r, "svi_socio_pct", None), decimals=1),
             "svi_household_pct": _num(getattr(r, "svi_household_pct", None), decimals=1),
