@@ -15,11 +15,15 @@ import re
 from datetime import UTC, datetime
 from pathlib import Path
 
+from build_og_image import FILENAME as OG_FILENAME
+
 SRC = Path("web/data/fda_approvals_nme_recent.json")
 OUT_DIR = Path("web/drugs")
 SITEMAP = Path("web/sitemap.xml")
 SITE = "https://troveproject.com"
-OG_IMAGE = f"{SITE}/og-20260505c.jpg"
+# Single-sourced from build_og_image so regenerating these 218 pages can't
+# silently revert them to a stale, cache-busted card filename.
+OG_IMAGE = f"{SITE}/{OG_FILENAME}"
 
 
 def slugify(s: str) -> str:

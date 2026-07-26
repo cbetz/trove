@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: "trove: parsers, data bundles, and Claude Code skills for underused U.S. public healthcare data"
+message: "If you use trove or its published data bundles, please cite it as below. The underlying source data is U.S. government work in the public domain and has its own suggested citations — see the README."
+type: software
+authors:
+  - family-names: Betz
+    given-names: Chris
+repository-code: "https://github.com/cbetz/trove"
+url: "https://troveproject.com"
+abstract: "Open-source Python parsers, published Parquet/JSON/CSV bundles, and Claude Code skills for public-domain U.S. healthcare datasets that are widely cited but rarely usable in raw form: CMS Medicare Cost Reports (HCRIS Hospital form 2552-10, including Worksheet S-10 charity care), IRS Form 990 Schedule H community benefit, a CCN-to-EIN hospital crosswalk, CDC Social Vulnerability Index enrichment, and FDA novel drug approvals across CDER and CBER. Includes a per-hospital comparison of charity-care cost as reported to CMS and to the IRS for tax year 2022."
+keywords:
+  - health services research
+  - hospital finance
+  - Medicare cost reports
+  - HCRIS
+  - Worksheet S-10
+  - IRS Form 990
+  - Schedule H
+  - community benefit
+  - charity care
+  - nonprofit hospitals
+  - FDA drug approvals
+  - open data
+license: MIT
+version: 1.0.1
+date-released: "2026-07-25"

@@ -8,7 +8,7 @@ DuckDB can query Parquet files over HTTPS natively. Treat each URL below as a vi
 |-----|-------------|-------------|
 | `https://troveproject.com/data/hcris_2023_wide.parquet` | HCRIS Hospital 2552-10, FY2023, pivoted wide. One row per CCN-keyed facility, every dictionary variable as a named column. | ~6,100 × 48 |
 | `https://troveproject.com/data/schedule_h_2022.parquet` | IRS 990 Schedule H filings for tax year 2022. One row per filing (originals + amendments — dedupe per EIN if needed). | ~1,500 × 23 |
-| `https://troveproject.com/data/community_benefit_gap_2022.parquet` | Pre-joined matched hospital dataset: HCRIS S-10 charity care summed per EIN, joined to Schedule H 7a, with `charity_gap` and `hcris_fy_end_dt` for alignment filtering. | 1,334 × 19 |
+| `https://troveproject.com/data/community_benefit_gap_2022.parquet` | Pre-joined matched hospital dataset: HCRIS S-10 charity care summed per EIN, joined to Schedule H 7a, with `charity_gap` and `hcris_fy_end_dt` for alignment filtering. | 1,334 × 20 |
 | `https://troveproject.com/data/community_benefit_gap_2022.json` | Same matched hospital dataset, JSON (UI-shaped — non-computable rows excluded, includes `gap_pct`). Use the Parquet for analysis; this is for the web UI. | 1,295 |
 
 ## JSON envelope shape
