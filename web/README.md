@@ -45,6 +45,23 @@ Two things that bite:
   `artifacts/community_benefit_gap_2022.csv` into `data/` so the published download can't
   drift from the committed artifact.
 
+## Host canonicalization (a dashboard setting, not a repo setting)
+
+`www.troveproject.com` redirects to the apex with a **307 Temporary**. It should be a
+**308 Permanent**: a temporary redirect tells Google the canonical host might change
+back, so it keeps the `www` variant as an index candidate instead of consolidating
+signals onto one host. This is why the Page indexing report lists `www` and `http://`
+variants under "Page with redirect".
+
+**It cannot be fixed from this repo.** A domain configured as a redirect in Vercel is
+handled at the edge *before* the deployment's routing config is read, so a `redirects`
+entry in `vercel.json` never fires for that host (verified: the response carries
+`content-type: text/plain` and no `x-vercel-cache`, and it fires for every path).
+
+Fix it in the Vercel dashboard: **Project → Settings → Domains → `www.troveproject.com`
+→ change the redirect status code from 307 to 308 (Permanent).** The `http://` hops are
+already 308 and need nothing.
+
 ## Conventions
 
 Every page is self-contained: inline `<style>`, no shared stylesheet, no JS framework.
