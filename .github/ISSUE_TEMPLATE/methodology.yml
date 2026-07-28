@@ -1,0 +1,47 @@
+name: Methodology question or disagreement
+description: You'd draw a filter, definition, or caveat differently
+title: "[method] "
+labels: ["methodology"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        These are welcome, and better as issues than PRs so the reasoning ends up in
+        public where the next reader finds it.
+
+        Worth reading first if you haven't:
+        [`artifacts/community_benefit_gap_2022_summary.md`](https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md)
+        (method, the full funnel, validation spot-checks, and known caveats).
+  - type: dropdown
+    id: area
+    attributes:
+      label: What it's about
+      options:
+        - The Gap Index filters (single-facility, period alignment, materiality, expense base)
+        - How the two charity-care figures are compared (net-to-net, cost-to-charge)
+        - The CCN to EIN crosswalk and how systems are rolled up
+        - A caveat that's missing, wrong, or understated
+        - How a difference is characterized in the copy
+        - Dataset scope — years, forms, or coverage
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: What trove does now
+      description: Quote the line, filter, or wording you're questioning, and where it appears.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: What you'd do instead, and why
+      description: If there's literature or a regulator's own guidance behind it, a citation carries a lot of weight here.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: What it would change
+      description: Optional — whether this changes a headline number, a specific hospital's row, or only the framing.

@@ -24,7 +24,7 @@ Invoke when the user asks about:
 - Questions about hospitals not in the U.S. (HCRIS is CMS / Medicare-specific).
 - For-profit and government hospitals that don't file 990s — they're in HCRIS but not in the matched CMS+IRS dataset. The skill can answer HCRIS-only questions about them.
 - Patient-level outcomes, quality metrics, or readmission rates — those live in CMS Care Compare / Hospital Compare, not HCRIS. Tell the user the data source they want is elsewhere.
-- Drug-approval questions — that's the FDA SBA dataset, planned as a Phase 2 trove package, not yet shipped.
+- Drug-approval questions — those belong to the sibling `fda-analyst` skill, which ships in the same trove plugin and covers FDA novel drug approvals 2021–2024 (CDER NMEs and novel BLAs plus CBER cell and gene therapies). Hand the question over rather than answering it from here.
 
 ## How to query
 

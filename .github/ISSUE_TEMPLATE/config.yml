@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: How the data is built, and every caveat
+    url: https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md
+    about: Method, the 1,334 → 1,295 → 372 → 99 funnel, validation checks, and the fiscal-period alignment problem. Most "this number is wrong" questions are answered here.
+  - name: What the datasets are, in plain language
+    url: https://troveproject.com/docs/
+    about: What HCRIS is, what IRS 990 Schedule H is, and what an FDA novel drug approval is.
+  - name: Install the Claude Code skills
+    url: https://troveproject.com/skills/
+    about: Setup and example prompts for fda-analyst and hcris-analyst.

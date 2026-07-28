@@ -90,7 +90,220 @@
 
   <h2>The gap, for hospitals where the comparison is clean</h2>
   <p>Comparing these two numbers naïvely is a trap. The biggest raw differences come from artifacts: a single 990 can cover a dozen hospitals reported under one name, and the two forms often cover fiscal years that are 12 months apart. So I filtered down to the hospitals where the comparison is genuinely apples-to-apples — a single reporting facility, both filings covering the same fiscal year, both numbers above $1M, and the two forms reporting a comparable total-expense base (within 5%). I also compare like with like: the <em>net</em> figure on each side — Schedule H line 7a column (e), net of offsetting revenue, against the S-10 cost of charity care net of partial patient payments — so this isn't a gross-versus-net illusion.</p>
-  <p><strong>99 hospitals</strong> clear that bar for tax year 2022. Among them, <strong>22 reported charity-care numbers to the two regulators that differ by more than 50%.</strong> A sample of the largest:</p>
+  <p><strong>99 hospitals</strong> clear that bar for tax year 2022. Among them, <strong>22 reported charity-care numbers to the two regulators that differ by more than 50%.</strong> Every one of them, plotted against the line where the two filings would agree:</p>
+
+<!-- GAP_CHART:START -->
+
+<style>
+  .gapfig { margin: 2rem 0; }
+  .gapfig figcaption { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin-top: 0.6rem; }
+  .gapchart { width: 100%; height: auto; display: block; overflow: visible;
+    --mark-pos: #a04413; --mark-neg: #1f5793;
+    --grid: rgba(127,127,127,0.22); --parity: rgba(127,127,127,0.55); }
+  @media (prefers-color-scheme: dark) {
+    .gapchart { --mark-pos: #d95926; --mark-neg: #3987e5;
+      --grid: rgba(255,255,255,0.13); --parity: rgba(255,255,255,0.4); }
+  }
+  .gapchart .grid { stroke: var(--grid); stroke-width: 1; }
+  .gapchart .parity { stroke: var(--parity); stroke-width: 1.5; }
+  .gapchart .tick, .gapchart .axis-title, .gapchart .region {
+    fill: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  .gapchart .tick { font-size: 12px; }
+  .gapchart .tick-x { text-anchor: middle; }
+  .gapchart .tick-y { text-anchor: end; }
+  .gapchart .axis-title { font-size: 12.5px; text-anchor: middle; }
+  .gapchart .region { font-size: 12px; text-anchor: start; }
+  .gapchart .swatch { stroke: var(--bg); stroke-width: 1.5; }
+  .gapchart .swatch.pos { fill: var(--mark-pos); }
+  .gapchart .swatch.neg { fill: var(--mark-neg); }
+  .gapchart .dot { stroke: var(--bg); stroke-width: 2; cursor: pointer; }
+  .gapchart .dot.pos { fill: var(--mark-pos); }
+  .gapchart .dot.neg { fill: var(--mark-neg); }
+  .gapchart .dot:hover { r: 7; }
+  .gaptip { position: fixed; z-index: 20; pointer-events: none; opacity: 0;
+    transition: opacity 0.1s; background: var(--bg); color: var(--fg);
+    border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.7rem;
+    font: 12px/1.5 ui-monospace, Menlo, monospace; max-width: 17rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18); }
+  .gaptip b { display: block; margin-bottom: 0.2rem; }
+  .gaptip span { color: var(--muted); }
+</style>
+
+<figure class="gapfig">
+<svg class="gapchart" viewBox="0 0 720 560" role="img" aria-labelledby="gapchart-t gapchart-d" preserveAspectRatio="xMidYMid meet">
+<title id="gapchart-t">Charity care reported to CMS versus to the IRS, 99 hospitals, tax year 2022</title>
+<desc id="gapchart-d">Log-log scatter. Each dot is one hospital. The diagonal marks where the two filings would be equal. Dots above it reported more to CMS; dots below reported more to the IRS. Distance from the diagonal is the size of the difference. The full figures are in the table below.</desc>
+<line class="grid" x1="106.0" y1="28" x2="106.0" y2="492"/>
+<line class="grid" x1="82" y1="473.9" x2="698" y2="473.9"/>
+<text class="tick tick-x" x="106.0" y="512">$1M</text>
+<text class="tick tick-y" x="72" y="477.9">$1M</text>
+<line class="grid" x1="188.9" y1="28" x2="188.9" y2="492"/>
+<line class="grid" x1="82" y1="411.5" x2="698" y2="411.5"/>
+<text class="tick tick-x" x="188.9" y="512">$2M</text>
+<text class="tick tick-y" x="72" y="415.5">$2M</text>
+<line class="grid" x1="298.4" y1="28" x2="298.4" y2="492"/>
+<line class="grid" x1="82" y1="329.0" x2="698" y2="329.0"/>
+<text class="tick tick-x" x="298.4" y="512">$5M</text>
+<text class="tick tick-y" x="72" y="333.0">$5M</text>
+<line class="grid" x1="381.3" y1="28" x2="381.3" y2="492"/>
+<line class="grid" x1="82" y1="266.6" x2="698" y2="266.6"/>
+<text class="tick tick-x" x="381.3" y="512">$10M</text>
+<text class="tick tick-y" x="72" y="270.6">$10M</text>
+<line class="grid" x1="464.2" y1="28" x2="464.2" y2="492"/>
+<line class="grid" x1="82" y1="204.1" x2="698" y2="204.1"/>
+<text class="tick tick-x" x="464.2" y="512">$20M</text>
+<text class="tick tick-y" x="72" y="208.1">$20M</text>
+<line class="grid" x1="573.7" y1="28" x2="573.7" y2="492"/>
+<line class="grid" x1="82" y1="121.6" x2="698" y2="121.6"/>
+<text class="tick tick-x" x="573.7" y="512">$50M</text>
+<text class="tick tick-y" x="72" y="125.6">$50M</text>
+<line class="grid" x1="656.6" y1="28" x2="656.6" y2="492"/>
+<line class="grid" x1="82" y1="59.2" x2="698" y2="59.2"/>
+<text class="tick tick-x" x="656.6" y="512">$100M</text>
+<text class="tick tick-y" x="72" y="63.2">$100M</text>
+<line class="parity" x1="82.0" y1="492.0" x2="698.0" y2="28.0"/>
+<line class="parity" x1="96" y1="42" x2="112" y2="42"/><text class="region" x="120" y="46">the diagonal: both filings equal</text>
+<circle class="swatch pos" cx="104" cy="62" r="4.5"/><text class="region" x="120" y="66">above it: reported more to CMS</text>
+<circle class="swatch neg" cx="104" cy="82" r="4.5"/><text class="region" x="120" y="86">below it: reported more to the IRS</text>
+<circle class="dot neg" cx="671.3" cy="152.3" r="4.5" data-n="Yale New Haven Hospital" data-irs="$113.1M" data-cms="$35.6M" data-pct="69%" data-end="2023-09-30"><title>Yale New Haven Hospital: IRS $113.1M, CMS $35.6M</title></circle>
+<circle class="dot pos" cx="576.2" cy="57.1" r="4.5" data-n="Tampa General Hospital" data-irs="$51.0M" data-cms="$102.4M" data-pct="50%" data-end="2023-09-30"><title>Tampa General Hospital: IRS $51.0M, CMS $102.4M</title></circle>
+<circle class="dot neg" cx="483.8" cy="349.4" r="4.5" data-n="Greenwich Hospital" data-irs="$23.6M" data-cms="$4.0M" data-pct="83%" data-end="2023-09-30"><title>Greenwich Hospital: IRS $23.6M, CMS $4.0M</title></circle>
+<circle class="dot pos" cx="530.3" cy="117.1" r="4.5" data-n="Baptist Medical Center" data-irs="$34.8M" data-cms="$52.6M" data-pct="34%" data-end="2023-09-30"><title>Baptist Medical Center: IRS $34.8M, CMS $52.6M</title></circle>
+<circle class="dot pos" cx="121.0" cy="213.4" r="4.5" data-n="Western Regional Medical Center" data-irs="$1.1M" data-cms="$18.1M" data-pct="94%" data-end="2023-09-30"><title>Western Regional Medical Center: IRS $1.1M, CMS $18.1M</title></circle>
+<circle class="dot neg" cx="470.5" cy="333.0" r="4.5" data-n="Lawrence &amp; Memorial Hospital" data-irs="$21.1M" data-cms="$4.8M" data-pct="77%" data-end="2023-09-30"><title>Lawrence &amp; Memorial Hospital: IRS $21.1M, CMS $4.8M</title></circle>
+<circle class="dot pos" cx="396.1" cy="177.9" r="4.5" data-n="Cook Childrens Medical Center" data-irs="$11.3M" data-cms="$26.8M" data-pct="58%" data-end="2023-09-30"><title>Cook Childrens Medical Center: IRS $11.3M, CMS $26.8M</title></circle>
+<circle class="dot pos" cx="281.8" cy="215.9" r="4.5" data-n="Bayfront Health St. Petersburg" data-irs="$4.4M" data-cms="$17.6M" data-pct="75%" data-end="2023-09-30"><title>Bayfront Health St. Petersburg: IRS $4.4M, CMS $17.6M</title></circle>
+<circle class="dot neg" cx="523.0" cy="206.2" r="4.5" data-n="Bridgeport Hospital" data-irs="$32.7M" data-cms="$19.5M" data-pct="40%" data-end="2023-09-30"><title>Bridgeport Hospital: IRS $32.7M, CMS $19.5M</title></circle>
+<circle class="dot pos" cx="655.9" cy="49.4" r="4.5" data-n="Boston Medical Center" data-irs="$99.5M" data-cms="$111.5M" data-pct="11%" data-end="2023-09-30"><title>Boston Medical Center: IRS $99.5M, CMS $111.5M</title></circle>
+<circle class="dot neg" cx="485.2" cy="247.3" r="4.5" data-n="Beth Israel Deaconess Medical Center" data-irs="$23.8M" data-cms="$12.4M" data-pct="48%" data-end="2023-09-30"><title>Beth Israel Deaconess Medical Center: IRS $23.8M, CMS $12.4M</title></circle>
+<circle class="dot pos" cx="331.9" cy="216.2" r="4.5" data-n="Southeastern Regional Medical Center" data-irs="$6.6M" data-cms="$17.5M" data-pct="62%" data-end="2023-09-30"><title>Southeastern Regional Medical Center: IRS $6.6M, CMS $17.5M</title></circle>
+<circle class="dot pos" cx="331.9" cy="219.4" r="4.5" data-n="Sharp Memorial Hospital" data-irs="$6.6M" data-cms="$16.9M" data-pct="61%" data-end="2023-09-30"><title>Sharp Memorial Hospital: IRS $6.6M, CMS $16.9M</title></circle>
+<circle class="dot neg" cx="425.1" cy="341.9" r="4.5" data-n="Boca Raton Regional Hospital" data-irs="$14.4M" data-cms="$4.3M" data-pct="70%" data-end="2023-09-30"><title>Boca Raton Regional Hospital: IRS $14.4M, CMS $4.3M</title></circle>
+<circle class="dot pos" cx="320.3" cy="228.4" r="4.5" data-n="Grossmont Hospital" data-irs="$6.0M" data-cms="$15.3M" data-pct="61%" data-end="2023-09-30"><title>Grossmont Hospital: IRS $6.0M, CMS $15.3M</title></circle>
+<circle class="dot neg" cx="444.1" cy="289.2" r="4.5" data-n="Hamilton Medical Center" data-irs="$16.9M" data-cms="$7.8M" data-pct="54%" data-end="2023-09-30"><title>Hamilton Medical Center: IRS $16.9M, CMS $7.8M</title></circle>
+<circle class="dot neg" cx="365.6" cy="464.6" r="4.5" data-n="Oroville Hospital" data-irs="$8.8M" data-cms="$1.1M" data-pct="87%" data-end="2023-11-30"><title>Oroville Hospital: IRS $8.8M, CMS $1.1M</title></circle>
+<circle class="dot neg" cx="435.2" cy="280.9" r="4.5" data-n="Carilion Medical Center" data-irs="$15.7M" data-cms="$8.5M" data-pct="46%" data-end="2023-09-30"><title>Carilion Medical Center: IRS $15.7M, CMS $8.5M</title></circle>
+<circle class="dot pos" cx="301.9" cy="257.5" r="4.5" data-n="Sharp Chula Vista Medical Center" data-irs="$5.1M" data-cms="$11.1M" data-pct="53%" data-end="2023-09-30"><title>Sharp Chula Vista Medical Center: IRS $5.1M, CMS $11.1M</title></circle>
+<circle class="dot pos" cx="380.8" cy="225.4" r="4.5" data-n="St Bernards Medical Center" data-irs="$10.0M" data-cms="$15.8M" data-pct="37%" data-end="2023-09-30"><title>St Bernards Medical Center: IRS $10.0M, CMS $15.8M</title></circle>
+<circle class="dot neg" cx="522.1" cy="177.1" r="4.5" data-n="North Mississippi Medical Center" data-irs="$32.5M" data-cms="$27.0M" data-pct="17%" data-end="2023-09-30"><title>North Mississippi Medical Center: IRS $32.5M, CMS $27.0M</title></circle>
+<circle class="dot pos" cx="187.7" cy="295.5" r="4.5" data-n="Concord Hospital  Inc." data-irs="$2.0M" data-cms="$7.3M" data-pct="73%" data-end="2023-09-30"><title>Concord Hospital  Inc.: IRS $2.0M, CMS $7.3M</title></circle>
+<circle class="dot neg" cx="493.0" cy="200.1" r="4.5" data-n="Coxhealth" data-irs="$25.5M" data-cms="$20.9M" data-pct="18%" data-end="2023-09-30"><title>Coxhealth: IRS $25.5M, CMS $20.9M</title></circle>
+<circle class="dot pos" cx="421.3" cy="211.4" r="4.5" data-n="Baptist Mem Hospital Desoto" data-irs="$14.0M" data-cms="$18.4M" data-pct="24%" data-end="2023-09-30"><title>Baptist Mem Hospital Desoto: IRS $14.0M, CMS $18.4M</title></circle>
+<circle class="dot pos" cx="411.6" cy="218.0" r="4.5" data-n="Orlando Health South Lake Hospital" data-irs="$12.9M" data-cms="$17.1M" data-pct="25%" data-end="2023-09-30"><title>Orlando Health South Lake Hospital: IRS $12.9M, CMS $17.1M</title></circle>
+<circle class="dot pos" cx="422.4" cy="212.0" r="4.5" data-n="Deaconess Hospital" data-irs="$14.1M" data-cms="$18.3M" data-pct="23%" data-end="2023-09-30"><title>Deaconess Hospital: IRS $14.1M, CMS $18.3M</title></circle>
+<circle class="dot neg" cx="344.4" cy="352.3" r="4.5" data-n="Baystate Medical Center" data-irs="$7.3M" data-cms="$3.9M" data-pct="47%" data-end="2023-09-30"><title>Baystate Medical Center: IRS $7.3M, CMS $3.9M</title></circle>
+<circle class="dot neg" cx="311.5" cy="404.7" r="4.5" data-n="Mount Auburn Hospital" data-irs="$5.6M" data-cms="$2.2M" data-pct="61%" data-end="2023-09-30"><title>Mount Auburn Hospital: IRS $5.6M, CMS $2.2M</title></circle>
+<circle class="dot neg" cx="328.2" cy="371.0" r="4.5" data-n="Jupiter Medical Center" data-irs="$6.4M" data-cms="$3.1M" data-pct="51%" data-end="2023-09-30"><title>Jupiter Medical Center: IRS $6.4M, CMS $3.1M</title></circle>
+<circle class="dot neg" cx="403.5" cy="275.5" r="4.5" data-n="University Of Vermont Medical Center" data-irs="$12.0M" data-cms="$9.1M" data-pct="25%" data-end="2023-09-30"><title>University Of Vermont Medical Center: IRS $12.0M, CMS $9.1M</title></circle>
+<circle class="dot pos" cx="216.0" cy="321.3" r="4.5" data-n="Baptist Medical Center-Beaches" data-irs="$2.5M" data-cms="$5.4M" data-pct="54%" data-end="2023-09-30"><title>Baptist Medical Center-Beaches: IRS $2.5M, CMS $5.4M</title></circle>
+<circle class="dot pos" cx="215.8" cy="326.1" r="4.5" data-n="Silver Cross Hospital" data-irs="$2.5M" data-cms="$5.2M" data-pct="51%" data-end="2023-09-30"><title>Silver Cross Hospital: IRS $2.5M, CMS $5.2M</title></circle>
+<circle class="dot neg" cx="394.7" cy="277.3" r="4.5" data-n="Conway Hospital" data-irs="$11.2M" data-cms="$8.9M" data-pct="21%" data-end="2023-09-30"><title>Conway Hospital: IRS $11.2M, CMS $8.9M</title></circle>
+<circle class="dot pos" cx="341.6" cy="272.8" r="4.5" data-n="Lahey Clinic Hospital  Inc." data-irs="$7.2M" data-cms="$9.3M" data-pct="23%" data-end="2023-09-30"><title>Lahey Clinic Hospital  Inc.: IRS $7.2M, CMS $9.3M</title></circle>
+<circle class="dot pos" cx="268.4" cy="313.5" r="4.5" data-n="Saint Francis Hospital" data-irs="$3.9M" data-cms="$5.9M" data-pct="34%" data-end="2023-09-30"><title>Saint Francis Hospital: IRS $3.9M, CMS $5.9M</title></circle>
+<circle class="dot neg" cx="364.5" cy="302.5" r="4.5" data-n="The Miriam Hospital" data-irs="$8.7M" data-cms="$6.7M" data-pct="23%" data-end="2023-09-30"><title>The Miriam Hospital: IRS $8.7M, CMS $6.7M</title></circle>
+<circle class="dot pos" cx="143.3" cy="366.2" r="4.5" data-n="Baptist Medical Ctr-Nassau" data-irs="$1.4M" data-cms="$3.3M" data-pct="59%" data-end="2023-09-30"><title>Baptist Medical Ctr-Nassau: IRS $1.4M, CMS $3.3M</title></circle>
+<circle class="dot pos" cx="182.7" cy="353.1" r="4.5" data-n="Midwestern Regional Medical Center" data-irs="$1.9M" data-cms="$3.8M" data-pct="50%" data-end="2023-09-30"><title>Midwestern Regional Medical Center: IRS $1.9M, CMS $3.8M</title></circle>
+<circle class="dot pos" cx="160.7" cy="362.2" r="4.5" data-n="Deaconess Henderson Hospital" data-irs="$1.6M" data-cms="$3.5M" data-pct="54%" data-end="2023-09-30"><title>Deaconess Henderson Hospital: IRS $1.6M, CMS $3.5M</title></circle>
+<circle class="dot neg" cx="548.9" cy="144.3" r="4.5" data-n="Baptist Mem Hospital Memphis" data-irs="$40.6M" data-cms="$38.9M" data-pct="4%" data-end="2023-09-30"><title>Baptist Mem Hospital Memphis: IRS $40.6M, CMS $38.9M</title></circle>
+<circle class="dot pos" cx="328.9" cy="284.6" r="4.5" data-n="Southcoast Hospitals Group  Inc" data-irs="$6.5M" data-cms="$8.2M" data-pct="21%" data-end="2023-09-30"><title>Southcoast Hospitals Group  Inc: IRS $6.5M, CMS $8.2M</title></circle>
+<circle class="dot neg" cx="339.5" cy="323.0" r="4.5" data-n="Baptist Mem Hospital Union County" data-irs="$7.1M" data-cms="$5.3M" data-pct="24%" data-end="2023-09-30"><title>Baptist Mem Hospital Union County: IRS $7.1M, CMS $5.3M</title></circle>
+<circle class="dot pos" cx="307.1" cy="297.6" r="4.5" data-n="Blessing Hospital" data-irs="$5.4M" data-cms="$7.1M" data-pct="24%" data-end="2023-09-30"><title>Blessing Hospital: IRS $5.4M, CMS $7.1M</title></circle>
+<circle class="dot neg" cx="329.3" cy="332.5" r="4.5" data-n="Nea Baptist Memorial Hospital" data-irs="$6.5M" data-cms="$4.8M" data-pct="26%" data-end="2023-09-30"><title>Nea Baptist Memorial Hospital: IRS $6.5M, CMS $4.8M</title></circle>
+<circle class="dot pos" cx="223.0" cy="343.5" r="4.5" data-n="Mclaren Macomb" data-irs="$2.7M" data-cms="$4.3M" data-pct="37%" data-end="2023-09-30"><title>Mclaren Macomb: IRS $2.7M, CMS $4.3M</title></circle>
+<circle class="dot pos" cx="461.1" cy="200.1" r="4.5" data-n="Shannon Medical Center" data-irs="$19.5M" data-cms="$20.9M" data-pct="7%" data-end="2023-09-30"><title>Shannon Medical Center: IRS $19.5M, CMS $20.9M</title></circle>
+<circle class="dot pos" cx="199.4" cy="358.7" r="4.5" data-n="Women &amp; Infants Hospital" data-irs="$2.2M" data-cms="$3.6M" data-pct="39%" data-end="2023-09-30"><title>Women &amp; Infants Hospital: IRS $2.2M, CMS $3.6M</title></circle>
+<circle class="dot neg" cx="503.1" cy="179.1" r="4.5" data-n="Naples Community Hospital" data-irs="$27.7M" data-cms="$26.4M" data-pct="5%" data-end="2023-09-30"><title>Naples Community Hospital: IRS $27.7M, CMS $26.4M</title></circle>
+<circle class="dot pos" cx="136.3" cy="392.4" r="4.5" data-n="Ottawa Regional Hospital &amp; Healthcar" data-irs="$1.3M" data-cms="$2.5M" data-pct="48%" data-end="2023-09-30"><title>Ottawa Regional Hospital &amp; Healthcar: IRS $1.3M, CMS $2.5M</title></circle>
+<circle class="dot neg" cx="221.4" cy="439.9" r="4.5" data-n="Beverly Hospital" data-irs="$2.6M" data-cms="$1.5M" data-pct="44%" data-end="2023-09-30"><title>Beverly Hospital: IRS $2.6M, CMS $1.5M</title></circle>
+<circle class="dot neg" cx="239.8" cy="412.6" r="4.5" data-n="Lowell General Hospital" data-irs="$3.1M" data-cms="$2.0M" data-pct="36%" data-end="2023-09-30"><title>Lowell General Hospital: IRS $3.1M, CMS $2.0M</title></circle>
+<circle class="dot neg" cx="259.9" cy="388.9" r="4.5" data-n="Emerson Hospital" data-irs="$3.6M" data-cms="$2.6M" data-pct="29%" data-end="2023-09-30"><title>Emerson Hospital: IRS $3.6M, CMS $2.6M</title></circle>
+<circle class="dot neg" cx="320.9" cy="328.9" r="4.5" data-n="Cox Medical Center Branson" data-irs="$6.0M" data-cms="$5.0M" data-pct="17%" data-end="2023-09-30"><title>Cox Medical Center Branson: IRS $6.0M, CMS $5.0M</title></circle>
+<circle class="dot pos" cx="263.8" cy="333.9" r="4.5" data-n="Lawrence General Hospital" data-irs="$3.7M" data-cms="$4.7M" data-pct="21%" data-end="2023-09-30"><title>Lawrence General Hospital: IRS $3.7M, CMS $4.7M</title></circle>
+<circle class="dot pos" cx="374.8" cy="263.6" r="4.5" data-n="Baptist Mem Hospital North Miss" data-irs="$9.5M" data-cms="$10.3M" data-pct="8%" data-end="2023-09-30"><title>Baptist Mem Hospital North Miss: IRS $9.5M, CMS $10.3M</title></circle>
+<circle class="dot neg" cx="402.7" cy="256.8" r="4.5" data-n="St. Vincents Medical Center" data-irs="$12.0M" data-cms="$11.1M" data-pct="7%" data-end="2023-09-30"><title>St. Vincents Medical Center: IRS $12.0M, CMS $11.1M</title></circle>
+<circle class="dot pos" cx="111.6" cy="418.1" r="4.5" data-n="Champlain Valley Physicians Hospital" data-irs="$1.0M" data-cms="$1.9M" data-pct="44%" data-end="2023-09-30"><title>Champlain Valley Physicians Hospital: IRS $1.0M, CMS $1.9M</title></circle>
+<circle class="dot neg" cx="228.9" cy="412.2" r="4.5" data-n="Milford Regional Medical Center  Inc" data-irs="$2.8M" data-cms="$2.0M" data-pct="29%" data-end="2023-09-30"><title>Milford Regional Medical Center  Inc: IRS $2.8M, CMS $2.0M</title></circle>
+<circle class="dot neg" cx="357.5" cy="293.4" r="4.5" data-n="Harnett Health System" data-irs="$8.2M" data-cms="$7.4M" data-pct="9%" data-end="2023-09-30"><title>Harnett Health System: IRS $8.2M, CMS $7.4M</title></circle>
+<circle class="dot pos" cx="108.7" cy="422.0" r="4.5" data-n="Newport Hospital" data-irs="$1.0M" data-cms="$1.8M" data-pct="43%" data-end="2023-09-30"><title>Newport Hospital: IRS $1.0M, CMS $1.8M</title></circle>
+<circle class="dot neg" cx="179.9" cy="459.0" r="4.5" data-n="Valley Regional Hospital" data-irs="$1.9M" data-cms="$1.2M" data-pct="36%" data-end="2023-09-30"><title>Valley Regional Hospital: IRS $1.9M, CMS $1.2M</title></circle>
+<circle class="dot neg" cx="202.5" cy="432.1" r="4.5" data-n="The Griffin Hospital" data-irs="$2.2M" data-cms="$1.6M" data-pct="29%" data-end="2023-09-30"><title>The Griffin Hospital: IRS $2.2M, CMS $1.6M</title></circle>
+<circle class="dot neg" cx="199.1" cy="435.4" r="4.5" data-n="Marshall Hospital" data-irs="$2.2M" data-cms="$1.5M" data-pct="30%" data-end="2023-10-31"><title>Marshall Hospital: IRS $2.2M, CMS $1.5M</title></circle>
+<circle class="dot neg" cx="244.5" cy="389.6" r="4.5" data-n="Winchester Hospital" data-irs="$3.2M" data-cms="$2.6M" data-pct="20%" data-end="2023-09-30"><title>Winchester Hospital: IRS $3.2M, CMS $2.6M</title></circle>
+<circle class="dot pos" cx="466.1" cy="200.0" r="4.5" data-n="Rhode Island Hospital" data-irs="$20.3M" data-cms="$20.9M" data-pct="3%" data-end="2023-09-30"><title>Rhode Island Hospital: IRS $20.3M, CMS $20.9M</title></circle>
+<circle class="dot pos" cx="265.8" cy="342.3" r="4.5" data-n="St. Lukes Nampa Medical Center" data-irs="$3.8M" data-cms="$4.3M" data-pct="12%" data-end="2023-09-30"><title>St. Lukes Nampa Medical Center: IRS $3.8M, CMS $4.3M</title></circle>
+<circle class="dot neg" cx="345.4" cy="299.8" r="4.5" data-n="Vassar Brothers Medical Center" data-irs="$7.4M" data-cms="$6.9M" data-pct="7%" data-end="2023-09-30"><title>Vassar Brothers Medical Center: IRS $7.4M, CMS $6.9M</title></circle>
+<circle class="dot neg" cx="172.3" cy="451.8" r="4.5" data-n="Karmanos Cancer Hospital" data-irs="$1.7M" data-cms="$1.3M" data-pct="27%" data-end="2023-09-30"><title>Karmanos Cancer Hospital: IRS $1.7M, CMS $1.3M</title></circle>
+<circle class="dot neg" cx="217.4" cy="406.4" r="4.5" data-n="Ephraim Mcdowell Reg Med Ctr" data-irs="$2.5M" data-cms="$2.1M" data-pct="17%" data-end="2023-09-30"><title>Ephraim Mcdowell Reg Med Ctr: IRS $2.5M, CMS $2.1M</title></circle>
+<circle class="dot neg" cx="164.6" cy="456.6" r="4.5" data-n="Singing River Gulfport" data-irs="$1.6M" data-cms="$1.2M" data-pct="26%" data-end="2023-09-30"><title>Singing River Gulfport: IRS $1.6M, CMS $1.2M</title></circle>
+<circle class="dot pos" cx="154.1" cy="416.9" r="4.5" data-n="Central Vermont Hospital" data-irs="$1.5M" data-cms="$1.9M" data-pct="21%" data-end="2023-09-30"><title>Central Vermont Hospital: IRS $1.5M, CMS $1.9M</title></circle>
+<circle class="dot neg" cx="238.2" cy="386.2" r="4.5" data-n="Tufts Medical Center" data-irs="$3.0M" data-cms="$2.6M" data-pct="12%" data-end="2023-09-30"><title>Tufts Medical Center: IRS $3.0M, CMS $2.6M</title></circle>
+<circle class="dot pos" cx="316.2" cy="310.1" r="4.5" data-n="Catholic Medical Center" data-irs="$5.8M" data-cms="$6.2M" data-pct="6%" data-end="2023-09-30"><title>Catholic Medical Center: IRS $5.8M, CMS $6.2M</title></circle>
+<circle class="dot neg" cx="240.7" cy="383.5" r="4.5" data-n="Norwegian American Hospital" data-irs="$3.1M" data-cms="$2.7M" data-pct="12%" data-end="2023-09-30"><title>Norwegian American Hospital: IRS $3.1M, CMS $2.7M</title></circle>
+<circle class="dot pos" cx="179.8" cy="403.4" r="4.5" data-n="Pontotoc Health Services" data-irs="$1.9M" data-cms="$2.2M" data-pct="15%" data-end="2023-09-30"><title>Pontotoc Health Services: IRS $1.9M, CMS $2.2M</title></circle>
+<circle class="dot neg" cx="301.6" cy="332.3" r="4.5" data-n="Pih Health Good Samaritan Hospital" data-irs="$5.1M" data-cms="$4.8M" data-pct="6%" data-end="2023-09-30"><title>Pih Health Good Samaritan Hospital: IRS $5.1M, CMS $4.8M</title></circle>
+<circle class="dot pos" cx="409.4" cy="243.2" r="4.5" data-n="Ms Baptist Medical Center" data-irs="$12.6M" data-cms="$13.0M" data-pct="2%" data-end="2023-09-30"><title>Ms Baptist Medical Center: IRS $12.6M, CMS $13.0M</title></circle>
+<circle class="dot neg" cx="309.1" cy="325.9" r="4.5" data-n="Baptist Mem Hospital Tipton County" data-irs="$5.5M" data-cms="$5.2M" data-pct="5%" data-end="2023-09-30"><title>Baptist Mem Hospital Tipton County: IRS $5.5M, CMS $5.2M</title></circle>
+<circle class="dot pos" cx="158.5" cy="419.8" r="4.5" data-n="Middlesex Hospital" data-irs="$1.6M" data-cms="$1.8M" data-pct="15%" data-end="2023-09-30"><title>Middlesex Hospital: IRS $1.6M, CMS $1.8M</title></circle>
+<circle class="dot neg" cx="154.5" cy="454.3" r="4.5" data-n="Baptist Mem Hospital Huntingdon" data-irs="$1.5M" data-cms="$1.2M" data-pct="17%" data-end="2023-09-30"><title>Baptist Mem Hospital Huntingdon: IRS $1.5M, CMS $1.2M</title></circle>
+<circle class="dot neg" cx="171.2" cy="439.0" r="4.5" data-n="Cox-Monett Hospital" data-irs="$1.7M" data-cms="$1.5M" data-pct="15%" data-end="2023-09-30"><title>Cox-Monett Hospital: IRS $1.7M, CMS $1.5M</title></circle>
+<circle class="dot pos" cx="116.3" cy="448.2" r="4.5" data-n="Northern Dutchess Hospital" data-irs="$1.1M" data-cms="$1.3M" data-pct="18%" data-end="2023-09-30"><title>Northern Dutchess Hospital: IRS $1.1M, CMS $1.3M</title></circle>
+<circle class="dot pos" cx="115.4" cy="450.8" r="4.5" data-n="Marion Regional Medical Center" data-irs="$1.1M" data-cms="$1.3M" data-pct="16%" data-end="2023-09-30"><title>Marion Regional Medical Center: IRS $1.1M, CMS $1.3M</title></circle>
+<circle class="dot neg" cx="145.1" cy="458.9" r="4.5" data-n="Putnam Hospital Center" data-irs="$1.4M" data-cms="$1.2M" data-pct="15%" data-end="2023-09-30"><title>Putnam Hospital Center: IRS $1.4M, CMS $1.2M</title></circle>
+<circle class="dot pos" cx="118.9" cy="449.2" r="4.5" data-n="Mclaren Central Michigan" data-irs="$1.1M" data-cms="$1.3M" data-pct="15%" data-end="2023-09-30"><title>Mclaren Central Michigan: IRS $1.1M, CMS $1.3M</title></circle>
+<circle class="dot neg" cx="272.2" cy="353.2" r="4.5" data-n="South Shore Hospital" data-irs="$4.0M" data-cms="$3.8M" data-pct="5%" data-end="2023-09-30"><title>South Shore Hospital: IRS $4.0M, CMS $3.8M</title></circle>
+<circle class="dot neg" cx="192.6" cy="416.9" r="4.5" data-n="Bmh-Crittenden" data-irs="$2.1M" data-cms="$1.9M" data-pct="9%" data-end="2023-09-30"><title>Bmh-Crittenden: IRS $2.1M, CMS $1.9M</title></circle>
+<circle class="dot pos" cx="191.3" cy="402.2" r="4.5" data-n="Monroe Health Services  Inc." data-irs="$2.0M" data-cms="$2.2M" data-pct="8%" data-end="2023-09-30"><title>Monroe Health Services  Inc.: IRS $2.0M, CMS $2.2M</title></circle>
+<circle class="dot neg" cx="165.3" cy="439.3" r="4.5" data-n="Baptist Medical Center - Yazoo" data-irs="$1.6M" data-cms="$1.5M" data-pct="11%" data-end="2023-09-30"><title>Baptist Medical Center - Yazoo: IRS $1.6M, CMS $1.5M</title></circle>
+<circle class="dot neg" cx="275.6" cy="349.9" r="4.5" data-n="Brockton Hospital  Inc." data-irs="$4.1M" data-cms="$4.0M" data-pct="4%" data-end="2023-09-30"><title>Brockton Hospital  Inc.: IRS $4.1M, CMS $4.0M</title></circle>
+<circle class="dot pos" cx="170.8" cy="417.5" r="4.5" data-n="Baptist Mem Hospital Union City" data-irs="$1.7M" data-cms="$1.9M" data-pct="8%" data-end="2023-09-30"><title>Baptist Mem Hospital Union City: IRS $1.7M, CMS $1.9M</title></circle>
+<circle class="dot neg" cx="227.3" cy="387.2" r="4.5" data-n="Rutland Regional Medical Center" data-irs="$2.8M" data-cms="$2.6M" data-pct="5%" data-end="2023-09-30"><title>Rutland Regional Medical Center: IRS $2.8M, CMS $2.6M</title></circle>
+<circle class="dot pos" cx="151.9" cy="435.0" r="4.5" data-n="Clay County Medical Corporation" data-irs="$1.5M" data-cms="$1.5M" data-pct="5%" data-end="2023-09-30"><title>Clay County Medical Corporation: IRS $1.5M, CMS $1.5M</title></circle>
+<circle class="dot neg" cx="184.3" cy="418.2" r="4.5" data-n="St. Lukes Wood River Medical Center" data-irs="$1.9M" data-cms="$1.9M" data-pct="4%" data-end="2023-09-30"><title>St. Lukes Wood River Medical Center: IRS $1.9M, CMS $1.9M</title></circle>
+<circle class="dot pos" cx="394.9" cy="256.3" r="4.5" data-n="Cape Canaveral Hospital Inc" data-irs="$11.2M" data-cms="$11.2M" data-pct="0%" data-end="2023-09-30"><title>Cape Canaveral Hospital Inc: IRS $11.2M, CMS $11.2M</title></circle>
+<circle class="dot pos" cx="303.0" cy="325.5" r="4.5" data-n="Viera Hospital Inc" data-irs="$5.2M" data-cms="$5.2M" data-pct="0%" data-end="2023-09-30"><title>Viera Hospital Inc: IRS $5.2M, CMS $5.2M</title></circle>
+<circle class="dot neg" cx="160.1" cy="433.1" r="4.5" data-n="Gibson Area Hospital And Health Svcs" data-irs="$1.6M" data-cms="$1.6M" data-pct="0%" data-end="2023-09-30"><title>Gibson Area Hospital And Health Svcs: IRS $1.6M, CMS $1.6M</title></circle>
+<circle class="dot neg" cx="124.9" cy="459.7" r="4.5" data-n="Macon County General Hospital" data-irs="$1.2M" data-cms="$1.2M" data-pct="0%" data-end="2023-09-30"><title>Macon County General Hospital: IRS $1.2M, CMS $1.2M</title></circle>
+<circle class="dot neg" cx="223.9" cy="385.1" r="4.5" data-n="Medical Center Of Deltona" data-irs="$2.7M" data-cms="$2.7M" data-pct="0%" data-end="2023-09-30"><title>Medical Center Of Deltona: IRS $2.7M, CMS $2.7M</title></circle>
+<text class="axis-title" x="390" y="542">Reported to the IRS — Form 990 Schedule H, Part I line 7a (net)</text>
+<text class="axis-title" transform="translate(18,260) rotate(-90)" x="0" y="0">Reported to CMS — Worksheet S-10 (net)</text>
+</svg>
+<figcaption>Each dot is one of the 99 hospitals where the two filings are cleanly comparable — single facility, periods ending within a month of each other, both figures at least $1M, and total expenses within 5%. A hospital reporting the same cost to both regulators sits on the diagonal; 22 sit far enough off it that the two figures differ by more than half. Both axes are log-scaled. Hover any dot for the hospital and its two figures. Sources: CMS HCRIS Worksheet S-10 (FY2023) and IRS Form 990 Schedule H (TY2022).</figcaption>
+</figure>
+
+<script>
+(function () {
+  var svg = document.querySelector('.gapchart');
+  if (!svg) return;
+  var tip = document.createElement('div');
+  tip.className = 'gaptip';
+  document.body.appendChild(tip);
+  function show(e) {
+    var d = e.target.dataset;
+    tip.innerHTML = '<b>' + d.n + '</b>'
+      + 'IRS 990 Sch. H 7a: ' + d.irs + '<br>'
+      + 'CMS Worksheet S-10: ' + d.cms + '<br>'
+      + '<span>differs by ' + d.pct + ' \u00b7 period ended ' + d.end + '</span>';
+    tip.style.opacity = '1';
+    move(e);
+  }
+  function move(e) {
+    var r = tip.getBoundingClientRect();
+    var x = Math.min(e.clientX + 14, window.innerWidth - r.width - 8);
+    var y = Math.max(e.clientY - r.height - 12, 8);
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  }
+  svg.querySelectorAll('.dot').forEach(function (dot) {
+    dot.addEventListener('mouseenter', show);
+    dot.addEventListener('mousemove', move);
+    dot.addEventListener('mouseleave', function () { tip.style.opacity = '0'; });
+  });
+})();
+</script>
+
+<!-- GAP_CHART:END -->
+
+  <p>A sample of the largest differences:</p>
 
   <div class="board-scroll">
     <table>

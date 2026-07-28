@@ -1,0 +1,61 @@
+name: Data question or correction
+description: A figure looks wrong, or you want to check how a number was derived
+title: "[data] "
+labels: ["data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks — this is the most useful kind of issue to file.
+
+        One thing to check first, because it explains most apparent errors: **HCRIS names
+        its files by CMS reporting cycle, not by the period a report covers.** The FY2023
+        file can hold a report ending in mid-2024, twelve months after the TY2022 990.
+        64% of matched systems are 12 months apart. Compare `hcris_fy_end_dt` against
+        `sched_h_tax_period_end` before comparing two dollar figures.
+
+        Also worth knowing: a difference between the two filings is not by itself an
+        error. The two forms define and cost charity care differently, and a hospital can
+        report both correctly and still show a large gap.
+  - type: input
+    id: entity
+    attributes:
+      label: Hospital
+      description: Name plus EIN or CCN if you have it — the identifier makes this much faster to look up.
+      placeholder: "Example Regional Medical Center (EIN 123456789)"
+    validations:
+      required: true
+  - type: input
+    id: figure
+    attributes:
+      label: Which figure
+      description: The field and the value trove shows.
+      placeholder: "hcris_charity_care_cost shows $4.0M"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and what you checked it against
+      description: The filed 990 on ProPublica, the hospital's audited statements, HCRIS directly — whatever your source is. A link helps.
+    validations:
+      required: true
+  - type: input
+    id: periods
+    attributes:
+      label: Periods you're comparing
+      description: The two period-end dates, if the issue involves both filings.
+      placeholder: "hcris_fy_end_dt 2024-06-30 vs sched_h_tax_period_end 2023-06-30"
+  - type: dropdown
+    id: source
+    attributes:
+      label: Where you saw it
+      options:
+        - troveproject.com/hospitals/
+        - troveproject.com/notes/
+        - The published CSV or Parquet bundle
+        - A Claude Code skill answer
+        - artifacts/ on GitHub
+        - Somewhere else
+    validations:
+      required: true

@@ -25,7 +25,9 @@ Output:
 """
 
 import csv
+import html
 import json
+import math
 from datetime import date
 from pathlib import Path
 
@@ -33,10 +35,26 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "artifacts" / "community_benefit_gap_2022.csv"
 MD_OUT = ROOT / "artifacts" / "charity_care_gap_index_2022.md"
 JSON_OUT = ROOT / "web" / "data" / "charity_care_gap_index_2022.json"
+CHART_TARGETS = (
+    ROOT / "web" / "notes" / "charity-care-gap" / "index.html",
+    ROOT / "web" / "hospitals" / "index.html",
+)
+CHART_START = "<!-- GAP_CHART:START -->"
+CHART_END = "<!-- GAP_CHART:END -->"
 
 MATERIAL_FLOOR = 1_000_000
 EXPENSE_BASE_TOLERANCE = 1.05
 ALIGNMENT_MONTHS = 1
+
+# Chart mark colors. These are NOT the site's --pos/--neg text tokens: those are
+# tuned for text legibility and fail the mark checks in dark mode (both above the
+# lightness band; the blue drops under the chroma floor and reads gray). These
+# steps were validated per-mode as a diverging pair against each surface —
+# all-pairs CVD ΔE 19.0 light / 26.8 dark, normal-vision 24.6 / 31.8, contrast
+# ≥3:1 on both. Warm = reported more to CMS, cool = reported more to the IRS;
+# the parity line is the neutral midpoint.
+MARK_POS_LIGHT, MARK_NEG_LIGHT = "#a04413", "#1f5793"
+MARK_POS_DARK, MARK_NEG_DARK = "#d95926", "#3987e5"
 
 
 def _f(v):
@@ -248,6 +266,242 @@ def write_markdown(index):
     MD_OUT.write_text("\n".join(lines))
 
 
+def _usd_axis(v):
+    """Axis tick label: $1M, $10M, $100M — no decimals, they're log decades."""
+    if v >= 1e9:
+        return f"${v / 1e9:.0f}B"
+    if v >= 1e6:
+        return f"${v / 1e6:.0f}M"
+    return f"${v / 1e3:.0f}K"
+
+
+def svg_chart(index):
+    """A log-log scatter of the two reported figures, one dot per hospital.
+
+    The form follows the data's job. Both axes carry the same unit (dollars of
+    charity-care cost), so they share one scale and one range — that is what makes
+    the 45-degree parity line meaningful: a hospital reporting the same number to
+    both regulators lands exactly on it, and distance from the line IS the finding.
+    Two axes of the same measure is the opposite of a dual-axis chart; forcing
+    independent scales here would manufacture the very divergence being measured.
+
+    Color encodes polarity (which regulator got the larger number), diverging from
+    the parity line as a neutral midpoint. No hospital is direct-labeled: identity
+    comes from hover and from the ranked table beside it, so an exported PNG can't
+    become a named-and-shamed image detached from its caveats. Region labels
+    explain the encoding without naming anyone.
+
+    Log scale because the values span $1M to $113M; a linear axis would pack 80 of
+    the 99 hospitals into the bottom-left corner.
+    """
+    pts = [r for r in index if r["irs_7a"] > 0 and r["cms_s10"] > 0]
+    if not pts:
+        return ""
+
+    W, H = 720, 560
+    M = {"t": 28, "r": 22, "b": 68, "l": 82}
+    pw, ph = W - M["l"] - M["r"], H - M["t"] - M["b"]
+
+    lo = min(min(p["irs_7a"], p["cms_s10"]) for p in pts) * 0.8
+    hi = max(max(p["irs_7a"], p["cms_s10"]) for p in pts) * 1.25
+    l10, h10 = math.log10(lo), math.log10(hi)
+
+    def sx(v):
+        return M["l"] + (math.log10(v) - l10) / (h10 - l10) * pw
+
+    def sy(v):
+        return M["t"] + ph - (math.log10(v) - l10) / (h10 - l10) * ph
+
+    ticks = [t for t in (1e6, 2e6, 5e6, 1e7, 2e7, 5e7, 1e8) if lo <= t <= hi]
+
+    o = []
+    o.append(
+        f'<svg class="gapchart" viewBox="0 0 {W} {H}" role="img" '
+        f'aria-labelledby="gapchart-t gapchart-d" preserveAspectRatio="xMidYMid meet">'
+    )
+    o.append(
+        '<title id="gapchart-t">Charity care reported to CMS versus to the IRS, '
+        f"{len(pts)} hospitals, tax year 2022</title>"
+    )
+    o.append(
+        '<desc id="gapchart-d">Log-log scatter. Each dot is one hospital. The '
+        "diagonal marks where the two filings would be equal. Dots above it reported "
+        "more to CMS; dots below reported more to the IRS. Distance from the diagonal "
+        "is the size of the difference. The full figures are in the table below.</desc>"
+    )
+
+    # Grid — hairline, solid, recessive. Never dashed.
+    for t in ticks:
+        o.append(
+            f'<line class="grid" x1="{sx(t):.1f}" y1="{M["t"]}" '
+            f'x2="{sx(t):.1f}" y2="{M["t"] + ph}"/>'
+        )
+        o.append(
+            f'<line class="grid" x1="{M["l"]}" y1="{sy(t):.1f}" '
+            f'x2="{M["l"] + pw}" y2="{sy(t):.1f}"/>'
+        )
+        o.append(
+            f'<text class="tick tick-x" x="{sx(t):.1f}" y="{M["t"] + ph + 20}">'
+            f"{_usd_axis(t)}</text>"
+        )
+        o.append(
+            f'<text class="tick tick-y" x="{M["l"] - 10}" y="{sy(t) + 4:.1f}">{_usd_axis(t)}</text>'
+        )
+
+    # Parity line — the neutral reference the whole chart is read against.
+    o.append(
+        f'<line class="parity" x1="{sx(lo):.1f}" y1="{sy(lo):.1f}" '
+        f'x2="{sx(hi):.1f}" y2="{sy(hi):.1f}"/>'
+    )
+    # Legend, top-left, in the one corner the cloud leaves empty. Every key is a
+    # swatch or a line-key beside muted text — identity never comes from coloring
+    # the text, and never from color alone. The parity line is keyed here rather
+    # than labeled inline: an inline label lands in the densest part of the cloud
+    # and collides with the dots it's meant to explain.
+    lx, ly = M["l"] + 14, M["t"] + 14
+    o.append(
+        f'<line class="parity" x1="{lx}" y1="{ly}" x2="{lx + 16}" y2="{ly}"/>'
+        f'<text class="region" x="{lx + 24}" y="{ly + 4}">the diagonal: both filings equal</text>'
+    )
+    o.append(
+        f'<circle class="swatch pos" cx="{lx + 8}" cy="{ly + 20}" r="4.5"/>'
+        f'<text class="region" x="{lx + 24}" y="{ly + 24}">above it: reported more to CMS</text>'
+    )
+    o.append(
+        f'<circle class="swatch neg" cx="{lx + 8}" cy="{ly + 40}" r="4.5"/>'
+        f'<text class="region" x="{lx + 24}" y="{ly + 44}">below it: reported more to the IRS</text>'
+    )
+
+    # Dots last so they sit above the grid. Surface ring keeps overlaps legible.
+    for p in pts:
+        cls = "pos" if p["gap"] > 0 else "neg"
+        pct = f"{round(p['gap_pct'] * 100)}%" if p["gap_pct"] is not None else "—"
+        o.append(
+            f'<circle class="dot {cls}" cx="{sx(p["irs_7a"]):.1f}" cy="{sy(p["cms_s10"]):.1f}" '
+            f'r="4.5" data-n="{html.escape(p["name"], quote=True)}" '
+            # usd(), not the axis formatter — the tooltip must match the $113.1M
+            # precision used in the table and prose, not round to whole millions.
+            f'data-irs="{usd(p["irs_7a"])}" data-cms="{usd(p["cms_s10"])}" '
+            f'data-pct="{pct}" data-end="{p["period_end"]}"><title>{html.escape(p["name"])}: '
+            f"IRS {usd(p['irs_7a'])}, CMS {usd(p['cms_s10'])}</title></circle>"
+        )
+
+    o.append(
+        f'<text class="axis-title" x="{M["l"] + pw / 2:.0f}" y="{H - 18}">'
+        "Reported to the IRS — Form 990 Schedule H, Part I line 7a (net)</text>"
+    )
+    o.append(
+        f'<text class="axis-title" transform="translate(18,{M["t"] + ph / 2:.0f}) rotate(-90)" '
+        'x="0" y="0">Reported to CMS — Worksheet S-10 (net)</text>'
+    )
+    o.append("</svg>")
+    return "\n".join(o)
+
+
+CHART_CSS = f"""
+<style>
+  .gapfig {{ margin: 2rem 0; }}
+  .gapfig figcaption {{ color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin-top: 0.6rem; }}
+  .gapchart {{ width: 100%; height: auto; display: block; overflow: visible;
+    --mark-pos: {MARK_POS_LIGHT}; --mark-neg: {MARK_NEG_LIGHT};
+    --grid: rgba(127,127,127,0.22); --parity: rgba(127,127,127,0.55); }}
+  @media (prefers-color-scheme: dark) {{
+    .gapchart {{ --mark-pos: {MARK_POS_DARK}; --mark-neg: {MARK_NEG_DARK};
+      --grid: rgba(255,255,255,0.13); --parity: rgba(255,255,255,0.4); }}
+  }}
+  .gapchart .grid {{ stroke: var(--grid); stroke-width: 1; }}
+  .gapchart .parity {{ stroke: var(--parity); stroke-width: 1.5; }}
+  .gapchart .tick, .gapchart .axis-title, .gapchart .region {{
+    fill: var(--muted); font-family: ui-monospace, Menlo, monospace; }}
+  .gapchart .tick {{ font-size: 12px; }}
+  .gapchart .tick-x {{ text-anchor: middle; }}
+  .gapchart .tick-y {{ text-anchor: end; }}
+  .gapchart .axis-title {{ font-size: 12.5px; text-anchor: middle; }}
+  .gapchart .region {{ font-size: 12px; text-anchor: start; }}
+  .gapchart .swatch {{ stroke: var(--bg); stroke-width: 1.5; }}
+  .gapchart .swatch.pos {{ fill: var(--mark-pos); }}
+  .gapchart .swatch.neg {{ fill: var(--mark-neg); }}
+  .gapchart .dot {{ stroke: var(--bg); stroke-width: 2; cursor: pointer; }}
+  .gapchart .dot.pos {{ fill: var(--mark-pos); }}
+  .gapchart .dot.neg {{ fill: var(--mark-neg); }}
+  .gapchart .dot:hover {{ r: 7; }}
+  .gaptip {{ position: fixed; z-index: 20; pointer-events: none; opacity: 0;
+    transition: opacity 0.1s; background: var(--bg); color: var(--fg);
+    border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.7rem;
+    font: 12px/1.5 ui-monospace, Menlo, monospace; max-width: 17rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.18); }}
+  .gaptip b {{ display: block; margin-bottom: 0.2rem; }}
+  .gaptip span {{ color: var(--muted); }}
+</style>
+"""
+
+CHART_JS = """
+<script>
+(function () {
+  var svg = document.querySelector('.gapchart');
+  if (!svg) return;
+  var tip = document.createElement('div');
+  tip.className = 'gaptip';
+  document.body.appendChild(tip);
+  function show(e) {
+    var d = e.target.dataset;
+    tip.innerHTML = '<b>' + d.n + '</b>'
+      + 'IRS 990 Sch. H 7a: ' + d.irs + '<br>'
+      + 'CMS Worksheet S-10: ' + d.cms + '<br>'
+      + '<span>differs by ' + d.pct + ' \\u00b7 period ended ' + d.end + '</span>';
+    tip.style.opacity = '1';
+    move(e);
+  }
+  function move(e) {
+    var r = tip.getBoundingClientRect();
+    var x = Math.min(e.clientX + 14, window.innerWidth - r.width - 8);
+    var y = Math.max(e.clientY - r.height - 12, 8);
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  }
+  svg.querySelectorAll('.dot').forEach(function (dot) {
+    dot.addEventListener('mouseenter', show);
+    dot.addEventListener('mousemove', move);
+    dot.addEventListener('mouseleave', function () { tip.style.opacity = '0'; });
+  });
+})();
+</script>
+"""
+
+
+def write_chart(index):
+    """Inject the generated figure between markers on each target page.
+
+    Marker-delimited so the chart is regenerated, never hand-maintained — the same
+    reason sitemap.xml lives in a build script.
+    """
+    n = len([r for r in index if r["irs_7a"] > 0 and r["cms_s10"] > 0])
+    big = sum(1 for r in index if r["gap_pct"] and r["gap_pct"] > 0.5)
+    fragment = (
+        f'{CHART_START}\n{CHART_CSS}\n<figure class="gapfig">\n{svg_chart(index)}\n'
+        f"<figcaption>Each dot is one of the {n} hospitals where the two filings are "
+        f"cleanly comparable — single facility, periods ending within a month of each "
+        f"other, both figures at least $1M, and total expenses within 5%. A hospital "
+        f"reporting the same cost to both regulators sits on the diagonal; {big} sit "
+        f"far enough off it that the two figures differ by more than half. Both axes "
+        f"are log-scaled. Hover any dot for the hospital and its two figures. "
+        f"Sources: CMS HCRIS Worksheet S-10 (FY2023) and IRS Form 990 Schedule H "
+        f"(TY2022).</figcaption>\n</figure>\n{CHART_JS}\n{CHART_END}"
+    )
+    written = []
+    for path in CHART_TARGETS:
+        if not path.exists():
+            continue
+        text = path.read_text()
+        if CHART_START not in text or CHART_END not in text:
+            continue
+        head, _, rest = text.partition(CHART_START)
+        _, _, tail = rest.partition(CHART_END)
+        path.write_text(head + fragment + tail)
+        written.append(path.relative_to(ROOT))
+    return written
+
+
 def write_json(index):
     payload = {
         "tax_year": 2022,
@@ -274,8 +528,12 @@ def main():
     index = clean_index(rows)
     write_markdown(index)
     write_json(index)
+    charted = write_chart(index)
     print(
         f"{len(index)} clean+aligned hospitals -> {MD_OUT.relative_to(ROOT)} and {JSON_OUT.relative_to(ROOT)}"
+    )
+    print(
+        f"  chart -> {', '.join(str(p) for p in charted) if charted else 'NO TARGET HAD MARKERS'}"
     )
     print("\nTop 15:")
     for i, r in enumerate(index[:15], 1):

@@ -161,7 +161,9 @@ Per-package detail in `packages/*/README.md`. Release history in [`CHANGELOG.md`
 
 ## Corrections
 
-If a number here looks wrong, it might be — the underlying filings are self-reported and the join spans two federal systems with different fiscal calendars. Open an issue at [github.com/cbetz/trove/issues](https://github.com/cbetz/trove/issues) with the hospital and the figure you're questioning, and it gets checked against the source filing. Methodology disagreements are welcome as issues too.
+If a number here looks wrong, it might be — the underlying filings are self-reported and the join spans two federal systems with different fiscal calendars. Open a [data question](https://github.com/cbetz/trove/issues/new?template=data-question.yml) with the hospital and the figure, and it gets checked against the source filing. Methodology disagreements are welcome too, as a [methodology issue](https://github.com/cbetz/trove/issues/new?template=methodology.yml) — better in public than in my inbox. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+One thing to check first, because it explains most apparent errors: compare `hcris_fy_end_dt` against `sched_h_tax_period_end` before comparing two dollar figures.
 
 Built by [Chris Betz](https://cbetz.com) on personal time. Not affiliated with my employer; opinions my own. Not medical, legal, or financial advice.
 
