@@ -3,5 +3,13 @@
   "framework": null,
   "buildCommand": "echo 'no build — static site'",
   "outputDirectory": "web",
-  "installCommand": "echo 'no install needed'"
+  "installCommand": "echo 'no install needed'",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.troveproject.com" }],
+      "destination": "https://troveproject.com/:path*",
+      "permanent": true
+    }
+  ]
 }
