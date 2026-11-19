@@ -1,5 +1,9 @@
+from pathlib import Path
+
+import form990.parse as parse_mod
 import pandas as pd
-from form990.parse import parse_zip
+from form990.download import discover_batches
+from form990.parse import latest_return_per_ein, parse_tax_year, parse_zip
 from form990.schedule_h import OUTPUT_COLUMNS
 
 
@@ -75,3 +79,155 @@ def pytest_approx(expected: float, rel: float = 1e-4):
     import pytest
 
     return pytest.approx(expected, rel=rel)
+
+
+def test_extracts_line_7a_gross_and_offset(fake_zip_factory) -> None:
+    """Schedule H Part I line 7a columns (c) and (d) sit beside the net column (e)."""
+    filings = [
+        {
+            "ein": "060646652",
+            "name": "YALE NEW HAVEN HOSPITAL",
+            "tax_year": 2022,
+            "fa_at_cost_gross": 257_262_512,
+            "fa_at_cost_offset": 144_162_000,
+            "fa_at_cost_net": 113_100_512,
+        },
+        {"ein": "111111111", "name": "NO OFFSET HOSPITAL", "tax_year": 2022},
+    ]
+    df = parse_zip(fake_zip_factory(filings=filings)).set_index("ein")
+    yale = df.loc["060646652"]
+    assert yale["financial_assistance_at_cost_gross"] == 257_262_512
+    assert yale["financial_assistance_at_cost_offset_revenue"] == 144_162_000
+    assert yale["financial_assistance_at_cost"] == 113_100_512
+    # Absent columns stay missing — never 0.
+    assert pd.isna(df.loc["111111111", "financial_assistance_at_cost_gross"])
+    assert pd.isna(df.loc["111111111", "financial_assistance_at_cost_offset_revenue"])
+
+
+def test_extracts_provenance_fields(fake_zip_factory) -> None:
+    filings = [
+        {
+            "ein": "111111111",
+            "name": "MEMORIAL HOSPITAL",
+            "tax_year": 2022,
+            "member": "2023_TEOS_XML_05A/202341319349301234_public.xml",
+            "amended": True,
+            "return_ts": "2024-08-14T20:42:27-05:00",
+        },
+        {"ein": "222222222", "name": "RIVER HOSPITAL", "tax_year": 2022},
+    ]
+    df = parse_zip(fake_zip_factory(filings=filings)).set_index("ein")
+    assert df.loc["111111111", "object_id"] == "202341319349301234"
+    assert bool(df.loc["111111111", "amended_return"]) is True
+    assert bool(df.loc["222222222", "amended_return"]) is False
+    assert df.loc["111111111", "return_ts"] == pd.Timestamp("2024-08-15T01:42:27Z")
+    assert df.loc["111111111", "filer_city"] == "SPRINGFIELD"
+    assert df.loc["111111111", "filer_state"] == "IL"
+
+
+def _release(fake_zip_factory, monkeypatch, zips: dict[str, list[dict]]) -> dict[str, Path]:
+    """Stand up fake bulk ZIPs and route ``download_zip`` to them."""
+    paths = {
+        batch: fake_zip_factory(filings=f, zip_name=f"{batch}.zip") for batch, f in zips.items()
+    }
+    monkeypatch.setattr(parse_mod, "download_zip", lambda _year, batch, _cache: paths[batch])
+    return paths
+
+
+def test_parse_tax_year_scans_every_zip_without_an_index(
+    fake_zip_factory, monkeypatch, tmp_path
+) -> None:
+    """The 2023 release has no batch column in its index, and the 2025/2026 indexes
+    label every May return 05A though the returns are split across 05A and 05B.
+    Returns must be found by scanning each ZIP, so nothing in 05B is skipped."""
+    paths = _release(
+        fake_zip_factory,
+        monkeypatch,
+        {
+            "2025_TEOS_XML_05A": [
+                {
+                    "ein": "111111111",
+                    "name": "IN 05A",
+                    "tax_year": 2022,
+                    "member": "100001_public.xml",
+                }
+            ],
+            "2025_TEOS_XML_05B": [
+                {
+                    "ein": "222222222",
+                    "name": "IN 05B",
+                    "tax_year": 2022,
+                    "member": "100002_public.xml",
+                },
+                {
+                    "ein": "333333333",
+                    "name": "TY2023",
+                    "tax_year": 2023,
+                    "member": "100003_public.xml",
+                },
+            ],
+        },
+    )
+    xml_dir = tmp_path / "xml"
+    df = parse_tax_year(
+        2022,
+        2025,
+        tmp_path,
+        progress=False,
+        keep_zips=False,
+        batches=list(paths),
+        xml_dir=xml_dir,
+        batch_cache_dir=tmp_path / "batches",
+    )
+    assert set(df["ein"]) == {"111111111", "222222222"}  # 05B found; TY2023 dropped
+    assert df.set_index("ein").loc["222222222", "batch_id"] == "2025_TEOS_XML_05B"
+    assert (df["release_year"] == 2025).all()
+    # One ZIP at a time: each is deleted once parsed.
+    assert not any(p.exists() for p in paths.values())
+    # Raw XML kept only for the returns in the result.
+    assert sorted(p.name for p in xml_dir.iterdir()) == ["100001_public.xml", "100002_public.xml"]
+    # A second run resumes from the per-ZIP cache without touching the (deleted) ZIPs.
+    again = parse_tax_year(
+        2022,
+        2025,
+        tmp_path,
+        progress=False,
+        batches=list(paths),
+        batch_cache_dir=tmp_path / "batches",
+    )
+    assert set(again["ein"]) == {"111111111", "222222222"}
+
+
+def test_discover_batches_probes_past_letter_a(monkeypatch) -> None:
+    import form990.download as dl
+
+    published = {"2025_TEOS_XML_01A", "2025_TEOS_XML_05A", "2025_TEOS_XML_05B", "2025_TEOS_XML_11A"}
+    monkeypatch.setattr(dl, "_exists", lambda url: url.rsplit("/", 1)[1][:-4] in published)
+    assert discover_batches(2025) == sorted(published)
+
+
+def test_latest_return_prefers_amendment_then_full_year() -> None:
+    df = pd.DataFrame(
+        [
+            # Original and amendment for the same period: the later e-file wins.
+            ("111111111", "2022-01-01", "2022-12-31", "2023-11-15T00:00:00Z", 2023, 1.0),
+            ("111111111", "2022-01-01", "2022-12-31", "2025-01-28T00:00:00Z", 2025, 2.0),
+            # Full year plus a later short year filed on the same year's forms:
+            # the full year is the year being compared.
+            ("222222222", "2022-01-01", "2022-12-31", "2023-11-15T00:00:00Z", 2023, 3.0),
+            ("222222222", "2023-01-01", "2023-06-30", "2024-05-15T00:00:00Z", 2024, 4.0),
+        ],
+        columns=[
+            "ein",
+            "tax_period_begin",
+            "tax_period_end",
+            "return_ts",
+            "release_year",
+            "financial_assistance_at_cost",
+        ],
+    )
+    for c in ("tax_period_begin", "tax_period_end", "return_ts"):
+        df[c] = pd.to_datetime(df[c], utc=(c == "return_ts"))
+    out = latest_return_per_ein(df).set_index("ein")
+    assert out.loc["111111111", "financial_assistance_at_cost"] == 2.0
+    assert out.loc["222222222", "financial_assistance_at_cost"] == 3.0

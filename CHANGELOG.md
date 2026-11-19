@@ -1,9 +1,112 @@
 # Changelog
 
-Milestone history for [trove](https://github.com/cbetz/trove). Dates are approximate to the
-month; see `git log` for exact commits.
+Release and milestone history for [trove](https://github.com/cbetz/trove). Milestone dates
+are approximate to the month; see `git log` for exact commits.
+
+## 1.1.0 — 2026-11-19
+
+A correction release. The hospital data was rebuilt, and the way the two figures are
+described was revised. Column names are additive: nothing was renamed or removed.
+
+**Corrected: the headline framing.** Earlier versions described IRS Schedule H line 7a and
+CMS Worksheet S-10 line 23 as directly comparable ("apples-to-apples", "net-to-net") and
+presented a difference as two reports of the same thing that did not match. That was
+wrong. The two lines are defined differently:
+
+- Line 7a is financial assistance at cost: column (c) total expense, column (d) direct
+  offsetting revenue, column (e) net. The Schedule H instructions (Worksheet 1, line 4)
+  have a filer include Medicaid or provider taxes in the line 7a cost when payments from
+  an uncompensated care pool or DSH program in its state are intended primarily to offset
+  the cost of financial assistance, with the pool revenue reported in column (d).
+- S-10 line 23 column 3 is the cost of charity care after patient payments, uninsured
+  (column 1) plus insured (column 2). Medicaid DSH and supplemental payments net of
+  provider taxes are on S-10 line 5, which is not part of line 23.
+
+The site, README, notes and skills now present the two figures side by side with the
+components from each filing, and say that a difference is not by itself evidence that
+either filing is incorrect. For the earlier lead example, Yale New Haven Hospital, about
+$71.5M of the $77.5M difference is the size of the amount on S-10 line 5; this is a
+reconciliation from the filings, not a figure the hospital has stated. Unverified
+citations of earlier literature were removed.
+
+**Corrected: hospital data.**
+
+- **Missing is no longer zero.** A hospital with no value on S-10 line 23, or no
+  Worksheet S-10 at all, was published with `hcris_charity_care_cost = 0` and a
+  difference computed from it (100 rows in the previous release, including The Johns
+  Hopkins Hospital). Those values are now empty, with no difference. 159 matched systems
+  have no S-10 line 23 figure and 53 have a blank line 7a column (e).
+- **The IRS 2023 e-file release is now ingested.** It was skipped before because its index
+  has a different layout. The ingest now scans every ZIP of the 2023–2026 releases rather
+  than relying on the index: 2,360 tax-year-2022 Schedule H returns.
+- **Fiscal periods are matched across the HCRIS FY2022 and FY2023 files.** CMS files a
+  cost report under the fiscal year in which its period *begins*. The earlier build
+  loaded only the FY2023 file, so a hospital whose year began before October 2022 was set
+  against its following year's cost report. Each CCN now gets the report ending closest
+  to the 990's period, and `period_aligned` records whether that is within one month.
+  (The M4.3 entry below described the CMS file layout incorrectly.)
+- **Worksheet S-10 layout change handled.** S-10 is filed as `S100000` for periods
+  beginning before 2022-10-01 and as `S100001` (Part I) after; both map to the same
+  variables.
+- **New component columns** (20 → 51 in the matched table): line 7a columns (c) and (d),
+  the S-10 uninsured and insured columns, S-10 line 5, charges and payments, line 7b,
+  both fiscal periods, cost report status, the return's object id, release year and
+  amended flag, `ccn_list`, `city`, `state`, `crosswalk_ccn_count`, a gross-basis
+  difference, and a flag for returns where (c) − (d) does not equal (e).
+- **Multi-CCN systems.** A system total is computed only when every CCN has the line;
+  otherwise the total is empty and the partial sum is published separately.
+- **Return of record.** Where an EIN has several tax-year-2022 returns: a full-year
+  return first, then the latest period end, then the latest e-file timestamp.
+- **Counts.** Matched 1,334 → 2,099; with both figures 1,295 → 1,904; period-aligned
+  372 → 1,797; ranked index 99 → 493 hospitals (48 states); index rows differing by more
+  than 50%, 22 → 107. All 99 earlier index rows are still in the index.
+- New published files: `hcris_2022_wide.parquet`, and
+  `artifacts/community_benefit_gap_2022_sources.json` (CMS extract date 2026-10-02,
+  posted 2026-10-05; ZIP hashes; IRS returns by release). The index JSON gained the
+  component fields and per-row note codes.
+- Smaller fixes: the $500K floor in the summary statistics no longer counts a negative
+  figure as passing; a tie between two equally distant cost reports is resolved the same
+  way for every CCN under an EIN; the IRS download probe retries on 403/429/5xx instead
+  of treating them as "does not exist".
+
+**Corrected: FDA approval dates.** The index is by original approval date, 2021–2024:
+217 drugs (192 CDER + 25 CBER), down from 218.
+
+- Tzield: the date was missing (shown as "NaT"); now 2022-11-17.
+- Xdemvy: 2023-07-25 → 2023-07-24.
+- Elevidys: 2024-01-10 (a supplement approval) → 2023-06-22.
+- Ryoncil: 2024-12-19 → 2024-12-18.
+- Imlygic removed: its original approval was 2015-10-27. `/drugs/imlygic` redirects to
+  `/drugs/`.
+- An unparseable or out-of-range date now stops the build instead of being published.
+
+**Skills** (plugin 1.1.0).
+
+- `hcris-analyst` rewritten for the rebuilt data: it uses `period_aligned`, reports a
+  missing line as "not reported on this line" rather than zero or "near zero", documents
+  the component columns and the FY2022 file, and has a new reference on reading a
+  difference from the components. Earlier text that explained missing S-10 values as
+  hospitals reporting near-zero charity care was removed.
+- `fda-analyst`: fetch helpers that send a descriptive User-Agent (FDA's document host
+  redirects default clients to an error page), guidance for reading large review PDFs in
+  page ranges, a note for sandboxed environments, and the corrected coverage.
+
+**Site.**
+
+- `/hospitals/` rewritten: both figures with components on every card, state filter,
+  search across all 2,099 systems including those with a missing line, links to each
+  return on ProPublica and each cost report record on data.cms.gov.
+- `/notes/charity-care-gap/` rewritten, with a dated correction note.
+- Phone layouts for the tables, keyboard access to index rows, visible focus, a search
+  label, and a no-JavaScript fallback with links to the data files.
+- `/drugs/` showed approval dates one day early in US time zones; fixed. Per-drug pages
+  link to related approvals and show the plugin install.
+- The chart is redrawn for 493 hospitals. New social card; the old cards are deleted.
+- `vercel.json` sets CORS headers on `/data/` (see `web/README.md`).
 
 ## M7 — the Charity Care Gap Index (July 2026)
+
+*The framing and counts in this entry were corrected in 1.1.0; it is kept as history.*
 
 The site leads with the finding instead of a shelf label. New `scripts/build_gap_index.py`
 derives a credibility-hardened ranking from the full matched dataset — the subset where a

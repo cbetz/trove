@@ -15,21 +15,23 @@ a report much faster to resolve:
 
 - **Which source you checked it against** — the filed 990 on ProPublica, the hospital's
   own audited statements, HCRIS directly.
-- **Which period you're looking at.** This is the single most common source of apparent
-  errors. HCRIS names its files by CMS reporting cycle, not by the period covered, so the
-  FY2023 file can hold a report ending in mid-2024 — 12 months after the TY2022 990.
-  Compare `hcris_fy_end_dt` to `sched_h_tax_period_end` first.
+- **Which period you're looking at.** CMS groups cost reports into fiscal-year files by
+  the date the reporting period begins, and the matched dataset already selects, per CCN,
+  the report ending closest to the 990's period. Check `period_aligned` on the row first:
+  when it is false, the two figures cover different years. Also check whether the line is
+  empty. A hospital with no value on S-10 line 23 is published as empty, never `0`.
 
-A difference between two filings is not itself an error. The two forms genuinely define
-and cost charity care differently, and a hospital can report both figures correctly and
-still produce a large gap. If you think trove has mischaracterized a difference, or that
-a caveat is missing or misleading, that's also a valid issue — file it as a methodology
-question.
+A difference between two filings is not itself an error. Schedule H line 7a and S-10
+line 23 are defined differently (see the method summary in `artifacts/`), and a hospital
+can file both correctly and still show a large difference. If you think trove has
+mischaracterized a difference, or that a caveat is missing or misleading, that's also a
+valid issue — file it as a methodology question. If you know what is in a difference that
+the published components do not show, that is especially welcome.
 
 ## Methodology disagreements
 
 Welcome, and best raised as an issue rather than a PR, so the reasoning is in public
-where the next reader can find it. The filters behind the Gap Index (single facility,
+where the next reader can find it. The filters behind the ranked index (single facility,
 period-aligned within a month, both figures ≥ $1M, expense bases within 5%) are judgment
 calls; if you'd draw a line differently, say where and why.
 

@@ -71,3 +71,33 @@ def test_pivot_preserves_rpt_metadata() -> None:
     assert "prvdr_num" in wide.columns
     assert "fy_bgn_dt" in wide.columns
     assert "fy_end_dt" in wide.columns
+
+
+def test_pivot_carries_report_status_and_s10_flag() -> None:
+    """Zeros are never stored by CMS, so a report with no S-10 cell at all must be
+    distinguishable from one that filed S-10 but left a line blank."""
+    files = _files()
+    rpt = files.rpt.assign(
+        rpt_stus_cd=pd.array([1, 4], dtype="Int8"),
+        proc_dt=pd.to_datetime(["2024-03-01", "2025-01-15"]),
+    )
+    nmrc = pd.concat(
+        [
+            files.nmrc,
+            pd.DataFrame(
+                {
+                    "rpt_rec_num": [2],
+                    "wksht_cd": ["S100000"],
+                    "line_num": ["00100"],
+                    "clmn_num": ["00100"],
+                    "itm_val_num": [0.25],
+                }
+            ),
+        ],
+        ignore_index=True,
+    )
+    wide = pivot_wide(HcrisFiles(rpt=rpt, nmrc=nmrc, alpha=files.alpha), _dictionary())
+    wide = wide.set_index("rpt_rec_num")
+    assert wide["rpt_status"].to_dict() == {1: "as_submitted", 2: "reopened"}
+    assert wide["s10_filed"].to_dict() == {1: False, 2: True}
+    assert "proc_dt" in wide.columns

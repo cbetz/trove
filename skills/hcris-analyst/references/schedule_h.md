@@ -1,71 +1,110 @@
-# IRS 990 Schedule H field dictionary
+# IRS Form 990 Schedule H: the fields in `schedule_h_2022.parquet`
 
-The fields trove extracts from Schedule H, with their location on the form and notes.
+**Bundle:** `https://troveproject.com/data/schedule_h_2022.parquet`. One row per tax year 2022 return with a Schedule H that was found in the IRS e-file releases for 2023 through 2026. It is **not** deduplicated: an EIN appears more than once when it filed an amended return, a short-year return next to a full-year one, or when the same return was published in two releases. For the one return per EIN that the matched table uses, see "Which return is used" below, or use `community_benefit_gap_2022.parquet`, which has already made the choice.
 
-**Parquet bundle:** `https://troveproject.com/data/schedule_h_2022.parquet` — one row per filing. When an EIN appears in multiple IRS release-year ZIPs (originals + amendments), all versions are present; downstream code should `ORDER BY release_year DESC, tax_period_end DESC` and dedupe per EIN if it wants the latest version.
+## Identity, timing and provenance
 
-## Identity and timing
+| Column | Source on the return | Notes |
+|---|---|---|
+| `ein` | Filer EIN | 9 characters, text. The join key to the crosswalk and the matched table. |
+| `organization_name` | Filer business name | Mixed case or all capitals. Search case-insensitively. |
+| `filer_city`, `filer_state` | Filer address | The filing organization's address. For a multi-hospital system this is the parent's office, not each facility. |
+| `tax_period_begin`, `tax_period_end` | Return header | The fiscal period the return covers. |
+| `tax_year` | `TaxYr` | The year in which the period begins. A tax year 2022 return from a July-to-June filer covers July 2022 to June 2023. |
+| `return_version` | `returnVersion` attribute | For example `2022v5.0`. |
+| `object_id` | IRS e-file object id | Text. The return's file name in the IRS release, and the key for a ProPublica link. |
+| `return_ts` | Return timestamp | When the return was e-filed. A timestamp with time zone; cast it to text (`return_ts::VARCHAR`) if your client cannot display it. |
+| `amended_return` | Amended-return indicator | True when the return is marked amended. |
+| `release_year`, `batch_id` | Added at ingest | The IRS e-file release year (2023 to 2026) and the ZIP the return was found in. |
 
-| Variable | Source | Notes |
-|----------|--------|-------|
-| `ein` | Header / Filer / EIN | Zero-padded 9-char string. The join key against the CCN crosswalk. |
-| `organization_name` | Header / Filer / BusinessName | Often all-caps. Use case-insensitive search. |
-| `tax_period_begin` | Header / TaxPeriodBeginDt | Start of the fiscal period this filing covers. |
-| `tax_period_end` | Header / TaxPeriodEndDt | End of the fiscal period. The alignment-against-HCRIS metric uses this. |
-| `tax_year` | Header / TaxYr | The IRS tax-year label. **Note:** for fiscal-year filers, this is the year the period *began*, not ended. A "TY2022" 990 from a July–June filer covers Jul 2022 – Jun 2023. |
-| `return_version` | Root attribute `returnVersion` | e.g. `2022v5.0`. Schema element names have been stable since 2013v3.0. |
-| `release_year` | (added by `parse_tax_year`) | Which IRS bulk-XML release-year ZIP this filing came from. Used to prefer amendments over originals. |
+## Form 990 totals
 
-## Main 990 financials
+| Column | Notes |
+|---|---|
+| `total_revenue` | Current-year total revenue (Form 990 Part VIII line 12). |
+| `total_expenses` | Current-year total expenses (Part IX line 25). The denominator for community benefit as a share of expenses. |
 
-These come from the parent 990, not Schedule H — they're useful as denominators.
+## Schedule H Part I, line 7
 
-| Variable | Source | Notes |
-|----------|--------|-------|
-| `total_revenue` | IRS990 / CYTotalRevenueAmt | Current-year total revenue, all activities. |
-| `total_expenses` | IRS990 / CYTotalExpensesAmt | Current-year total expenses. The denominator for the Schedule H 7k community benefit %. |
+Part I line 7 has eleven rows, 7a to 7k. Each row has columns (a) number of activities, (b) persons served, (c) total community benefit expense, (d) direct offsetting revenue, (e) net community benefit expense, and (f) percent of total expense. On the form, (e) = (c) − (d).
 
-## Schedule H Part I line 7 — community benefit (NET column)
+For every row the bundle carries three columns: the bare name is column (e), `_gross` is column (c), `_offset_revenue` is column (d).
 
-Schedule H Part I has eleven line-7 categories, each broken into columns (a) activities, (b) persons served, (c) total expense, (d) offsetting revenue, (e) **net expense**, (f) percent of total expense. trove extracts column (e), the net amount, for every line — that's the figure used for cross-form context.
+| Column (e) | Line | What the line is |
+|---|---|---|
+| `financial_assistance_at_cost` | **7a** | Financial assistance at cost. The IRS figure shown next to CMS S-10 line 23. |
+| `unreimbursed_medicaid` | 7b | Medicaid: cost of services less the revenue received. |
+| `unreimbursed_other_means_tested` | 7c | Costs of other means-tested government programs. |
+| `total_financial_assistance` | 7d | Total of 7a to 7c. |
+| `community_health_services` | 7e | Community health improvement services and community benefit operations. |
+| `health_professions_education` | 7f | Health professions education. |
+| `subsidized_health_services` | 7g | Subsidized health services. |
+| `research` | 7h | Research. |
+| `cash_and_in_kind_contributions` | 7i | Cash and in-kind contributions for community benefit. |
+| `total_other_benefits` | 7j | Total of 7e to 7i. |
+| `total_community_benefit` | **7k** | Total of 7d and 7j. |
 
-| Variable | Schedule H line | Notes |
-|----------|-----------------|-------|
-| `financial_assistance_at_cost` | **7a** | Charity-care cost. **The cross-reference against HCRIS Worksheet S-10 charity care.** This is the field that powers `analytics.community_benefit_gap()`. |
-| `unreimbursed_medicaid` | 7b | Medicaid shortfall — Medicaid payments minus Medicaid cost. |
-| `unreimbursed_other_means_tested` | 7c | Other means-tested government programs (CHIP, etc.) net of payments. |
-| `total_financial_assistance` | 7d | Sum of 7a + 7b + 7c. |
-| `community_health_services` | 7e | Community health improvement services and community-benefit operations. |
-| `health_professions_education` | 7f | Education of health professionals (residencies etc., to the extent not reimbursed). |
-| `subsidized_health_services` | 7g | Services run at a financial loss to meet community need. |
-| `research` | 7h | Research conducted. |
-| `cash_and_in_kind_contributions` | 7i | Cash + in-kind contributions for community benefit. |
-| `total_other_benefits` | 7j | Sum of 7e + 7f + 7g + 7h + 7i. |
-| `total_community_benefit` | **7k** | Total community benefit. Sum of 7d + 7j. The "headline" Schedule H number that appears in benchmarking and PR. |
-| `total_community_benefit_pct` | 7k column (f) | Total community benefit as % of total expenses (the same ratio the IRS publishes). |
+So line 7a is three columns: `financial_assistance_at_cost_gross` (c), `financial_assistance_at_cost_offset_revenue` (d), `financial_assistance_at_cost` (e).
 
-## Schedule H Part III — bad debt
+`total_community_benefit_pct` is line 7k column (f), stored as a fraction (0.15 means 15%).
 
-| Variable | Source | Notes |
-|----------|--------|-------|
-| `bad_debt_expense` | Part III / BadDebtExpenseAmt | Bad-debt expense reported on Schedule H Part III line 2. Distinct from charity-care cost — bad debt is care provided where collection was attempted but failed; charity care is care provided where the patient was determined unable to pay before collection. |
+A blank cell on the return is null here. A reported 0 is 0. Do not treat the two as the same: a null column (d) means the filer left it blank; a 0 means the filer entered zero.
 
-## Schedule H Part V Section A — facility count
+### Line 7a and provider taxes
 
-| Variable | Source | Notes |
-|----------|--------|-------|
-| `hospital_facility_count` | Part V / HospitalFacilitiesCnt | Number of hospital facilities operated under this EIN. The "system size" denominator when comparing per-facility HCRIS numbers up to the system-level 990. |
+The Schedule H instructions (Worksheet 1) say that a filer enters Medicaid or provider taxes in the line 7a cost when payments from an uncompensated care pool or DSH program in its state are intended primarily to offset the cost of financial assistance, and reports that pool revenue as direct offsetting revenue in column (d). When the payments are primarily to offset the cost of Medicaid services, both go to line 7b. When state law does not make the purpose clear, the instructions allow a proportional split. This is a classification the instructions permit, it depends on the state, and the worksheet is not part of the public return. It is one reason line 7a can differ from CMS S-10 line 23, where provider taxes are netted on a separate line (line 5).
 
-## How the line-7 fields relate
+## Other Schedule H fields
+
+| Column | Source | Notes |
+|---|---|---|
+| `bad_debt_expense` | Part III line 2 | Bad debt expense. Reported separately from financial assistance. |
+| `hospital_facility_count` | Part V Section A | Number of hospital facilities the return covers. Useful next to `ccn_count` on the matched table. |
+
+## Which return is used per EIN
+
+The matched table picks one return per EIN in this order:
+
+1. a full-year return (at least 330 days) over a short-year one;
+2. the latest tax period end;
+3. the latest e-file timestamp, so an amended return is used over the original;
+4. the newest release year.
+
+To reproduce it:
+
+```sql
+SELECT * REPLACE (return_ts::VARCHAR AS return_ts)
+FROM read_parquet('https://troveproject.com/data/schedule_h_2022.parquet')
+QUALIFY ROW_NUMBER() OVER (
+  PARTITION BY ein
+  ORDER BY (date_diff('day', tax_period_begin, tax_period_end) < 330),
+           tax_period_end DESC, return_ts DESC, release_year DESC
+) = 1;
+```
+
+To see every return on file for one EIN:
+
+```sql
+SELECT ein, organization_name, tax_period_begin, tax_period_end,
+       release_year, batch_id, amended_return, return_ts::VARCHAR AS e_filed, object_id,
+       financial_assistance_at_cost_gross AS line_7a_c,
+       financial_assistance_at_cost_offset_revenue AS line_7a_d,
+       financial_assistance_at_cost AS line_7a_e
+FROM read_parquet('https://troveproject.com/data/schedule_h_2022.parquet')
+WHERE ein = '112241326'
+ORDER BY return_ts;
+```
+
+## How the totals relate
 
 ```
-7d = 7a + 7b + 7c   (financial assistance to means-tested patients)
-7j = 7e + 7f + 7g + 7h + 7i   (other community benefit)
-7k = 7d + 7j   (total community benefit)
+7d = 7a + 7b + 7c
+7j = 7e + 7f + 7g + 7h + 7i
+7k = 7d + 7j
 ```
 
-When the public discourse says "X reported $Y in community benefit," they almost always mean 7k. When they say "X reported $Y in charity care," they mean 7a. These are very different numbers — a teaching hospital can have small 7a and large 7k because of research and education.
+When someone quotes a hospital's "community benefit", it is usually line 7k. "Charity care" or "financial assistance" usually means line 7a. A teaching hospital can show a small 7a and a large 7k because of education and research. Do not set line 7k next to CMS S-10 line 23; they are different in scope.
 
-## Tax-year-2022 vs. fiscal-period-2022
+## Coverage
 
-The IRS labels filings by the year the tax period *began*. A "TY2022" filing from a July–June fiscal-year filer covers July 2022 – June 2023. Most TY2022 returns appear in the IRS 2024 release-year ZIPs; late filers and amendments trickle into 2025/2026 release ZIPs. trove ingests all three.
+Tax year 2022 only (periods beginning in 2022). Returns were located by opening every ZIP in the IRS e-file releases for 2023 through 2026 and reading each return's own tax year, not by trusting the IRS index files. Most tax year 2022 returns are in the 2023 and 2024 releases; a small number, mostly amended returns, are in 2025. Paper filers and returns the IRS has not released are not here.

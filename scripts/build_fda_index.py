@@ -25,6 +25,7 @@ import json
 import math
 from pathlib import Path
 
+import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 from fda_sba import build_index
@@ -46,6 +47,7 @@ def main() -> None:
     print("  by regulatory center:")
     for center, count in df.groupby("regulatory_center").size().items():
         print(f"    {center}: {count}")
+    _check_dates(df)
     sponsor_cov = df["sponsor"].notna().sum()
     print(f"  sponsor coverage: {sponsor_cov:,}/{len(df):,}")
 
@@ -84,13 +86,25 @@ def main() -> None:
     print(f"  → {web_json} ({web_json.stat().st_size / 1024:.1f} KB)")
 
 
+def _check_dates(df) -> None:
+    """Refuse to publish a row with a missing or out-of-range approval date."""
+    bad = [
+        f"{r.drug_name}: approval_date={r.approval_date!r} year={r.year}"
+        for r in df.itertuples(index=False)
+        if pd.isna(r.approval_date) or r.approval_date.year != r.year or r.year not in YEARS
+    ]
+    if bad:
+        raise SystemExit("Refusing to publish rows with bad approval dates:\n  " + "\n  ".join(bad))
+
+
 def _row_to_json(r) -> dict:
     return {
         "year": int(r.year),
         "drug_name": _str(r.drug_name),
         "active_ingredient": _str(r.active_ingredient),
         "sponsor": _str(getattr(r, "sponsor", None)),
-        "approval_date": r.approval_date.isoformat() if r.approval_date else None,
+        # NaT is truthy, so a bare truthiness test would publish the string "NaT".
+        "approval_date": None if pd.isna(r.approval_date) else r.approval_date.isoformat(),
         "indication": _str(r.indication),
         "application_number": _str(r.application_number),
         "application_type": _str(r.application_type),

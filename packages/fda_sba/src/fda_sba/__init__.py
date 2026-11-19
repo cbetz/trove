@@ -11,7 +11,9 @@ from fda_sba.cber import build_cber_index
 from fda_sba.overview import (
     enrich_with_sponsor,
     fetch_application_overview,
+    parse_original_approval_date,
     parse_sponsor,
+    reconcile_approval_dates,
 )
 from fda_sba.scrape import build_index as build_cder_index
 from fda_sba.scrape import fetch_nme_year_html, scrape_nme_year
@@ -35,6 +37,10 @@ def build_index(
     """
     cder = build_cder_index(years, cache_dir=cache_dir)
     cder = enrich_with_sponsor(cder, cache_dir=Path(cache_dir) / "overview")
+    cder = reconcile_approval_dates(cder, cache_dir=Path(cache_dir) / "overview")
+    cder = cder.sort_values(["year", "approval_date"], ascending=[False, False]).reset_index(
+        drop=True
+    )
     cder["regulatory_center"] = "CDER"
 
     if not include_cber:
@@ -58,6 +64,8 @@ __all__ = [
     "enrich_with_sponsor",
     "fetch_application_overview",
     "fetch_nme_year_html",
+    "parse_original_approval_date",
     "parse_sponsor",
+    "reconcile_approval_dates",
     "scrape_nme_year",
 ]

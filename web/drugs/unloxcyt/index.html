@@ -11,13 +11,13 @@
   <meta property="og:title" content="Unloxcyt — FDA approval package">
   <meta property="og:description" content="FDA novel drug approval for Unloxcyt (cosibelimab-ipdl), BLA 761297, approved Dec 13, 2024 for Checkpoint Therapeutics INC. Direct links to the FDA approval package.">
   <meta property="og:url" content="https://troveproject.com/drugs/unloxcyt/">
-  <meta property="og:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta property="og:image" content="https://troveproject.com/og-20261119.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Unloxcyt — FDA approval package">
   <meta name="twitter:description" content="FDA novel drug approval for Unloxcyt (cosibelimab-ipdl), BLA 761297, approved Dec 13, 2024 for Checkpoint Therapeutics INC. Direct links to the FDA approval package.">
-  <meta name="twitter:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta name="twitter:image" content="https://troveproject.com/og-20261119.jpg">
   <script type="application/ld+json">
 [
   {
@@ -109,6 +109,11 @@
     .links li { padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
     .links li:last-child { border-bottom: 0; }
     .links a { display: block; }
+    .links .when { color: var(--muted); font-size: 0.85em; }
+    h3 { font-size: 0.9rem; margin: 1.5rem 0 0.4rem; font-weight: 600; }
+    .related { list-style: none; padding: 0; margin: 0; }
+    .related li { padding: 0.3rem 0; }
+    .related .when { color: var(--muted); font-size: 0.85em; }
 
     footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
     footer p { margin: 0 0 0.5rem; }
@@ -141,10 +146,30 @@
     <li><a href="https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshot-unloxcyt" rel="noopener" target="_blank">↗ FDA Drug Trials Snapshot</a></li>
   </ul>
 
+  <h2>Related approvals</h2>
+  <h3>Approved just before and after</h3>
+  <ul class="related">
+    <li>Previous: <a href="/drugs/crenessity/">Crenessity</a> <span class="when">(crinecerfont) · Dec 13, 2024</span></li>
+    <li>Next: <a href="/drugs/ensacove/">Ensacove</a> <span class="when">(ensartinib) · Dec 18, 2024</span></li>
+  </ul>
+  <h3>More 2024 novel drug approvals</h3>
+  <ul class="related">
+    <li><a href="/drugs/ziihera/">Ziihera</a> <span class="when">(zanidatamab-hrii) · Nov 20, 2024</span></li>
+    <li><a href="/drugs/rapiblyk/">Rapiblyk</a> <span class="when">(landiolol) · Nov 22, 2024</span></li>
+    <li><a href="/drugs/attruby/">Attruby</a> <span class="when">(acoramidis) · Nov 22, 2024</span></li>
+    <li><a href="/drugs/iomervu/">Iomervu</a> <span class="when">(iomeprol) · Nov 27, 2024</span></li>
+    <li><a href="/drugs/bizengri/">Bizengri</a> <span class="when">(zenocutuzumab-zbco) · Dec 4, 2024</span></li>
+    <li><a href="/drugs/tryngolza/">Tryngolza</a> <span class="when">(olezarsen) · Dec 19, 2024</span></li>
+    <li><a href="/drugs/alhemo/">Alhemo</a> <span class="when">(concizumab-mtci) · Dec 20, 2024</span></li>
+    <li><a href="/drugs/alyftrek/">Alyftrek</a> <span class="when">(vanzacaftor, tezacaftor, and deutivacaftor) · Dec 20, 2024</span></li>
+  </ul>
+  <p><a href="/drugs/">Search all FDA novel drug approvals in the index →</a></p>
+
   <h2>Query with Claude</h2>
-  <p>The <code>fda-analyst</code> skill answers natural-language questions about this approval by fetching the relevant FDA review PDFs at query time.</p>
-<pre><code>git clone https://github.com/cbetz/trove
-cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
+  <p>The <a href="/skills/fda-analyst/"><code>fda-analyst</code> skill</a> answers natural-language questions about this approval by fetching the relevant FDA review PDFs at query time. It ships in the trove Claude Code plugin. Add Anthropic's public community marketplace, then install the plugin:</p>
+<pre><code>/plugin marketplace add anthropics/claude-plugins-community
+/plugin install trove@claude-community</code></pre>
+  <p>Other install options are on the <a href="/skills/">skills page</a>; the source is at <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>.</p>
   <p>Example prompts for Unloxcyt:</p>
   <ul>
     <li><em>"What was the basis for Unloxcyt's approval — what trials, what endpoints?"</em></li>
@@ -153,7 +178,8 @@ cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
   </ul>
 
   <footer>
-    <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> at <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
+    <p><a href="/drugs/">← All FDA novel drug approvals</a> · <a href="/">trove home</a> · <a href="/skills/">Claude skills</a> · <a href="https://github.com/cbetz/trove">Source on GitHub</a></p>
+    <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> (2021–2024) at <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
     <p>Source: U.S. Food and Drug Administration, <a href="https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda">Novel Drug Approvals</a>; <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">Drugs@FDA database</a>. US government work, public domain.</p>
     <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
   </footer>

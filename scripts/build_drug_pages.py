@@ -1,8 +1,13 @@
 """Generate per-drug static HTML pages under web/drugs/{slug}/index.html.
 
 Each page is a permalink for one FDA novel drug approval — its own URL,
-metadata, JSON-LD, and links back to the lookup index. Generated from the
-same source JSON the /drugs/ lookup uses.
+metadata, JSON-LD, links back to the lookup index, and links to related
+approvals (chronological neighbours, same sponsor, same year). Generated from
+the same source JSON the /drugs/ lookup uses.
+
+Pages for drugs no longer in the source JSON are removed, and the sitemap's
+per-drug entries are regenerated; every other sitemap entry is left exactly
+as it is.
 
 Usage: ``uv run python scripts/build_drug_pages.py``
 """
@@ -21,9 +26,15 @@ SRC = Path("web/data/fda_approvals_nme_recent.json")
 OUT_DIR = Path("web/drugs")
 SITEMAP = Path("web/sitemap.xml")
 SITE = "https://troveproject.com"
-# Single-sourced from build_og_image so regenerating these 218 pages can't
+# Single-sourced from build_og_image so regenerating the per-drug pages can't
 # silently revert them to a stale, cache-busted card filename.
 OG_IMAGE = f"{SITE}/{OG_FILENAME}"
+REPO_URL = "https://github.com/cbetz/trove"
+# Keep in step with README.md "Install the skills" and web/skills/index.html.
+PLUGIN_INSTALL = """/plugin marketplace add anthropics/claude-plugins-community
+/plugin install trove@claude-community"""
+# How many same-sponsor / same-year links to show before deferring to the index.
+MAX_RELATED = 8
 
 
 def slugify(s: str) -> str:
@@ -46,13 +57,15 @@ def title_case(s: str | None) -> str:
 
 
 def fmt_date(iso: str | None) -> str:
+    """Format an ISO date for display. Raises on anything that is not a date.
+
+    A missing or malformed approval date used to be echoed straight onto the
+    page (Tzield shipped as "approved NaT"); it now stops the build instead.
+    """
     if not iso:
-        return "—"
-    try:
-        d = datetime.strptime(iso, "%Y-%m-%d")
-        return d.strftime("%b %-d, %Y")
-    except ValueError:
-        return iso
+        raise ValueError("missing approval date")
+    d = datetime.strptime(iso, "%Y-%m-%d")
+    return d.strftime("%b %-d, %Y")
 
 
 def esc(s: str | None) -> str:
@@ -132,6 +145,11 @@ PAGE_TEMPLATE = """<!doctype html>
     .links li {{ padding: 0.5rem 0; border-bottom: 1px solid var(--border); }}
     .links li:last-child {{ border-bottom: 0; }}
     .links a {{ display: block; }}
+    .links .when {{ color: var(--muted); font-size: 0.85em; }}
+    h3 {{ font-size: 0.9rem; margin: 1.5rem 0 0.4rem; font-weight: 600; }}
+    .related {{ list-style: none; padding: 0; margin: 0; }}
+    .related li {{ padding: 0.3rem 0; }}
+    .related .when {{ color: var(--muted); font-size: 0.85em; }}
 
     footer {{ margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }}
     footer p {{ margin: 0 0 0.5rem; }}
@@ -162,10 +180,13 @@ PAGE_TEMPLATE = """<!doctype html>
 {link_items}
   </ul>
 
+  <h2>Related approvals</h2>
+{related}
+
   <h2>Query with Claude</h2>
-  <p>The <code>fda-analyst</code> skill answers natural-language questions about this approval by fetching the relevant FDA review PDFs at query time.</p>
-<pre><code>git clone https://github.com/cbetz/trove
-cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
+  <p>The <a href="/skills/fda-analyst/"><code>fda-analyst</code> skill</a> answers natural-language questions about this approval by fetching the relevant FDA review PDFs at query time. It ships in the trove Claude Code plugin. Add Anthropic's public community marketplace, then install the plugin:</p>
+<pre><code>{plugin_install}</code></pre>
+  <p>Other install options are on the <a href="/skills/">skills page</a>; the source is at <a href="{repo_url}">github.com/cbetz/trove</a>.</p>
   <p>Example prompts for {drug_name}:</p>
   <ul>
     <li><em>"What was the basis for {drug_name}'s approval — what trials, what endpoints?"</em></li>
@@ -174,7 +195,8 @@ cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
   </ul>
 
   <footer>
-    <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> at <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
+    <p><a href="/drugs/">← All FDA novel drug approvals</a> · <a href="/">trove home</a> · <a href="/skills/">Claude skills</a> · <a href="{repo_url}">Source on GitHub</a></p>
+    <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> ({coverage}) at <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
     <p>Source: U.S. Food and Drug Administration, <a href="https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda">Novel Drug Approvals</a>; <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">Drugs@FDA database</a>. US government work, public domain.</p>
     <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
   </footer>
@@ -243,7 +265,78 @@ def build_link_items(r: dict) -> str:
     )
 
 
-def build_page(r: dict) -> tuple[str, str]:
+def _related_link(r: dict) -> str:
+    return (
+        f'<a href="/drugs/{slugify(r["drug_name"])}/">{esc(r["drug_name"])}</a> '
+        f'<span class="when">({esc(r.get("active_ingredient") or "—")}) · '
+        f"{esc(fmt_date(r.get('approval_date')))}</span>"
+    )
+
+
+def _related_list(rows: list[dict]) -> str:
+    items = "\n".join(f"    <li>{_related_link(x)}</li>" for x in rows)
+    return f'  <ul class="related">\n{items}\n  </ul>'
+
+
+def build_related(r: dict, ordered: list[dict]) -> str:
+    """Internal links from one drug page to other drug pages.
+
+    ``ordered`` is every row sorted by approval date. Three groups, each
+    omitted when empty: the approvals immediately before and after this one,
+    other approvals held by the same sponsor, and other approvals from the
+    same year and regulatory center (nearest in time first).
+    """
+    i = next(k for k, x in enumerate(ordered) if x is r)
+    blocks: list[str] = []
+
+    neighbours = []
+    if i > 0:
+        neighbours.append(f"    <li>Previous: {_related_link(ordered[i - 1])}</li>")
+    if i < len(ordered) - 1:
+        neighbours.append(f"    <li>Next: {_related_link(ordered[i + 1])}</li>")
+    if neighbours:
+        blocks.append(
+            "  <h3>Approved just before and after</h3>\n"
+            '  <ul class="related">\n' + "\n".join(neighbours) + "\n  </ul>"
+        )
+    shown = {id(x) for x in ordered[max(i - 1, 0) : i + 2]}
+
+    sponsor = title_case(r.get("sponsor"))
+    if sponsor:
+        same_sponsor = [
+            x for x in ordered if x is not r and title_case(x.get("sponsor")) == sponsor
+        ]
+        if same_sponsor:
+            blocks.append(
+                f"  <h3>Also from {esc(sponsor)}</h3>\n" + _related_list(same_sponsor[:MAX_RELATED])
+            )
+            shown |= {id(x) for x in same_sponsor[:MAX_RELATED]}
+
+    center = r.get("regulatory_center")
+    same_year = [
+        (abs(k - i), x)
+        for k, x in enumerate(ordered)
+        if id(x) not in shown
+        and x.get("year") == r.get("year")
+        and x.get("regulatory_center") == center
+    ]
+    same_year.sort(key=lambda t: t[0])
+    if same_year:
+        kind = (
+            "cell and gene therapy approvals (CBER)" if center == "CBER" else "novel drug approvals"
+        )
+        nearest = sorted((x for _, x in same_year[:MAX_RELATED]), key=lambda x: x["approval_date"])
+        blocks.append(
+            f"  <h3>More {esc(str(r.get('year')))} {kind}</h3>\n" + _related_list(nearest)
+        )
+
+    blocks.append(
+        '  <p><a href="/drugs/">Search all FDA novel drug approvals in the index →</a></p>'
+    )
+    return "\n".join(blocks)
+
+
+def build_page(r: dict, ordered: list[dict], coverage: str) -> tuple[str, str]:
     slug = slugify(r["drug_name"])
     canonical = f"{SITE}/drugs/{slug}/"
     sponsor = title_case(r.get("sponsor")) or "Sponsor not identified"
@@ -275,68 +368,95 @@ def build_page(r: dict) -> tuple[str, str]:
         year=esc(str(r.get("year") or "")),
         indication=esc(indication),
         link_items=build_link_items(r),
+        related=build_related(r, ordered),
+        plugin_install=esc(PLUGIN_INSTALL),
+        repo_url=REPO_URL,
+        coverage=esc(coverage),
     )
     return slug, page
+
+
+_DRUG_URL_BLOCK_RE = re.compile(
+    r"[ \t]*<url>\s*<loc>" + re.escape(SITE) + r"/drugs/[a-z0-9-]+/</loc>.*?</url>[ \t]*\n?",
+    re.S,
+)
+
+
+def update_sitemap(slugs: list[str]) -> int:
+    """Regenerate only the per-drug ``<url>`` entries of the sitemap.
+
+    Every other entry is kept byte-for-byte: the rest of the sitemap is
+    maintained elsewhere, and this script used to overwrite it wholesale from
+    a hard-coded list. Returns the number of per-drug entries written.
+    """
+    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    drug_blocks = "".join(
+        "  <url>\n"
+        f"    <loc>{SITE}/drugs/{slug}/</loc>\n"
+        f"    <lastmod>{today}</lastmod>\n"
+        "    <changefreq>yearly</changefreq>\n"
+        "    <priority>0.7</priority>\n"
+        "  </url>\n"
+        for slug in sorted(slugs)
+    )
+    text = SITEMAP.read_text()
+    if "</urlset>" not in text:
+        raise SystemExit(f"{SITEMAP} has no </urlset>; refusing to rewrite it")
+    text = _DRUG_URL_BLOCK_RE.sub("", text)
+    text = text.replace("</urlset>", drug_blocks + "</urlset>", 1)
+    SITEMAP.write_text(text)
+    return len(slugs)
+
+
+def prune_stale_pages(slugs: set[str]) -> list[str]:
+    """Delete generated pages for drugs that are no longer in the index.
+
+    Only touches a directory that holds nothing but a generated ``index.html``.
+    """
+    removed = []
+    for d in sorted(OUT_DIR.iterdir()):
+        if not d.is_dir() or d.name in slugs:
+            continue
+        if [f.name for f in d.iterdir()] != ["index.html"]:
+            continue
+        (d / "index.html").unlink()
+        d.rmdir()
+        removed.append(d.name)
+    return removed
 
 
 def main() -> None:
     data = json.loads(SRC.read_text())
     rows = data["rows"]
+    totals = data["totals"]
+    coverage = f"{totals['year_min']}–{totals['year_max']}"
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    written = 0
-    slugs: list[str] = []
+    bad = [
+        r["drug_name"]
+        for r in rows
+        if not re.fullmatch(r"\d{4}-\d\d-\d\d", r.get("approval_date") or "")
+    ]
+    if bad:
+        raise SystemExit(f"Rows without a valid approval date: {', '.join(bad)}")
+    slugs = [slugify(r["drug_name"]) for r in rows]
+    if len(set(slugs)) != len(slugs):
+        raise SystemExit("Two drugs map to the same page slug")
+    ordered = sorted(rows, key=lambda r: (r["approval_date"], r["drug_name"]))
+
     for r in rows:
-        slug, page = build_page(r)
+        slug, page = build_page(r, ordered, coverage)
         dir_out = OUT_DIR / slug
         dir_out.mkdir(parents=True, exist_ok=True)
         (dir_out / "index.html").write_text(page)
-        slugs.append(slug)
-        written += 1
 
-    print(f"  → wrote {written} per-drug pages under {OUT_DIR}/")
+    print(f"  → wrote {len(slugs)} per-drug pages under {OUT_DIR}/")
+    removed = prune_stale_pages(set(slugs))
+    if removed:
+        print(f"  → removed {len(removed)} stale page(s): {', '.join(removed)}")
 
-    # Regenerate sitemap with top-level + per-drug URLs
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
-    top_level = [
-        ("", "1.0"),
-        ("notes/charity-care-gap/", "0.9"),
-        ("drugs/", "0.9"),
-        ("hospitals/", "0.9"),
-        ("notes/", "0.8"),
-        ("skills/", "0.9"),
-        ("skills/fda-analyst/", "0.8"),
-        ("skills/hcris-analyst/", "0.8"),
-        ("docs/", "0.8"),
-        ("docs/hcris/", "0.8"),
-        ("docs/schedule-h/", "0.8"),
-        ("docs/fda-nme/", "0.8"),
-    ]
-    lines = [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ]
-    for path, priority in top_level:
-        lines += [
-            "  <url>",
-            f"    <loc>{SITE}/{path}</loc>",
-            f"    <lastmod>{today}</lastmod>",
-            "    <changefreq>monthly</changefreq>",
-            f"    <priority>{priority}</priority>",
-            "  </url>",
-        ]
-    for slug in sorted(slugs):
-        lines += [
-            "  <url>",
-            f"    <loc>{SITE}/drugs/{slug}/</loc>",
-            f"    <lastmod>{today}</lastmod>",
-            "    <changefreq>yearly</changefreq>",
-            "    <priority>0.7</priority>",
-            "  </url>",
-        ]
-    lines.append("</urlset>")
-    SITEMAP.write_text("\n".join(lines) + "\n")
-    print(f"  → wrote {SITEMAP} ({len(slugs) + len(top_level)} URLs)")
+    n = update_sitemap(slugs)
+    print(f"  → updated {n} per-drug URLs in {SITEMAP} (other entries untouched)")
 
 
 if __name__ == "__main__":

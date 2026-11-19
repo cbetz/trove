@@ -11,13 +11,13 @@
   <meta property="og:title" content="Scemblix — FDA approval package">
   <meta property="og:description" content="FDA novel drug approval for Scemblix (asciminib), NDA 215358, approved Oct 29, 2021 for Novartis. Direct links to the FDA approval package.">
   <meta property="og:url" content="https://troveproject.com/drugs/scemblix/">
-  <meta property="og:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta property="og:image" content="https://troveproject.com/og-20261119.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Scemblix — FDA approval package">
   <meta name="twitter:description" content="FDA novel drug approval for Scemblix (asciminib), NDA 215358, approved Oct 29, 2021 for Novartis. Direct links to the FDA approval package.">
-  <meta name="twitter:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta name="twitter:image" content="https://troveproject.com/og-20261119.jpg">
   <script type="application/ld+json">
 [
   {
@@ -109,6 +109,11 @@
     .links li { padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
     .links li:last-child { border-bottom: 0; }
     .links a { display: block; }
+    .links .when { color: var(--muted); font-size: 0.85em; }
+    h3 { font-size: 0.9rem; margin: 1.5rem 0 0.4rem; font-weight: 600; }
+    .related { list-style: none; padding: 0; margin: 0; }
+    .related li { padding: 0.3rem 0; }
+    .related .when { color: var(--muted); font-size: 0.85em; }
 
     footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
     footer p { margin: 0 0 0.5rem; }
@@ -141,10 +146,36 @@
     <li><a href="https://www.fda.gov/node/406030" rel="noopener" target="_blank">↗ FDA Drug Trials Snapshot</a></li>
   </ul>
 
+  <h2>Related approvals</h2>
+  <h3>Approved just before and after</h3>
+  <ul class="related">
+    <li>Previous: <a href="/drugs/rethymic/">Rethymic</a> <span class="when">(allogeneic processed thymus tissue – agdc) · Oct 8, 2021</span></li>
+    <li>Next: <a href="/drugs/besremi/">Besremi</a> <span class="when">(ropeginterferon alfa-2b-njft) · Nov 12, 2021</span></li>
+  </ul>
+  <h3>Also from Novartis</h3>
+  <ul class="related">
+    <li><a href="/drugs/leqvio/">Leqvio</a> <span class="when">(inclisiran) · Dec 22, 2021</span></li>
+    <li><a href="/drugs/pluvicto/">Pluvicto</a> <span class="when">(lutetium (177Lu) vipivotide tetraxetan) · Mar 23, 2022</span></li>
+    <li><a href="/drugs/fabhalta/">Fabhalta</a> <span class="when">(iptacopan) · Dec 5, 2023</span></li>
+  </ul>
+  <h3>More 2021 novel drug approvals</h3>
+  <ul class="related">
+    <li><a href="/drugs/tivdak/">Tivdak</a> <span class="when">(tisotumab vedotin-tftv) · Sep 20, 2021</span></li>
+    <li><a href="/drugs/qulipta/">Qulipta</a> <span class="when">(atogepant) · Sep 28, 2021</span></li>
+    <li><a href="/drugs/livmarli/">Livmarli</a> <span class="when">(maralixibat) · Sep 29, 2021</span></li>
+    <li><a href="/drugs/tavneos/">Tavneos</a> <span class="when">(avacopan) · Oct 7, 2021</span></li>
+    <li><a href="/drugs/voxzogo/">Voxzogo</a> <span class="when">(vosoritide) · Nov 19, 2021</span></li>
+    <li><a href="/drugs/livtencity/">Livtencity</a> <span class="when">(maribavir) · Nov 23, 2021</span></li>
+    <li><a href="/drugs/cytalux/">Cytalux</a> <span class="when">(pafolacianine) · Nov 29, 2021</span></li>
+    <li><a href="/drugs/tezspire/">Tezspire</a> <span class="when">(tezepelumab-ekko) · Dec 17, 2021</span></li>
+  </ul>
+  <p><a href="/drugs/">Search all FDA novel drug approvals in the index →</a></p>
+
   <h2>Query with Claude</h2>
-  <p>The <code>fda-analyst</code> skill answers natural-language questions about this approval by fetching the relevant FDA review PDFs at query time.</p>
-<pre><code>git clone https://github.com/cbetz/trove
-cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
+  <p>The <a href="/skills/fda-analyst/"><code>fda-analyst</code> skill</a> answers natural-language questions about this approval by fetching the relevant FDA review PDFs at query time. It ships in the trove Claude Code plugin. Add Anthropic's public community marketplace, then install the plugin:</p>
+<pre><code>/plugin marketplace add anthropics/claude-plugins-community
+/plugin install trove@claude-community</code></pre>
+  <p>Other install options are on the <a href="/skills/">skills page</a>; the source is at <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>.</p>
   <p>Example prompts for Scemblix:</p>
   <ul>
     <li><em>"What was the basis for Scemblix's approval — what trials, what endpoints?"</em></li>
@@ -153,7 +184,8 @@ cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
   </ul>
 
   <footer>
-    <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> at <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
+    <p><a href="/drugs/">← All FDA novel drug approvals</a> · <a href="/">trove home</a> · <a href="/skills/">Claude skills</a> · <a href="https://github.com/cbetz/trove">Source on GitHub</a></p>
+    <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> (2021–2024) at <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
     <p>Source: U.S. Food and Drug Administration, <a href="https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda">Novel Drug Approvals</a>; <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">Drugs@FDA database</a>. US government work, public domain.</p>
     <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
   </footer>

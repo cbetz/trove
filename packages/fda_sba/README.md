@@ -2,20 +2,20 @@
 
 Index of recent FDA novel drug approvals (NMEs + novel BLA approvals) with links to their approval-package documents on accessdata.fda.gov. Source: FDA's annual "Novel Drug Approvals" pages.
 
-**Status:** v0.2 — index only, no document extraction. Each row carries enough metadata to *find* the approval package (drug name, active ingredient, sponsor, application number, approval date, indication) and direct links to the drugs@FDA detail page where the actual PDFs live. Sponsor is parsed from each drug's drugs@FDA application-overview page; v0.2 added it as a per-row field.
+**Status:** index only, no document extraction. Each row carries enough metadata to *find* the approval package (drug name, active ingredient, sponsor, application number, approval date, indication) and direct links to the drugs@FDA detail page where the actual PDFs live. Sponsor is parsed from each drug's drugs@FDA application-overview page, and CDER approval dates are reconciled against the original-approval date on the same page.
 
 ## What's covered
 
 - **Calendar years 2021–2024** of FDA's annual *Novel Drug Approvals* lists. Those lists curate the meaningful approvals — new molecular entities (NMEs) approved via NDA, plus novel BLA approvals. We scrape the curated lists rather than every FDA approval, because they're the set most public discourse cares about.
-- 192 drugs total across 4 years.
+- 217 approvals in the published index: 192 from CDER's annual lists plus 25 CBER cell and gene therapies (from FDA's Approved Cellular and Gene Therapy Products page), each with a `regulatory_center` column. Rows are dated by original approval; a product first approved outside 2021–2024 is left out.
 - 2020 isn't included — FDA's 2020 page isn't reachable on the current site. Pre-2020 needs a different source (Wayback Machine or alternative).
 - Each row includes a direct link to the drugs@FDA application overview, which is FDA's index of every PDF document FDA released for that approval (label, medical review, statistical review, pharmacology review, chemistry review, etc.).
 
-## What's not covered (v0.1)
+## What's not covered
 
 - **Document extraction.** trove doesn't pre-extract content from approval-package PDFs. The companion Claude skill (`fda-analyst`) reads PDFs at query time when a user asks about a specific approval.
-- **Older approvals.** Pre-2020 approvals are out of scope for v0.1; older drugs are typically scanned PDFs needing OCR, which is a separate project.
-- **Device approvals.** This covers drugs (Center for Drug Evaluation and Research). Devices and biologics that aren't on FDA's "novel drug" lists aren't included.
+- **Older approvals.** Pre-2020 approvals are out of scope; older drugs are typically scanned PDFs needing OCR, which is a separate project.
+- **Device approvals.** Devices, and biologics that are on neither CDER's novel drug lists nor CBER's cell and gene therapy list, aren't included.
 - **Generic approvals (ANDAs).** Out of scope.
 
 ## Usage
@@ -27,7 +27,7 @@ from fda_sba import scrape_nme_year, build_index
 rows = scrape_nme_year(2024, cache_dir="data/raw/fda")
 
 # Build the full index across multiple years
-df = build_index(years=range(2020, 2025), cache_dir="data/raw/fda")
+df = build_index(years=range(2021, 2025), cache_dir="data/raw/fda")   # CDER + CBER
 df.head()
 ```
 
@@ -38,14 +38,15 @@ df.head()
 | `year` | Calendar year of the FDA novel-drug approvals page |
 | `drug_name` | FDA brand name (as listed in the FDA novel-drug page) |
 | `active_ingredient` | International nonproprietary or USAN name |
-| `sponsor` | Company that holds the application (parsed from drugs@FDA overview, v0.2) |
-| `approval_date` | Approval date (date type) |
+| `sponsor` | Company that holds the application (parsed from the drugs@FDA overview) |
+| `approval_date` | Date of original approval (date type, never null) |
 | `indication` | Short indication string from FDA's page |
 | `application_number` | NDA or BLA number, parsed from the label PDF URL when present |
 | `application_type` | "NDA" or "BLA" (inferred from application number prefix) |
 | `label_pdf_url` | Direct link to the FDA-approved label PDF (when listed) |
 | `drugs_at_fda_url` | Direct link to the drugs@FDA application overview (lists every PDF in the approval package) |
 | `trials_snapshot_url` | Drug Trials Snapshot URL (when FDA published one) |
+| `regulatory_center` | `CDER` or `CBER` |
 
 ## Source pages
 

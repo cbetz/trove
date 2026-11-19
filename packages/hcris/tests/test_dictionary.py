@@ -69,3 +69,21 @@ def test_default_form_is_2552_10() -> None:
     a = load_dictionary()
     b = load_dictionary("2552-10")
     assert a == b
+
+
+def test_validate_rejects_alias_equal_to_primary() -> None:
+    import pytest
+    from hcris.dictionary import Variable, _validate
+
+    bad = Variable(
+        "x", "nmrc", "int", "S100001", "00100", "00100", "", wksht_cd_aliases=("S100001",)
+    )
+    with pytest.raises(ValueError, match="wksht_cd_aliases"):
+        _validate((bad,))
+
+
+def test_wksht_cds_lists_primary_then_aliases() -> None:
+    from hcris.dictionary import Variable
+
+    v = Variable("x", "nmrc", "int", "S100001", "00100", "00100", "", wksht_cd_aliases=("S100000",))
+    assert v.wksht_cds == ("S100001", "S100000")

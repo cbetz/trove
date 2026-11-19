@@ -157,3 +157,121 @@ def test_resolve_mixed_scalar_and_range() -> None:
     resolved = resolve_numeric(nmrc, (scalar, rng)).set_index("variable_name")
     assert resolved.loc["total_beds", "value"] == 400.0
     assert resolved.loc["icu_beds", "value"] == 20.0
+
+
+def test_s10_alias_resolves_old_and_new_worksheet_codes() -> None:
+    """Worksheet S-10 is S100000 for periods beginning before 2022-10-01 and
+    S100001 (Part I) after; one variable must resolve from either. S100002
+    (Part II, hospital-CCN-only subset) must NOT be picked up."""
+    nmrc = pd.DataFrame(
+        {
+            "rpt_rec_num": [1, 2, 2, 3],
+            "wksht_cd": ["S100000", "S100001", "S100002", "S100002"],
+            "line_num": ["02300", "02300", "02300", "02300"],
+            "clmn_num": ["00300", "00300", "00300", "00300"],
+            "itm_val_num": [32_528_304.0, 35_568_680.0, 30_000_000.0, 1.0],
+        }
+    )
+    var = Variable(
+        name="charity_care_cost",
+        source="nmrc",
+        type="currency_usd",
+        wksht_cd="S100001",
+        line_num="02300",
+        clmn_num="00300",
+        description="",
+        wksht_cd_aliases=("S100000",),
+    )
+    resolved = resolve_numeric(nmrc, (var,)).set_index("rpt_rec_num")["value"]
+    assert resolved.to_dict() == {1: 32_528_304.0, 2: 35_568_680.0}
+
+
+def test_report_with_both_worksheet_codes_is_not_double_counted() -> None:
+    """No report in FY2022-FY2024 carries S100000 and S100001 together, but if one
+    did, summing them would double the figure. The primary code wins, loudly."""
+    nmrc = pd.DataFrame(
+        {
+            "rpt_rec_num": [1, 1, 2, 3, 3, 3, 3],
+            "wksht_cd": [
+                "S100001", "S100000", "S100000", "S100000", "S100000", "S100001", "S100001",
+            ],
+            "line_num": ["02300", "02300", "02300", "00700", "00800", "00700", "00800"],
+            "clmn_num": ["00300"] * 7,
+            "itm_val_num": [35_000_000.0, 32_000_000.0, 7.0, 1.0, 2.0, 10.0, 20.0],
+        }
+    )  # fmt: skip
+    common = dict(source="nmrc", type="currency_usd", clmn_num="00300", description="")
+    scalar = Variable(
+        name="charity_care_cost",
+        wksht_cd="S100001",
+        line_num="02300",
+        wksht_cd_aliases=("S100000",),
+        **common,
+    )
+    rng = Variable(
+        name="ranged",
+        wksht_cd="S100001",
+        line_num="00700",
+        line_num_end="00800",
+        aggregation="sum",
+        wksht_cd_aliases=("S100000",),
+        **common,
+    )
+    with pytest.warns(RuntimeWarning, match="more than one worksheet"):
+        resolved = resolve_numeric(nmrc, (scalar, rng))
+    got = resolved.set_index(["rpt_rec_num", "variable_name"])["value"].to_dict()
+    assert got == {
+        (1, "charity_care_cost"): 35_000_000.0,  # primary only, not 67M
+        (2, "charity_care_cost"): 7.0,  # alias alone still resolves
+        (3, "ranged"): 30.0,  # the primary worksheet's range, not 33
+    }
+    assert list(resolved.columns) == ["rpt_rec_num", "variable_name", "value"]
+
+
+def test_single_worksheet_reports_resolve_without_a_warning() -> None:
+    import warnings
+
+    nmrc = pd.DataFrame(
+        {
+            "rpt_rec_num": [1, 2],
+            "wksht_cd": ["S100000", "S100001"],
+            "line_num": ["02300", "02300"],
+            "clmn_num": ["00300", "00300"],
+            "itm_val_num": [1.0, 2.0],
+        }
+    )
+    var = Variable(
+        name="charity_care_cost",
+        source="nmrc",
+        type="currency_usd",
+        wksht_cd="S100001",
+        line_num="02300",
+        clmn_num="00300",
+        description="",
+        wksht_cd_aliases=("S100000",),
+    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        resolved = resolve_numeric(nmrc, (var,))
+    assert resolved["value"].tolist() == [1.0, 2.0]
+
+
+def test_every_s10_variable_in_the_shipped_dictionary_is_aliased() -> None:
+    from hcris.dictionary import load_dictionary
+
+    s10 = [v for v in load_dictionary() if v.wksht_cd.startswith("S10")]
+    assert len(s10) >= 18
+    for v in s10:
+        assert v.wksht_cd == "S100001", v.name
+        assert v.wksht_cd_aliases == ("S100000",), v.name
+    by_name = {v.name: v for v in s10}
+    # PRM 15-2 ch. 40 section 4012: line 23 col 3 cost of charity care; line 5
+    # Medicaid DSH/supplemental payments net of provider taxes.
+    assert (by_name["charity_care_cost"].line_num, by_name["charity_care_cost"].clmn_num) == (
+        "02300",
+        "00300",
+    )
+    assert by_name["charity_care_cost_uninsured"].clmn_num == "00100"
+    assert by_name["charity_care_cost_insured"].clmn_num == "00200"
+    line5 = by_name["medicaid_dsh_supplemental_payments"]
+    assert (line5.line_num, line5.clmn_num) == ("00500", "00100")

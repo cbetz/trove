@@ -7,7 +7,7 @@ authors:
     given-names: Chris
 repository-code: "https://github.com/cbetz/trove"
 url: "https://troveproject.com"
-abstract: "Open-source Python parsers, published Parquet/JSON/CSV bundles, and Claude Code skills for public-domain U.S. healthcare datasets that are widely cited but rarely usable in raw form: CMS Medicare Cost Reports (HCRIS Hospital form 2552-10, including Worksheet S-10 charity care), IRS Form 990 Schedule H community benefit, a CCN-to-EIN hospital crosswalk, CDC Social Vulnerability Index enrichment, and FDA novel drug approvals across CDER and CBER. Includes a per-hospital comparison of charity-care cost as reported to CMS and to the IRS for tax year 2022."
+abstract: "Open-source Python parsers, published Parquet/JSON/CSV bundles, and Claude Code skills for public-domain U.S. healthcare datasets that are widely cited but rarely usable in raw form: CMS Medicare Cost Reports (HCRIS Hospital form 2552-10, including Worksheet S-10 charity care), IRS Form 990 Schedule H community benefit, a CCN-to-EIN hospital crosswalk, CDC Social Vulnerability Index enrichment, and FDA novel drug approvals across CDER and CBER. Includes a per-hospital side-by-side of financial assistance at cost on IRS Form 990 Schedule H line 7a and the cost of charity care on CMS Worksheet S-10 line 23 for tax year 2022, with the components from each filing."
 keywords:
   - health services research
   - hospital finance
@@ -22,5 +22,5 @@ keywords:
   - FDA drug approvals
   - open data
 license: MIT
-version: 1.0.1
-date-released: "2026-07-25"
+version: 1.1.0
+date-released: "2026-11-19"

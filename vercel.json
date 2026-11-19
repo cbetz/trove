@@ -3,5 +3,40 @@
   "framework": null,
   "buildCommand": "echo 'no build — static site'",
   "outputDirectory": "web",
-  "installCommand": "echo 'no install needed'"
+  "installCommand": "echo 'no install needed'",
+  "redirects": [
+    {
+      "source": "/drugs/imlygic",
+      "destination": "/drugs/",
+      "permanent": true
+    },
+    {
+      "source": "/drugs/imlygic/",
+      "destination": "/drugs/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, HEAD, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Range"
+        },
+        {
+          "key": "Access-Control-Expose-Headers",
+          "value": "Content-Range, Content-Length, Accept-Ranges"
+        }
+      ]
+    }
+  ]
 }

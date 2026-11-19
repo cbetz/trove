@@ -26,11 +26,15 @@ name = "analytics"
 version = "0.1.0"
 source = { editable = "packages/analytics" }
 dependencies = [
+    { name = "form990" },
     { name = "pandas" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "pandas", specifier = ">=2.2" }]
+requires-dist = [
+    { name = "form990", editable = "packages/form990" },
+    { name = "pandas", specifier = ">=2.2" },
+]
 
 [[package]]
 name = "babel"

@@ -24,6 +24,17 @@ class Variable:
     description: str
     line_num_end: str | None = None
     aggregation: str | None = None
+    # Other worksheet codes that carry the same cell at the same line/column.
+    # CMS renumbered Worksheet S-10 in Transmittal 18: it is ``S100000`` for cost
+    # reporting periods beginning before 2022-10-01 and ``S100001`` (S-10 Part I)
+    # after. A report uses exactly one of them; if one ever carried both, the
+    # resolver keeps the primary code only (and warns) rather than adding them.
+    wksht_cd_aliases: tuple[str, ...] = ()
+
+    @property
+    def wksht_cds(self) -> tuple[str, ...]:
+        """Every worksheet code this variable resolves from, primary first."""
+        return (self.wksht_cd, *self.wksht_cd_aliases)
 
 
 def load_dictionary(form: str = "2552-10") -> tuple[Variable, ...]:
@@ -47,6 +58,7 @@ def _parse_variable(raw: dict) -> Variable:
         description=raw.get("description", ""),
         line_num_end=_pad(end) if end is not None else None,
         aggregation=raw.get("aggregation"),
+        wksht_cd_aliases=tuple(str(a) for a in raw.get("wksht_cd_aliases", ())),
     )
 
 
@@ -65,5 +77,7 @@ def _validate(variables: tuple[Variable, ...]) -> None:
     for v in variables:
         if v.source not in ("nmrc", "alpha"):
             raise ValueError(f"variable {v.name!r}: source must be 'nmrc' or 'alpha'")
+        if v.wksht_cd in v.wksht_cd_aliases:
+            raise ValueError(f"variable {v.name!r}: wksht_cd_aliases repeats the primary wksht_cd")
         if v.line_num_end is not None and v.aggregation is None:
             raise ValueError(f"variable {v.name!r}: line_num_end requires aggregation (e.g. 'sum')")
