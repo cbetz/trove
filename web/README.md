@@ -71,6 +71,10 @@ Things that bite:
   `<link rel="alternate" type="text/markdown">` and served `noindex` (see `vercel.json`).
   `llms.txt` and `robots.txt` are hand-written; update the counts in `llms.txt` after a
   data rebuild.
+- **The 32-character `.txt` file at the site root is the IndexNow key.** It is public by
+  design: Bing and the other IndexNow engines fetch it to confirm that URL submissions come
+  from this site. Don't delete or rename it. After a deploy that changes pages, run
+  `uv run python scripts/indexnow_submit.py --since YYYY-MM-DD` to tell them what changed.
 - **`drugs/index.html` is hand-written except between the `fda-static-list` markers,** which
   hold the crawlable year links and drug links (the search box itself needs JavaScript).
 - **The docs pages quote counts.** `docs/new-molecular-entity/`, `docs/fda-approval-package/`
