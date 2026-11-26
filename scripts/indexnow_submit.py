@@ -23,6 +23,7 @@ import json
 import re
 import secrets
 from pathlib import Path
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 HOST = "troveproject.com"
@@ -75,9 +76,19 @@ def main() -> None:
         headers={"Content-Type": "application/json; charset=utf-8"},
         method="POST",
     )
-    with urlopen(req, timeout=30) as resp:
-        # 200 or 202 means the list was accepted; indexing is not guaranteed.
-        print(f"IndexNow answered {resp.status}")
+    try:
+        with urlopen(req, timeout=30) as resp:
+            # 200 or 202 means the list was accepted; indexing is not guaranteed.
+            print(f"IndexNow answered {resp.status}")
+    except HTTPError as exc:
+        if exc.code == 403:
+            # Seen on the very first submission, seconds after the key file went
+            # live: the same request succeeded a minute later.
+            raise SystemExit(
+                "IndexNow answered 403: it could not validate the key. Check that "
+                f"https://{HOST}/{key}.txt returns the key, wait a minute and run this again."
+            ) from exc
+        raise SystemExit(f"IndexNow answered {exc.code}: {exc.reason}") from exc
 
 
 if __name__ == "__main__":
