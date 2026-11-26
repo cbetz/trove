@@ -26,20 +26,22 @@ def fy2023():
 
 
 def test_fy2023_report_row_count(fy2023) -> None:
-    """Pinned as of CMS build dated 2026-01-12. Bump if CMS rebuilds FY2023 and counts drift."""
-    assert len(fy2023.rpt) == 6105
+    """Pinned to the CMS file dated 2026-10-05 (downloaded 2026-11-19; latest
+    processing date 2026-09-30). CMS rebuilds every yearly ZIP each quarter — bump
+    these four counts when the file is refreshed."""
+    assert len(fy2023.rpt) == 6109
 
 
 def test_fy2023_distinct_ccns(fy2023) -> None:
-    assert fy2023.rpt["prvdr_num"].nunique() == 6042
+    assert fy2023.rpt["prvdr_num"].nunique() == 6046
 
 
 def test_fy2023_nmrc_row_count(fy2023) -> None:
-    assert len(fy2023.nmrc) == 19_539_796
+    assert len(fy2023.nmrc) == 19_588_707
 
 
 def test_fy2023_alpha_row_count(fy2023) -> None:
-    assert len(fy2023.alpha) == 3_765_093
+    assert len(fy2023.alpha) == 3_785_932
 
 
 def test_fy2023_invariants_hold(fy2023) -> None:
@@ -91,3 +93,19 @@ def test_fy2023_nyp_is_biggest_hospital(fy2023_wide) -> None:
     assert "PRESBYTERIAN" in top1["hospital_name"].upper()
     assert top1["net_patient_revenue"] > 5e9
     assert top1["total_beds"] > 2000
+
+
+def test_fy2023_yale_anchor(fy2023_wide) -> None:
+    """Yale New Haven Hospital (CCN 070022), period ending 2023-09-30, read off the
+    cost report: S-10 line 23 col 3 and line 5."""
+    row = fy2023_wide[fy2023_wide["prvdr_num"] == "070022"].iloc[0]
+    assert str(row["fy_end_dt"].date()) == "2023-09-30"
+    assert row["charity_care_cost"] == 35_568_680
+    assert row["medicaid_dsh_supplemental_payments"] == -71_469_000
+    assert row["s10_filed"]
+
+
+def test_fy2023_file_is_keyed_on_period_begin(fy2023) -> None:
+    """CMS assigns a report to the federal fiscal year in which its period BEGINS."""
+    assert fy2023.rpt["fy_bgn_dt"].min() >= __import__("pandas").Timestamp("2022-10-01")
+    assert fy2023.rpt["fy_bgn_dt"].max() <= __import__("pandas").Timestamp("2023-09-30")

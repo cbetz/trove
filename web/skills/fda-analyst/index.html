@@ -11,13 +11,13 @@
   <meta property="og:title" content="fda-analyst — Claude Code skill for FDA drug approvals">
   <meta property="og:description" content="A Claude Code skill that reads FDA approval-package documents to answer questions about the basis for approval, trials, endpoints, and regulatory pathway.">
   <meta property="og:url" content="https://troveproject.com/skills/fda-analyst/">
-  <meta property="og:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta property="og:image" content="https://troveproject.com/og-20261119.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="fda-analyst — Claude Code skill for FDA drug approvals">
   <meta name="twitter:description" content="A Claude Code skill that reads FDA approval-package documents to answer questions about the basis for approval.">
-  <meta name="twitter:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta name="twitter:image" content="https://troveproject.com/og-20261119.jpg">
   <script type="application/ld+json">
 [
   {
@@ -28,7 +28,7 @@
     "sameAs": "https://github.com/cbetz/trove/tree/main/skills/fda-analyst",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Cross-platform (Claude Code)",
-    "softwareVersion": "0.1",
+    "softwareVersion": "1.1.0",
     "license": "https://opensource.org/licenses/MIT",
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
     "author": {
@@ -71,11 +71,14 @@
     a:hover { opacity: 0.7; }
     code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
     pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
-    pre code { background: none; padding: 0; }
+    pre code { background: none; padding: 0; overflow-wrap: normal; }
+    p, li { overflow-wrap: anywhere; }
     ul { padding-left: 1.4rem; }
     li { margin: 0.3rem 0; }
     .examples li { margin: 0.5rem 0; }
     .examples em { color: var(--muted); }
+    .step { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; margin: 1.4rem 0 0.4rem; font-weight: 600; }
+    .note { color: var(--muted); font-size: 0.92em; }
     footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }
     footer p { margin: 0 0 0.5rem; }
     @media (max-width: 640px) { h1 { font-size: 1.9rem; } }
@@ -96,13 +99,10 @@
 
   <section>
     <h2>Install</h2>
-    <p>Install from Anthropic's public community marketplace:</p>
+    <p>Install the trove plugin (version 1.1.0) from Anthropic's public community marketplace:</p>
 <pre><code>/plugin marketplace add anthropics/claude-plugins-community
 /plugin install trove@claude-community</code></pre>
-    <p>trove is listed in the community marketplace, not the separate official <code>claude-plugins-official</code> marketplace.</p>
-    <p>Or copy the skill directory directly:</p>
-<pre><code>git clone https://github.com/cbetz/trove
-cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
+    <p>trove is listed in the community marketplace, not the separate official <code>claude-plugins-official</code> marketplace. The skill's source, and instructions for installing it without the plugin, are at <a href="https://github.com/cbetz/trove/tree/main/skills">github.com/cbetz/trove/tree/main/skills</a>.</p>
   </section>
 
   <section>
@@ -118,11 +118,51 @@ cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
   </section>
 
   <section>
+    <h2>A worked example</h2>
+    <p>The question, the commands the skill's reference files give for it, and their output (run on 2026-11-19). <code>fda_package_base</code>, <code>fda_probe</code> and <code>fda_get</code> are small shell helpers defined in the skill; they send the User-Agent FDA's document server requires and accept only a real PDF.</p>
+
+    <p class="step">Question</p>
+    <p><em>"What was the basis for Zurzuvae's approval?"</em></p>
+
+    <p class="step">1. Find the application in the index</p>
+<pre><code>SELECT drug_name, active_ingredient, sponsor, application_type, application_number,
+       approval_date, regulatory_center, drugs_at_fda_url
+FROM read_parquet('https://troveproject.com/data/fda_approvals_nme_recent.parquet')
+WHERE LOWER(drug_name) = 'zurzuvae';</code></pre>
+<pre><code>         drug_name = Zurzuvae
+ active_ingredient = zuranolone
+           sponsor = Biogen INC
+  application_type = NDA
+application_number = 217369
+     approval_date = 2023-08-04
+ regulatory_center = CDER
+  drugs_at_fda_url = https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&amp;ApplNo=217369</code></pre>
+
+    <p class="step">2. Read the package location from FDA's overview page, then check the review exists</p>
+<pre><code>BASE=$(fda_package_base 217369); echo "BASE=$BASE"
+fda_probe "${BASE}IntegratedR.pdf"</code></pre>
+<pre><code>BASE=https://www.accessdata.fda.gov/drugsatfda_docs/nda/2023/217369Orig2s000
+OK 21.3 MB https://www.accessdata.fda.gov/drugsatfda_docs/nda/2023/217369Orig2s000IntegratedR.pdf</code></pre>
+    <p class="note">This package is published as <code>Orig2s000</code>, not the usual <code>Orig1s000</code>, which is why the skill reads the location from the overview page instead of guessing it.</p>
+
+    <p class="step">3. Download once, then read page ranges</p>
+<pre><code>fda_get "${BASE}IntegratedR.pdf" review.pdf
+pdfinfo review.pdf | grep Pages
+pdftotext -f 34 -l 34 -layout review.pdf - | grep -A3 "2.2. Conclusions"</code></pre>
+<pre><code>Pages:           416
+2.2. Conclusions Regarding Benefit-Risk
+In NDA 217369 for zuranolone oral capsules, the Applicant is seeking indications for the
+treatment of major depressive disorder (MDD) and for the treatment of postpartum depression
+(PPD).</code></pre>
+    <p>From there the skill reads the benefit-risk section and the efficacy tables it points to, and answers with the document name and page for each fact it quotes. A 416-page review is read in page ranges, not loaded whole.</p>
+  </section>
+
+  <section>
     <h2>What this skill does</h2>
     <ul>
-      <li><strong>Finds the application.</strong> The skill queries trove's <a href="/drugs/">FDA approvals index</a> (a Parquet bundle with 218 novel drug approvals from 2021–2024 — CDER NMEs plus CBER cell &amp; gene therapies) to locate the application number, sponsor, and approval-package URL for the drug in question.</li>
+      <li><strong>Finds the application.</strong> The skill queries trove's <a href="/drugs/">FDA approvals index</a> (a Parquet bundle with 217 novel drug approvals from 2021–2024: 192 from CDER and 25 CBER cell &amp; gene therapies) to locate the application number, sponsor, and approval-package URL for the drug in question.</li>
       <li><strong>Picks the right document.</strong> Different questions need different documents — the medical review for "basis for approval" and "adverse events", the statistical review for endpoint analyses, the pharmacology review for ADME, the chemistry review for manufacturing. The skill knows the mapping.</li>
-      <li><strong>Reads it at query time.</strong> No pre-extracted summaries. The skill fetches the PDF from accessdata.fda.gov, reads the relevant section, and quotes back with a citation.</li>
+      <li><strong>Reads it at query time.</strong> No pre-extracted summaries. The skill fetches the PDF from FDA's site, checks its size, reads the relevant section (in page ranges when the review is large), and quotes back with a citation.</li>
       <li><strong>Cites the source.</strong> Answers reference the specific document and page so users can verify.</li>
     </ul>
   </section>
@@ -131,15 +171,15 @@ cp -r trove/skills/fda-analyst ~/.claude/skills/</code></pre>
     <h2>What this skill doesn't do</h2>
     <ul>
       <li><strong>Clinical advice or dosing.</strong> It's a reference tool over public approval documents, not a substitute for the prescribing label or clinical judgment.</li>
-      <li><strong>Pre-2021 drugs.</strong> The current index covers 2021–2024. Earlier drugs aren't ingested yet.</li>
+      <li><strong>Drugs first approved before 2021 or after 2024.</strong> The index covers original approvals dated 2021–2024.</li>
       <li><strong>Devices, biosimilars, or generic (ANDA) approvals.</strong> The trove index covers FDA's curated <em>Novel Drug Approvals</em> lists (NMEs and novel BLAs) only.</li>
-      <li><strong>Real-time updates.</strong> The bundle is rebuilt on a release cycle, not continuously. Approvals within the last few weeks may not be in the current bundle.</li>
+      <li><strong>Work without network access to FDA.</strong> The review documents have no mirror. In a sandbox that cannot reach <code>www.accessdata.fda.gov</code> or <code>www.fda.gov</code>, the skill gives you the document URL and asks you to allow the domain or upload the PDF.</li>
     </ul>
   </section>
 
   <section>
     <h2>Coverage</h2>
-    <p>218 FDA novel drug approvals from 2021–2024 — 192 CDER (small molecules + most antibody biologics) plus 26 CBER (cell &amp; gene therapies). Browse the index at <a href="/drugs/">/drugs/</a> — each drug has its own permalink page with the approval-package URL, e.g. <a href="/drugs/elahere/">/drugs/elahere/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/casgevy/">/drugs/casgevy/</a>.</p>
+    <p>217 FDA novel drug approvals with an original approval date in 2021–2024: 192 CDER (small molecules and most antibody biologics) plus 25 CBER (cell &amp; gene therapies). Browse the index at <a href="/drugs/">/drugs/</a> — each drug has its own permalink page with the approval-package URL, e.g. <a href="/drugs/elahere/">/drugs/elahere/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/casgevy/">/drugs/casgevy/</a>.</p>
   </section>
 
   <section>

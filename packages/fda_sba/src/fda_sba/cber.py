@@ -27,8 +27,9 @@ from __future__ import annotations
 
 import re
 import time
+import warnings
 from collections.abc import Iterable
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urljoin
 from urllib.request import Request, urlopen
@@ -60,6 +61,38 @@ _STN_RE = re.compile(r"STN[:\s]*(?:BL[A]?\s*)?(\d{6})", re.I)
 
 # Approval letter anchor text looks like "March 18, 2024 Approval Letter - LENMELDY"
 _APPROVAL_LETTER_DATE_RE = re.compile(r"([A-Z][a-z]+ \d{1,2},?\s+\d{4}).{0,5}Approval Letter", re.I)
+
+# Any dated entry in the supporting-documents list, e.g.
+# "June 21, 2023 Summary Basis for Regulatory Action - ELEVIDYS".
+_DATED_DOC_RE = re.compile(r"^([A-Z][a-z]+ \d{1,2},?\s+\d{4})\s+\S")
+
+# FDA moves a product's older documents off the product page and links to an
+# archived copy: "Supporting Documents older than three years - IMLYGIC".
+_OLDER_DOCS_RE = re.compile(r"Supporting Documents older than", re.I)
+
+# Original approval dates for products whose FDA page cannot yield the right
+# date by parsing: the original approval letter is not listed at all, or its
+# link text carries the wrong date. Keyed by STN. Each entry cites the FDA
+# document the date was verified against. ``build_cber_index`` refuses to
+# publish a product whose page lacks its original letter unless it has an
+# entry here, so new cases surface as warnings, not as silently wrong dates.
+_ORIGINAL_APPROVAL_OVERRIDES: dict[str, tuple[date, str]] = {
+    # ELEVIDYS: the page's earliest "Approval Letter" (January 10, 2024) is a
+    # supplement approval. FDA's June 20, 2024 letter states "We approved BLA
+    # STN BL 125781/0 on June 22, 2023"; the FDA press release announcing the
+    # approval is dated June 22, 2023.
+    "125781": (date(2023, 6, 22), "https://www.fda.gov/media/179484/download"),
+    # RYONCIL: the page labels the original letter "December 19, 2024 Approval
+    # Letter", but the letter itself ("BLA APPROVAL", STN BL 125706/0) is dated
+    # December 18, 2024, as is FDA's press release.
+    "125706": (date(2024, 12, 18), "https://www.fda.gov/media/184605/download"),
+}
+
+# Review documents are routinely signed a day or so before the approval letter
+# (SBRA dated the day before approval on about a third of product pages), so a
+# small lead is normal. A lead longer than this means the letter those reviews
+# belong to is missing from the page. ELEVIDYS's lead is 203 days.
+_MAX_REVIEW_LEAD_DAYS = 30
 
 # Indication text on per-product pages. Try to capture up to ~400 chars after
 # "Indication:" up to the next labelled field.
@@ -154,12 +187,16 @@ def fetch_cber_product(
     cache_dir: Path | str = "data/raw/fda/cber",
     *,
     force: bool = False,
+    cache_name: str | None = None,
 ) -> Path:
-    """Fetch a single CBER per-product page; cache locally by URL slug."""
+    """Fetch a single CBER per-product page; cache locally by URL slug.
+
+    ``cache_name`` overrides the cache file stem (used for the archived
+    older-documents page, whose own URL slug is an opaque ``ucm`` id).
+    """
     cache = Path(cache_dir)
     cache.mkdir(parents=True, exist_ok=True)
-    slug = product_url.rstrip("/").split("/")[-1] or "_root"
-    target = cache / f"{slug}.html"
+    target = cache / f"{cache_name or _slug(product_url)}.html"
     if target.exists() and not force:
         return target
     time.sleep(_FETCH_DELAY_SEC)
@@ -167,6 +204,10 @@ def fetch_cber_product(
     with urlopen(req) as resp:
         target.write_bytes(resp.read())
     return target
+
+
+def _slug(url: str) -> str:
+    return url.rstrip("/").split("/")[-1] or "_root"
 
 
 def parse_cber_product(product_html: bytes | str) -> dict:
@@ -178,7 +219,12 @@ def parse_cber_product(product_html: bytes | str) -> dict:
     Returns dict with keys:
         approval_date (date|None), stn (str|None), indication (str|None),
         manufacturer (str|None), package_insert_url (str|None),
-        approval_letter_url (str|None), is_404 (bool).
+        approval_letter_url (str|None), is_404 (bool),
+        earliest_document_date (date|None), older_documents_url (str|None).
+
+    ``approval_date`` is the earliest approval letter *listed on this page*.
+    That is the original approval only when the page's history is complete —
+    see ``resolve_original_approval_date`` for the two ways it is not.
     """
     if isinstance(product_html, str):
         product_html = product_html.encode("utf-8", errors="replace")
@@ -194,6 +240,8 @@ def parse_cber_product(product_html: bytes | str) -> dict:
             "package_insert_url": None,
             "approval_letter_url": None,
             "is_404": True,
+            "earliest_document_date": None,
+            "older_documents_url": None,
         }
 
     approval_date, approval_letter_url = _earliest_approval_letter(tree)
@@ -210,7 +258,97 @@ def parse_cber_product(product_html: bytes | str) -> dict:
         "package_insert_url": package_insert_url,
         "approval_letter_url": approval_letter_url,
         "is_404": False,
+        "earliest_document_date": _earliest_dated_document(tree),
+        "older_documents_url": _older_documents_url(tree),
     }
+
+
+def _parse_long_date(text: str) -> date | None:
+    try:
+        return datetime.strptime(" ".join(text.replace(",", " ").split()), "%B %d %Y").date()
+    except ValueError:
+        return None
+
+
+def _earliest_dated_document(tree) -> date | None:
+    """Earliest date on any dated supporting-document link (letters, SBRA, memos)."""
+    earliest = None
+    for a in tree.cssselect("a"):
+        m = _DATED_DOC_RE.match(" ".join(a.text_content().split()))
+        if not m:
+            continue
+        d = _parse_long_date(m.group(1))
+        if d is not None and (earliest is None or d < earliest):
+            earliest = d
+    return earliest
+
+
+def _older_documents_url(tree) -> str | None:
+    """URL of the archived 'Supporting Documents older than three years' page."""
+    for a in tree.cssselect("a"):
+        if _OLDER_DOCS_RE.search(" ".join(a.text_content().split())):
+            href = (a.get("href") or "").strip()
+            if href.startswith("//"):
+                href = "https:" + href
+            elif href.startswith("http://"):
+                href = "https://" + href[len("http://") :]
+            return _abs(href)
+    return None
+
+
+def resolve_original_approval_date(
+    parsed: dict,
+    older_documents_html: bytes | None = None,
+) -> tuple[date | None, str | None]:
+    """Return ``(original_approval_date, problem)`` for a parsed product page.
+
+    The earliest approval letter listed on a product page is NOT always the
+    original approval. Two FDA page behaviours break that assumption:
+
+    1. FDA archives documents older than three years and replaces them with a
+       "Supporting Documents older than three years" link. What is left on the
+       page are supplement approvals (IMLYGIC: original approval October 27,
+       2015; earliest letter still on the page December 8, 2021). When that
+       link is present the archived page's letters must be considered too, so
+       pass its HTML as ``older_documents_html``.
+    2. FDA sometimes never lists the original approval letter (ELEVIDYS). The
+       tell is a dated supporting document — typically the Summary Basis for
+       Regulatory Action — that predates every listed approval letter by
+       more than ``_MAX_REVIEW_LEAD_DAYS``. The real date then has to come
+       from ``_ORIGINAL_APPROVAL_OVERRIDES``.
+
+    ``problem`` is a human-readable reason when no trustworthy date can be
+    established; the caller must not publish the row in that case.
+    """
+    stn = parsed.get("stn")
+    if stn in _ORIGINAL_APPROVAL_OVERRIDES:
+        return _ORIGINAL_APPROVAL_OVERRIDES[stn][0], None
+
+    letter = parsed.get("approval_date")
+    earliest_doc = parsed.get("earliest_document_date")
+
+    if parsed.get("older_documents_url"):
+        if older_documents_html is None:
+            return None, "older documents are archived off-page and the archive was not read"
+        older_tree = html.fromstring(older_documents_html)
+        older_letter, _ = _earliest_approval_letter(older_tree)
+        older_doc = _earliest_dated_document(older_tree)
+        if older_letter is None:
+            return None, "archived older-documents page lists no approval letter"
+        letter = older_letter if letter is None else min(letter, older_letter)
+        if older_doc is not None:
+            earliest_doc = older_doc if earliest_doc is None else min(earliest_doc, older_doc)
+
+    if letter is None:
+        return None, "no approval letter listed"
+    if earliest_doc is not None and (letter - earliest_doc).days > _MAX_REVIEW_LEAD_DAYS:
+        return None, (
+            f"a supporting document dated {earliest_doc.isoformat()} predates the earliest "
+            f"listed approval letter ({letter.isoformat()}), so the original approval letter "
+            "is not on the page; verify the date against FDA and add it to "
+            "_ORIGINAL_APPROVAL_OVERRIDES"
+        )
+    return letter, None
 
 
 def _earliest_approval_letter(tree) -> tuple[object, str | None]:
@@ -227,9 +365,8 @@ def _earliest_approval_letter(tree) -> tuple[object, str | None]:
         m = _APPROVAL_LETTER_DATE_RE.search(t)
         if not m:
             continue
-        try:
-            d = datetime.strptime(m.group(1).replace(",", ""), "%B %d %Y").date()
-        except ValueError:
+        d = _parse_long_date(m.group(1))
+        if d is None:
             continue
         if earliest is None or d < earliest:
             earliest = d
@@ -297,9 +434,32 @@ def build_cber_index(
         except Exception:
             continue
         parsed = parse_cber_product(product_path.read_bytes())
-        if parsed["is_404"] or parsed["approval_date"] is None:
+        if parsed["is_404"]:
             continue
-        year = parsed["approval_date"].year
+        older_html = None
+        if parsed["older_documents_url"]:
+            try:
+                older_html = fetch_cber_product(
+                    parsed["older_documents_url"],
+                    cache_dir,
+                    cache_name=_slug(p["product_url"]) + "__older-documents",
+                ).read_bytes()
+            except Exception as exc:  # noqa: BLE001
+                warnings.warn(
+                    f"CBER {p['trade_name']}: could not read archived documents page "
+                    f"{parsed['older_documents_url']} ({exc!r})",
+                    stacklevel=2,
+                )
+        approval_date, problem = resolve_original_approval_date(parsed, older_html)
+        if approval_date is None:
+            # Products with no dated letters at all are pre-2017 legacy pages;
+            # anything else is a row we would otherwise have misdated.
+            if parsed["approval_date"] is not None:
+                warnings.warn(
+                    f"CBER {p['trade_name']} left out of the index: {problem}", stacklevel=2
+                )
+            continue
+        year = approval_date.year
         if years is not None and year not in set(years):
             continue
         rows.append(
@@ -307,7 +467,7 @@ def build_cber_index(
                 "year": year,
                 "drug_name": p["trade_name"],
                 "active_ingredient": p["active_ingredient"],
-                "approval_date": parsed["approval_date"],
+                "approval_date": approval_date,
                 "indication": parsed["indication"],
                 "application_number": parsed["stn"],
                 "application_type": "BLA",

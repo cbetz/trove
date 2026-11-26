@@ -1,44 +1,71 @@
-# Peer cohort definitions
+# Peer cohorts: what the bundles can and cannot support
 
-When the user asks for peer context or "how does X look alongside similar hospitals," construct a cohort along one or more of these dimensions. None of these are universally right — pick the dimensions that match the question.
+When a user asks how a hospital looks next to similar hospitals, build the cohort from columns that exist. Say which dimensions you used. Several dimensions people expect (teaching status, children's hospitals, critical access, staffing) are not in the published bundles; say so instead of approximating silently.
 
-## Common cohort dimensions
+## Dimensions available in the published bundles
 
-| Dimension | HCRIS column / source | Notes |
-|-----------|------------------------|-------|
-| **Bed-size band** | `total_beds` | Common bands: `<100`, `100–299`, `300–599`, `600+`. Bed count is reported on Worksheet S-3 Part I. |
-| **State** | `state_code` (HCRIS RPT) | The pivoted bundle doesn't yet expose state directly; join to `crosswalk` (the bundled CBI rows include `state`) or pull from the raw RPT table. |
-| **Ownership type** | `ownership_type` | CMS code: `1` voluntary nonprofit church, `2` voluntary nonprofit other, `3` proprietary individual, `4` proprietary partnership, `5` proprietary corporation, `6`–`12` government. For nonprofit peer context, filter to `1` or `2`. |
-| **Teaching status** | `teaching_hospital` (CBI crosswalk), or HCRIS Worksheet S-3 line 26 column 14 (intern + resident FTE) | Boolean from the crosswalk is easier; the raw FTE count gives you a more granular signal. |
-| **Children's hospital** | `children_hospital` (CBI crosswalk) | Important — children's hospitals don't bill Medicare in volume, so HCRIS S-10 charity care will read near-zero. Analyze them separately for charity-care context. |
-| **Critical access** | (HCRIS Worksheet S-2) | A small-rural designation — different reimbursement rules. Exclude from large-hospital benchmarks. |
-| **Urban / rural** | `urban` (CBI crosswalk) | Boolean. |
-| **System chain** | `chain_name` (HCRIS, when present) | For "how does this hospital compare to others in the same system" questions. |
-| **Disproportionate share** | (HCRIS Worksheet S-2) | DSH-eligible hospitals have meaningfully different patient mix. |
-| **Home-county SVI proxy** | `svi_overall_pct` (0-100) on the matched hospital dataset, with sub-themes `svi_socio_pct`, `svi_household_pct`, `svi_minority_pct`, `svi_housing_pct` | Useful as coarse geographic context. Most useful in bands: `≤20`, `40–60`, `≥80`. This is a home-county aggregate (median across the system's facility counties), not a true catchment-area weighting and not a measure of charity-care adequacy. SVI weighs minority status and housing factors more heavily than other deprivation indices, so urban diverse counties may rank high even when median income is decent. |
+| Dimension | Column | Where | Notes |
+|---|---|---|---|
+| Bed size | `total_beds` | `hcris_2022_wide`, `hcris_2023_wide` | Worksheet S-3 Part I line 14 column 2. Null on a small share of reports. Common bands: under 100, 100–299, 300–599, 600 and over. |
+| Type of control | `ownership_type` | HCRIS wide | CMS code from Worksheet S-2 Part I line 21, stored as text. Table below. |
+| Chain | `chain_name` | HCRIS wide | Home-office or chain name when the report gives one; null for about a third of reports. Free text, so spelling varies. |
+| Size by dollars | `total_operating_expenses`, `net_patient_revenue` | HCRIS wide | Worksheet G-3. |
+| State and city | `state`, `city` | `community_benefit_gap_2022` only | Lead facility of a matched nonprofit EIN. The HCRIS wide files have no state column. |
+| Single hospital or system | `ccn_count` | matched table | 1 means one CCN with a cost report under the EIN. |
+| Home-county SVI | `svi_overall_pct` and four theme columns | matched table | CDC/ATSDR SVI 2022 percentile, 0–100. A county-level proxy, not a service area. Null for Connecticut rows and a few others. |
+| Cost report status | `rpt_status` / `hcris_report_status` | both | Useful to exclude as-submitted reports from a comparison. |
 
-## Useful canned cohorts
+### Type of control codes (`ownership_type`)
 
-- **Major safety-net hospitals**: `total_beds >= 300 AND uncompensated_care_cost > 50_000_000` — typically large public/voluntary hospitals serving low-income populations. The top of this list is well-known: Harris Health, Dallas Co. Hosp. Dist., Grady, NYC H+H, JPS.
-- **Academic medical centers**: teaching status = true AND total_beds >= 500. ~150 facilities. The "famous hospital" set most public discourse focuses on.
-- **Small rural / critical access**: `total_beds < 50 AND ownership_type IN ('1','2')`. Different operational economics; their charity-care cost dollar figures look small but proportions can be large.
-- **Children's hospitals**: from the CBI crosswalk. About 80 facilities. Should be analyzed separately for charity-care because they don't bill Medicare in volume.
-- **Hospitals headquartered in high-SVI counties**: `svi_overall_pct >= 80` on the matched hospital dataset. Useful for geographic context. Pair with bed count to separate "small rural hospital in high-SVI county" from "big urban hospital in high-SVI county." Note: this is a home-county signal, not a true catchment-area measure.
+From the CMS Provider Reimbursement Manual, Part 2, chapter 40, section 4004.1 (Worksheet S-2 Part I, line 21):
 
-## Useful HCRIS aggregate metrics for benchmarking
+| Code | Type of control |
+|---|---|
+| 1 | Voluntary nonprofit, church |
+| 2 | Voluntary nonprofit, other |
+| 3 | Proprietary, individual |
+| 4 | Proprietary, corporation |
+| 5 | Proprietary, partnership |
+| 6 | Proprietary, other |
+| 7 | Governmental, federal |
+| 8 | Governmental, city-county |
+| 9 | Governmental, county |
+| 10 | Governmental, state |
+| 11 | Governmental, hospital district |
+| 12 | Governmental, city |
+| 13 | Governmental, other |
 
-When showing a hospital alongside a peer cohort, useful context columns:
+For a nonprofit cohort use `ownership_type IN ('1', '2')`. The code is what the hospital entered on its cost report; it is not the same test as "files a Form 990".
 
-| Metric | Calculation | Why |
-|--------|------------|-----|
-| Operating margin | `(net_patient_revenue + other_revenue - total_operating_expenses) / (net_patient_revenue + other_revenue)` | Financial health. |
-| Charity-care cost ratio | `charity_care_cost / total_operating_expenses` | Charity-care cost normalized for size. |
-| Uncompensated-care intensity | `uncompensated_care_cost / total_operating_expenses` | Similar but includes bad debt — a broader measure of care provided that didn't generate revenue. |
-| Beds per million in catchment | `total_beds` / state population × 1M | Capacity vs. the area served (state-level approx). |
-| Occupancy | `inpatient_bed_days_utilized / (total_beds * 365)` | How fully the hospital is used. |
+## Dimensions that need the repository clone
 
-## What NOT to compare across cohorts
+The CCN-to-EIN crosswalk carries per-CCN flags that are not published under `/data/`. After `git clone --depth 1 https://github.com/cbetz/trove` they are in `trove/packages/crosswalk/src/crosswalk/data/cbi.parquet`:
 
-- **HCRIS S-10 charity-care to a children's hospital's 990 7a** — HCRIS S-10 only captures Medicare-bill-related charity, which is near-zero for children's hospitals. The 990 7a captures everything. The difference is structural.
-- **Total community benefit (7k) to charity-care cost (S-10)** — these are different concepts. 7k includes research, education, subsidized services. Use 7a for charity-care cross-form context.
-- **HCRIS dollar figures across very different fiscal-year ends without alignment** — see the alignment filter discussion in `parquet_layout.md`. A hospital's HCRIS FY2023 report and 990 TY2022 may cover entirely different 12-month periods.
+- `teaching_hospital`, `children_hospital`, `urban`, `church_affiliated` (boolean)
+- `bed_size_band`, `bed_count`, `state`, `county_fips`
+
+These flags come from Community Benefit Insight's December 2024 list and cover nonprofit hospitals only. Join on `ccn = prvdr_num`.
+
+## Not available anywhere in trove
+
+- Staffing, FTEs, wages, interns and residents counts.
+- Critical access, sole community or Medicare DSH designation.
+- Quality, outcomes, readmissions, patient experience.
+- Payer mix beyond the Medicaid and charity lines of Worksheet S-10.
+
+## Useful ratios
+
+| Metric | Calculation | Notes |
+|---|---|---|
+| Charity care cost as a share of expenses | `charity_care_cost / total_operating_expenses` | S-10 line 23 column 3 over G-3 line 4. Null when the report has no line 23. |
+| Uncompensated care as a share of expenses | `uncompensated_care_cost / total_operating_expenses` | S-10 line 30: line 23 column 3 plus line 29 (non-Medicare and non-reimbursable Medicare bad debt). |
+| Occupancy | `inpatient_bed_days_utilized / total_bed_days_available` | Both from Worksheet S-3 Part I line 1 (adults and pediatrics), so it excludes special-care units. |
+| Community benefit as a share of expenses | `community_benefit_pct_of_expenses` | Schedule H line 7k over the 990's own total expenses, 0–100. |
+
+## Cautions when comparing
+
+- **Missing is not zero.** Hospitals with no Worksheet S-10, or an S-10 with line 23 blank, have a null `charity_care_cost`. In the matched table that includes most Maryland hospitals and most children's hospitals. Leave them out of a charity-care ratio and say how many were left out; do not count them as zero and do not describe them as "low".
+- **Two files, two periods.** A CCN usually has a report in each HCRIS file. Pick one period per hospital before ranking or averaging, or the same hospital is counted twice.
+- **Line 7k is not charity care.** Schedule H line 7k includes Medicaid, education and research. Set line 7a, not 7k, next to S-10 line 23.
+- **Unaligned periods.** For cross-form comparisons keep `period_aligned` rows only.
+- **System rows.** A matched row with `ccn_count > 1` sums several cost reports. Do not rank it against single hospitals without saying so.

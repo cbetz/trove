@@ -12,7 +12,7 @@ The plain-language explainers for each dataset live on the site rather than here
 
 | Package | What it parses |
 |---|---|
-| [`hcris`](../packages/hcris/) | CMS Medicare Cost Reports (Hospital 2552-10), with a 44-variable semantic dictionary |
+| [`hcris`](../packages/hcris/) | CMS Medicare Cost Reports (Hospital 2552-10), with a 52-variable semantic dictionary |
 | [`form990`](../packages/form990/) | IRS Form 990 Schedule H, from the bulk-XML ZIPs |
 | [`crosswalk`](../packages/crosswalk/) | CCN ↔ EIN linking (3,523 hospitals, 2,385 EINs) |
 | [`analytics`](../packages/analytics/) | Composed queries — `community_benefit_gap()` is the cross-form primitive |
@@ -21,17 +21,24 @@ The plain-language explainers for each dataset live on the site rather than here
 
 ## Published data
 
-- **Charity Care Gap Index** — the 99 hospitals where the CMS and IRS charity-care
-  figures are cleanly comparable:
+- **Ranked index** — IRS Schedule H line 7a and CMS Worksheet S-10 line 23 side by side
+  for the 493 hospitals, in 48 states, where one facility files both for the same fiscal
+  period, with the components from each filing:
   [`artifacts/charity_care_gap_index_2022.md`](../artifacts/charity_care_gap_index_2022.md)
-- **Full matched dataset** — 1,334 systems:
+- **Full matched dataset** — 2,099 systems, 1,904 with both figures; a missing line is
+  empty, never `0`:
   [`artifacts/community_benefit_gap_2022.csv`](../artifacts/community_benefit_gap_2022.csv)
-- **Method and caveats** —
+- **Method, funnel and caveats** —
   [`artifacts/community_benefit_gap_2022_summary.md`](../artifacts/community_benefit_gap_2022_summary.md)
-- **Parquet bundles over HTTPS**, queryable directly from DuckDB — see the
+- **FDA novel drug approvals** — 217 approvals, 2021–2024 (192 CDER + 25 CBER):
+  [`artifacts/fda_approvals_nme_recent.csv`](../artifacts/fda_approvals_nme_recent.csv)
+- **Parquet files over HTTPS**, queryable directly from DuckDB — see the
   [README](../README.md).
 
 ## Status
 
-See [`CHANGELOG.md`](../CHANGELOG.md) for milestone history. Current: M7 — the ranked
-Charity Care Gap Index, with the finding on the front page of the site.
+See [`CHANGELOG.md`](../CHANGELOG.md) for release history. Current: 1.1.0 (2026-11-19),
+which rebuilt the hospital data (missing values no longer published as zero, the 2023 IRS
+release and the CMS FY2022 file added, component columns added) and revised how the two
+figures are described: they are defined differently and are shown side by side with their
+components.

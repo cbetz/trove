@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "trove",
   "description": "Reference tools for underused public healthcare data. Two Claude skills: hcris-analyst (look up nonprofit U.S. hospital reporting — related CMS Worksheet S-10 and IRS 990 Schedule H charity-care fields side-by-side, with home-county SVI context) and fda-analyst (look up FDA novel drug approvals from 2021–2024 and find the approval-package documents).",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": {
     "name": "Chris Betz",
     "url": "https://github.com/cbetz"

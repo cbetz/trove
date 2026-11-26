@@ -98,3 +98,51 @@ def test_snapshot_url_resolved(fda_year_page: Path) -> None:
     assert df.loc["Alhemo", "trials_snapshot_url"].startswith("https://www.fda.gov/")
     alyftrek_url = df.loc["Alyftrek", "trials_snapshot_url"]
     assert pd.isna(alyftrek_url) or alyftrek_url in (None, "")
+
+
+# --- approval-date parsing (regression: Tzield shipped as "NaT") -------------
+
+
+def test_parse_approval_date_accepts_two_digit_year() -> None:
+    """FDA lists Tzield as 11/18/22 in a column of M/D/YYYY dates."""
+    from datetime import date
+
+    from fda_sba.scrape import _parse_approval_date
+
+    assert _parse_approval_date("11/18/22") == date(2022, 11, 18)
+    assert _parse_approval_date("1/7/2022") == date(2022, 1, 7)
+    assert _parse_approval_date("12/28/2022") == date(2022, 12, 28)
+    assert _parse_approval_date("November 18, 2022") == date(2022, 11, 18)
+
+
+def test_parse_approval_date_raises_instead_of_returning_nat() -> None:
+    from fda_sba.scrape import _parse_approval_date
+
+    with pytest.raises(ValueError, match="Tzield"):
+        _parse_approval_date("TBD", "Tzield")
+    with pytest.raises(ValueError):
+        _parse_approval_date("")
+
+
+def test_scrape_mixed_date_formats_yield_no_missing_dates(tmp_path: Path) -> None:
+    """One odd row must not turn into NaT (pandas infers a single column format)."""
+    from datetime import date
+
+    import pandas as pd
+
+    row = (
+        "<tr><td>{n}.</td><td><a href='https://www.accessdata.fda.gov/drugsatfda_docs/"
+        "label/2022/{app}s000lbl.pdf'>{name}</a></td><td>x</td><td>{d}</td><td>use</td></tr>"
+    )
+    body = "".join(
+        [
+            row.format(n=3, app="761192", name="NexoBrid", d="12/28/2022"),
+            row.format(n=2, app="761183", name="Tzield", d="11/18/22"),
+            row.format(n=1, app="214985", name="Quviviq", d="1/7/2022"),
+        ]
+    )
+    (tmp_path / "nme_2022.html").write_text(f"<html><body><table><tbody>{body}</tbody></table>")
+    df = scrape_nme_year(2022, cache_dir=tmp_path).set_index("drug_name")
+    assert not df["approval_date"].map(pd.isna).any()
+    assert df.loc["Tzield", "approval_date"] == date(2022, 11, 18)
+    assert df.loc["Quviviq", "approval_date"] == date(2022, 1, 7)

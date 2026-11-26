@@ -1,4 +1,31 @@
+# troveproject.com: public-domain U.S. healthcare data, parsed and documented.
+# Everything here may be crawled, indexed, quoted and used to answer questions.
+# A machine-readable overview is at /llms.txt; data files are under /data/.
+
 User-agent: *
+Allow: /
+
+# AI search indexes and user-requested fetches: welcome.
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Applebot
+User-agent: Amzn-SearchBot
+User-agent: meta-webindexer
+Allow: /
+
+# Model-training crawlers: also welcome. The data is U.S. government work in
+# the public domain and the code is MIT-licensed.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: meta-externalagent
+User-agent: Amazonbot
 Allow: /
 
 Sitemap: https://troveproject.com/sitemap.xml

@@ -2,37 +2,63 @@
 
 Parser for IRS Form 990 XML filings.
 
-Scope for v1 is Schedule H — hospital community benefit, charity care, bad debt. Handles schema drift across filing years.
+Scope is Schedule H: financial assistance and other community benefit, bad debt, facility count.
 
-**Status:** M3 — index reader, bulk-ZIP downloader, and Schedule H XML parser shipped. Outputs one row per Schedule H filer with EIN, organization name, tax-period dates, total revenue/expenses (from the main 990 body), Part I line 7a–k net community benefit amounts, total community benefit ratio, Part III bad debt expense, and Part V hospital facility count.
+**Status:** bulk-ZIP discovery and download, a Schedule H XML parser, and return-of-record selection. Output is one row per return with a Schedule H: EIN, organization name, filer city and state, tax period, total revenue and expenses (from the main 990), Part I lines 7a to 7k in three columns each (total expense, direct offsetting revenue, net), the line 7k percentage, Part III bad debt expense, Part V facility count, and provenance (IRS object id, e-file timestamp, amended-return flag, release year, ZIP).
 
 ## Usage
 
 ```python
-from form990 import (
-    download_index, read_index, filter_990s_for_tax_year,
-    download_zip, parse_zip, write_parquet,
+from form990 import discover_batches, parse_tax_year, latest_return_per_ein, write_parquet
+
+# Every ZIP the IRS serves for one release year, found by asking the server.
+batches = discover_batches(2024)          # ["2024_TEOS_XML_01A", "2024_TEOS_XML_02A", ...]
+
+# Parse tax year 2022 Schedule H returns out of every ZIP in that release.
+# ZIPs are handled one at a time; keep_zips=False deletes each after parsing.
+df = parse_tax_year(
+    2022, 2024,
+    keep_zips=False,
+    batch_cache_dir="data/parquet/form990/batches",   # resume an interrupted run
+    xml_dir="data/raw/form990/xml_ty2022",            # keep each return's XML
 )
 
-# Step 1: read the per-release-year index and filter to 990s for the tax year you want.
-idx = read_index(download_index(2024))
-filings = filter_990s_for_tax_year(idx, tax_year=2022)
-batches = filings["XML_BATCH_ID"].unique()  # which ZIPs to pull
-
-# Step 2: download + parse one or more ZIPs.
-df = parse_zip(download_zip(2024, "2024_TEOS_XML_01A"))
-
-# Step 3: persist as Parquet partitioned by tax year.
+# Repeat for each release year and concatenate, then pick one return per EIN.
+one_per_ein = latest_return_per_ein(df)
 write_parquet(df, tax_year=2022)
 ```
 
-The parser short-circuits on a cheap byte-level check for `IRS990ScheduleH` before invoking lxml, so iterating a 100 MB ZIP takes well under a second on a laptop — most filers in the bulk feed are not hospitals.
+`parse_zip(path)` parses a single ZIP you already have. The parser checks each member for the bytes `IRS990ScheduleH` before invoking lxml, so most of a ZIP is skipped quickly: most filers are not hospitals.
 
-## Schema and tax-year scope
+## Finding returns: ZIP discovery, not the index
 
-XPaths target the `http://www.irs.gov/efile` namespace. Element names (`FinancialAssistanceAtCostTyp`, `TotalCommunityBenefitsGrp`, etc.) have been stable since TY2013 schema 2013v3.0; pre-2013 paths used a different shape and aren't supported.
+Returns are located by opening every ZIP in a release and reading each return's own `TaxYr`. The IRS index CSVs are not used to locate them:
 
-**Bootstrap year:** TY2022. Most TY2022 returns appear in the `2024_TEOS_XML_*.zip` release; late filers and amendments trickle into 2025 and 2026 ZIPs. Concat parses across release years and dedup downstream — `parse_tax_year` attaches a `release_year` column so the analytics layer can prefer the most recent version per EIN.
+- the 2023 index has no batch column at all;
+- the 2025 and 2026 indexes label every May return `05A`, although the returns are split across `05A` and `05B` on the server.
+
+`discover_batches(release_year)` probes the server for each month and letter and stops at the first 404. Any other failure (403 when throttled, 429, 5xx, a dropped connection) is retried with a back-off and then raised, so a throttled probe cannot silently shorten the list. `download_index`, `read_index` and `filter_990s_for_tax_year` remain for completeness checks; `tax_periods_for_tax_year` gives the period-end window for a tax year (2022 covers periods ending 2022-12 through 2023-11).
+
+**Tax year 2022 across releases.** The published `schedule_h_2022.parquet` was built from the 2023, 2024, 2025 and 2026 releases (51 ZIPs, about 17 GB, processed one at a time): 849 returns in 2023, 1,464 in 2024, 47 in 2025 and none in 2026. It is not deduplicated; 2,360 returns cover 2,295 EINs.
+
+## Fields
+
+- `ein`, `organization_name`, `filer_city`, `filer_state`, `tax_period_begin`, `tax_period_end`, `tax_year`, `return_version`
+- `total_revenue`, `total_expenses`
+- For each Part I line 7 row (`financial_assistance_at_cost` 7a, `unreimbursed_medicaid` 7b, `unreimbursed_other_means_tested` 7c, `total_financial_assistance` 7d, `community_health_services` 7e, `health_professions_education` 7f, `subsidized_health_services` 7g, `research` 7h, `cash_and_in_kind_contributions` 7i, `total_other_benefits` 7j, `total_community_benefit` 7k): the bare name is column (e) net, `_gross` is column (c) total expense, `_offset_revenue` is column (d) direct offsetting revenue
+- `total_community_benefit_pct` (line 7k column (f), a fraction), `bad_debt_expense`, `hospital_facility_count`
+- `object_id` (the IRS e-file object id, from the ZIP member name), `return_ts`, `amended_return`
+- `release_year`, `batch_id` (added by `parse_tax_year`)
+
+A blank element on the return is missing in the output; a reported 0 is 0.
+
+## Which return counts: `latest_return_per_ein`
+
+An EIN can have more than one return for a tax year: an amended return, the same return in two releases, or a short-year return next to a full-year one. `latest_return_per_ein` prefers a full-year return (at least 330 days), then the latest period end, then the latest e-file timestamp, then the newest release. `analytics` imports this function, so there is one implementation.
+
+## Schema scope
+
+XPaths target the `http://www.irs.gov/efile` namespace. The Schedule H element names used here have been stable since the 2013v3.0 schema; earlier schemas are not supported.
 
 ## ZIP compression
 

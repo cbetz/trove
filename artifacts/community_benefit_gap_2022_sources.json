@@ -1,0 +1,50 @@
+{
+  "tax_year": 2022,
+  "cms_hcris": {
+    "form": "Hospital 2552-10",
+    "files": [
+      {
+        "fiscal_year": 2022,
+        "file": "HOSP10FY2022.zip",
+        "reports": 6069,
+        "latest_proc_dt": "2026-09-30",
+        "extract_date": "2026-10-02",
+        "posted_date": "2026-10-05",
+        "zip_sha256": "02b0ba92cb36cf8fc996779e0b8406164d3a74fd15305c515697592f82974415"
+      },
+      {
+        "fiscal_year": 2023,
+        "file": "HOSP10FY2023.zip",
+        "reports": 6109,
+        "latest_proc_dt": "2026-09-30",
+        "extract_date": "2026-10-02",
+        "posted_date": "2026-10-05",
+        "zip_sha256": "fff18bb36d8b448fc7ea5961415307255fe602e0344b8d44b1f7df75b9a6c321"
+      }
+    ]
+  },
+  "irs_990": {
+    "release_years": [
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "schedule_h_returns": 2360,
+    "schedule_h_eins": 2295,
+    "returns_by_release_year": {
+      "2023": 849,
+      "2024": 1464,
+      "2025": 47
+    },
+    "bulk_zips_with_schedule_h": 37
+  },
+  "crosswalk": {
+    "eins": 2385,
+    "ccns_without_cost_report": 245,
+    "also_checked_fiscal_years": [
+      2024
+    ],
+    "found_in_also_checked": 0
+  }
+}

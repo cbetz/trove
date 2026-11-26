@@ -3,34 +3,37 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Nonprofit hospitals report charity care to two federal regulators. The numbers don't match. | trove</title>
-  <meta name="description" content="Every nonprofit U.S. hospital reports its charity care to CMS and to the IRS. Yale New Haven told the IRS $113.1M and CMS $35.6M for the same year. I indexed the 99 hospitals where the comparison is clean — 22 differ by more than 50%.">
+  <title>Hospital charity care on two public filings: what is in the difference | trove</title>
+  <meta name="description" content="IRS Form 990 Schedule H line 7a and CMS cost report Worksheet S-10 line 23 are defined differently. This note sets the two figures side by side for 493 nonprofit hospitals in 48 states, tax year 2022, and works through Yale New Haven Hospital&#x27;s two filings line by line.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.">
-  <meta property="og:description" content="Yale New Haven told the IRS it gave $113.1M in financial assistance and told CMS $35.6M — same hospital, same year. I indexed the 99 hospitals where the comparison is clean; 22 differ by more than 50%.">
+  <meta property="og:title" content="Hospital charity care on two public filings: what is in the difference">
+  <meta property="og:description" content="IRS Schedule H line 7a and CMS Worksheet S-10 line 23 for 493 hospitals, tax year 2022: what each line measures, why they can differ when both are filed correctly, and one hospital worked through line by line.">
   <meta property="og:url" content="https://troveproject.com/notes/charity-care-gap/">
-  <meta property="og:image" content="https://troveproject.com/og-20260725.jpg">
-  <meta property="og:image:secure_url" content="https://troveproject.com/og-20260725.jpg">
+  <meta property="og:image" content="https://troveproject.com/og-20261119.jpg">
+  <meta property="og:image:secure_url" content="https://troveproject.com/og-20261119.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="trove: hospital charity care, the IRS figure and the CMS figure side by side.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.">
-  <meta name="twitter:description" content="Yale New Haven told the IRS $113.1M and CMS $35.6M for the same year. I indexed the 99 hospitals where the comparison is clean — 22 differ by more than 50%.">
-  <meta name="twitter:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta name="twitter:title" content="Hospital charity care on two public filings: what is in the difference">
+  <meta name="twitter:description" content="IRS Schedule H line 7a and CMS Worksheet S-10 line 23 for 493 hospitals, tax year 2022: what each line measures, why they can differ when both are filed correctly, and one hospital worked through line by line.">
+  <meta name="twitter:image" content="https://troveproject.com/og-20261119.jpg">
+  <meta name="twitter:image:alt" content="trove: hospital charity care, the IRS figure and the CMS figure side by side.">
   <link rel="canonical" href="https://troveproject.com/notes/charity-care-gap/">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.",
-    "description": "A per-hospital comparison of charity-care cost as reported to CMS (Worksheet S-10) and to the IRS (Form 990 Schedule H) for tax year 2022.",
+    "headline": "Hospital charity care on two public filings: what is in the difference",
+    "description": "A per-hospital side-by-side of financial assistance at cost on IRS Form 990 Schedule H Part I line 7a and the cost of charity care on CMS Worksheet S-10 line 23 for tax year 2022, with the components from each filing. The two lines are defined differently; a difference is not by itself evidence that either filing is incorrect.",
     "author": {"@type": "Person", "name": "Chris Betz", "url": "https://cbetz.com"},
     "publisher": {"@type": "Organization", "name": "trove", "url": "https://troveproject.com/"},
     "mainEntityOfPage": "https://troveproject.com/notes/charity-care-gap/",
+    "image": "https://troveproject.com/og-20261119.jpg",
     "datePublished": "2026-07-25",
-    "dateModified": "2026-07-25",
+    "dateModified": "2026-11-19",
     "isAccessibleForFree": true
   }
   </script>
@@ -56,7 +59,8 @@
     .byline { color: var(--muted); font-size: 0.85rem; font-family: ui-monospace, Menlo, monospace; margin: 0 0 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
     h2 { font-size: 1.3rem; letter-spacing: -0.01em; margin: 2.5rem 0 0.75rem; font-weight: 700; }
     p { margin: 1.1rem 0; }
-    a { color: inherit; }
+    a { color: inherit; overflow-wrap: anywhere; }
+    :focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
     strong { font-weight: 700; }
     .callout { border-left: 3px solid var(--muted); padding: 0.25rem 0 0.25rem 1.1rem; margin: 1.5rem 0; color: var(--fg); }
     .board-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin: 1.75rem 0; }
@@ -68,6 +72,19 @@
     td { padding: 0.55rem 0.75rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
     tr:last-child td { border-bottom: 0; }
     td.name { font-family: -apple-system, sans-serif; font-weight: 600; white-space: normal; }
+    /* Phones: each row becomes a compact card — name, then the two filings, then the
+       difference and percent — so nothing needs horizontal scrolling. */
+    @media (max-width: 640px) {
+      .board-scroll { overflow-x: visible; }
+      table { min-width: 0; }
+      table, tbody { display: block; }
+      thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+      tbody tr { display: grid; grid-template-columns: 1fr 1fr; column-gap: 0.75rem; row-gap: 0.35rem; padding: 0.75rem 0.9rem; border-bottom: 1px solid var(--border); }
+      tbody tr:last-child { border-bottom: 0; }
+      tbody td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; min-width: 0; }
+      tbody td.name { grid-column: 1 / -1; }
+      tbody td[data-label]::before { content: attr(data-label); display: block; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 600; line-height: 1.5; }
+    }
     .pos { color: var(--pos); } .neg { color: var(--neg); }
     .cta { display: block; border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; text-decoration: none; color: inherit; background: var(--accent); }
     .cta:hover { background: var(--row-hover); }
@@ -75,275 +92,894 @@
     .src { color: var(--muted); font-size: 0.9rem; }
     footer { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; font-family: ui-monospace, Menlo, monospace; }
     footer a { color: inherit; }
+    /* note-specific additions */
+    h3 { font-size: 1.05rem; margin: 1.75rem 0 0.5rem; font-weight: 700; }
+    ul, ol { padding-left: 1.25rem; }
+    li { margin: 0.45rem 0; }
+    table.cmp { font-size: 0.8rem; }
+    @media (min-width: 641px) { table.cmp { min-width: 40rem; } }
+    table.cmp th { white-space: normal; vertical-align: bottom; line-height: 1.3; padding: 0.5rem 0.4rem; }
+    table.cmp td { padding: 0.5rem 0.4rem; vertical-align: top; }
+    table.cmp td.name { min-width: 9.5rem; }
+    table.cmp td.name a { text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    .rk { color: var(--muted); font-family: ui-monospace, Menlo, monospace; font-weight: 400; margin-right: 0.15rem; }
+    .sub { display: block; color: var(--muted); font-weight: 400; font-size: 0.72rem; line-height: 1.45; margin-top: 0.15rem; }
+    table.kv { min-width: 0; }
+    table.kv td { white-space: normal; }
+    table.kv td.v { text-align: right; white-space: nowrap; }
+    table.kv td.name { font-weight: 400; }
+    table.kv tr.key td, table.kv tr.key td.name { font-weight: 700; }
+    table.sys { min-width: 0; }
+    .groups { list-style: none; padding-left: 0; }
+    .groups > li { border-top: 1px solid var(--border); padding: 0.9rem 0 0.4rem; margin: 0; }
+    .groups .g { display: inline-block; font-family: ui-monospace, Menlo, monospace; font-weight: 700; margin-right: 0.5rem; }
+    .open-list { font-size: 0.95rem; }
+    .correction { border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 1.2rem; margin: 1.5rem 0; background: var(--accent); }
+    @media (max-width: 640px) {
+      table.kv tbody tr { grid-template-columns: 1fr auto; }
+      table.kv tbody td.name { grid-column: auto; }
+      table.sys tbody td.name { grid-column: 1 / -1; }
+      table.cmp tbody td { padding: 0; }
+    }
   </style>
 </head>
 <body>
-  <p class="breadcrumb"><a href="/">trove</a> / <a href="/notes/">notes</a> / the charity-care gap</p>
+  <p class="breadcrumb"><a href="/">trove</a> / <a href="/notes/">notes</a> / hospital charity care, two filings</p>
 
-  <h1>Nonprofit hospitals report charity care to two federal regulators. The numbers don't match.</h1>
-  <p class="dek">Yale New Haven Hospital told the IRS it provided $113.1M in financial assistance for its fiscal year ending September 2023, and told Medicare $35.6M in charity care for the same year, on a comparable ~$4.1B expense base. Large gaps like this are far from rare.</p>
-  <p class="byline">By Chris Betz · <time datetime="2026-07-25">July 25, 2026</time> · public-domain data, MIT-licensed code</p>
+  <h1>Hospital charity care on two public filings: what is in the difference</h1>
+  <p class="dek">Nonprofit hospitals publish a financial-assistance figure on their IRS Form 990 and a charity-care figure on their Medicare cost report. This note puts the two public figures next to each other for every hospital that can be matched, with the components from each filing that show what is in the difference.</p>
+  <p class="byline">By Chris Betz · first published <time datetime="2026-07-25">July 25, 2026</time> · revised <time datetime="2026-11-19">November 19, 2026</time> (<a href="#correction">what changed</a>) · public-domain data, MIT-licensed code</p>
 
-  <p>Every nonprofit hospital in the United States reports the cost of the free and discounted care it gives patients who can't pay to <strong>two</strong> different federal regulators — for two different purposes, on two different forms:</p>
-  <p>To the <strong>IRS</strong>, on <strong>Schedule H</strong> of Form 990 — the "financial assistance at cost" line (Part I, line 7a) — which documents the community benefit that helps justify the hospital's tax exemption. And to <strong>CMS</strong>, on <strong>Worksheet S-10</strong> of the Medicare Cost Report — the "cost of charity care" line — which feeds Medicare's uncompensated-care (DSH) payments. Two different regulatory purposes, but both lines are meant to capture the same underlying thing: what it cost to treat patients who couldn't pay.</p>
-  <p>They are supposed to describe the same activity. For a lot of hospitals, they don't come close.</p>
+  <h2>The two lines</h2>
+  <p>The two figures, for tax year 2022:</p>
+  <ul>
+    <li><strong>IRS Form 990, Schedule H, Part I, line 7a</strong> reports financial assistance at cost: column (c) total expense, column (d) direct offsetting revenue, and column (e) net, which is (c) − (d).</li>
+    <li><strong>CMS cost report (form 2552-10), Worksheet S-10, line 23, column 3</strong> is the cost of charity care after patient payments: uninsured patients (column 1) plus insured patients (column 2).</li>
+  </ul>
+  <p><strong>The two lines are defined differently, so they can differ even when both are filed correctly.</strong> Three of the differences in definition are visible in the filings themselves:</p>
+  <ul>
+    <li><strong>Provider taxes.</strong> The IRS Schedule H instructions (Worksheet 1, line 4) have a filer include Medicaid or provider taxes in the line 7a cost when payments from an uncompensated care pool or DSH program in its state are intended primarily to offset the cost of financial assistance, with that pool revenue reported as offsetting revenue in column (d). When the payments are primarily to offset the cost of Medicaid services, both go to line 7b instead, and where state law does not make the purpose clear the instructions allow a proportional split. This is a classification the instructions permit, and it depends on the state.</li>
+    <li><strong>S-10 line 5.</strong> The cost report puts Medicaid DSH and supplemental payments, “net of associated provider taxes or assessments”, on line 5 of Worksheet S-10. Line 5 holds the payments not already included in line 2 (Medicaid revenue); neither line is part of line 23.</li>
+    <li><strong>The insured column.</strong> S-10 line 23 column 2 counts deductibles and coinsurance written off for insured patients.</li>
+  </ul>
+  <p>The two forms also cost the care differently. Schedule H asks for the filer's most accurate costing methodology (a cost accounting system, a cost-to-charge ratio, or another method); S-10 derives cost from charges with the worksheet's own cost-to-charge ratio. And the reporting units differ: a 990 is filed by a legal entity (an EIN), a cost report by a provider (a CCN).</p>
+  <p>So a difference between the two is a reason to open both filings and read the components. It does not, by itself, say anything about either filing.</p>
 
-  <h2>The gap, for hospitals where the comparison is clean</h2>
-  <p>Comparing these two numbers naïvely is a trap. The biggest raw differences come from artifacts: a single 990 can cover a dozen hospitals reported under one name, and the two forms often cover fiscal years that are 12 months apart. So I filtered down to the hospitals where the comparison is genuinely apples-to-apples — a single reporting facility, both filings covering the same fiscal year, both numbers above $1M, and the two forms reporting a comparable total-expense base (within 5%). I also compare like with like: the <em>net</em> figure on each side — Schedule H line 7a column (e), net of offsetting revenue, against the S-10 cost of charity care net of partial patient payments — so this isn't a gross-versus-net illusion.</p>
-  <p><strong>99 hospitals</strong> clear that bar for tax year 2022. Among them, <strong>22 reported charity-care numbers to the two regulators that differ by more than 50%.</strong> Every one of them, plotted against the line where the two filings would agree:</p>
+  <h2>What can be set side by side</h2>
+  <p>The <a href="/hospitals/">lookup</a> holds every EIN matched across the CMS cost report files, IRS Schedule H and a CCN-to-EIN crosswalk: <strong>2,099 systems</strong>, of which 1,904 have both figures. The other 195 are missing one of the two lines and are shown without a difference (see <a href="#missing">missing is not zero</a>).</p>
+  <p>The ranked index is the subset where the two lines can be set side by side without a unit or period mismatch. A row is in the index when all four hold: one CCN with a cost report under the EIN, so both filings describe one facility; the cost report's period ends within one month of the 990's; both figures are at least $1M; and total expenses on the two filings are within 5% of each other. The funnel: 2,099 matched, 1,904 with both figures, 1,797 of those period-aligned, 1,642 of those with a single cost report, and <strong>493 in the index, in 48 states</strong>.</p>
+  <p>Among those 493, the CMS figure is the larger in 321, the IRS figure in 169, and 3 show the same amount. The median difference is 27.6% of the larger figure, and 107 differ by more than 50%. Those counts describe two differently defined lines: 143 of the 493 list offsetting revenue in column (d), and 301 show an amount on S-10 line 5. Each hospital's two figures:</p>
 
 <!-- GAP_CHART:START -->
 
 <style>
   .gapfig { margin: 2rem 0; }
   .gapfig figcaption { color: var(--muted); font-size: 0.85rem; line-height: 1.5; margin-top: 0.6rem; }
-  .gapchart { width: 100%; height: auto; display: block; overflow: visible;
+  .gapchart { width: 100%; height: auto; display: block; overflow: visible; touch-action: pan-y;
     --mark-pos: #a04413; --mark-neg: #1f5793;
-    --grid: rgba(127,127,127,0.22); --parity: rgba(127,127,127,0.55); }
+    --grid: rgba(127,127,127,0.2); --parity: rgba(100,100,100,0.75); --half: rgba(127,127,127,0.42); }
   @media (prefers-color-scheme: dark) {
     .gapchart { --mark-pos: #d95926; --mark-neg: #3987e5;
-      --grid: rgba(255,255,255,0.13); --parity: rgba(255,255,255,0.4); }
+      --grid: rgba(255,255,255,0.11); --parity: rgba(255,255,255,0.55); --half: rgba(255,255,255,0.26); }
   }
   .gapchart .grid { stroke: var(--grid); stroke-width: 1; }
   .gapchart .parity { stroke: var(--parity); stroke-width: 1.5; }
-  .gapchart .tick, .gapchart .axis-title, .gapchart .region {
-    fill: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  .gapchart .half { stroke: var(--half); stroke-width: 1; }
+  .gapchart .tick, .gapchart .axis-title, .gapchart .region, .gapchart .name {
+    font-family: ui-monospace, Menlo, monospace; }
+  .gapchart .tick, .gapchart .axis-title, .gapchart .region { fill: var(--muted); }
   .gapchart .tick { font-size: 12px; }
   .gapchart .tick-x { text-anchor: middle; }
   .gapchart .tick-y { text-anchor: end; }
   .gapchart .axis-title { font-size: 12.5px; text-anchor: middle; }
-  .gapchart .region { font-size: 12px; text-anchor: start; }
+  .gapchart .region { font-size: 11.5px; text-anchor: start; }
+  .gapchart .name { font-size: 11px; fill: var(--fg); stroke: var(--bg); stroke-width: 3.5;
+    stroke-linejoin: round; paint-order: stroke; pointer-events: none; }
+  .gapchart .ring { fill: none; stroke: var(--fg); stroke-width: 1.25; pointer-events: none; }
+  .gapchart .lead { stroke: var(--fg); stroke-width: 0.75; stroke-opacity: 0.65; pointer-events: none; }
+  .gapkey { display: none; list-style: none; margin: 0.5rem 0 0; padding: 0; color: var(--muted);
+    font: 0.78rem/1.6 ui-monospace, Menlo, monospace; }
+  .gapkey i { display: inline-block; width: 0.65rem; height: 0.65rem; border-radius: 50%;
+    margin-right: 0.45rem; vertical-align: -0.05rem; }
+  .gapkey i.pos { background: #a04413; }
+  .gapkey i.neg { background: #1f5793; }
+  .gapkey i.ln { height: 0; border-radius: 0; border-top: 2px solid var(--muted); vertical-align: 0.25rem; }
+  .gapkey i.ln.half { border-top-width: 1px; opacity: 0.7; }
+  @media (prefers-color-scheme: dark) {
+    .gapkey i.pos { background: #d95926; }
+    .gapkey i.neg { background: #3987e5; }
+  }
+  /* Phones: the SVG is scaled to about half size, so its text is enlarged, the
+     in-plot legend moves below the chart as HTML, and the five names (placed for
+     the wide layout) are dropped; their rings stay. */
+  @media (max-width: 560px) {
+    .gapchart .tick { font-size: 18px; }
+    .gapchart .axis-title { font-size: 19px; }
+    .gapchart .legend, .gapchart .name, .gapchart .lead { display: none; }
+    .gapchart .dot { r: 4.5; }
+    .gapchart .ring { r: 8.5; stroke-width: 2; }
+    .gapkey { display: block; }
+  }
   .gapchart .swatch { stroke: var(--bg); stroke-width: 1.5; }
   .gapchart .swatch.pos { fill: var(--mark-pos); }
   .gapchart .swatch.neg { fill: var(--mark-neg); }
-  .gapchart .dot { stroke: var(--bg); stroke-width: 2; cursor: pointer; }
+  .gapchart .dot { stroke: var(--bg); stroke-width: 0.75; fill-opacity: 0.78; }
   .gapchart .dot.pos { fill: var(--mark-pos); }
   .gapchart .dot.neg { fill: var(--mark-neg); }
-  .gapchart .dot:hover { r: 7; }
+  .gapchart .dot.eq { fill: var(--muted); }
+  .gapchart .dot.hl { r: 6.5; fill-opacity: 1; stroke: var(--fg); stroke-width: 1.5; }
   .gaptip { position: fixed; z-index: 20; pointer-events: none; opacity: 0;
     transition: opacity 0.1s; background: var(--bg); color: var(--fg);
     border: 1px solid var(--border); border-radius: 6px; padding: 0.5rem 0.7rem;
-    font: 12px/1.5 ui-monospace, Menlo, monospace; max-width: 17rem;
+    font: 12px/1.5 ui-monospace, Menlo, monospace; max-width: 18rem;
     box-shadow: 0 2px 10px rgba(0,0,0,0.18); }
   .gaptip b { display: block; margin-bottom: 0.2rem; }
-  .gaptip span { color: var(--muted); }
+  .gaptip span { display: block; }
+  .gaptip .sub { color: var(--muted); }
+  @media (forced-colors: active) {
+    .gapchart .dot.pos { fill: CanvasText; }
+    .gapchart .dot.neg { fill: Canvas; stroke: CanvasText; stroke-width: 1; }
+  }
 </style>
 
 <figure class="gapfig">
-<svg class="gapchart" viewBox="0 0 720 560" role="img" aria-labelledby="gapchart-t gapchart-d" preserveAspectRatio="xMidYMid meet">
-<title id="gapchart-t">Charity care reported to CMS versus to the IRS, 99 hospitals, tax year 2022</title>
-<desc id="gapchart-d">Log-log scatter. Each dot is one hospital. The diagonal marks where the two filings would be equal. Dots above it reported more to CMS; dots below reported more to the IRS. Distance from the diagonal is the size of the difference. The full figures are in the table below.</desc>
-<line class="grid" x1="106.0" y1="28" x2="106.0" y2="492"/>
-<line class="grid" x1="82" y1="473.9" x2="698" y2="473.9"/>
-<text class="tick tick-x" x="106.0" y="512">$1M</text>
-<text class="tick tick-y" x="72" y="477.9">$1M</text>
-<line class="grid" x1="188.9" y1="28" x2="188.9" y2="492"/>
-<line class="grid" x1="82" y1="411.5" x2="698" y2="411.5"/>
-<text class="tick tick-x" x="188.9" y="512">$2M</text>
-<text class="tick tick-y" x="72" y="415.5">$2M</text>
-<line class="grid" x1="298.4" y1="28" x2="298.4" y2="492"/>
-<line class="grid" x1="82" y1="329.0" x2="698" y2="329.0"/>
-<text class="tick tick-x" x="298.4" y="512">$5M</text>
-<text class="tick tick-y" x="72" y="333.0">$5M</text>
-<line class="grid" x1="381.3" y1="28" x2="381.3" y2="492"/>
-<line class="grid" x1="82" y1="266.6" x2="698" y2="266.6"/>
-<text class="tick tick-x" x="381.3" y="512">$10M</text>
-<text class="tick tick-y" x="72" y="270.6">$10M</text>
-<line class="grid" x1="464.2" y1="28" x2="464.2" y2="492"/>
-<line class="grid" x1="82" y1="204.1" x2="698" y2="204.1"/>
-<text class="tick tick-x" x="464.2" y="512">$20M</text>
-<text class="tick tick-y" x="72" y="208.1">$20M</text>
-<line class="grid" x1="573.7" y1="28" x2="573.7" y2="492"/>
-<line class="grid" x1="82" y1="121.6" x2="698" y2="121.6"/>
-<text class="tick tick-x" x="573.7" y="512">$50M</text>
-<text class="tick tick-y" x="72" y="125.6">$50M</text>
-<line class="grid" x1="656.6" y1="28" x2="656.6" y2="492"/>
-<line class="grid" x1="82" y1="59.2" x2="698" y2="59.2"/>
-<text class="tick tick-x" x="656.6" y="512">$100M</text>
-<text class="tick tick-y" x="72" y="63.2">$100M</text>
-<line class="parity" x1="82.0" y1="492.0" x2="698.0" y2="28.0"/>
-<line class="parity" x1="96" y1="42" x2="112" y2="42"/><text class="region" x="120" y="46">the diagonal: both filings equal</text>
-<circle class="swatch pos" cx="104" cy="62" r="4.5"/><text class="region" x="120" y="66">above it: reported more to CMS</text>
-<circle class="swatch neg" cx="104" cy="82" r="4.5"/><text class="region" x="120" y="86">below it: reported more to the IRS</text>
-<circle class="dot neg" cx="671.3" cy="152.3" r="4.5" data-n="Yale New Haven Hospital" data-irs="$113.1M" data-cms="$35.6M" data-pct="69%" data-end="2023-09-30"><title>Yale New Haven Hospital: IRS $113.1M, CMS $35.6M</title></circle>
-<circle class="dot pos" cx="576.2" cy="57.1" r="4.5" data-n="Tampa General Hospital" data-irs="$51.0M" data-cms="$102.4M" data-pct="50%" data-end="2023-09-30"><title>Tampa General Hospital: IRS $51.0M, CMS $102.4M</title></circle>
-<circle class="dot neg" cx="483.8" cy="349.4" r="4.5" data-n="Greenwich Hospital" data-irs="$23.6M" data-cms="$4.0M" data-pct="83%" data-end="2023-09-30"><title>Greenwich Hospital: IRS $23.6M, CMS $4.0M</title></circle>
-<circle class="dot pos" cx="530.3" cy="117.1" r="4.5" data-n="Baptist Medical Center" data-irs="$34.8M" data-cms="$52.6M" data-pct="34%" data-end="2023-09-30"><title>Baptist Medical Center: IRS $34.8M, CMS $52.6M</title></circle>
-<circle class="dot pos" cx="121.0" cy="213.4" r="4.5" data-n="Western Regional Medical Center" data-irs="$1.1M" data-cms="$18.1M" data-pct="94%" data-end="2023-09-30"><title>Western Regional Medical Center: IRS $1.1M, CMS $18.1M</title></circle>
-<circle class="dot neg" cx="470.5" cy="333.0" r="4.5" data-n="Lawrence &amp; Memorial Hospital" data-irs="$21.1M" data-cms="$4.8M" data-pct="77%" data-end="2023-09-30"><title>Lawrence &amp; Memorial Hospital: IRS $21.1M, CMS $4.8M</title></circle>
-<circle class="dot pos" cx="396.1" cy="177.9" r="4.5" data-n="Cook Childrens Medical Center" data-irs="$11.3M" data-cms="$26.8M" data-pct="58%" data-end="2023-09-30"><title>Cook Childrens Medical Center: IRS $11.3M, CMS $26.8M</title></circle>
-<circle class="dot pos" cx="281.8" cy="215.9" r="4.5" data-n="Bayfront Health St. Petersburg" data-irs="$4.4M" data-cms="$17.6M" data-pct="75%" data-end="2023-09-30"><title>Bayfront Health St. Petersburg: IRS $4.4M, CMS $17.6M</title></circle>
-<circle class="dot neg" cx="523.0" cy="206.2" r="4.5" data-n="Bridgeport Hospital" data-irs="$32.7M" data-cms="$19.5M" data-pct="40%" data-end="2023-09-30"><title>Bridgeport Hospital: IRS $32.7M, CMS $19.5M</title></circle>
-<circle class="dot pos" cx="655.9" cy="49.4" r="4.5" data-n="Boston Medical Center" data-irs="$99.5M" data-cms="$111.5M" data-pct="11%" data-end="2023-09-30"><title>Boston Medical Center: IRS $99.5M, CMS $111.5M</title></circle>
-<circle class="dot neg" cx="485.2" cy="247.3" r="4.5" data-n="Beth Israel Deaconess Medical Center" data-irs="$23.8M" data-cms="$12.4M" data-pct="48%" data-end="2023-09-30"><title>Beth Israel Deaconess Medical Center: IRS $23.8M, CMS $12.4M</title></circle>
-<circle class="dot pos" cx="331.9" cy="216.2" r="4.5" data-n="Southeastern Regional Medical Center" data-irs="$6.6M" data-cms="$17.5M" data-pct="62%" data-end="2023-09-30"><title>Southeastern Regional Medical Center: IRS $6.6M, CMS $17.5M</title></circle>
-<circle class="dot pos" cx="331.9" cy="219.4" r="4.5" data-n="Sharp Memorial Hospital" data-irs="$6.6M" data-cms="$16.9M" data-pct="61%" data-end="2023-09-30"><title>Sharp Memorial Hospital: IRS $6.6M, CMS $16.9M</title></circle>
-<circle class="dot neg" cx="425.1" cy="341.9" r="4.5" data-n="Boca Raton Regional Hospital" data-irs="$14.4M" data-cms="$4.3M" data-pct="70%" data-end="2023-09-30"><title>Boca Raton Regional Hospital: IRS $14.4M, CMS $4.3M</title></circle>
-<circle class="dot pos" cx="320.3" cy="228.4" r="4.5" data-n="Grossmont Hospital" data-irs="$6.0M" data-cms="$15.3M" data-pct="61%" data-end="2023-09-30"><title>Grossmont Hospital: IRS $6.0M, CMS $15.3M</title></circle>
-<circle class="dot neg" cx="444.1" cy="289.2" r="4.5" data-n="Hamilton Medical Center" data-irs="$16.9M" data-cms="$7.8M" data-pct="54%" data-end="2023-09-30"><title>Hamilton Medical Center: IRS $16.9M, CMS $7.8M</title></circle>
-<circle class="dot neg" cx="365.6" cy="464.6" r="4.5" data-n="Oroville Hospital" data-irs="$8.8M" data-cms="$1.1M" data-pct="87%" data-end="2023-11-30"><title>Oroville Hospital: IRS $8.8M, CMS $1.1M</title></circle>
-<circle class="dot neg" cx="435.2" cy="280.9" r="4.5" data-n="Carilion Medical Center" data-irs="$15.7M" data-cms="$8.5M" data-pct="46%" data-end="2023-09-30"><title>Carilion Medical Center: IRS $15.7M, CMS $8.5M</title></circle>
-<circle class="dot pos" cx="301.9" cy="257.5" r="4.5" data-n="Sharp Chula Vista Medical Center" data-irs="$5.1M" data-cms="$11.1M" data-pct="53%" data-end="2023-09-30"><title>Sharp Chula Vista Medical Center: IRS $5.1M, CMS $11.1M</title></circle>
-<circle class="dot pos" cx="380.8" cy="225.4" r="4.5" data-n="St Bernards Medical Center" data-irs="$10.0M" data-cms="$15.8M" data-pct="37%" data-end="2023-09-30"><title>St Bernards Medical Center: IRS $10.0M, CMS $15.8M</title></circle>
-<circle class="dot neg" cx="522.1" cy="177.1" r="4.5" data-n="North Mississippi Medical Center" data-irs="$32.5M" data-cms="$27.0M" data-pct="17%" data-end="2023-09-30"><title>North Mississippi Medical Center: IRS $32.5M, CMS $27.0M</title></circle>
-<circle class="dot pos" cx="187.7" cy="295.5" r="4.5" data-n="Concord Hospital  Inc." data-irs="$2.0M" data-cms="$7.3M" data-pct="73%" data-end="2023-09-30"><title>Concord Hospital  Inc.: IRS $2.0M, CMS $7.3M</title></circle>
-<circle class="dot neg" cx="493.0" cy="200.1" r="4.5" data-n="Coxhealth" data-irs="$25.5M" data-cms="$20.9M" data-pct="18%" data-end="2023-09-30"><title>Coxhealth: IRS $25.5M, CMS $20.9M</title></circle>
-<circle class="dot pos" cx="421.3" cy="211.4" r="4.5" data-n="Baptist Mem Hospital Desoto" data-irs="$14.0M" data-cms="$18.4M" data-pct="24%" data-end="2023-09-30"><title>Baptist Mem Hospital Desoto: IRS $14.0M, CMS $18.4M</title></circle>
-<circle class="dot pos" cx="411.6" cy="218.0" r="4.5" data-n="Orlando Health South Lake Hospital" data-irs="$12.9M" data-cms="$17.1M" data-pct="25%" data-end="2023-09-30"><title>Orlando Health South Lake Hospital: IRS $12.9M, CMS $17.1M</title></circle>
-<circle class="dot pos" cx="422.4" cy="212.0" r="4.5" data-n="Deaconess Hospital" data-irs="$14.1M" data-cms="$18.3M" data-pct="23%" data-end="2023-09-30"><title>Deaconess Hospital: IRS $14.1M, CMS $18.3M</title></circle>
-<circle class="dot neg" cx="344.4" cy="352.3" r="4.5" data-n="Baystate Medical Center" data-irs="$7.3M" data-cms="$3.9M" data-pct="47%" data-end="2023-09-30"><title>Baystate Medical Center: IRS $7.3M, CMS $3.9M</title></circle>
-<circle class="dot neg" cx="311.5" cy="404.7" r="4.5" data-n="Mount Auburn Hospital" data-irs="$5.6M" data-cms="$2.2M" data-pct="61%" data-end="2023-09-30"><title>Mount Auburn Hospital: IRS $5.6M, CMS $2.2M</title></circle>
-<circle class="dot neg" cx="328.2" cy="371.0" r="4.5" data-n="Jupiter Medical Center" data-irs="$6.4M" data-cms="$3.1M" data-pct="51%" data-end="2023-09-30"><title>Jupiter Medical Center: IRS $6.4M, CMS $3.1M</title></circle>
-<circle class="dot neg" cx="403.5" cy="275.5" r="4.5" data-n="University Of Vermont Medical Center" data-irs="$12.0M" data-cms="$9.1M" data-pct="25%" data-end="2023-09-30"><title>University Of Vermont Medical Center: IRS $12.0M, CMS $9.1M</title></circle>
-<circle class="dot pos" cx="216.0" cy="321.3" r="4.5" data-n="Baptist Medical Center-Beaches" data-irs="$2.5M" data-cms="$5.4M" data-pct="54%" data-end="2023-09-30"><title>Baptist Medical Center-Beaches: IRS $2.5M, CMS $5.4M</title></circle>
-<circle class="dot pos" cx="215.8" cy="326.1" r="4.5" data-n="Silver Cross Hospital" data-irs="$2.5M" data-cms="$5.2M" data-pct="51%" data-end="2023-09-30"><title>Silver Cross Hospital: IRS $2.5M, CMS $5.2M</title></circle>
-<circle class="dot neg" cx="394.7" cy="277.3" r="4.5" data-n="Conway Hospital" data-irs="$11.2M" data-cms="$8.9M" data-pct="21%" data-end="2023-09-30"><title>Conway Hospital: IRS $11.2M, CMS $8.9M</title></circle>
-<circle class="dot pos" cx="341.6" cy="272.8" r="4.5" data-n="Lahey Clinic Hospital  Inc." data-irs="$7.2M" data-cms="$9.3M" data-pct="23%" data-end="2023-09-30"><title>Lahey Clinic Hospital  Inc.: IRS $7.2M, CMS $9.3M</title></circle>
-<circle class="dot pos" cx="268.4" cy="313.5" r="4.5" data-n="Saint Francis Hospital" data-irs="$3.9M" data-cms="$5.9M" data-pct="34%" data-end="2023-09-30"><title>Saint Francis Hospital: IRS $3.9M, CMS $5.9M</title></circle>
-<circle class="dot neg" cx="364.5" cy="302.5" r="4.5" data-n="The Miriam Hospital" data-irs="$8.7M" data-cms="$6.7M" data-pct="23%" data-end="2023-09-30"><title>The Miriam Hospital: IRS $8.7M, CMS $6.7M</title></circle>
-<circle class="dot pos" cx="143.3" cy="366.2" r="4.5" data-n="Baptist Medical Ctr-Nassau" data-irs="$1.4M" data-cms="$3.3M" data-pct="59%" data-end="2023-09-30"><title>Baptist Medical Ctr-Nassau: IRS $1.4M, CMS $3.3M</title></circle>
-<circle class="dot pos" cx="182.7" cy="353.1" r="4.5" data-n="Midwestern Regional Medical Center" data-irs="$1.9M" data-cms="$3.8M" data-pct="50%" data-end="2023-09-30"><title>Midwestern Regional Medical Center: IRS $1.9M, CMS $3.8M</title></circle>
-<circle class="dot pos" cx="160.7" cy="362.2" r="4.5" data-n="Deaconess Henderson Hospital" data-irs="$1.6M" data-cms="$3.5M" data-pct="54%" data-end="2023-09-30"><title>Deaconess Henderson Hospital: IRS $1.6M, CMS $3.5M</title></circle>
-<circle class="dot neg" cx="548.9" cy="144.3" r="4.5" data-n="Baptist Mem Hospital Memphis" data-irs="$40.6M" data-cms="$38.9M" data-pct="4%" data-end="2023-09-30"><title>Baptist Mem Hospital Memphis: IRS $40.6M, CMS $38.9M</title></circle>
-<circle class="dot pos" cx="328.9" cy="284.6" r="4.5" data-n="Southcoast Hospitals Group  Inc" data-irs="$6.5M" data-cms="$8.2M" data-pct="21%" data-end="2023-09-30"><title>Southcoast Hospitals Group  Inc: IRS $6.5M, CMS $8.2M</title></circle>
-<circle class="dot neg" cx="339.5" cy="323.0" r="4.5" data-n="Baptist Mem Hospital Union County" data-irs="$7.1M" data-cms="$5.3M" data-pct="24%" data-end="2023-09-30"><title>Baptist Mem Hospital Union County: IRS $7.1M, CMS $5.3M</title></circle>
-<circle class="dot pos" cx="307.1" cy="297.6" r="4.5" data-n="Blessing Hospital" data-irs="$5.4M" data-cms="$7.1M" data-pct="24%" data-end="2023-09-30"><title>Blessing Hospital: IRS $5.4M, CMS $7.1M</title></circle>
-<circle class="dot neg" cx="329.3" cy="332.5" r="4.5" data-n="Nea Baptist Memorial Hospital" data-irs="$6.5M" data-cms="$4.8M" data-pct="26%" data-end="2023-09-30"><title>Nea Baptist Memorial Hospital: IRS $6.5M, CMS $4.8M</title></circle>
-<circle class="dot pos" cx="223.0" cy="343.5" r="4.5" data-n="Mclaren Macomb" data-irs="$2.7M" data-cms="$4.3M" data-pct="37%" data-end="2023-09-30"><title>Mclaren Macomb: IRS $2.7M, CMS $4.3M</title></circle>
-<circle class="dot pos" cx="461.1" cy="200.1" r="4.5" data-n="Shannon Medical Center" data-irs="$19.5M" data-cms="$20.9M" data-pct="7%" data-end="2023-09-30"><title>Shannon Medical Center: IRS $19.5M, CMS $20.9M</title></circle>
-<circle class="dot pos" cx="199.4" cy="358.7" r="4.5" data-n="Women &amp; Infants Hospital" data-irs="$2.2M" data-cms="$3.6M" data-pct="39%" data-end="2023-09-30"><title>Women &amp; Infants Hospital: IRS $2.2M, CMS $3.6M</title></circle>
-<circle class="dot neg" cx="503.1" cy="179.1" r="4.5" data-n="Naples Community Hospital" data-irs="$27.7M" data-cms="$26.4M" data-pct="5%" data-end="2023-09-30"><title>Naples Community Hospital: IRS $27.7M, CMS $26.4M</title></circle>
-<circle class="dot pos" cx="136.3" cy="392.4" r="4.5" data-n="Ottawa Regional Hospital &amp; Healthcar" data-irs="$1.3M" data-cms="$2.5M" data-pct="48%" data-end="2023-09-30"><title>Ottawa Regional Hospital &amp; Healthcar: IRS $1.3M, CMS $2.5M</title></circle>
-<circle class="dot neg" cx="221.4" cy="439.9" r="4.5" data-n="Beverly Hospital" data-irs="$2.6M" data-cms="$1.5M" data-pct="44%" data-end="2023-09-30"><title>Beverly Hospital: IRS $2.6M, CMS $1.5M</title></circle>
-<circle class="dot neg" cx="239.8" cy="412.6" r="4.5" data-n="Lowell General Hospital" data-irs="$3.1M" data-cms="$2.0M" data-pct="36%" data-end="2023-09-30"><title>Lowell General Hospital: IRS $3.1M, CMS $2.0M</title></circle>
-<circle class="dot neg" cx="259.9" cy="388.9" r="4.5" data-n="Emerson Hospital" data-irs="$3.6M" data-cms="$2.6M" data-pct="29%" data-end="2023-09-30"><title>Emerson Hospital: IRS $3.6M, CMS $2.6M</title></circle>
-<circle class="dot neg" cx="320.9" cy="328.9" r="4.5" data-n="Cox Medical Center Branson" data-irs="$6.0M" data-cms="$5.0M" data-pct="17%" data-end="2023-09-30"><title>Cox Medical Center Branson: IRS $6.0M, CMS $5.0M</title></circle>
-<circle class="dot pos" cx="263.8" cy="333.9" r="4.5" data-n="Lawrence General Hospital" data-irs="$3.7M" data-cms="$4.7M" data-pct="21%" data-end="2023-09-30"><title>Lawrence General Hospital: IRS $3.7M, CMS $4.7M</title></circle>
-<circle class="dot pos" cx="374.8" cy="263.6" r="4.5" data-n="Baptist Mem Hospital North Miss" data-irs="$9.5M" data-cms="$10.3M" data-pct="8%" data-end="2023-09-30"><title>Baptist Mem Hospital North Miss: IRS $9.5M, CMS $10.3M</title></circle>
-<circle class="dot neg" cx="402.7" cy="256.8" r="4.5" data-n="St. Vincents Medical Center" data-irs="$12.0M" data-cms="$11.1M" data-pct="7%" data-end="2023-09-30"><title>St. Vincents Medical Center: IRS $12.0M, CMS $11.1M</title></circle>
-<circle class="dot pos" cx="111.6" cy="418.1" r="4.5" data-n="Champlain Valley Physicians Hospital" data-irs="$1.0M" data-cms="$1.9M" data-pct="44%" data-end="2023-09-30"><title>Champlain Valley Physicians Hospital: IRS $1.0M, CMS $1.9M</title></circle>
-<circle class="dot neg" cx="228.9" cy="412.2" r="4.5" data-n="Milford Regional Medical Center  Inc" data-irs="$2.8M" data-cms="$2.0M" data-pct="29%" data-end="2023-09-30"><title>Milford Regional Medical Center  Inc: IRS $2.8M, CMS $2.0M</title></circle>
-<circle class="dot neg" cx="357.5" cy="293.4" r="4.5" data-n="Harnett Health System" data-irs="$8.2M" data-cms="$7.4M" data-pct="9%" data-end="2023-09-30"><title>Harnett Health System: IRS $8.2M, CMS $7.4M</title></circle>
-<circle class="dot pos" cx="108.7" cy="422.0" r="4.5" data-n="Newport Hospital" data-irs="$1.0M" data-cms="$1.8M" data-pct="43%" data-end="2023-09-30"><title>Newport Hospital: IRS $1.0M, CMS $1.8M</title></circle>
-<circle class="dot neg" cx="179.9" cy="459.0" r="4.5" data-n="Valley Regional Hospital" data-irs="$1.9M" data-cms="$1.2M" data-pct="36%" data-end="2023-09-30"><title>Valley Regional Hospital: IRS $1.9M, CMS $1.2M</title></circle>
-<circle class="dot neg" cx="202.5" cy="432.1" r="4.5" data-n="The Griffin Hospital" data-irs="$2.2M" data-cms="$1.6M" data-pct="29%" data-end="2023-09-30"><title>The Griffin Hospital: IRS $2.2M, CMS $1.6M</title></circle>
-<circle class="dot neg" cx="199.1" cy="435.4" r="4.5" data-n="Marshall Hospital" data-irs="$2.2M" data-cms="$1.5M" data-pct="30%" data-end="2023-10-31"><title>Marshall Hospital: IRS $2.2M, CMS $1.5M</title></circle>
-<circle class="dot neg" cx="244.5" cy="389.6" r="4.5" data-n="Winchester Hospital" data-irs="$3.2M" data-cms="$2.6M" data-pct="20%" data-end="2023-09-30"><title>Winchester Hospital: IRS $3.2M, CMS $2.6M</title></circle>
-<circle class="dot pos" cx="466.1" cy="200.0" r="4.5" data-n="Rhode Island Hospital" data-irs="$20.3M" data-cms="$20.9M" data-pct="3%" data-end="2023-09-30"><title>Rhode Island Hospital: IRS $20.3M, CMS $20.9M</title></circle>
-<circle class="dot pos" cx="265.8" cy="342.3" r="4.5" data-n="St. Lukes Nampa Medical Center" data-irs="$3.8M" data-cms="$4.3M" data-pct="12%" data-end="2023-09-30"><title>St. Lukes Nampa Medical Center: IRS $3.8M, CMS $4.3M</title></circle>
-<circle class="dot neg" cx="345.4" cy="299.8" r="4.5" data-n="Vassar Brothers Medical Center" data-irs="$7.4M" data-cms="$6.9M" data-pct="7%" data-end="2023-09-30"><title>Vassar Brothers Medical Center: IRS $7.4M, CMS $6.9M</title></circle>
-<circle class="dot neg" cx="172.3" cy="451.8" r="4.5" data-n="Karmanos Cancer Hospital" data-irs="$1.7M" data-cms="$1.3M" data-pct="27%" data-end="2023-09-30"><title>Karmanos Cancer Hospital: IRS $1.7M, CMS $1.3M</title></circle>
-<circle class="dot neg" cx="217.4" cy="406.4" r="4.5" data-n="Ephraim Mcdowell Reg Med Ctr" data-irs="$2.5M" data-cms="$2.1M" data-pct="17%" data-end="2023-09-30"><title>Ephraim Mcdowell Reg Med Ctr: IRS $2.5M, CMS $2.1M</title></circle>
-<circle class="dot neg" cx="164.6" cy="456.6" r="4.5" data-n="Singing River Gulfport" data-irs="$1.6M" data-cms="$1.2M" data-pct="26%" data-end="2023-09-30"><title>Singing River Gulfport: IRS $1.6M, CMS $1.2M</title></circle>
-<circle class="dot pos" cx="154.1" cy="416.9" r="4.5" data-n="Central Vermont Hospital" data-irs="$1.5M" data-cms="$1.9M" data-pct="21%" data-end="2023-09-30"><title>Central Vermont Hospital: IRS $1.5M, CMS $1.9M</title></circle>
-<circle class="dot neg" cx="238.2" cy="386.2" r="4.5" data-n="Tufts Medical Center" data-irs="$3.0M" data-cms="$2.6M" data-pct="12%" data-end="2023-09-30"><title>Tufts Medical Center: IRS $3.0M, CMS $2.6M</title></circle>
-<circle class="dot pos" cx="316.2" cy="310.1" r="4.5" data-n="Catholic Medical Center" data-irs="$5.8M" data-cms="$6.2M" data-pct="6%" data-end="2023-09-30"><title>Catholic Medical Center: IRS $5.8M, CMS $6.2M</title></circle>
-<circle class="dot neg" cx="240.7" cy="383.5" r="4.5" data-n="Norwegian American Hospital" data-irs="$3.1M" data-cms="$2.7M" data-pct="12%" data-end="2023-09-30"><title>Norwegian American Hospital: IRS $3.1M, CMS $2.7M</title></circle>
-<circle class="dot pos" cx="179.8" cy="403.4" r="4.5" data-n="Pontotoc Health Services" data-irs="$1.9M" data-cms="$2.2M" data-pct="15%" data-end="2023-09-30"><title>Pontotoc Health Services: IRS $1.9M, CMS $2.2M</title></circle>
-<circle class="dot neg" cx="301.6" cy="332.3" r="4.5" data-n="Pih Health Good Samaritan Hospital" data-irs="$5.1M" data-cms="$4.8M" data-pct="6%" data-end="2023-09-30"><title>Pih Health Good Samaritan Hospital: IRS $5.1M, CMS $4.8M</title></circle>
-<circle class="dot pos" cx="409.4" cy="243.2" r="4.5" data-n="Ms Baptist Medical Center" data-irs="$12.6M" data-cms="$13.0M" data-pct="2%" data-end="2023-09-30"><title>Ms Baptist Medical Center: IRS $12.6M, CMS $13.0M</title></circle>
-<circle class="dot neg" cx="309.1" cy="325.9" r="4.5" data-n="Baptist Mem Hospital Tipton County" data-irs="$5.5M" data-cms="$5.2M" data-pct="5%" data-end="2023-09-30"><title>Baptist Mem Hospital Tipton County: IRS $5.5M, CMS $5.2M</title></circle>
-<circle class="dot pos" cx="158.5" cy="419.8" r="4.5" data-n="Middlesex Hospital" data-irs="$1.6M" data-cms="$1.8M" data-pct="15%" data-end="2023-09-30"><title>Middlesex Hospital: IRS $1.6M, CMS $1.8M</title></circle>
-<circle class="dot neg" cx="154.5" cy="454.3" r="4.5" data-n="Baptist Mem Hospital Huntingdon" data-irs="$1.5M" data-cms="$1.2M" data-pct="17%" data-end="2023-09-30"><title>Baptist Mem Hospital Huntingdon: IRS $1.5M, CMS $1.2M</title></circle>
-<circle class="dot neg" cx="171.2" cy="439.0" r="4.5" data-n="Cox-Monett Hospital" data-irs="$1.7M" data-cms="$1.5M" data-pct="15%" data-end="2023-09-30"><title>Cox-Monett Hospital: IRS $1.7M, CMS $1.5M</title></circle>
-<circle class="dot pos" cx="116.3" cy="448.2" r="4.5" data-n="Northern Dutchess Hospital" data-irs="$1.1M" data-cms="$1.3M" data-pct="18%" data-end="2023-09-30"><title>Northern Dutchess Hospital: IRS $1.1M, CMS $1.3M</title></circle>
-<circle class="dot pos" cx="115.4" cy="450.8" r="4.5" data-n="Marion Regional Medical Center" data-irs="$1.1M" data-cms="$1.3M" data-pct="16%" data-end="2023-09-30"><title>Marion Regional Medical Center: IRS $1.1M, CMS $1.3M</title></circle>
-<circle class="dot neg" cx="145.1" cy="458.9" r="4.5" data-n="Putnam Hospital Center" data-irs="$1.4M" data-cms="$1.2M" data-pct="15%" data-end="2023-09-30"><title>Putnam Hospital Center: IRS $1.4M, CMS $1.2M</title></circle>
-<circle class="dot pos" cx="118.9" cy="449.2" r="4.5" data-n="Mclaren Central Michigan" data-irs="$1.1M" data-cms="$1.3M" data-pct="15%" data-end="2023-09-30"><title>Mclaren Central Michigan: IRS $1.1M, CMS $1.3M</title></circle>
-<circle class="dot neg" cx="272.2" cy="353.2" r="4.5" data-n="South Shore Hospital" data-irs="$4.0M" data-cms="$3.8M" data-pct="5%" data-end="2023-09-30"><title>South Shore Hospital: IRS $4.0M, CMS $3.8M</title></circle>
-<circle class="dot neg" cx="192.6" cy="416.9" r="4.5" data-n="Bmh-Crittenden" data-irs="$2.1M" data-cms="$1.9M" data-pct="9%" data-end="2023-09-30"><title>Bmh-Crittenden: IRS $2.1M, CMS $1.9M</title></circle>
-<circle class="dot pos" cx="191.3" cy="402.2" r="4.5" data-n="Monroe Health Services  Inc." data-irs="$2.0M" data-cms="$2.2M" data-pct="8%" data-end="2023-09-30"><title>Monroe Health Services  Inc.: IRS $2.0M, CMS $2.2M</title></circle>
-<circle class="dot neg" cx="165.3" cy="439.3" r="4.5" data-n="Baptist Medical Center - Yazoo" data-irs="$1.6M" data-cms="$1.5M" data-pct="11%" data-end="2023-09-30"><title>Baptist Medical Center - Yazoo: IRS $1.6M, CMS $1.5M</title></circle>
-<circle class="dot neg" cx="275.6" cy="349.9" r="4.5" data-n="Brockton Hospital  Inc." data-irs="$4.1M" data-cms="$4.0M" data-pct="4%" data-end="2023-09-30"><title>Brockton Hospital  Inc.: IRS $4.1M, CMS $4.0M</title></circle>
-<circle class="dot pos" cx="170.8" cy="417.5" r="4.5" data-n="Baptist Mem Hospital Union City" data-irs="$1.7M" data-cms="$1.9M" data-pct="8%" data-end="2023-09-30"><title>Baptist Mem Hospital Union City: IRS $1.7M, CMS $1.9M</title></circle>
-<circle class="dot neg" cx="227.3" cy="387.2" r="4.5" data-n="Rutland Regional Medical Center" data-irs="$2.8M" data-cms="$2.6M" data-pct="5%" data-end="2023-09-30"><title>Rutland Regional Medical Center: IRS $2.8M, CMS $2.6M</title></circle>
-<circle class="dot pos" cx="151.9" cy="435.0" r="4.5" data-n="Clay County Medical Corporation" data-irs="$1.5M" data-cms="$1.5M" data-pct="5%" data-end="2023-09-30"><title>Clay County Medical Corporation: IRS $1.5M, CMS $1.5M</title></circle>
-<circle class="dot neg" cx="184.3" cy="418.2" r="4.5" data-n="St. Lukes Wood River Medical Center" data-irs="$1.9M" data-cms="$1.9M" data-pct="4%" data-end="2023-09-30"><title>St. Lukes Wood River Medical Center: IRS $1.9M, CMS $1.9M</title></circle>
-<circle class="dot pos" cx="394.9" cy="256.3" r="4.5" data-n="Cape Canaveral Hospital Inc" data-irs="$11.2M" data-cms="$11.2M" data-pct="0%" data-end="2023-09-30"><title>Cape Canaveral Hospital Inc: IRS $11.2M, CMS $11.2M</title></circle>
-<circle class="dot pos" cx="303.0" cy="325.5" r="4.5" data-n="Viera Hospital Inc" data-irs="$5.2M" data-cms="$5.2M" data-pct="0%" data-end="2023-09-30"><title>Viera Hospital Inc: IRS $5.2M, CMS $5.2M</title></circle>
-<circle class="dot neg" cx="160.1" cy="433.1" r="4.5" data-n="Gibson Area Hospital And Health Svcs" data-irs="$1.6M" data-cms="$1.6M" data-pct="0%" data-end="2023-09-30"><title>Gibson Area Hospital And Health Svcs: IRS $1.6M, CMS $1.6M</title></circle>
-<circle class="dot neg" cx="124.9" cy="459.7" r="4.5" data-n="Macon County General Hospital" data-irs="$1.2M" data-cms="$1.2M" data-pct="0%" data-end="2023-09-30"><title>Macon County General Hospital: IRS $1.2M, CMS $1.2M</title></circle>
-<circle class="dot neg" cx="223.9" cy="385.1" r="4.5" data-n="Medical Center Of Deltona" data-irs="$2.7M" data-cms="$2.7M" data-pct="0%" data-end="2023-09-30"><title>Medical Center Of Deltona: IRS $2.7M, CMS $2.7M</title></circle>
-<text class="axis-title" x="390" y="542">Reported to the IRS — Form 990 Schedule H, Part I line 7a (net)</text>
-<text class="axis-title" transform="translate(18,260) rotate(-90)" x="0" y="0">Reported to CMS — Worksheet S-10 (net)</text>
+<svg class="gapchart" viewBox="0 0 720 600" role="img" aria-labelledby="gapchart-t gapchart-d" preserveAspectRatio="xMidYMid meet">
+<title id="gapchart-t">CMS S-10 line 23 against IRS Schedule H line 7a, 493 hospitals, tax year 2022</title>
+<desc id="gapchart-d">Scatter plot with logarithmic axes from $1M to $100M. Each of the 493 dots is one hospital: horizontal position is the amount on IRS Form 990 Schedule H line 7a, vertical position the amount on CMS Worksheet S-10 line 23. On the diagonal the two amounts are equal. 321 dots are above it (larger amount on the CMS form) and 169 below it (larger amount on the IRS form). 107 dots lie outside the two guide lines that mark where one amount is twice the other. Every hospital and both amounts are listed in the table on this page.</desc>
+<line class="grid" x1="117.3" y1="24" x2="117.3" y2="534"/>
+<line class="grid" x1="92" y1="512.7" x2="700" y2="512.7"/>
+<text class="tick tick-x" x="117.3" y="557">$1M</text>
+<text class="tick tick-y" x="82" y="516.7">$1M</text>
+<line class="grid" x1="196.5" y1="24" x2="196.5" y2="534"/>
+<line class="grid" x1="92" y1="446.4" x2="700" y2="446.4"/>
+<text class="tick tick-x" x="196.5" y="557">$2M</text>
+<text class="tick tick-y" x="82" y="450.4">$2M</text>
+<line class="grid" x1="301.1" y1="24" x2="301.1" y2="534"/>
+<line class="grid" x1="92" y1="358.6" x2="700" y2="358.6"/>
+<text class="tick tick-x" x="301.1" y="557">$5M</text>
+<text class="tick tick-y" x="82" y="362.6">$5M</text>
+<line class="grid" x1="380.2" y1="24" x2="380.2" y2="534"/>
+<line class="grid" x1="92" y1="292.2" x2="700" y2="292.2"/>
+<text class="tick tick-x" x="380.2" y="557">$10M</text>
+<text class="tick tick-y" x="82" y="296.2">$10M</text>
+<line class="grid" x1="459.4" y1="24" x2="459.4" y2="534"/>
+<line class="grid" x1="92" y1="225.8" x2="700" y2="225.8"/>
+<text class="tick tick-x" x="459.4" y="557">$20M</text>
+<text class="tick tick-y" x="82" y="229.8">$20M</text>
+<line class="grid" x1="564.0" y1="24" x2="564.0" y2="534"/>
+<line class="grid" x1="92" y1="138.1" x2="700" y2="138.1"/>
+<text class="tick tick-x" x="564.0" y="557">$50M</text>
+<text class="tick tick-y" x="82" y="142.1">$50M</text>
+<line class="grid" x1="643.1" y1="24" x2="643.1" y2="534"/>
+<line class="grid" x1="92" y1="71.7" x2="700" y2="71.7"/>
+<text class="tick tick-x" x="643.1" y="557">$100M</text>
+<text class="tick tick-y" x="82" y="75.7">$100M</text>
+<line class="half" x1="92.0" y1="467.6" x2="620.9" y2="24.0"/>
+<line class="half" x1="171.1" y1="534.0" x2="700.0" y2="90.4"/>
+<line class="parity" x1="92.0" y1="534.0" x2="700.0" y2="24.0"/>
+<g class="legend">
+<line class="parity" x1="106" y1="40" x2="122" y2="40"/>
+<text class="region" x="130" y="44">on the diagonal: the two amounts are equal</text>
+<line class="half" x1="106" y1="59" x2="122" y2="59"/>
+<text class="region" x="130" y="63">guide lines: one amount is twice the other</text>
+<circle class="swatch pos" cx="114" cy="78" r="4.5"/>
+<text class="region" x="130" y="82">above the diagonal: larger on the CMS form (321)</text>
+<circle class="swatch neg" cx="114" cy="97" r="4.5"/>
+<text class="region" x="130" y="101">below the diagonal: larger on the IRS form (169)</text>
+</g>
+<circle class="dot eq" cx="169.1" cy="469.4" r="3.5" data-n="Gibson Area Hospital And Health Svcs" data-p="Gibson City, IL" data-irs="$1.6M" data-cms="$1.6M" data-pct="0%" data-end="2023-09-30"/>
+<circle class="dot eq" cx="229.9" cy="418.3" r="3.5" data-n="Medical Center Of Deltona" data-p="Deltona, FL" data-irs="$2.7M" data-cms="$2.7M" data-pct="0%" data-end="2023-09-30"/>
+<circle class="dot eq" cx="253.7" cy="398.4" r="3.5" data-n="Shore Memorial Hospital" data-p="Onacock, VA" data-irs="$3.3M" data-cms="$3.3M" data-pct="0%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="305.5" cy="354.9" r="3.5" data-n="Viera Hospital Inc" data-p="Viera, FL" data-irs="$5.2M" data-cms="$5.2M" data-pct="0%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="393.2" cy="281.3" r="3.5" data-n="Cape Canaveral Hospital Inc" data-p="Cocoa Beach, FL" data-irs="$11.2M" data-cms="$11.2M" data-pct="0%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="352.6" cy="315.4" r="3.5" data-n="Presbyterian Hospital Matthews" data-p="Matthews, NC" data-irs="$7.8M" data-cms="$7.8M" data-pct="0%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="340.9" cy="325.2" r="3.5" data-n="Kearney Regional Medical Center" data-p="Kearney, NE" data-irs="$7.1M" data-cms="$7.1M" data-pct="0%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="187.2" cy="454.2" r="3.5" data-n="Indiana Regional Medical Center" data-p="Indiana, PA" data-irs="$1.8M" data-cms="$1.8M" data-pct="0%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="262.6" cy="390.9" r="3.5" data-n="Fremont Health" data-p="Fremont, NE" data-irs="$3.6M" data-cms="$3.6M" data-pct="0%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="165.5" cy="472.1" r="3.5" data-n="Atrium Medical Center" data-p="Franklin, OH" data-irs="$1.5M" data-cms="$1.5M" data-pct="0%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="201.0" cy="442.7" r="3.5" data-n="Phoebe Worth Medical Center" data-p="Sylvester, GA" data-irs="$2.1M" data-cms="$2.1M" data-pct="0%" data-end="2023-07-31"/>
+<circle class="dot pos" cx="130.6" cy="501.2" r="3.5" data-n="South Peninsula Hospital" data-p="Homer, AK" data-irs="$1.1M" data-cms="$1.1M" data-pct="0%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="244.6" cy="406.7" r="3.5" data-n="Innovis Health" data-p="Fargo, ND" data-irs="$3.0M" data-cms="$3.0M" data-pct="1%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="338.0" cy="327.3" r="3.5" data-n="Henry Ford Health Wyandotte Hospital" data-p="Wyandotte, MI" data-irs="$6.9M" data-cms="$6.9M" data-pct="0%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="211.2" cy="433.0" r="3.5" data-n="Jennie Edmundson Memorial" data-p="Council Bluffs, IA" data-irs="$2.3M" data-cms="$2.3M" data-pct="1%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="135.4" cy="499.7" r="3.5" data-n="Macon County General Hospital" data-p="Lafayette, TN" data-irs="$1.2M" data-cms="$1.1M" data-pct="2%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="189.8" cy="449.6" r="3.5" data-n="Montrose Memorial Hospital" data-p="Montrose, CO" data-irs="$1.9M" data-cms="$1.9M" data-pct="2%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="181.8" cy="455.7" r="3.5" data-n="Via Christi Hosp. Wichita St. Teresa" data-p="Wichita, KS" data-irs="$1.8M" data-cms="$1.8M" data-pct="3%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="365.6" cy="303.9" r="3.5" data-n="Jackson Hospital And Clinic  Inc" data-p="Montgomery, AL" data-irs="$8.8M" data-cms="$8.9M" data-pct="1%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="163.9" cy="477.5" r="3.5" data-n="Touchette Regional Hospital" data-p="Centreville, IL" data-irs="$1.5M" data-cms="$1.4M" data-pct="4%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="148.3" cy="491.4" r="3.5" data-n="Medical Park Hospital" data-p="Winston-Salem, NC" data-irs="$1.3M" data-cms="$1.2M" data-pct="5%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="576.5" cy="127.7" r="3.5" data-n="Regional One Health" data-p="Memphis, TN" data-irs="$55.8M" data-cms="$55.7M" data-pct="0%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="291.2" cy="368.3" r="3.5" data-n="Chi St Lukes Health Mem Livingston" data-p="Livingston, TX" data-irs="$4.6M" data-cms="$4.5M" data-pct="1%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="192.1" cy="453.4" r="3.5" data-n="St. Lukes Wood River Medical Center" data-p="Ketchum, ID" data-irs="$1.9M" data-cms="$1.9M" data-pct="4%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="161.2" cy="471.3" r="3.5" data-n="Clay County Medical Corporation" data-p="West Point, MS" data-irs="$1.5M" data-cms="$1.5M" data-pct="5%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="305.6" cy="353.5" r="3.5" data-n="St. Peters Hospital" data-p="Helena, MT" data-irs="$5.2M" data-cms="$5.3M" data-pct="1%" data-end="2023-05-31"/>
+<circle class="dot pos" cx="130.2" cy="494.9" r="3.5" data-n="St Lukes Health Memorial San August" data-p="San Augustine, TX" data-irs="$1.1M" data-cms="$1.2M" data-pct="7%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="127.5" cy="512.6" r="3.5" data-n="Franciscan Health Rensselaer" data-p="Rensselaer, IN" data-irs="$1.1M" data-cms="$1.0M" data-pct="8%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="337.7" cy="326.6" r="3.5" data-n="Adventhealth Palm Coast" data-p="Palm Coast, FL" data-irs="$6.9M" data-cms="$7.0M" data-pct="1%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="160.2" cy="484.0" r="3.5" data-n="Northwest Medical Center" data-p="Albany, MO" data-irs="$1.5M" data-cms="$1.4M" data-pct="7%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="119.4" cy="501.6" r="3.5" data-n="Mercyone Clinton Medical Center" data-p="Clinton, IA" data-irs="$1.0M" data-cms="$1.1M" data-pct="9%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="143.4" cy="483.0" r="3.5" data-n="Columbus Community Hospital" data-p="Columbus, TX" data-irs="$1.3M" data-cms="$1.4M" data-pct="8%" data-end="2023-04-30"/>
+<circle class="dot neg" cx="158.0" cy="486.2" r="3.5" data-n="St. Joseph Hospital" data-p="Nashua, NH" data-irs="$1.4M" data-cms="$1.3M" data-pct="8%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="145.1" cy="498.9" r="3.5" data-n="Union Hospital Of Cecil County" data-p="Elkton, MD" data-irs="$1.3M" data-cms="$1.2M" data-pct="9%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="233.2" cy="420.5" r="3.5" data-n="Rutland Regional Medical Center" data-p="Rutland, VT" data-irs="$2.8M" data-cms="$2.6M" data-pct="5%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="179.2" cy="452.7" r="3.5" data-n="Baptist Mem Hospital Union City" data-p="Union City, TN" data-irs="$1.7M" data-cms="$1.9M" data-pct="8%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="279.3" cy="380.8" r="3.5" data-n="Brockton Hospital  Inc." data-p="Brockton, MA" data-irs="$4.1M" data-cms="$4.0M" data-pct="4%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="174.0" cy="476.0" r="3.5" data-n="Baptist Medical Center - Yazoo" data-p="Yazoo City, MS" data-irs="$1.6M" data-cms="$1.5M" data-pct="11%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="198.9" cy="436.5" r="3.5" data-n="Monroe Health Services  Inc." data-p="Amory, MS" data-irs="$2.0M" data-cms="$2.2M" data-pct="8%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="218.1" cy="435.5" r="3.5" data-n="Cedars-Sinai Marina Del Rey Hospital" data-p="Marina Del Rey, CA" data-irs="$2.4M" data-cms="$2.2M" data-pct="7%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="200.0" cy="452.1" r="3.5" data-n="Bmh-Crittenden" data-p="West Memphis, AR" data-irs="$2.1M" data-cms="$1.9M" data-pct="9%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="232.4" cy="422.9" r="3.5" data-n="Effingham Hospital" data-p="Springfield, GA" data-irs="$2.7M" data-cms="$2.6M" data-pct="7%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="183.5" cy="447.8" r="3.5" data-n="Loretto Hospital" data-p="Chicago, IL" data-irs="$1.8M" data-cms="$2.0M" data-pct="9%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="405.7" cy="269.4" r="3.5" data-n="Spalding Regional Hospital" data-p="Griffin, GA" data-irs="$12.5M" data-cms="$12.7M" data-pct="2%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="245.6" cy="399.4" r="3.5" data-n="St. Josephs Reg Med Center S. Bend" data-p="Mishawaka, IN" data-irs="$3.1M" data-cms="$3.3M" data-pct="6%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="276.1" cy="384.3" r="3.5" data-n="South Shore Hospital" data-p="South Weymouth, MA" data-irs="$4.0M" data-cms="$3.8M" data-pct="5%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="117.5" cy="495.4" r="3.5" data-n="Kenmore Mercy Hospital" data-p="Kenmore, NY" data-irs="$1.0M" data-cms="$1.2M" data-pct="16%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="182.4" cy="469.5" r="3.5" data-n="Clifton Springs Hospital &amp; Clinic" data-p="Clifton Springs, NY" data-irs="$1.8M" data-cms="$1.6M" data-pct="11%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="129.7" cy="486.5" r="3.5" data-n="Mclaren Central Michigan" data-p="Mt Pleasant, MI" data-irs="$1.1M" data-cms="$1.3M" data-pct="15%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="240.9" cy="402.7" r="3.5" data-n="Boulder Community Hospital" data-p="Boulder, CO" data-irs="$3.0M" data-cms="$3.2M" data-pct="6%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="154.7" cy="496.7" r="3.5" data-n="Putnam Hospital Center" data-p="Carmel, NY" data-irs="$1.4M" data-cms="$1.2M" data-pct="15%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="193.0" cy="460.0" r="3.5" data-n="St. Marys Regional Medical Center" data-p="Lewiston, ME" data-irs="$1.9M" data-cms="$1.7M" data-pct="11%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="205.9" cy="448.2" r="3.5" data-n="Johnston Memorial Hospital" data-p="Abingdon, VA" data-irs="$2.2M" data-cms="$2.0M" data-pct="10%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="126.4" cy="488.1" r="3.5" data-n="Marion Regional Medical Center" data-p="Hamilton, AL" data-irs="$1.1M" data-cms="$1.3M" data-pct="16%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="297.0" cy="357.5" r="3.5" data-n="St. Lukes Cornwall Hospital" data-p="Newburgh, NY" data-irs="$4.8M" data-cms="$5.1M" data-pct="5%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="382.2" cy="288.4" r="3.5" data-n="St. Vincent Hospital" data-p="Santa Fe, NM" data-irs="$10.2M" data-cms="$10.4M" data-pct="2%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="127.2" cy="485.3" r="3.5" data-n="Northern Dutchess Hospital" data-p="Rhinebeck, NY" data-irs="$1.1M" data-cms="$1.3M" data-pct="18%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="374.3" cy="299.7" r="3.5" data-n="Nebraska Methodist Hospital" data-p="Omaha, NE" data-irs="$9.5M" data-cms="$9.2M" data-pct="3%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="145.5" cy="472.2" r="3.5" data-n="Community Hospital Assocociation" data-p="Mccook, NE" data-irs="$1.3M" data-cms="$1.5M" data-pct="16%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="179.6" cy="475.6" r="3.5" data-n="Cox-Monett Hospital" data-p="Monett, MO" data-irs="$1.7M" data-cms="$1.5M" data-pct="15%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="163.7" cy="491.9" r="3.5" data-n="Baptist Mem Hospital Huntingdon" data-p="Huntingdon, TN" data-irs="$1.5M" data-cms="$1.2M" data-pct="17%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="123.4" cy="486.8" r="3.5" data-n="Richland Memorial Hospital" data-p="Olney, IL" data-irs="$1.1M" data-cms="$1.3M" data-pct="20%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="383.3" cy="292.2" r="3.5" data-n="Lancaster General Hospital" data-p="Lancaster, PA" data-irs="$10.3M" data-cms="$10.0M" data-pct="3%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="118.4" cy="489.4" r="3.5" data-n="St John Sapulpa" data-p="Sapulpa, OK" data-irs="$1.0M" data-cms="$1.3M" data-pct="21%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="167.5" cy="455.3" r="3.5" data-n="Middlesex Hospital" data-p="Middletown, CT" data-irs="$1.6M" data-cms="$1.8M" data-pct="15%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="477.1" cy="209.8" r="3.5" data-n="North Fulton Regional Hospital" data-p="Roswell, GA" data-irs="$23.4M" data-cms="$23.6M" data-pct="1%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="302.3" cy="352.4" r="3.5" data-n="Torrance Memorial Medical Center" data-p="Torrance, CA" data-irs="$5.1M" data-cms="$5.3M" data-pct="5%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="165.3" cy="456.2" r="3.5" data-n="Sacred Heart Hospital" data-p="Eau Claire, WI" data-irs="$1.5M" data-cms="$1.8M" data-pct="16%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="311.3" cy="355.3" r="3.5" data-n="Baptist Mem Hospital Tipton County" data-p="Covington, TN" data-irs="$5.5M" data-cms="$5.2M" data-pct="5%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="234.4" cy="425.3" r="3.5" data-n="Goshen Hospital" data-p="Goshen, IN" data-irs="$2.8M" data-cms="$2.5M" data-pct="11%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="305.5" cy="360.6" r="3.5" data-n="Silverton Hospital" data-p="Silverton, OR" data-irs="$5.2M" data-cms="$4.9M" data-pct="6%" data-end="2023-03-31"/>
+<circle class="dot neg" cx="385.8" cy="290.3" r="3.5" data-n="Adventhealth Deland" data-p="Deland, FL" data-irs="$10.5M" data-cms="$10.2M" data-pct="3%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="561.7" cy="139.4" r="3.5" data-n="University Of Tennessee Medical Cent" data-p="Knoxville, TN" data-irs="$49.0M" data-cms="$49.3M" data-pct="1%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="407.0" cy="267.4" r="3.5" data-n="Ms Baptist Medical Center" data-p="Jackson, MS" data-irs="$12.6M" data-cms="$13.0M" data-pct="2%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="131.6" cy="477.4" r="3.5" data-n="Bennett County Hospital" data-p="Martin, SD" data-irs="$1.1M" data-cms="$1.4M" data-pct="22%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="304.1" cy="362.1" r="3.5" data-n="Pih Health Good Samaritan Hospital" data-p="Los Angeles, CA" data-irs="$5.1M" data-cms="$4.8M" data-pct="6%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="163.2" cy="455.9" r="3.5" data-n="The Gettysburg Hospital" data-p="Gettysburg, PA" data-irs="$1.5M" data-cms="$1.8M" data-pct="17%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="285.1" cy="379.3" r="3.5" data-n="Beebe Medical Center" data-p="Lewes, DE" data-irs="$4.3M" data-cms="$4.0M" data-pct="7%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="199.0" cy="430.3" r="3.5" data-n="Christus Mfh Winnsboro" data-p="Winnsboro, TX" data-irs="$2.0M" data-cms="$2.4M" data-pct="14%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="157.9" cy="503.6" r="3.5" data-n="St. Anthony Regional Hospital" data-p="Carroll, IA" data-irs="$1.4M" data-cms="$1.1M" data-pct="23%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="149.6" cy="464.3" r="3.5" data-n="Holy Rosary Healthcare" data-p="Miles City, MT" data-irs="$1.3M" data-cms="$1.7M" data-pct="20%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="187.9" cy="437.7" r="3.5" data-n="Pontotoc Health Services" data-p="Pontotoc, MS" data-irs="$1.9M" data-cms="$2.2M" data-pct="15%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="218.0" cy="415.9" r="3.5" data-n="Mercy Hospital Of Buffalo" data-p="Buffalo, NY" data-irs="$2.4M" data-cms="$2.8M" data-pct="12%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="185.4" cy="439.2" r="3.5" data-n="Carle  Bromenn Medical Center" data-p="Normal, IL" data-irs="$1.8M" data-cms="$2.2M" data-pct="16%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="176.0" cy="445.4" r="3.5" data-n="Llumc Murrieta" data-p="Murrieta, CA" data-irs="$1.7M" data-cms="$2.0M" data-pct="17%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="246.0" cy="416.6" r="3.5" data-n="Norwegian American Hospital" data-p="Chicago, IL" data-irs="$3.1M" data-cms="$2.7M" data-pct="12%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="308.6" cy="359.0" r="3.5" data-n="Medstar Montgomery Medical Center" data-p="Olney, MD" data-irs="$5.3M" data-cms="$5.0M" data-pct="7%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="184.9" cy="438.4" r="3.5" data-n="Samaritan Albany General Hospital" data-p="Albany, OR" data-irs="$1.8M" data-cms="$2.2M" data-pct="17%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="318.1" cy="338.5" r="3.5" data-n="Catholic Medical Center" data-p="Manchester, NH" data-irs="$5.8M" data-cms="$6.2M" data-pct="6%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="133.8" cy="472.6" r="3.5" data-n="Grande Ronde Hospital" data-p="La Grande, OR" data-irs="$1.2M" data-cms="$1.5M" data-pct="24%" data-end="2023-04-30"/>
+<circle class="dot pos" cx="192.8" cy="432.8" r="3.5" data-n="Cullman Regional" data-p="Cullman, AL" data-irs="$1.9M" data-cms="$2.3M" data-pct="16%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="299.9" cy="367.0" r="3.5" data-n="Lake Regional Health System" data-p="Osage Beach, MO" data-irs="$4.9M" data-cms="$4.6M" data-pct="7%" data-end="2023-04-30"/>
+<circle class="dot neg" cx="243.6" cy="419.4" r="3.5" data-n="Tufts Medical Center" data-p="Boston, MA" data-irs="$3.0M" data-cms="$2.6M" data-pct="12%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="241.0" cy="397.5" r="3.5" data-n="Upson Regional Medical Center" data-p="Thomaston, GA" data-irs="$3.0M" data-cms="$3.3M" data-pct="11%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="163.3" cy="452.1" r="3.5" data-n="Central Vermont Hospital" data-p="Barre, VT" data-irs="$1.5M" data-cms="$1.9M" data-pct="21%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="291.4" cy="375.2" r="3.5" data-n="Central Washington Hospital" data-p="Wenatchee, WA" data-irs="$4.6M" data-cms="$4.2M" data-pct="9%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="203.5" cy="424.1" r="3.5" data-n="Emanate Health Foothill Presb. Hosp." data-p="Glendora, CA" data-irs="$2.1M" data-cms="$2.5M" data-pct="16%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="120.5" cy="478.3" r="3.5" data-n="Trinity Regional Medical Center" data-p="Fort Dodge, IA" data-irs="$1.0M" data-cms="$1.4M" data-pct="28%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="178.3" cy="487.7" r="3.5" data-n="Crouse Hospital" data-p="Syracuse, NY" data-irs="$1.7M" data-cms="$1.3M" data-pct="24%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="133.8" cy="469.3" r="3.5" data-n="Mymichigan Medical Ctr - West Bran" data-p="West Branch, MI" data-irs="$1.2M" data-cms="$1.6M" data-pct="27%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="173.3" cy="494.3" r="3.5" data-n="Singing River Gulfport" data-p="Gulfport, MS" data-irs="$1.6M" data-cms="$1.2M" data-pct="26%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="223.7" cy="440.9" r="3.5" data-n="Ephraim Mcdowell Reg Med Ctr" data-p="Danville, KY" data-irs="$2.5M" data-cms="$2.1M" data-pct="17%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="269.2" cy="375.2" r="3.5" data-n="Texas Health Kaufman" data-p="Kaufman, TX" data-irs="$3.8M" data-cms="$4.2M" data-pct="10%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="248.9" cy="416.4" r="3.5" data-n="Adventist Glenoaks Hospital" data-p="Glendale Heights, IL" data-irs="$3.2M" data-cms="$2.7M" data-pct="14%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="323.3" cy="347.0" r="3.5" data-n="Adventist Health And Rideout" data-p="Marysville, CA" data-irs="$6.1M" data-cms="$5.6M" data-pct="7%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="209.7" cy="456.0" r="3.5" data-n="St. Catherine Of Siena Medical Cente" data-p="Smithtown, NY" data-irs="$2.2M" data-cms="$1.8M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="374.9" cy="292.4" r="3.5" data-n="Adventhealth Fish Memorial" data-p="Orange City, FL" data-irs="$9.5M" data-cms="$10.0M" data-pct="4%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="128.6" cy="470.2" r="3.5" data-n="Indiana University Health Bedford" data-p="Bedford, IN" data-irs="$1.1M" data-cms="$1.6M" data-pct="29%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="180.6" cy="489.2" r="3.5" data-n="Karmanos Cancer Hospital" data-p="Detroit, MI" data-irs="$1.7M" data-cms="$1.3M" data-pct="27%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="327.6" cy="343.8" r="3.5" data-n="Medstar Harbor Hospital" data-p="Baltimore, MD" data-irs="$6.3M" data-cms="$5.8M" data-pct="8%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="291.1" cy="377.7" r="3.5" data-n="Southeast Iowa Regional Medical Ctr" data-p="West Burlington, IA" data-irs="$4.6M" data-cms="$4.1M" data-pct="11%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="188.7" cy="430.7" r="3.5" data-n="St. Marys Of Michigan" data-p="Saginaw, MI" data-irs="$1.9M" data-cms="$2.4M" data-pct="21%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="346.0" cy="327.6" r="3.5" data-n="Vassar Brothers Medical Center" data-p="Poughkeepsie, NY" data-irs="$7.4M" data-cms="$6.9M" data-pct="7%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="177.4" cy="437.4" r="3.5" data-n="Southside Community Hospital" data-p="Farmville, VA" data-irs="$1.7M" data-cms="$2.2M" data-pct="23%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="363.4" cy="312.1" r="3.5" data-n="Washington Regional Medical Center" data-p="Fayetteville, AR" data-irs="$8.6M" data-cms="$8.1M" data-pct="6%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="269.9" cy="372.8" r="3.5" data-n="St. Lukes Nampa Medical Center" data-p="Nampa, ID" data-irs="$3.8M" data-cms="$4.3M" data-pct="12%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="319.8" cy="334.8" r="3.5" data-n="Tuality Healthcare" data-p="Hillsboro, OR" data-irs="$5.9M" data-cms="$6.4M" data-pct="8%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="234.9" cy="434.4" r="3.5" data-n="Wenatchee Valley Hospital" data-p="Wenatchee, WA" data-irs="$2.8M" data-cms="$2.3M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="182.8" cy="432.5" r="3.5" data-n="Hays Medical Center  Inc." data-p="Hays, KS" data-irs="$1.8M" data-cms="$2.3M" data-pct="23%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="252.9" cy="384.2" r="3.5" data-n="Good Samaritan Hospital Corvallis" data-p="Corvallis, OR" data-irs="$3.3M" data-cms="$3.8M" data-pct="14%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="150.5" cy="451.4" r="3.5" data-n="Mymichigan Medical Center-Clare" data-p="Clare, MI" data-irs="$1.3M" data-cms="$1.9M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="161.5" cy="444.7" r="3.5" data-n="Glencoe Regional Health Services" data-p="Glencoe, MN" data-irs="$1.5M" data-cms="$2.0M" data-pct="28%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="343.8" cy="330.5" r="3.5" data-n="Aria Health" data-p="Philadelphia, PA" data-irs="$7.3M" data-cms="$6.7M" data-pct="8%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="295.7" cy="352.3" r="3.5" data-n="Texas Health Hospital Allen" data-p="Allen, TX" data-irs="$4.8M" data-cms="$5.3M" data-pct="11%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="264.5" cy="405.8" r="3.5" data-n="Platte Valley Medical Center" data-p="Brighton, CO" data-irs="$3.6M" data-cms="$3.1M" data-pct="16%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="143.4" cy="454.1" r="3.5" data-n="St. John Owasso" data-p="Owasso, OK" data-irs="$1.3M" data-cms="$1.8M" data-pct="32%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="202.4" cy="417.6" r="3.5" data-n="St. Lukes Hospital Of Duluth" data-p="Duluth, MN" data-irs="$2.1M" data-cms="$2.7M" data-pct="22%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="128.4" cy="461.8" r="3.5" data-n="Freeman Neosho Hospital" data-p="Neosho, MO" data-irs="$1.1M" data-cms="$1.7M" data-pct="35%" data-end="2023-03-31"/>
+<circle class="dot neg" cx="211.9" cy="462.9" r="3.5" data-n="City Hospital Inc." data-p="Martinsburg, WV" data-irs="$2.3M" data-cms="$1.7M" data-pct="26%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="296.1" cy="375.8" r="3.5" data-n="Mercy Medical Center" data-p="Rockville Centre, NY" data-irs="$4.8M" data-cms="$4.2M" data-pct="13%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="461.2" cy="221.4" r="3.5" data-n="Rhode Island Hospital" data-p="Providence, RI" data-irs="$20.3M" data-cms="$20.9M" data-pct="3%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="249.6" cy="423.0" r="3.5" data-n="Winchester Hospital" data-p="Winchester, MA" data-irs="$3.2M" data-cms="$2.6M" data-pct="20%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="153.9" cy="445.6" r="3.5" data-n="The Good Samaritan Hospital" data-p="Lebanon, PA" data-irs="$1.4M" data-cms="$2.0M" data-pct="32%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="206.3" cy="471.7" r="3.5" data-n="Marshall Hospital" data-p="Placerville, CA" data-irs="$2.2M" data-cms="$1.5M" data-pct="30%" data-end="2023-10-31"/>
+<circle class="dot pos" cx="121.1" cy="463.2" r="3.5" data-n="Parkview Wabash Hospital  Inc." data-p="Wabash, IN" data-irs="$1.0M" data-cms="$1.7M" data-pct="38%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="209.5" cy="468.3" r="3.5" data-n="The Griffin Hospital" data-p="Derby, CT" data-irs="$2.2M" data-cms="$1.6M" data-pct="29%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="150.8" cy="446.4" r="3.5" data-n="North Lincoln Hospital" data-p="Lincoln City, OR" data-irs="$1.3M" data-cms="$2.0M" data-pct="33%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="255.0" cy="418.4" r="3.5" data-n="Oak Park Hospital" data-p="Oak Park, IL" data-irs="$3.3M" data-cms="$2.7M" data-pct="20%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="215.2" cy="406.8" r="3.5" data-n="Meriter Hospital  Inc." data-p="Madison, WI" data-irs="$2.4M" data-cms="$3.0M" data-pct="22%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="262.3" cy="411.0" r="3.5" data-n="Sarah Bush Lincoln Health Center" data-p="Mattoon, IL" data-irs="$3.6M" data-cms="$2.9M" data-pct="19%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="300.0" cy="347.4" r="3.5" data-n="Christus Mfh - Jacksonville" data-p="Jacksonville, TX" data-irs="$5.0M" data-cms="$5.6M" data-pct="12%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="228.6" cy="447.4" r="3.5" data-n="Altru Health System-Altru Hospital" data-p="Grand Forks, ND" data-irs="$2.6M" data-cms="$2.0M" data-pct="25%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="188.0" cy="496.9" r="3.5" data-n="Valley Regional Hospital" data-p="Claremont, NH" data-irs="$1.9M" data-cms="$1.2M" data-pct="36%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="153.0" cy="443.8" r="3.5" data-n="Hoopeston Community Memorial Hospita" data-p="Hoopseton, IL" data-irs="$1.4M" data-cms="$2.1M" data-pct="34%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="178.5" cy="428.8" r="3.5" data-n="Newark Wayne Community Hospital" data-p="Newark, NY" data-irs="$1.7M" data-cms="$2.4M" data-pct="29%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="186.8" cy="500.6" r="3.5" data-n="Baxter Regional Medical Center" data-p="Mountain Home, AR" data-irs="$1.8M" data-cms="$1.1M" data-pct="38%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="310.4" cy="338.7" r="3.5" data-n="Kennedy University Hospital" data-p="Cherry Hill, NJ" data-irs="$5.4M" data-cms="$6.2M" data-pct="12%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="187.6" cy="422.0" r="3.5" data-n="United Memorial Medical Center" data-p="Batavia, NY" data-irs="$1.8M" data-cms="$2.6M" data-pct="28%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="169.0" cy="432.1" r="3.5" data-n="Halifax Regional Hospital" data-p="South Boston, VA" data-irs="$1.6M" data-cms="$2.3M" data-pct="32%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="288.1" cy="354.6" r="3.5" data-n="Capital Region Medical Center" data-p="Jefferson City, MO" data-irs="$4.5M" data-cms="$5.2M" data-pct="14%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="245.5" cy="432.3" r="3.5" data-n="Healtheast Woodwinds Hospital" data-p="Woodbury, MN" data-irs="$3.1M" data-cms="$2.3M" data-pct="25%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="119.9" cy="457.5" r="3.5" data-n="Newport Hospital" data-p="Newport, RI" data-irs="$1.0M" data-cms="$1.8M" data-pct="43%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="357.5" cy="320.7" r="3.5" data-n="Harnett Health System" data-p="Dunn, NC" data-irs="$8.2M" data-cms="$7.4M" data-pct="9%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="379.1" cy="286.0" r="3.5" data-n="New York-Presbyterian/Brooklyn Metho" data-p="Brooklyn, NY" data-irs="$9.9M" data-cms="$10.7M" data-pct="7%" data-end="2022-10-01"/>
+<circle class="dot pos" cx="301.9" cy="344.0" r="3.5" data-n="St. Bernard Hospital" data-p="Chicago, IL" data-irs="$5.0M" data-cms="$5.8M" data-pct="14%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="328.5" cy="348.6" r="3.5" data-n="Centrastate Medical Center" data-p="Freehold, NJ" data-irs="$6.4M" data-cms="$5.6M" data-pct="13%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="124.3" cy="452.9" r="3.5" data-n="Sutter Coast Hospital" data-p="Crescent City, CA" data-irs="$1.1M" data-cms="$1.9M" data-pct="43%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="234.7" cy="447.0" r="3.5" data-n="Milford Regional Medical Center  Inc" data-p="Milford, MA" data-irs="$2.8M" data-cms="$2.0M" data-pct="29%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="122.7" cy="453.3" r="3.5" data-n="Champlain Valley Physicians Hospital" data-p="Plattsburgh, NY" data-irs="$1.0M" data-cms="$1.9M" data-pct="44%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="244.6" cy="435.9" r="3.5" data-n="Russell Medical Center" data-p="Alexander City, AL" data-irs="$3.0M" data-cms="$2.2M" data-pct="27%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="400.7" cy="281.9" r="3.5" data-n="St. Vincents Medical Center" data-p="Bridgeport, CT" data-irs="$12.0M" data-cms="$11.1M" data-pct="7%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="200.0" cy="411.1" r="3.5" data-n="Iu Health North Hospital" data-p="Carmel, IN" data-irs="$2.1M" data-cms="$2.9M" data-pct="29%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="299.5" cy="344.9" r="3.5" data-n="Phoebe Sumter Medical Center  Inc." data-p="Americus, GA" data-irs="$4.9M" data-cms="$5.8M" data-pct="15%" data-end="2023-07-31"/>
+<circle class="dot neg" cx="294.4" cy="383.0" r="3.5" data-n="Healtheast  St Johns Hospital" data-p="Maplewood, MN" data-irs="$4.7M" data-cms="$3.9M" data-pct="18%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="239.2" cy="443.9" r="3.5" data-n="Mid-Columbia Medical Center" data-p="The Dalles, OR" data-irs="$2.9M" data-cms="$2.1M" data-pct="29%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="235.4" cy="388.2" r="3.5" data-n="Jane Phillips Medical Center" data-p="Bartlesville, OK" data-irs="$2.8M" data-cms="$3.7M" data-pct="23%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="303.5" cy="374.2" r="3.5" data-n="Glen Cove Hospital" data-p="Glen Cove, NY" data-irs="$5.1M" data-cms="$4.2M" data-pct="17%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="374.0" cy="289.1" r="3.5" data-n="Baptist Mem Hospital North Miss" data-p="Oxford, MS" data-irs="$9.5M" data-cms="$10.3M" data-pct="8%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="216.0" cy="400.1" r="3.5" data-n="Roper St. Francis Mt Pleasant Hospit" data-p="Mt Pleasant, SC" data-irs="$2.4M" data-cms="$3.2M" data-pct="27%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="367.9" cy="312.5" r="3.5" data-n="Henry Ford Health Macomb Hospital" data-p="Mt Clemens, MI" data-irs="$9.0M" data-cms="$8.1M" data-pct="10%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="281.7" cy="356.5" r="3.5" data-n="Texas Health Hospital Mansfield" data-p="Mansfield, TX" data-irs="$4.2M" data-cms="$5.1M" data-pct="17%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="198.5" cy="409.8" r="3.5" data-n="Covenant Medical Center" data-p="Saginaw, MI" data-irs="$2.0M" data-cms="$2.9M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="272.7" cy="362.5" r="3.5" data-n="Iu Health West Hospital" data-p="Avon, IN" data-irs="$3.9M" data-cms="$4.8M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="294.6" cy="384.4" r="3.5" data-n="Overlake Hospital Medical Center" data-p="Bellevue, WA" data-irs="$4.7M" data-cms="$3.8M" data-pct="19%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="134.2" cy="443.1" r="3.5" data-n="The Brooklyn Hospital Center" data-p="Brooklyn, NY" data-irs="$1.2M" data-cms="$2.1M" data-pct="44%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="283.1" cy="355.2" r="3.5" data-n="Good Shepherd Medical Center" data-p="Hermiston, OR" data-irs="$4.3M" data-cms="$5.2M" data-pct="18%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="207.0" cy="403.7" r="3.5" data-n="St. John Broken Arrow" data-p="Broken Arrow, OK" data-irs="$2.2M" data-cms="$3.1M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="164.6" cy="427.1" r="3.5" data-n="Nanticoke Memorial Hospital" data-p="Seaford, DE" data-irs="$1.5M" data-cms="$2.4M" data-pct="38%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="144.7" cy="436.5" r="3.5" data-n="Pomona Valley Hospital Med Ctr" data-p="Pomona, CA" data-irs="$1.3M" data-cms="$2.2M" data-pct="43%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="159.9" cy="428.9" r="3.5" data-n="Ascension St. Vincent Kokomo" data-p="Kokomo, IN" data-irs="$1.5M" data-cms="$2.4M" data-pct="40%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="192.6" cy="411.3" r="3.5" data-n="Camden-Clark Memorial Hospital" data-p="Parkersburg, WV" data-irs="$1.9M" data-cms="$2.9M" data-pct="33%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="208.2" cy="402.3" r="3.5" data-n="Providence St Johns Health Center" data-p="Santa Monica, CA" data-irs="$2.2M" data-cms="$3.2M" data-pct="30%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="260.7" cy="368.9" r="3.5" data-n="Marion General Hospital" data-p="Marion, IN" data-irs="$3.5M" data-cms="$4.5M" data-pct="22%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="344.6" cy="336.0" r="3.5" data-n="Valley View Hospital" data-p="Glenwood Springs, CO" data-irs="$7.3M" data-cms="$6.3M" data-pct="13%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="338.3" cy="314.6" r="3.5" data-n="Swedish Edmonds" data-p="Edmonds, WA" data-irs="$6.9M" data-cms="$7.9M" data-pct="13%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="268.0" cy="363.8" r="3.5" data-n="Lawrence General Hospital" data-p="Lawrence, MA" data-irs="$3.7M" data-cms="$4.7M" data-pct="21%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="331.2" cy="319.7" r="3.5" data-n="Miami Valley Hospital" data-p="Dayton, OH" data-irs="$6.5M" data-cms="$7.5M" data-pct="13%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="274.6" cy="359.2" r="3.5" data-n="New York Presbyterian Hudson Valley" data-p="Cortlandt Manor, NY" data-irs="$4.0M" data-cms="$5.0M" data-pct="20%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="296.4" cy="385.4" r="3.5" data-n="St. Marys Hospital" data-p="Leonardtown, MD" data-irs="$4.8M" data-cms="$3.8M" data-pct="21%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="322.6" cy="358.5" r="3.5" data-n="Cox Medical Center Branson" data-p="Branson, MO" data-irs="$6.0M" data-cms="$5.0M" data-pct="17%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="264.3" cy="422.3" r="3.5" data-n="Emerson Hospital" data-p="Concord, MA" data-irs="$3.6M" data-cms="$2.6M" data-pct="29%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="288.9" cy="348.4" r="3.5" data-n="Uhs Hospitals" data-p="Binghamton, NY" data-irs="$4.5M" data-cms="$5.6M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="168.4" cy="419.6" r="3.5" data-n="St. Peters Hospital" data-p="Albany, NY" data-irs="$1.6M" data-cms="$2.6M" data-pct="41%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="245.2" cy="447.5" r="3.5" data-n="Lowell General Hospital" data-p="Lowell, MA" data-irs="$3.1M" data-cms="$2.0M" data-pct="36%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="174.8" cy="415.8" r="3.5" data-n="Samaritan Lebanon Comm Hospital" data-p="Lebanon, OR" data-irs="$1.7M" data-cms="$2.8M" data-pct="40%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="209.0" cy="500.7" r="3.5" data-n="The Mount Vernon Hospital" data-p="Mount Vernon, NY" data-irs="$2.2M" data-cms="$1.1M" data-pct="49%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="209.7" cy="396.8" r="3.5" data-n="Chi Health St. Francis" data-p="Grand Island, NE" data-irs="$2.2M" data-cms="$3.4M" data-pct="33%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="167.9" cy="418.7" r="3.5" data-n="St. Joseph Hospital" data-p="Bethpage, NY" data-irs="$1.6M" data-cms="$2.7M" data-pct="42%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="180.2" cy="412.4" r="3.5" data-n="Boone Hospital Center" data-p="Columbia, MO" data-irs="$1.7M" data-cms="$2.9M" data-pct="39%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="145.5" cy="428.2" r="3.5" data-n="Ascension St. Vincent Carmel" data-p="Carmel, IN" data-irs="$1.3M" data-cms="$2.4M" data-pct="47%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="292.5" cy="344.7" r="3.5" data-n="Adventhealth New Smyrna Beach" data-p="New Smyrna Beach, FL" data-irs="$4.6M" data-cms="$5.8M" data-pct="20%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="209.2" cy="505.0" r="3.5" data-n="Goleta Valley Cottage Hospital" data-p="Santa Barbara, CA" data-irs="$2.2M" data-cms="$1.1M" data-pct="51%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="317.8" cy="327.1" r="3.5" data-n="Bozeman Deaconess Health Services" data-p="Bozeman, MT" data-irs="$5.8M" data-cms="$6.9M" data-pct="17%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="227.5" cy="476.6" r="3.5" data-n="Beverly Hospital" data-p="Beverly, MA" data-irs="$2.6M" data-cms="$1.5M" data-pct="44%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="234.2" cy="381.1" r="3.5" data-n="Ascension St. Vincent Anderson" data-p="Anderson, IN" data-irs="$2.8M" data-cms="$4.0M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="146.3" cy="426.0" r="3.5" data-n="Ottawa Regional Hospital &amp; Healthcar" data-p="Ottawa, IL" data-irs="$1.3M" data-cms="$2.5M" data-pct="48%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="234.1" cy="380.8" r="3.5" data-n="Chi Health Good Samaritan" data-p="Kearney, NE" data-irs="$2.8M" data-cms="$4.0M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="297.3" cy="340.7" r="3.5" data-n="Montefiore Nyack Hospital" data-p="Nyack, NY" data-irs="$4.8M" data-cms="$6.0M" data-pct="20%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="289.1" cy="345.9" r="3.5" data-n="Sentara Martha Jefferson Hospital" data-p="Charlottesville, VA" data-irs="$4.5M" data-cms="$5.7M" data-pct="21%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="314.4" cy="328.5" r="3.5" data-n="Legacy Good Samaritan Hospital" data-p="Portland, OR" data-irs="$5.6M" data-cms="$6.8M" data-pct="18%" data-end="2023-03-31"/>
+<circle class="dot pos" cx="242.4" cy="374.7" r="3.5" data-n="St. Lukes Hospital" data-p="Chesterfield, MO" data-irs="$3.0M" data-cms="$4.2M" data-pct="29%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="273.5" cy="418.0" r="3.5" data-n="Metropolitan Hospital" data-p="Wyoming, MI" data-irs="$3.9M" data-cms="$2.7M" data-pct="31%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="217.9" cy="497.5" r="3.5" data-n="Faxton-St. Lukes Healthcare" data-p="Utica, NY" data-irs="$2.4M" data-cms="$1.2M" data-pct="51%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="313.6" cy="328.8" r="3.5" data-n="Legacy Mount Hood Medical Center" data-p="Gresham, OR" data-irs="$5.6M" data-cms="$6.8M" data-pct="18%" data-end="2023-03-31"/>
+<circle class="dot pos" cx="350.4" cy="302.8" r="3.5" data-n="West Jersey Health System" data-p="Voorhees, NJ" data-irs="$7.7M" data-cms="$9.0M" data-pct="14%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="193.5" cy="400.9" r="3.5" data-n="Samaritan Pacific Comm Hospital" data-p="Newport, OR" data-irs="$1.9M" data-cms="$3.2M" data-pct="39%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="254.3" cy="366.4" r="3.5" data-n="Ascension Se Wisconsin Hospital  Inc" data-p="Milwaukee, WI" data-irs="$3.3M" data-cms="$4.6M" data-pct="28%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="227.3" cy="486.2" r="3.5" data-n="Mather Hospital" data-p="Port Jefferson, NY" data-irs="$2.6M" data-cms="$1.3M" data-pct="49.6%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="496.6" cy="199.3" r="3.5" data-n="Naples Community Hospital" data-p="Naples, FL" data-irs="$27.7M" data-cms="$26.4M" data-pct="5%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="357.0" cy="328.4" r="3.5" data-n="Methodist Medical Center" data-p="Oak Ridge, TN" data-irs="$8.2M" data-cms="$6.9M" data-pct="16%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="200.3" cy="395.7" r="3.5" data-n="The Queens Medical Center" data-p="Honolulu, HI" data-irs="$2.1M" data-cms="$3.4M" data-pct="39%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="128.5" cy="427.7" r="3.5" data-n="Integris Health Edmond" data-p="Edmond, OK" data-irs="$1.1M" data-cms="$2.4M" data-pct="55%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="453.4" cy="224.3" r="3.5" data-n="West Georgia Medical Center" data-p="Lagrange, GA" data-irs="$19.0M" data-cms="$20.3M" data-pct="7%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="124.8" cy="427.3" r="3.5" data-n="Verdugo Hills Hospital" data-p="Glendale, CA" data-irs="$1.1M" data-cms="$2.4M" data-pct="56%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="270.0" cy="355.2" r="3.5" data-n="Texas Health Hospital Frisco" data-p="Frisco, TX" data-irs="$3.8M" data-cms="$5.2M" data-pct="27%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="192.8" cy="397.8" r="3.5" data-n="Munson Medical Center" data-p="Traverse City, MI" data-irs="$1.9M" data-cms="$3.3M" data-pct="42%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="235.7" cy="374.9" r="3.5" data-n="Aspirus Wausau Hospital" data-p="Wausau, WI" data-irs="$2.8M" data-cms="$4.2M" data-pct="33%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="206.5" cy="390.1" r="3.5" data-n="Women &amp; Infants Hospital" data-p="Providence, RI" data-irs="$2.2M" data-cms="$3.6M" data-pct="39%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="267.3" cy="432.7" r="3.5" data-n="Southern Ohio Medical Center" data-p="Portsmouth, OH" data-irs="$3.7M" data-cms="$2.3M" data-pct="38%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="456.4" cy="221.6" r="3.5" data-n="Shannon Medical Center" data-p="San Angelo, TX" data-irs="$19.5M" data-cms="$20.9M" data-pct="7%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="230.3" cy="490.1" r="3.5" data-n="Jefferson Regional Medical Center" data-p="Pine Bluff, AR" data-irs="$2.7M" data-cms="$1.3M" data-pct="53%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="176.2" cy="404.2" r="3.5" data-n="Samaritan Hospital" data-p="Troy, NY" data-irs="$1.7M" data-cms="$3.1M" data-pct="46%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="144.9" cy="416.3" r="3.5" data-n="Ssm Health Good Samaritan Hospital" data-p="Mt Vernon, IL" data-irs="$1.3M" data-cms="$2.7M" data-pct="54%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="340.2" cy="307.7" r="3.5" data-n="St. Francis Hospital" data-p="Roslyn, NY" data-irs="$7.0M" data-cms="$8.5M" data-pct="17%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="168.0" cy="406.5" r="3.5" data-n="St. Marys Medical Center" data-p="Duluth, MN" data-irs="$1.6M" data-cms="$3.0M" data-pct="49%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="217.5" cy="382.8" r="3.5" data-n="Great Plains Health" data-p="North Platte, NE" data-irs="$2.4M" data-cms="$3.9M" data-pct="38%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="262.0" cy="357.9" r="3.5" data-n="Virtua Mount Holly Hospital" data-p="Mt Holly, NJ" data-irs="$3.6M" data-cms="$5.0M" data-pct="29%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="354.8" cy="333.6" r="3.5" data-n="Good Samaritan Hospital" data-p="Baltimore, MD" data-irs="$8.0M" data-cms="$6.5M" data-pct="19%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="198.2" cy="391.3" r="3.5" data-n="New York Eye And Ear Infirmary" data-p="New York, NY" data-irs="$2.0M" data-cms="$3.6M" data-pct="43%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="146.6" cy="413.2" r="3.5" data-n="Wrmc Hospital Operating Corporation" data-p="North Wilkesboro, NC" data-irs="$1.3M" data-cms="$2.8M" data-pct="54%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="202.3" cy="388.0" r="3.5" data-n="Mymichigan Medical Center Alpena" data-p="Alpena, MI" data-irs="$2.1M" data-cms="$3.7M" data-pct="43%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="370.1" cy="285.4" r="3.5" data-n="Yakima Valley Memorial Hospital" data-p="Yakima, WA" data-irs="$9.1M" data-cms="$10.7M" data-pct="15%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="229.1" cy="374.1" r="3.5" data-n="Mclaren Macomb" data-p="Mt Clemens, MI" data-irs="$2.7M" data-cms="$4.3M" data-pct="37%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="389.4" cy="299.9" r="3.5" data-n="Good Samaritan Hospital" data-p="West Islip, NY" data-irs="$10.8M" data-cms="$9.2M" data-pct="15%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="336.9" cy="308.3" r="3.5" data-n="Adventhealth Zephyrhills" data-p="Zephyrhills, FL" data-irs="$6.8M" data-cms="$8.5M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="259.7" cy="356.7" r="3.5" data-n="Ascension Macomb-Oakland Hospital" data-p="Warren, MI" data-irs="$3.5M" data-cms="$5.1M" data-pct="32%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="317.5" cy="321.1" r="3.5" data-n="Wheaton Franciscan Healthcare - All" data-p="Racine, WI" data-irs="$5.8M" data-cms="$7.4M" data-pct="22%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="401.0" cy="262.6" r="3.5" data-n="Rochester General Hospital" data-p="Rochester, NY" data-irs="$12.0M" data-cms="$13.6M" data-pct="12%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="197.2" cy="388.9" r="3.5" data-n="Thedacare Regional Medical Center Ap" data-p="Appleton, WI" data-irs="$2.0M" data-cms="$3.6M" data-pct="45%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="270.7" cy="350.1" r="3.5" data-n="Copley Memorial Hospital" data-p="Aurora, IL" data-irs="$3.8M" data-cms="$5.5M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="340.4" cy="350.9" r="3.5" data-n="Baptist Mem Hospital Union County" data-p="New Albany, MS" data-irs="$7.1M" data-cms="$5.4M" data-pct="23%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="317.7" cy="320.7" r="3.5" data-n="Ball Memorial Hospital" data-p="Muncie, IN" data-irs="$5.8M" data-cms="$7.4M" data-pct="22%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="330.6" cy="362.0" r="3.5" data-n="Nea Baptist Memorial Hospital" data-p="Jonesboro, AR" data-irs="$6.5M" data-cms="$4.8M" data-pct="25%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="135.0" cy="413.3" r="3.5" data-n="Adventist Health Sonora" data-p="Sonora, CA" data-irs="$1.2M" data-cms="$2.8M" data-pct="59%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="309.4" cy="325.2" r="3.5" data-n="Blessing Hospital" data-p="Quincy, IL" data-irs="$5.4M" data-cms="$7.1M" data-pct="24%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="408.0" cy="256.8" r="3.5" data-n="Stanford Health Care" data-p="Stanford, CA" data-irs="$12.8M" data-cms="$14.5M" data-pct="12%" data-end="2023-08-31"/>
+<circle class="dot pos" cx="330.2" cy="311.4" r="3.5" data-n="Southcoast Hospitals Group  Inc" data-p="Fall River, MA" data-irs="$6.5M" data-cms="$8.2M" data-pct="21%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="140.6" cy="408.7" r="3.5" data-n="Mercy Medical Center" data-p="Roseburg, OR" data-irs="$1.2M" data-cms="$3.0M" data-pct="59%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="143.9" cy="407.3" r="3.5" data-n="Ssm Health-St. Marys-Jefferson City" data-p="Jefferson City, MO" data-irs="$1.3M" data-cms="$3.0M" data-pct="58%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="328.3" cy="312.4" r="3.5" data-n="Virtua Our Lady Of Lourdes Hospital" data-p="Camden, NJ" data-irs="$6.3M" data-cms="$8.1M" data-pct="22%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="540.3" cy="162.2" r="3.5" data-n="Baptist Mem Hospital Memphis" data-p="Memphis, TN" data-irs="$40.6M" data-cms="$38.9M" data-pct="4%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="275.1" cy="345.4" r="3.5" data-n="Our Lady Of Lourdes Memorial Hosp" data-p="Binghamton, NY" data-irs="$4.0M" data-cms="$5.7M" data-pct="31%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="188.2" cy="389.5" r="3.5" data-n="St. Agnes Medical Center" data-p="Fresno, CA" data-irs="$1.9M" data-cms="$3.6M" data-pct="49%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="249.9" cy="478.9" r="3.5" data-n="Southwest Memorial Hospital" data-p="Cortez, CO" data-irs="$3.2M" data-cms="$1.4M" data-pct="55%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="261.2" cy="353.0" r="3.5" data-n="Legacy Meridian Park Hospital" data-p="Tualatin, OR" data-irs="$3.5M" data-cms="$5.3M" data-pct="34%" data-end="2023-03-31"/>
+<circle class="dot neg" cx="363.0" cy="328.9" r="3.5" data-n="Medstar Southern Maryland Hospital C" data-p="Clinton, MD" data-irs="$8.6M" data-cms="$6.8M" data-pct="21%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="268.3" cy="348.9" r="3.5" data-n="Chi Health St. Elizabeth" data-p="Lincoln, NE" data-irs="$3.8M" data-cms="$5.5M" data-pct="32%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="306.5" cy="326.0" r="3.5" data-n="York Hospital" data-p="York, PA" data-irs="$5.2M" data-cms="$7.0M" data-pct="25%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="439.2" cy="253.6" r="3.5" data-n="Atlanta Medical Center" data-p="Atlanta, GA" data-irs="$16.8M" data-cms="$15.0M" data-pct="11%" data-end="2022-10-01"/>
+<circle class="dot neg" cx="389.2" cy="302.2" r="3.5" data-n="Ingalls Memorial Hospital" data-p="Harvey, IL" data-irs="$10.8M" data-cms="$9.0M" data-pct="17%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="323.7" cy="314.6" r="3.5" data-n="Garnet Health Medical Center" data-p="Middletown, NY" data-irs="$6.1M" data-cms="$7.9M" data-pct="23%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="308.2" cy="394.0" r="3.5" data-n="Plainview Hospital" data-p="Plainview, NY" data-irs="$5.3M" data-cms="$3.5M" data-pct="35%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="169.6" cy="394.0" r="3.5" data-n="Deaconess Henderson Hospital" data-p="Henderson, KY" data-irs="$1.6M" data-cms="$3.5M" data-pct="54%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="249.3" cy="488.9" r="3.5" data-n="Mary Imogene Bassett Hospital" data-p="Cooperstown, NY" data-irs="$3.2M" data-cms="$1.3M" data-pct="60%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="461.2" cy="215.8" r="3.5" data-n="Integris Baptist Medical Center" data-p="Oklahoma City, OK" data-irs="$20.3M" data-cms="$22.2M" data-pct="9%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="212.2" cy="375.1" r="3.5" data-n="Cheshire Medical Center" data-p="Keene, NH" data-irs="$2.3M" data-cms="$4.2M" data-pct="45%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="331.3" cy="366.8" r="3.5" data-n="Holy Spirit Hospital" data-p="Camp Hill, PA" data-irs="$6.5M" data-cms="$4.6M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="190.7" cy="384.3" r="3.5" data-n="Midwestern Regional Medical Center" data-p="Zion, IL" data-irs="$1.9M" data-cms="$3.8M" data-pct="50.3%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="341.0" cy="302.1" r="3.5" data-n="Legacy Salmon Creek Hospital" data-p="Vancouver, WA" data-irs="$7.1M" data-cms="$9.0M" data-pct="21%" data-end="2023-03-31"/>
+<circle class="dot pos" cx="153.0" cy="398.1" r="3.5" data-n="Baptist Medical Ctr-Nassau" data-p="Fernandina Beach, FL" data-irs="$1.4M" data-cms="$3.3M" data-pct="59%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="246.5" cy="357.2" r="3.5" data-n="Highland Hospital" data-p="Rochester, NY" data-irs="$3.1M" data-cms="$5.1M" data-pct="39%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="364.2" cy="330.4" r="3.5" data-n="The Miriam Hospital" data-p="Providence, RI" data-irs="$8.7M" data-cms="$6.7M" data-pct="23%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="410.2" cy="282.9" r="3.5" data-n="W.A. Foote Memorial Hospital" data-p="Jackson, MI" data-irs="$13.0M" data-cms="$11.0M" data-pct="15%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="238.7" cy="360.7" r="3.5" data-n="Ascension Ne Wisconsin-St. Elizabeth" data-p="Appleton, WI" data-irs="$2.9M" data-cms="$4.9M" data-pct="41%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="373.7" cy="320.6" r="3.5" data-n="Medstar Union Memorial Hospital" data-p="Baltimore, MD" data-irs="$9.4M" data-cms="$7.4M" data-pct="21%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="272.3" cy="342.8" r="3.5" data-n="Sibley Memorial Hospital" data-p="Washington, DC" data-irs="$3.9M" data-cms="$5.9M" data-pct="34%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="203.8" cy="376.4" r="3.5" data-n="St. Cloud Hospital" data-p="St Cloud, MN" data-irs="$2.1M" data-cms="$4.2M" data-pct="49%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="142.8" cy="399.3" r="3.5" data-n="Riverside Medical Center" data-p="Kankakee, IL" data-irs="$1.2M" data-cms="$3.3M" data-pct="62%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="401.6" cy="291.9" r="3.5" data-n="Edward W. Sparrow Hospital" data-p="Lansing, MI" data-irs="$12.1M" data-cms="$10.0M" data-pct="17%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="255.8" cy="351.2" r="3.5" data-n="Chi Health Immanuel" data-p="Omaha, NE" data-irs="$3.4M" data-cms="$5.4M" data-pct="38%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="272.4" cy="342.1" r="3.5" data-n="Saint Francis Hospital" data-p="Hartford, CT" data-irs="$3.9M" data-cms="$5.9M" data-pct="34%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="307.0" cy="322.1" r="3.5" data-n="The Unity Hospital Of Rochester" data-p="Rochester, NY" data-irs="$5.3M" data-cms="$7.3M" data-pct="28%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="342.3" cy="299.9" r="3.5" data-n="Chi St Lukes Health Memorial Lufkin" data-p="Lufkin, TX" data-irs="$7.2M" data-cms="$9.2M" data-pct="22%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="193.6" cy="379.7" r="3.5" data-n="Thedacare Regional Medical Center -" data-p="Neenah, WI" data-irs="$2.0M" data-cms="$4.0M" data-pct="51%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="454.0" cy="241.4" r="3.5" data-n="Legacy Emanuel Hospital &amp; Health Ctr" data-p="Portland, OR" data-irs="$19.1M" data-cms="$17.0M" data-pct="11%" data-end="2023-03-31"/>
+<circle class="dot pos" cx="252.4" cy="352.1" r="3.5" data-n="Ascension Borgess Hospital" data-p="Kalamazoo, MI" data-irs="$3.3M" data-cms="$5.3M" data-pct="39%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="444.0" cy="251.0" r="3.5" data-n="Saint Joseph Hospital" data-p="Denver, CO" data-irs="$17.5M" data-cms="$15.4M" data-pct="12%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="282.7" cy="335.2" r="3.5" data-n="Adventhealth Hendersonville" data-p="Hendersonville, NC" data-irs="$4.3M" data-cms="$6.4M" data-pct="33%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="342.4" cy="298.8" r="3.5" data-n="Lahey Clinic Hospital  Inc." data-p="Burlington, MA" data-irs="$7.2M" data-cms="$9.3M" data-pct="23%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="166.8" cy="386.5" r="3.5" data-n="Bhmc-Conway" data-p="Conway, AR" data-irs="$1.5M" data-cms="$3.7M" data-pct="59%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="159.8" cy="388.3" r="3.5" data-n="Long Island Community Hospital" data-p="Patchogue, NY" data-irs="$1.5M" data-cms="$3.7M" data-pct="60%" data-end="2023-08-31"/>
+<circle class="dot pos" cx="421.5" cy="243.9" r="3.5" data-n="Adventhealth Shawnee Mission" data-p="Shawnee Mission, KS" data-irs="$14.3M" data-cms="$16.6M" data-pct="13%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="301.9" cy="415.2" r="3.5" data-n="Wyckoff Heights Medical Center" data-p="Brooklyn, NY" data-irs="$5.0M" data-cms="$2.8M" data-pct="45%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="420.8" cy="244.0" r="3.5" data-n="Adventhealth Waterman" data-p="Tavares, FL" data-irs="$14.3M" data-cms="$16.5M" data-pct="14%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="243.8" cy="352.4" r="3.5" data-n="Adventist Health Glendale" data-p="Glendale, CA" data-irs="$3.0M" data-cms="$5.3M" data-pct="43%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="393.1" cy="303.7" r="3.5" data-n="Conway Hospital" data-p="Conway, SC" data-irs="$11.2M" data-cms="$8.9M" data-pct="21%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="117.7" cy="397.8" r="3.5" data-n="Anderson Hospital" data-p="Maryville, IL" data-irs="$1.0M" data-cms="$3.3M" data-pct="70%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="372.1" cy="326.5" r="3.5" data-n="Blue Ridge Healthcare Hospitals" data-p="Morganton, NC" data-irs="$9.3M" data-cms="$7.0M" data-pct="25%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="413.5" cy="282.8" r="3.5" data-n="Medstar Franklin Square Medical Ctr" data-p="Baltimore, MD" data-irs="$13.4M" data-cms="$11.0M" data-pct="18%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="283.8" cy="449.7" r="3.5" data-n="Maple Grove Hospital" data-p="Maple Grove, MN" data-irs="$4.3M" data-cms="$1.9M" data-pct="55%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="423.4" cy="273.2" r="3.5" data-n="Huntington Hospital" data-p="Pasadena, CA" data-irs="$14.6M" data-cms="$12.2M" data-pct="16%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="318.1" cy="311.2" r="3.5" data-n="Adventhealth - North Pinellas" data-p="Tarpon Springs, FL" data-irs="$5.8M" data-cms="$8.2M" data-pct="29%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="276.7" cy="334.0" r="3.5" data-n="Sentara Princess Anne Hospital" data-p="Virginia Beach, VA" data-irs="$4.0M" data-cms="$6.5M" data-pct="38%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="135.1" cy="389.1" r="3.5" data-n="Lexington Memorial Hospital  Inc." data-p="Lexington, NC" data-irs="$1.2M" data-cms="$3.6M" data-pct="68%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="343.5" cy="294.9" r="3.5" data-n="Emanate Health Medical Center" data-p="Covina, CA" data-irs="$7.3M" data-cms="$9.7M" data-pct="25%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="334.4" cy="300.5" r="3.5" data-n="Mymichigan Medical Center Midland" data-p="Midland, MI" data-irs="$6.7M" data-cms="$9.2M" data-pct="27%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="297.4" cy="431.8" r="3.5" data-n="Salem Health West Valley" data-p="Dallas, OR" data-irs="$4.8M" data-cms="$2.3M" data-pct="52%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="163.5" cy="378.7" r="3.5" data-n="St Josephs Hospital &amp; Health Ctr" data-p="Dickinson, ND" data-irs="$1.5M" data-cms="$4.1M" data-pct="63%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="348.6" cy="290.9" r="3.5" data-n="Sentara Rmh Medical Center" data-p="Harrisonburg, VA" data-irs="$7.6M" data-cms="$10.1M" data-pct="25%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="134.5" cy="386.9" r="3.5" data-n="Ellis Hospital" data-p="Schenectady, NY" data-irs="$1.2M" data-cms="$3.7M" data-pct="69%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="284.7" cy="459.2" r="3.5" data-n="Baptist Health Madisonville" data-p="Madisonville, KY" data-irs="$4.3M" data-cms="$1.7M" data-pct="60%" data-end="2023-08-31"/>
+<circle class="dot pos" cx="243.6" cy="347.5" r="3.5" data-n="Ascension St John Hospital" data-p="Detroit, MI" data-irs="$3.0M" data-cms="$5.6M" data-pct="46%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="312.6" cy="311.8" r="3.5" data-n="Ascension St. Vincent Evansville" data-p="Evansville, IN" data-irs="$5.5M" data-cms="$8.1M" data-pct="32%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="265.4" cy="336.7" r="3.5" data-n="Froedtert South" data-p="Kenosha, WI" data-irs="$3.7M" data-cms="$6.3M" data-pct="42%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="222.2" cy="355.5" r="3.5" data-n="Silver Cross Hospital" data-p="New Lenox, IL" data-irs="$2.5M" data-cms="$5.2M" data-pct="51%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="362.0" cy="281.5" r="3.5" data-n="Christus Mf - Sulphur Springs" data-p="Sulphur Springs, TX" data-irs="$8.5M" data-cms="$11.2M" data-pct="24%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="209.6" cy="360.4" r="3.5" data-n="Hendrick Medical Center Brownwood" data-p="Brownwood, TX" data-irs="$2.2M" data-cms="$4.9M" data-pct="54%" data-end="2023-08-31"/>
+<circle class="dot neg" cx="297.7" cy="437.9" r="3.5" data-n="Gerald Champion Regional Medical Ctr" data-p="Alamogordo, NM" data-irs="$4.9M" data-cms="$2.2M" data-pct="55%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="215.5" cy="357.5" r="3.5" data-n="Bartow Regional Medical Center" data-p="Bartow, FL" data-irs="$2.4M" data-cms="$5.1M" data-pct="53%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="219.9" cy="352.5" r="3.5" data-n="Loma Linda University Childrens Hosp" data-p="Loma Linda, CA" data-irs="$2.5M" data-cms="$5.3M" data-pct="54%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="215.9" cy="353.6" r="3.5" data-n="Roper St. Francis Hospital-Berkeley" data-p="Summerville, SC" data-irs="$2.4M" data-cms="$5.3M" data-pct="55%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="143.9" cy="376.1" r="3.5" data-n="Memorial Hospital Of South Bend  Inc" data-p="South Bend, IN" data-irs="$1.3M" data-cms="$4.2M" data-pct="70%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="300.7" cy="314.8" r="3.5" data-n="Kaleida Health" data-p="Buffalo, NY" data-irs="$5.0M" data-cms="$7.9M" data-pct="37%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="222.4" cy="350.4" r="3.5" data-n="Baptist Medical Center-Beaches" data-p="Jacksonville Beach, FL" data-irs="$2.5M" data-cms="$5.4M" data-pct="54%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="401.4" cy="302.1" r="3.5" data-n="University Of Vermont Medical Center" data-p="Burlington, VT" data-irs="$12.0M" data-cms="$9.0M" data-pct="25%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="288.5" cy="319.1" r="3.5" data-n="Knapp Medical  Center" data-p="Weslaco, TX" data-irs="$4.5M" data-cms="$7.5M" data-pct="41%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="243.7" cy="339.1" r="3.5" data-n="Ascension St. Vincents Clay County" data-p="Middleburg, FL" data-irs="$3.0M" data-cms="$6.1M" data-pct="51%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="340.7" cy="290.0" r="3.5" data-n="University Of Louisville Hospital" data-p="Louisville, KY" data-irs="$7.1M" data-cms="$10.2M" data-pct="31%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="202.3" cy="353.5" r="3.5" data-n="Soin Medical Center" data-p="Beavercreek, OH" data-irs="$2.1M" data-cms="$5.3M" data-pct="60%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="439.0" cy="226.2" r="3.5" data-n="Mount Sinai St. Lukes Roosevelt Hos" data-p="New York, NY" data-irs="$16.7M" data-cms="$19.9M" data-pct="16%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="447.3" cy="254.7" r="3.5" data-n="Adventhealth Daytona Beach" data-p="Daytona, FL" data-irs="$18.0M" data-cms="$14.8M" data-pct="18%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="239.8" cy="338.9" r="3.5" data-n="Adventist Medical Center-Portland" data-p="Portland, OR" data-irs="$2.9M" data-cms="$6.1M" data-pct="52%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="445.8" cy="221.2" r="3.5" data-n="Salem Hospital" data-p="Salem, OR" data-irs="$17.8M" data-cms="$21.0M" data-pct="15%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="188.0" cy="356.6" r="3.5" data-n="Fort Hamilton Hospital" data-p="Hamilton, OH" data-irs="$1.9M" data-cms="$5.1M" data-pct="64%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="329.5" cy="403.2" r="3.5" data-n="Jupiter Medical Center" data-p="Jupiter, FL" data-irs="$6.4M" data-cms="$3.1M" data-pct="51%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="508.2" cy="174.8" r="3.5" data-n="Mount Sinai Hospital" data-p="New York, NY" data-irs="$30.7M" data-cms="$34.1M" data-pct="10%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="231.0" cy="339.5" r="3.5" data-n="Ascension Providence Hospital" data-p="Southfield, MI" data-irs="$2.7M" data-cms="$6.1M" data-pct="56%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="261.1" cy="327.3" r="3.5" data-n="United Hospital Center" data-p="Bridgeport, WV" data-irs="$3.5M" data-cms="$6.9M" data-pct="49%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="313.6" cy="439.1" r="3.5" data-n="Mount Auburn Hospital" data-p="Cambridge, MA" data-irs="$5.6M" data-cms="$2.2M" data-pct="61%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="345.0" cy="383.4" r="3.5" data-n="Baystate Medical Center" data-p="Springfield, MA" data-irs="$7.3M" data-cms="$3.9M" data-pct="47%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="444.9" cy="220.7" r="3.5" data-n="Paulding Medical Center" data-p="Hiram, GA" data-irs="$17.6M" data-cms="$21.1M" data-pct="17%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="366.4" cy="271.7" r="3.5" data-n="Baylor S&amp;W Medical Center - Mckinney" data-p="Mckinney, TX" data-irs="$8.9M" data-cms="$12.4M" data-pct="28%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="346.4" cy="283.2" r="3.5" data-n="Adventhealth Wesley Chapel" data-p="Wesley Chapel, FL" data-irs="$7.4M" data-cms="$11.0M" data-pct="32%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="225.4" cy="337.6" r="3.5" data-n="Harrison Medical Center" data-p="Bremerton, WA" data-irs="$2.6M" data-cms="$6.2M" data-pct="59%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="400.3" cy="249.7" r="3.5" data-n="Bronxcare Health System" data-p="Bronx, NY" data-irs="$11.9M" data-cms="$15.6M" data-pct="24%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="457.5" cy="247.4" r="3.5" data-n="Fort Sanders Regional Medical Center" data-p="Knoxville, TN" data-irs="$19.7M" data-cms="$16.0M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="299.3" cy="306.3" r="3.5" data-n="St. Lukes Sugar Land Hospital" data-p="Sugar Land, TX" data-irs="$4.9M" data-cms="$8.6M" data-pct="43%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="426.5" cy="280.9" r="3.5" data-n="Kadlec Regional Medical Center" data-p="Richland, WA" data-irs="$15.0M" data-cms="$11.2M" data-pct="25%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="437.8" cy="223.9" r="3.5" data-n="Texas Health Huguley" data-p="Burleson, TX" data-irs="$16.6M" data-cms="$20.4M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="385.2" cy="257.6" r="3.5" data-n="Baylor Scott &amp; White Mc- Lake Pointe" data-p="Rowlett, TX" data-irs="$10.4M" data-cms="$14.3M" data-pct="27%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="374.4" cy="348.0" r="3.5" data-n="North Memorial Health Hospital" data-p="Robbinsdale, MN" data-irs="$9.5M" data-cms="$5.6M" data-pct="41%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="563.6" cy="146.4" r="3.5" data-n="Forsyth Memorial Hospital  Inc" data-p="Winston Salem, NC" data-irs="$49.8M" data-cms="$45.8M" data-pct="8%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="126.7" cy="356.3" r="3.5" data-n="San Antonio Regional Hospital" data-p="Upland, CA" data-irs="$1.1M" data-cms="$5.1M" data-pct="79%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="310.2" cy="297.1" r="3.5" data-n="St Lukes Hospital At The Vintage" data-p="Houston, TX" data-irs="$5.4M" data-cms="$9.5M" data-pct="43%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="221.2" cy="331.8" r="3.5" data-n="The Chester County Hospital" data-p="West Chester, PA" data-irs="$2.5M" data-cms="$6.6M" data-pct="62%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="348.6" cy="276.8" r="3.5" data-n="Sentara Northern Virginia Med Ctr" data-p="Woodbridge, VA" data-irs="$7.6M" data-cms="$11.7M" data-pct="35%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="230.7" cy="328.0" r="3.5" data-n="Mercy Medical Center" data-p="Williston, ND" data-irs="$2.7M" data-cms="$6.9M" data-pct="61%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="419.5" cy="234.2" r="3.5" data-n="Deaconess Hospital" data-p="Evansville, IN" data-irs="$14.1M" data-cms="$18.3M" data-pct="23%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="409.2" cy="240.6" r="3.5" data-n="Orlando Health South Lake Hospital" data-p="Clermont, FL" data-irs="$12.9M" data-cms="$17.1M" data-pct="25%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="135.3" cy="349.7" r="3.5" data-n="Marinhealth Medical Center" data-p="Greenbrae, CA" data-irs="$1.2M" data-cms="$5.5M" data-pct="79%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="381.9" cy="256.8" r="3.5" data-n="Baylor Medical Center-Grapevine" data-p="Grapevine, TX" data-irs="$10.1M" data-cms="$14.5M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="452.3" cy="211.9" r="3.5" data-n="Wyoming Medical Center" data-p="Casper, WY" data-irs="$18.8M" data-cms="$23.1M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="316.6" cy="486.1" r="3.5" data-n="Northern Westchester Hospital" data-p="Mount Kisco, NY" data-irs="$5.7M" data-cms="$1.3M" data-pct="77%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="172.3" cy="340.5" r="3.5" data-n="Southern Nh Medical Center" data-p="Nashua, NH" data-irs="$1.6M" data-cms="$6.0M" data-pct="73%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="418.4" cy="233.6" r="3.5" data-n="Baptist Mem Hospital Desoto" data-p="Southaven, MS" data-irs="$14.0M" data-cms="$18.4M" data-pct="24%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="130.6" cy="347.4" r="3.5" data-n="Gritman Medical Center" data-p="Moscow, ID" data-irs="$1.1M" data-cms="$5.6M" data-pct="80%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="137.4" cy="346.2" r="3.5" data-n="Genesis Healthcare System" data-p="Zanesville, OH" data-irs="$1.2M" data-cms="$5.7M" data-pct="79%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="389.2" cy="251.2" r="3.5" data-n="Froedtert Mem. Lutheran Hospt." data-p="Milwaukee, WI" data-irs="$10.8M" data-cms="$15.4M" data-pct="30%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="383.8" cy="254.3" r="3.5" data-n="Baylor Sw Medical Center- Waxahachie" data-p="Waxahachie, TX" data-irs="$10.3M" data-cms="$14.9M" data-pct="31%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="487.0" cy="221.5" r="3.5" data-n="Coxhealth" data-p="Springfield, MO" data-irs="$25.5M" data-cms="$20.9M" data-pct="18%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="351.7" cy="272.1" r="3.5" data-n="Integris Southwest Medical Center" data-p="Oklahoma City, OK" data-irs="$7.8M" data-cms="$12.3M" data-pct="37%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="284.1" cy="303.7" r="3.5" data-n="High Point Medical Center" data-p="High Point, NC" data-irs="$4.3M" data-cms="$8.9M" data-pct="51%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="429.2" cy="226.0" r="3.5" data-n="Texas Health Presbyterian Hospital P" data-p="Plano, TX" data-irs="$15.4M" data-cms="$20.0M" data-pct="23%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="295.3" cy="298.1" r="3.5" data-n="Adventist Bolingbrook Hospital" data-p="Bolingbrook, IL" data-irs="$4.8M" data-cms="$9.4M" data-pct="49%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="554.7" cy="156.4" r="3.5" data-n="Phoebe Putney Memorial Hospital" data-p="Albany, GA" data-irs="$46.1M" data-cms="$41.3M" data-pct="10%" data-end="2023-07-31"/>
+<circle class="dot pos" cx="352.0" cy="269.2" r="3.5" data-n="St. Alexius Medical Center" data-p="Hoffman Estates, IL" data-irs="$7.8M" data-cms="$12.7M" data-pct="39%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="210.1" cy="323.8" r="3.5" data-n="Adventist Health White Memorial" data-p="Los Angeles, CA" data-irs="$2.3M" data-cms="$7.2M" data-pct="69%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="330.1" cy="279.8" r="3.5" data-n="Jamaica Hospital Medical Center" data-p="Jamaica, NY" data-irs="$6.4M" data-cms="$11.4M" data-pct="43%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="431.8" cy="222.8" r="3.5" data-n="Roper Hospital  Inc." data-p="Charleston, SC" data-irs="$15.7M" data-cms="$20.6M" data-pct="24%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="332.6" cy="278.5" r="3.5" data-n="Alexian Brothers Medical Center" data-p="Elk Grove Village, IL" data-irs="$6.6M" data-cms="$11.5M" data-pct="43%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="329.8" cy="475.7" r="3.5" data-n="Monongalia General Hospital" data-p="Morgantown, WV" data-irs="$6.4M" data-cms="$1.5M" data-pct="77%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="381.0" cy="252.9" r="3.5" data-n="Bon Secours St. Francis Xavier Hospi" data-p="Charleston, SC" data-irs="$10.1M" data-cms="$15.1M" data-pct="33%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="446.0" cy="213.1" r="3.5" data-n="Ascension St. Vincent Hospital" data-p="Indianapolis, IN" data-irs="$17.8M" data-cms="$22.8M" data-pct="22%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="186.6" cy="327.4" r="3.5" data-n="Adventist Health Reedley" data-p="Reedley, CA" data-irs="$1.8M" data-cms="$6.9M" data-pct="74%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="223.1" cy="318.2" r="3.5" data-n="Enloe Medical Center" data-p="Chico, CA" data-irs="$2.5M" data-cms="$7.6M" data-pct="67%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="366.0" cy="260.4" r="3.5" data-n="Swedishamerican Hospital" data-p="Rockford, IL" data-irs="$8.8M" data-cms="$13.9M" data-pct="37%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="455.6" cy="206.0" r="3.5" data-n="Christus St Michael" data-p="Texarkana, TX" data-irs="$19.4M" data-cms="$24.6M" data-pct="21%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="195.4" cy="323.0" r="3.5" data-n="Concord Hospital  Inc." data-p="Concord, NH" data-irs="$2.0M" data-cms="$7.3M" data-pct="73%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="384.3" cy="356.9" r="3.5" data-n="Tidalhealth Peninsula Regional Inc" data-p="Salisbury, MD" data-irs="$10.4M" data-cms="$5.1M" data-pct="51%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="415.5" cy="231.2" r="3.5" data-n="St. Lukes The Woodlands Hospital" data-p="The Woodlands, TX" data-irs="$13.6M" data-cms="$18.9M" data-pct="28%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="286.7" cy="294.8" r="3.5" data-n="South Florida Baptist Hospital" data-p="Plant City, FL" data-irs="$4.4M" data-cms="$9.7M" data-pct="55%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="514.7" cy="197.1" r="3.5" data-n="North Mississippi Medical Center" data-p="Tupelo, MS" data-irs="$32.5M" data-cms="$27.0M" data-pct="17%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="244.4" cy="307.3" r="3.5" data-n="St. Mary Medical Center" data-p="Langhorne, PA" data-irs="$3.0M" data-cms="$8.5M" data-pct="64%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="313.0" cy="282.4" r="3.5" data-n="Ascension St. Vincents Southside Ho" data-p="Jacksonville, FL" data-irs="$5.5M" data-cms="$11.1M" data-pct="49.9%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="487.2" cy="226.1" r="3.5" data-n="Mercy Medical Center" data-p="Baltimore, MD" data-irs="$25.5M" data-cms="$19.9M" data-pct="22%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="379.8" cy="248.4" r="3.5" data-n="St Bernards Medical Center" data-p="Jonesboro, AR" data-irs="$10.0M" data-cms="$15.8M" data-pct="37%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="304.4" cy="282.6" r="3.5" data-n="Sharp Chula Vista Medical Center" data-p="Chula Vista, CA" data-irs="$5.1M" data-cms="$11.1M" data-pct="53%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="481.5" cy="186.0" r="3.5" data-n="Baylor S&amp;W Medical Center - Irving" data-p="Irving, TX" data-irs="$24.3M" data-cms="$30.3M" data-pct="20%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="158.9" cy="319.7" r="3.5" data-n="Culpeper Memorial Hospital" data-p="Culpeper, VA" data-irs="$1.4M" data-cms="$7.5M" data-pct="81%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="466.5" cy="252.5" r="3.5" data-n="Englewood Hospital &amp; Med Ctr" data-p="Englewood, NJ" data-irs="$21.3M" data-cms="$15.1M" data-pct="29%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="165.7" cy="317.1" r="3.5" data-n="Adventist Health Hanford" data-p="Hanford, CA" data-irs="$1.5M" data-cms="$7.7M" data-pct="80%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="567.8" cy="124.0" r="3.5" data-n="Christus Mother Frances Hosp-Tyler" data-p="Tyler, TX" data-irs="$51.7M" data-cms="$57.9M" data-pct="11%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="410.3" cy="229.1" r="3.5" data-n="St. John Medical Center" data-p="Tulsa, OK" data-irs="$13.0M" data-cms="$19.3M" data-pct="33%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="346.6" cy="259.7" r="3.5" data-n="Mary Hitchcock Memorial Hosp" data-p="Lebanon, NH" data-irs="$7.4M" data-cms="$14.0M" data-pct="47%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="382.3" cy="392.7" r="3.5" data-n="Verde Valley Medical Center" data-p="Cottonwood, AZ" data-irs="$10.2M" data-cms="$3.5M" data-pct="66%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="237.4" cy="296.7" r="3.5" data-n="Olathe Medical Center" data-p="Olathe, KS" data-irs="$2.9M" data-cms="$9.5M" data-pct="70%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="343.4" cy="260.0" r="3.5" data-n="Ascension St. Vincents Riverside" data-p="Jacksonville, FL" data-irs="$7.2M" data-cms="$14.0M" data-pct="48%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="414.7" cy="224.1" r="3.5" data-n="Carle Foundation Hospital" data-p="Urbana, IL" data-irs="$13.5M" data-cms="$20.4M" data-pct="34%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="412.7" cy="225.0" r="3.5" data-n="Bryan Medical Center" data-p="Lincoln, NE" data-irs="$13.3M" data-cms="$20.2M" data-pct="34%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="421.3" cy="320.6" r="3.5" data-n="Santa Barbara Cottage Hospital" data-p="Santa Barbara, CA" data-irs="$14.3M" data-cms="$7.4M" data-pct="48%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="388.9" cy="237.4" r="3.5" data-n="Winter Haven Hospital" data-p="Winter Haven, FL" data-irs="$10.8M" data-cms="$17.7M" data-pct="39%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="398.9" cy="362.9" r="3.5" data-n="White Plains Hospital" data-p="White Plains, NY" data-irs="$11.8M" data-cms="$4.8M" data-pct="59%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="417.0" cy="330.5" r="3.5" data-n="Huntsville Memorial" data-p="Huntsville, TX" data-irs="$13.8M" data-cms="$6.7M" data-pct="51%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="431.8" cy="307.5" r="3.5" data-n="Carilion Medical Center" data-p="Roanoke, VA" data-irs="$15.7M" data-cms="$8.5M" data-pct="46%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="466.6" cy="259.5" r="3.5" data-n="Regions Hospital" data-p="St Paul, MN" data-irs="$21.3M" data-cms="$14.1M" data-pct="34%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="371.5" cy="244.2" r="3.5" data-n="Elliot Hospital" data-p="Manchester, NH" data-irs="$9.3M" data-cms="$16.5M" data-pct="44%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="389.4" cy="234.2" r="3.5" data-n="Tanner Medical Center" data-p="Carrollton, GA" data-irs="$10.8M" data-cms="$18.3M" data-pct="41%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="433.6" cy="210.3" r="3.5" data-n="Christiana Care Health System" data-p="Wilmington, DE" data-irs="$16.0M" data-cms="$23.5M" data-pct="32%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="533.9" cy="184.4" r="3.5" data-n="Saint Francis Hospital" data-p="Tulsa, OK" data-irs="$38.4M" data-cms="$30.8M" data-pct="20%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="531.3" cy="187.3" r="3.5" data-n="Cedars-Sinai Medical Center" data-p="Los Angeles, CA" data-irs="$37.6M" data-cms="$29.9M" data-pct="20%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="365.3" cy="502.8" r="3.5" data-n="Oroville Hospital" data-p="Oroville, CA" data-irs="$8.8M" data-cms="$1.1M" data-pct="87%" data-end="2023-11-30"/>
+<circle class="dot neg" cx="383.8" cy="421.2" r="3.5" data-n="Robert Packer Hospital" data-p="Sayre, PA" data-irs="$10.3M" data-cms="$2.6M" data-pct="75%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="475.2" cy="184.8" r="3.5" data-n="University Of Chicago Hospitals" data-p="Chicago, IL" data-irs="$23.0M" data-cms="$30.7M" data-pct="25%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="398.0" cy="381.8" r="3.5" data-n="West Virginia University Hospitals" data-p="Morgantown, WV" data-irs="$11.7M" data-cms="$3.9M" data-pct="66%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="467.4" cy="262.2" r="3.5" data-n="Mission Regional Medical Center" data-p="Mission, TX" data-irs="$21.5M" data-cms="$13.7M" data-pct="36%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="316.9" cy="262.7" r="3.5" data-n="Providence Hospital" data-p="Mobile, AL" data-irs="$5.7M" data-cms="$13.6M" data-pct="58%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="245.0" cy="282.7" r="3.5" data-n="Pennsylvania Hospital Of Uphs" data-p="Philadelphia, PA" data-irs="$3.1M" data-cms="$11.0M" data-pct="72%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="407.2" cy="367.4" r="3.5" data-n="Flushing Hospital Medical Center" data-p="Flushing, NY" data-irs="$12.7M" data-cms="$4.6M" data-pct="64%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="446.3" cy="200.3" r="3.5" data-n="Heartland Regional Medical Center" data-p="St Joseph, MO" data-irs="$17.8M" data-cms="$26.1M" data-pct="32%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="197.6" cy="288.6" r="3.5" data-n="Stanford Health Care Tri-Valley" data-p="Pleasanton, CA" data-irs="$2.0M" data-cms="$10.4M" data-pct="81%" data-end="2023-08-31"/>
+<circle class="dot pos" cx="431.2" cy="208.2" r="3.5" data-n="Washington Hospital Center" data-p="Washington, DC" data-irs="$15.6M" data-cms="$24.0M" data-pct="35%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="478.8" cy="180.2" r="3.5" data-n="Chi St Lukes Health Baylor Med Ctr" data-p="Houston, TX" data-irs="$23.7M" data-cms="$32.2M" data-pct="26%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="400.6" cy="397.0" r="3.5" data-n="Huntington Hospital" data-p="Huntington, NY" data-irs="$12.0M" data-cms="$3.3M" data-pct="72%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="434.7" cy="321.8" r="3.5" data-n="Hospital For Special Surgery" data-p="New York, NY" data-irs="$16.1M" data-cms="$7.3M" data-pct="54%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="367.6" cy="237.2" r="3.5" data-n="St. Vincents East" data-p="Birmingham, AL" data-irs="$9.0M" data-cms="$17.8M" data-pct="49.6%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="261.3" cy="271.9" r="3.5" data-n="Sbh Health System" data-p="Bronx, NY" data-irs="$3.5M" data-cms="$12.4M" data-pct="71%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="440.2" cy="316.3" r="3.5" data-n="Hamilton Medical Center" data-p="Dalton, GA" data-irs="$16.9M" data-cms="$7.8M" data-pct="54%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="394.2" cy="223.4" r="3.5" data-n="Ssm Saint Louis University Hospital" data-p="St Louis, MO" data-irs="$11.3M" data-cms="$20.5M" data-pct="45%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="322.0" cy="251.6" r="3.5" data-n="Grossmont Hospital" data-p="La Mesa, CA" data-irs="$6.0M" data-cms="$15.3M" data-pct="61%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="122.0" cy="288.8" r="3.5" data-n="Tucson Medical Center" data-p="Tucson, AZ" data-irs="$1.0M" data-cms="$10.4M" data-pct="90%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="320.6" cy="251.6" r="3.5" data-n="Peterson Regional Medical Center" data-p="Kerrville, TX" data-irs="$5.9M" data-cms="$15.3M" data-pct="61%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="285.4" cy="261.9" r="3.5" data-n="Kettering Health Dayton" data-p="Dayton, OH" data-irs="$4.4M" data-cms="$13.7M" data-pct="68%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="291.4" cy="257.5" r="3.5" data-n="Presbyterian Medical Center" data-p="Philadelphia, PA" data-irs="$4.6M" data-cms="$14.4M" data-pct="68%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="478.2" cy="262.1" r="3.5" data-n="South Shore University Hospital" data-p="Bay Shore, NY" data-irs="$23.6M" data-cms="$13.7M" data-pct="42%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="417.1" cy="209.3" r="3.5" data-n="Parkview Hospital" data-p="Fort Wayne, IN" data-irs="$13.8M" data-cms="$23.8M" data-pct="42%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="422.1" cy="372.8" r="3.5" data-n="Boca Raton Regional Hospital" data-p="Boca Raton, FL" data-irs="$14.4M" data-cms="$4.3M" data-pct="70%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="333.1" cy="242.0" r="3.5" data-n="Sharp Memorial Hospital" data-p="San Diego, CA" data-irs="$6.6M" data-cms="$16.9M" data-pct="61%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="333.1" cy="238.6" r="3.5" data-n="Southeastern Regional Medical Center" data-p="Newnan, GA" data-irs="$6.6M" data-cms="$17.5M" data-pct="62%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="404.0" cy="481.3" r="3.5" data-n="Charleston Area Medical Center  Inc." data-p="Charleston, WV" data-irs="$12.3M" data-cms="$1.4M" data-pct="89%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="390.3" cy="216.3" r="3.5" data-n="St. Anthonys Hospital" data-p="St Petersburg, FL" data-irs="$10.9M" data-cms="$22.1M" data-pct="51%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="432.6" cy="366.2" r="3.5" data-n="Deborah Heart And Lung Center" data-p="Browns Mills, NJ" data-irs="$15.8M" data-cms="$4.6M" data-pct="71%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="539.8" cy="134.8" r="3.5" data-n="Good Shepherd Medical Center" data-p="Longview, TX" data-irs="$40.4M" data-cms="$51.7M" data-pct="22%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="479.5" cy="271.7" r="3.5" data-n="Beth Israel Deaconess Medical Center" data-p="Boston, MA" data-irs="$23.8M" data-cms="$12.4M" data-pct="48%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="642.5" cy="61.3" r="3.5" data-n="Boston Medical Center" data-p="Boston, MA" data-irs="$99.5M" data-cms="$111.5M" data-pct="11%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="191.9" cy="259.1" r="3.5" data-n="St Vincents Birmingham" data-p="Birmingham, AL" data-irs="$1.9M" data-cms="$14.1M" data-pct="86%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="613.2" cy="82.5" r="3.5" data-n="Nyu Langone Hospitals" data-p="New York, NY" data-irs="$77.0M" data-cms="$89.3M" data-pct="14%" data-end="2023-08-31"/>
+<circle class="dot neg" cx="468.2" cy="302.0" r="3.5" data-n="Mercy Medical Center" data-p="Cedar Rapids, IA" data-irs="$21.6M" data-cms="$9.0M" data-pct="58%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="515.5" cy="228.1" r="3.5" data-n="Bridgeport Hospital" data-p="Bridgeport, CT" data-irs="$32.7M" data-cms="$19.5M" data-pct="40%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="285.2" cy="238.3" r="3.5" data-n="Bayfront Health St. Petersburg" data-p="St Petersburg, FL" data-irs="$4.4M" data-cms="$17.6M" data-pct="75%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="470.2" cy="170.5" r="3.5" data-n="Saint Thomas Rutherford Hospital" data-p="Murfreesboro, TN" data-irs="$22.0M" data-cms="$35.6M" data-pct="38%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="470.5" cy="321.2" r="3.5" data-n="Flagstaff Medical Center" data-p="Flagstaff, AZ" data-irs="$22.0M" data-cms="$7.4M" data-pct="66%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="535.4" cy="208.6" r="3.5" data-n="Montefiore Medical Center" data-p="Bronx, NY" data-irs="$38.9M" data-cms="$24.0M" data-pct="38%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="394.4" cy="197.9" r="3.5" data-n="Cook Childrens Medical Center" data-p="Fort Worth, TX" data-irs="$11.3M" data-cms="$26.8M" data-pct="58%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="509.9" cy="249.4" r="3.5" data-n="Martin Luther King Community Hosp" data-p="Los Angeles, CA" data-irs="$31.1M" data-cms="$15.6M" data-pct="49.8%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="465.4" cy="362.8" r="3.5" data-n="Lawrence &amp; Memorial Hospital" data-p="New London, CT" data-irs="$21.1M" data-cms="$4.8M" data-pct="77%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="131.7" cy="235.7" r="3.5" data-n="Western Regional Medical Center" data-p="Goodyear, AZ" data-irs="$1.1M" data-cms="$18.1M" data-pct="94%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="344.7" cy="206.4" r="3.5" data-n="Ascension Providence" data-p="Waco, TX" data-irs="$7.3M" data-cms="$24.5M" data-pct="70%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="522.5" cy="133.3" r="3.5" data-n="Baptist Medical Center" data-p="Jacksonville, FL" data-irs="$34.8M" data-cms="$52.6M" data-pct="34%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="518.3" cy="135.2" r="3.5" data-n="Saint Thomas West Hospital" data-p="Nashville, TN" data-irs="$33.5M" data-cms="$51.5M" data-pct="35%" data-end="2023-06-30"/>
+<circle class="dot neg" cx="540.4" cy="216.6" r="3.5" data-n="Lenox Hill Hospital" data-p="New York, NY" data-irs="$40.7M" data-cms="$22.0M" data-pct="46%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="478.1" cy="380.3" r="3.5" data-n="Greenwich Hospital" data-p="Greenwich, CT" data-irs="$23.6M" data-cms="$4.0M" data-pct="83%" data-end="2023-09-30"/>
+<circle class="dot pos" cx="323.0" cy="202.0" r="3.5" data-n="Lehigh Valley" data-p="Allentown, PA" data-irs="$6.1M" data-cms="$25.7M" data-pct="76%" data-end="2023-06-30"/>
+<circle class="dot pos" cx="289.7" cy="206.6" r="3.5" data-n="Hendrick Medical Center" data-p="Abilene, TX" data-irs="$4.5M" data-cms="$24.5M" data-pct="82%" data-end="2023-08-31"/>
+<circle class="dot neg" cx="505.7" cy="330.9" r="3.5" data-n="Northbay Hospital Group" data-p="Fairfield, CA" data-irs="$30.0M" data-cms="$6.7M" data-pct="78%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="650.0" cy="45.4" r="3.5" data-n="Methodist H/C Memphis Hospt." data-p="Memphis, TN" data-irs="$106.2M" data-cms="$131.6M" data-pct="19%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="554.1" cy="225.4" r="3.5" data-n="Maimonides Medical Center" data-p="Brooklyn, NY" data-irs="$45.9M" data-cms="$20.1M" data-pct="56%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="431.8" cy="144.7" r="3.5" data-n="St. Josephs University Medical Cent" data-p="Paterson, NJ" data-irs="$15.7M" data-cms="$46.7M" data-pct="66%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="582.7" cy="197.4" r="3.5" data-n="North Shore University Hospital" data-p="Manhasset, NY" data-irs="$58.9M" data-cms="$26.9M" data-pct="54%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="481.5" cy="125.9" r="3.5" data-n="St. Josephs Hospital" data-p="Tampa, FL" data-irs="$24.3M" data-cms="$56.8M" data-pct="57%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="201.6" cy="173.1" r="3.5" data-n="St. Peters University Hospital" data-p="New Brunswick, NJ" data-irs="$2.1M" data-cms="$34.7M" data-pct="94%" data-end="2022-12-31"/>
+<circle class="dot neg" cx="607.2" cy="167.3" r="3.5" data-n="Long Island Jewish Medical Center" data-p="New Hyde Park, NY" data-irs="$73.0M" data-cms="$36.9M" data-pct="49.5%" data-end="2022-12-31"/>
+<circle class="dot pos" cx="566.3" cy="69.6" r="3.5" data-n="Tampa General Hospital" data-p="Tampa, FL" data-irs="$51.0M" data-cms="$102.2M" data-pct="50.1%" data-end="2023-09-30"/>
+<circle class="dot neg" cx="657.2" cy="170.7" r="3.5" data-n="Yale New Haven Hospital" data-p="New Haven, CT" data-irs="$113.1M" data-cms="$35.6M" data-pct="69%" data-end="2023-09-30"/>
+<circle class="ring" cx="657.2" cy="170.7" r="6.5"/>
+<circle class="ring" cx="566.3" cy="69.6" r="6.5"/>
+<circle class="ring" cx="607.2" cy="167.3" r="6.5"/>
+<circle class="ring" cx="201.6" cy="173.1" r="6.5"/>
+<circle class="ring" cx="481.5" cy="125.9" r="6.5"/>
+<line class="lead" x1="654.1" y1="177.5" x2="651.2" y2="183.7"/>
+<text class="name" x="648.2" y="187.7" text-anchor="end">Yale New Haven Hospital</text>
+<text class="name" x="566.3" y="56.6" text-anchor="middle">Tampa General Hospital</text>
+<line class="lead" x1="604.1" y1="160.4" x2="601.2" y2="154.3"/>
+<text class="name" x="598.2" y="158.3" text-anchor="end">Long Island Jewish Medical Center</text>
+<text class="name" x="210.6" y="177.1" text-anchor="start">St. Peters University Hospital</text>
+<text class="name" x="472.5" y="129.9" text-anchor="end">St. Josephs Hospital</text>
+<text class="axis-title" x="396" y="588">IRS Schedule H line 7a (e), financial assistance at cost</text>
+<text class="axis-title" transform="translate(18,279) rotate(-90)" x="0" y="0">CMS Worksheet S-10 line 23, cost of charity care</text>
 </svg>
-<figcaption>Each dot is one of the 99 hospitals where the two filings are cleanly comparable — single facility, periods ending within a month of each other, both figures at least $1M, and total expenses within 5%. A hospital reporting the same cost to both regulators sits on the diagonal; 22 sit far enough off it that the two figures differ by more than half. Both axes are log-scaled. Hover any dot for the hospital and its two figures. Sources: CMS HCRIS Worksheet S-10 (FY2023) and IRS Form 990 Schedule H (TY2022).</figcaption>
+<ul class="gapkey" aria-hidden="true"><li><i class="ln"></i>on the diagonal: the two amounts are equal</li><li><i class="ln half"></i>guide lines: one amount is twice the other</li><li><i class="pos"></i>above it: larger on the CMS form (321)</li><li><i class="neg"></i>below it: larger on the IRS form (169)</li></ul>
+<figcaption>Each dot is one of the 493 hospitals in the index: one CCN with a cost report, periods ending within a month of each other, both figures at least $1M, and total expenses within 5%. A hospital whose two lines show the same amount sits on the diagonal. The two fainter lines mark where one amount is twice the other; 107 hospitals are outside them, meaning the two figures differ by more than half. Both axes are log-scaled. The 5 ringed dots are the 5 largest dollar differences, picked by that rule alone; they are named on wider screens and are the first 5 rows of the table. Hover or tap any dot for the hospital and its two figures; all 493 are in the table. Sources: CMS HCRIS Worksheet S-10 (FY2022 and FY2023 files) and IRS Form 990 Schedule H (TY2022).</figcaption>
 </figure>
 
 <script>
 (function () {
   var svg = document.querySelector('.gapchart');
-  if (!svg) return;
+  if (!svg || !svg.createSVGPoint) return;
+  var dots = Array.prototype.map.call(svg.querySelectorAll('.dot'), function (el) {
+    return { el: el, x: +el.getAttribute('cx'), y: +el.getAttribute('cy') };
+  });
   var tip = document.createElement('div');
   tip.className = 'gaptip';
+  tip.setAttribute('role', 'status');
   document.body.appendChild(tip);
-  function show(e) {
-    var d = e.target.dataset;
-    tip.innerHTML = '<b>' + d.n + '</b>'
-      + 'IRS 990 Sch. H 7a: ' + d.irs + '<br>'
-      + 'CMS Worksheet S-10: ' + d.cms + '<br>'
-      + '<span>differs by ' + d.pct + ' \u00b7 period ended ' + d.end + '</span>';
-    tip.style.opacity = '1';
-    move(e);
+  var current = null;
+  var REACH = 16;
+  function line(cls, text) {
+    var s = document.createElement(cls === 'b' ? 'b' : 'span');
+    if (cls && cls !== 'b') s.className = cls;
+    s.textContent = text;
+    tip.appendChild(s);
   }
-  function move(e) {
+  function clear() {
+    if (current) current.el.classList.remove('hl');
+    current = null;
+    tip.style.opacity = '0';
+  }
+  function nearest(e) {
+    var ctm = svg.getScreenCTM();
+    if (!ctm) return null;
+    var pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    var p = pt.matrixTransform(ctm.inverse());
+    var best = null, bestD = REACH * REACH;
+    for (var i = 0; i < dots.length; i++) {
+      var dx = dots[i].x - p.x, dy = dots[i].y - p.y, d = dx * dx + dy * dy;
+      if (d <= bestD) { bestD = d; best = dots[i]; }
+    }
+    return best;
+  }
+  function onMove(e) {
+    var hit = nearest(e);
+    if (!hit) { clear(); return; }
+    if (hit !== current) {
+      if (current) current.el.classList.remove('hl');
+      current = hit;
+      hit.el.classList.add('hl');
+      var d = hit.el.dataset;
+      tip.textContent = '';
+      line('b', d.n);
+      if (d.p) line('sub', d.p);
+      line('', 'IRS Schedule H 7a: ' + d.irs);
+      line('', 'CMS Worksheet S-10: ' + d.cms);
+      line('sub', 'differ by ' + d.pct + ' \u00b7 period ended ' + d.end);
+      tip.style.opacity = '1';
+    }
     var r = tip.getBoundingClientRect();
-    var x = Math.min(e.clientX + 14, window.innerWidth - r.width - 8);
-    var y = Math.max(e.clientY - r.height - 12, 8);
+    var x = Math.max(8, Math.min(e.clientX + 14, window.innerWidth - r.width - 8));
+    var y = e.clientY - r.height - 12;
+    if (y < 8) y = e.clientY + 18;
     tip.style.left = x + 'px';
     tip.style.top = y + 'px';
   }
-  svg.querySelectorAll('.dot').forEach(function (dot) {
-    dot.addEventListener('mouseenter', show);
-    dot.addEventListener('mousemove', move);
-    dot.addEventListener('mouseleave', function () { tip.style.opacity = '0'; });
-  });
+  svg.addEventListener('pointermove', onMove);
+  svg.addEventListener('pointerdown', onMove);
+  svg.addEventListener('pointerleave', clear);
+  window.addEventListener('scroll', clear, { passive: true });
 })();
 </script>
 
 <!-- GAP_CHART:END -->
 
-  <p>A sample of the largest differences:</p>
-
+  <h2 id="worked-example">One hospital, line by line</h2>
+  <p>The first row of the index is a useful example, because both filings publish enough components to see most of what is in the difference.</p>
+  <h3>Yale New Haven Hospital</h3>
+  <p class="src">New Haven, CT · EIN 06-0646652 · CCN 070022 · fiscal year ending 2023-09-30 on both filings · <a href="https://projects.propublica.org/nonprofits/organizations/60646652/202422269349301652/IRS990ScheduleH">Schedule H on ProPublica</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=070022">cost report record on data.cms.gov</a> · <a href="/hospitals/#h=60646652">lookup card</a></p>
   <div class="board-scroll">
-    <table>
-      <thead>
-        <tr><th class="l">Hospital</th><th>Told the IRS</th><th>Told CMS</th><th>Difference</th><th>%</th></tr>
-      </thead>
-      <tbody>
-        <tr><td class="l name">Yale New Haven Hospital</td><td>$113.1M</td><td>$35.6M</td><td class="neg">−$77.5M</td><td>69%</td></tr>
-        <tr><td class="l name">Tampa General Hospital</td><td>$51.0M</td><td>$102.4M</td><td class="pos">+$51.3M</td><td>50%</td></tr>
-        <tr><td class="l name">Greenwich Hospital</td><td>$23.6M</td><td>$4.0M</td><td class="neg">−$19.6M</td><td>83%</td></tr>
-        <tr><td class="l name">Baptist Medical Center (Jacksonville)</td><td>$34.8M</td><td>$52.6M</td><td class="pos">+$17.8M</td><td>34%</td></tr>
-        <tr><td class="l name">Western Regional Medical Center</td><td>$1.1M</td><td>$18.1M</td><td class="pos">+$16.9M</td><td>94%</td></tr>
-        <tr><td class="l name">Lawrence &amp; Memorial Hospital</td><td>$21.1M</td><td>$4.8M</td><td class="neg">−$16.3M</td><td>77%</td></tr>
-        <tr><td class="l name">Cook Children's Medical Center</td><td>$11.3M</td><td>$26.8M</td><td class="pos">+$15.5M</td><td>58%</td></tr>
-        <tr><td class="l name">Bayfront Health St. Petersburg</td><td>$4.4M</td><td>$17.6M</td><td class="pos">+$13.2M</td><td>75%</td></tr>
+    <table class="kv" role="table">
+      <thead role="rowgroup"><tr role="row"><th class="l" role="columnheader" scope="col">Line</th><th role="columnheader" scope="col">Amount</th></tr></thead>
+      <tbody role="rowgroup">
+        <tr role="row"><td role="cell" class="l name">IRS Schedule H line 7a, column (c), total expense</td><td role="cell" class="v">$257,262,512</td></tr>
+        <tr role="row"><td role="cell" class="l name">IRS Schedule H line 7a, column (d), direct offsetting revenue</td><td role="cell" class="v">$144,162,000</td></tr>
+        <tr role="row" class="key"><td role="cell" class="l name">IRS Schedule H line 7a, column (e), net</td><td role="cell" class="v">$113,100,512</td></tr>
+        <tr role="row" class="key"><td role="cell" class="l name">CMS Worksheet S-10 line 23, column 3, cost of charity care</td><td role="cell" class="v">$35,568,680</td></tr>
+        <tr role="row"><td role="cell" class="l name">CMS Worksheet S-10 line 5, Medicaid DSH and supplemental payments net of provider taxes</td><td role="cell" class="v">−$71,469,000</td></tr>
+        <tr role="row"><td role="cell" class="l name">Column (e) minus line 23</td><td role="cell" class="v">$77,531,832</td></tr>
       </tbody>
     </table>
   </div>
-  <p class="src">The full ranked index of all 99, and a searchable lookup of all 1,295 systems, is at <a href="/hospitals/">troveproject.com/hospitals</a>. The IRS figure for each hospital links to its actual 990 on ProPublica so you can check it yourself. (Figures are rounded to $0.1M; differences are computed from the exact values.)</p>
+  <p>Of the $77.5M difference, about $71.5M appears to be Connecticut's hospital provider tax net of the state supplemental payments it funds: the amount on S-10 line 5, which the cost report keeps separate from charity care. The worksheet behind the IRS line is not public, so this is a reconciliation from the hospital's own filings, not a figure the hospital has stated.</p>
+  <p>The return itself describes the program. Its Schedule H narrative (Part III, line 4) repeats a footnote from the system's consolidated financial statements, which says the Connecticut Disproportionate Share Hospital Program “was established to provide funds to hospitals for the provision of uncompensated care” and is funded in part by an assessment on hospital net patient service revenue. It says the system paid $317.9M into the program for the assessment in the year ended September 30, 2023, and received $198.2M in distributions. The four Yale New Haven Health hospitals in this data line up with those two system figures:</p>
+  <div class="board-scroll">
+    <table class="sys" role="table">
+      <thead role="rowgroup"><tr role="row"><th class="l" role="columnheader" scope="col">Hospital</th><th role="columnheader" scope="col">IRS 7a (d)</th><th role="columnheader" scope="col">CMS S-10 line 5</th><th role="columnheader" scope="col">Difference (CMS − IRS)</th></tr></thead>
+      <tbody role="rowgroup">
+        <tr role="row"><td role="cell" class="l name"><a href="/hospitals/#h=60646652">Yale New Haven Hospital</a> <span class="rk">#1</span></td><td role="cell" data-label="IRS 7a (d)">$144,162,000</td><td role="cell" data-label="CMS S-10 line 5">−$71,469,000</td><td role="cell" data-label="Difference (CMS − IRS)">−$77,531,832</td></tr>
+        <tr role="row"><td role="cell" class="l name"><a href="/hospitals/#h=60646659">Greenwich Hospital</a> <span class="rk">#13</span></td><td role="cell" data-label="IRS 7a (d)">$11,028,000</td><td role="cell" data-label="CMS S-10 line 5">−$19,837,000</td><td role="cell" data-label="Difference (CMS − IRS)">−$19,583,281</td></tr>
+        <tr role="row"><td role="cell" class="l name"><a href="/hospitals/#h=60646704">Lawrence + Memorial Hospital</a> <span class="rk">#19</span></td><td role="cell" data-label="IRS 7a (d)">$11,014,000</td><td role="cell" data-label="CMS S-10 line 5">−$16,316,000</td><td role="cell" data-label="Difference (CMS − IRS)">−$16,305,693</td></tr>
+        <tr role="row"><td role="cell" class="l name"><a href="/hospitals/#h=60646554">Bridgeport Hospital</a> <span class="rk">#26</span></td><td role="cell" data-label="IRS 7a (d)">$32,019,000</td><td role="cell" data-label="CMS S-10 line 5">−$12,084,000</td><td role="cell" data-label="Difference (CMS − IRS)">−$13,164,345</td></tr>
+        <tr role="row"><td role="cell" class="l name">Sum of the four</td><td role="cell" data-label="IRS 7a (d)">$198,223,000</td><td role="cell" data-label="CMS S-10 line 5">−$119,706,000</td><td role="cell" data-label="Difference (CMS − IRS)">−$126,585,151</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Column (d) sums to $198.2M, the distributions the return states. Line 5 sums to −$119.7M, which is $198.2M less $317.9M. For <a href="/hospitals/#h=60646659">Greenwich Hospital</a> and <a href="/hospitals/#h=60646704">Lawrence + Memorial Hospital</a> the difference between the two figures is within $0.3M of line 5. This is still a reconciliation: the return does not say what is in line 7a.</p>
+  <p>Eight other Connecticut hospitals with both figures also show a negative amount on S-10 line 5, and leave line 7a column (d) blank or at $0. Their two figures differ by less than $3M each. One of them is in the index: <a href="/hospitals/#h=832550272">St. Vincent&#x27;s Medical Center</a> (#333) shows line 5 of −$10.90M, and its two figures differ by $0.82M, or 6.9%. That is what the filings show; they do not say how any of these hospitals treated the assessment on Schedule H.</p>
 
-  <p>Notice something in that list: Yale New Haven, Greenwich, and Lawrence &amp; Memorial — plus Bridgeport, just outside the top eight — are all part of Yale New Haven Health. Several hospitals in one system, all showing large same-direction gaps. That's exactly what you'd expect when a system applies one financial-assistance policy and one Schedule H costing method across all its hospitals: a methodological signature, not evidence that any one hospital did something wrong. But it's the kind of pattern the index surfaces that a single filing never would — a reason to ask a system how it costs financial assistance, not to assume the answer.</p>
+  <h2 id="top-25">The 25 largest differences, with their components</h2>
+  <p>The table lists the 25 largest dollar differences in the index, in rank order, with the components from each filing. The group letter under each name is explained below the table. “—” means the line has no value on the form; it is not a zero. Figures are rounded to $0.1M; differences and percentages are computed from the exact values. Each name opens that hospital's card in the lookup, and each row links to the return's Schedule H on ProPublica and to the provider's cost report record on data.cms.gov.</p>
 
-  <h2>A gap is not an accusation</h2>
-  <p>This is the part that matters, and it's why the tool leads with the source documents. A difference between these two numbers does <strong>not</strong> mean a hospital did anything wrong, and it is not evidence of fraud.</p>
-  <p>The two forms genuinely define and cost charity care differently: where the line falls between "charity care," "bad debt," and "contractual allowance"; how uninsured discounts are classified; and the cost-to-charge methods each form permits. On top of that, the reliability of S-10 charity-care reporting has been questioned for years — MedPAC has repeatedly flagged S-10 data quality — so in many cases the gap is simply that one figure, often the S-10 side, is incompletely reported. (A few children's and specialty hospitals bill so little Medicare that they file no Medicare cost report at all, or an S-10 with almost nothing in it — so a near-zero S-10 should be treated as suspect, not as a real zero.)</p>
-  <p>None of this is secret. That the S-10 and Schedule H charity-care figures diverge is <strong>a well-documented reporting inconsistency</strong>, not a novel finding: the GAO has noted there is no standard definition of uncompensated care across federal programs (GAO-16-568) and has separately scrutinized Schedule H reporting (GAO-20-679); the Congressional Research Service laid out the differing Medicare and IRS charity-care definitions (2018); and health-services researchers have compared the two sources (Zare et al., <em>Health Services Research</em>, 2022). What hasn't existed is a fast way to check it for a specific hospital, with a link to both filings. That's the whole point of this tool: not to accuse, but to make a known inconsistency legible — one hospital at a time.</p>
+  <div class="board-scroll">
+    <table class="cmp" role="table">
+      <thead role="rowgroup">
+        <tr role="row"><th class="l" role="columnheader" scope="col">Hospital</th><th role="columnheader" scope="col">IRS 7a (c)</th><th role="columnheader" scope="col">IRS 7a (d)</th><th role="columnheader" scope="col">IRS 7a (e)</th><th role="columnheader" scope="col">CMS S&#8209;10<br>line 23</th><th role="columnheader" scope="col">CMS S&#8209;10<br>line 5</th><th role="columnheader" scope="col">Difference<br>(CMS − IRS)</th><th role="columnheader" scope="col">% of larger<br>figure</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+        <tr role="row"><td role="cell" class="l name"><span class="rk">1</span> <a href="/hospitals/#h=60646652">Yale New Haven Hospital</a><span class="sub">New Haven, CT · group A · <a href="https://projects.propublica.org/nonprofits/organizations/60646652/202422269349301652/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=070022">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$257.3M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$144.2M</td><td role="cell" data-label="IRS 7a (e) net">$113.1M</td><td role="cell" data-label="CMS S-10 line 23">$35.6M</td><td role="cell" data-label="CMS S-10 line 5">−$71.5M</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$77.5M</td><td role="cell" data-label="% of larger figure">68.5%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">2</span> <a href="/hospitals/#h=593458145">Tampa General Hospital</a><span class="sub">Tampa, FL · group A · <a href="https://projects.propublica.org/nonprofits/organizations/593458145/202442279349300629/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=100128">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$91.0M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$40.0M</td><td role="cell" data-label="IRS 7a (e) net">$51.0M</td><td role="cell" data-label="CMS S-10 line 23">$102.2M</td><td role="cell" data-label="CMS S-10 line 5">—</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$51.2M</td><td role="cell" data-label="% of larger figure">50.1%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">3</span> <a href="/hospitals/#h=112241326">Long Island Jewish Medical Center</a><span class="sub">New Hyde Park, NY · group D · <a href="https://projects.propublica.org/nonprofits/organizations/112241326/202510289349300626/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=330195">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$84.4M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$11.4M</td><td role="cell" data-label="IRS 7a (e) net">$73.0M</td><td role="cell" data-label="CMS S-10 line 23">$36.9M</td><td role="cell" data-label="CMS S-10 line 5">$35.8M</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$36.1M</td><td role="cell" data-label="% of larger figure">49.5%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">4</span> <a href="/hospitals/#h=221487330">St. Peter&#x27;s University Hospital</a><span class="sub">New Brunswick, NJ · group A · <a href="https://projects.propublica.org/nonprofits/organizations/221487330/202303179349303810/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=310070">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$23.8M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$21.7M</td><td role="cell" data-label="IRS 7a (e) net">$2.1M</td><td role="cell" data-label="CMS S-10 line 23">$34.7M</td><td role="cell" data-label="CMS S-10 line 5">$61.4M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$32.6M</td><td role="cell" data-label="% of larger figure">94.0%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">5</span> <a href="/hospitals/#h=590774199">St. Joseph&#x27;s Hospital (Tampa)</a><span class="sub">Tampa, FL · group A · <a href="https://projects.propublica.org/nonprofits/organizations/590774199/202303159349301505/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=100075">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$41.0M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$16.7M</td><td role="cell" data-label="IRS 7a (e) net">$24.3M</td><td role="cell" data-label="CMS S-10 line 23">$56.8M</td><td role="cell" data-label="CMS S-10 line 5">$2.7M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$32.5M</td><td role="cell" data-label="% of larger figure">57.3%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">6</span> <a href="/hospitals/#h=111562701">North Shore University Hospital</a><span class="sub">Manhasset, NY · group D · <a href="https://projects.propublica.org/nonprofits/organizations/111562701/202520289349300627/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=330106">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$63.4M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$4.5M</td><td role="cell" data-label="IRS 7a (e) net">$58.9M</td><td role="cell" data-label="CMS S-10 line 23">$26.9M</td><td role="cell" data-label="CMS S-10 line 5">$13.7M</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$32.0M</td><td role="cell" data-label="% of larger figure">54.3%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">7</span> <a href="/hospitals/#h=271344467">St. Joseph&#x27;s University Medical Center</a><span class="sub">Paterson, NJ · group A · <a href="https://projects.propublica.org/nonprofits/organizations/271344467/202303199349326490/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=310019">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$55.2M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$39.5M</td><td role="cell" data-label="IRS 7a (e) net">$15.7M</td><td role="cell" data-label="CMS S-10 line 23">$46.7M</td><td role="cell" data-label="CMS S-10 line 5">$107.4M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$30.9M</td><td role="cell" data-label="% of larger figure">66.3%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">8</span> <a href="/hospitals/#h=111635081">Maimonides Medical Center</a><span class="sub">Brooklyn, NY · group D · <a href="https://projects.propublica.org/nonprofits/organizations/111635081/202333149349305508/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=330194">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$45.9M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$0</td><td role="cell" data-label="IRS 7a (e) net">$45.9M</td><td role="cell" data-label="CMS S-10 line 23">$20.1M</td><td role="cell" data-label="CMS S-10 line 5">—</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$25.8M</td><td role="cell" data-label="% of larger figure">56.2%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">9</span> <a href="/hospitals/#h=620479367">Methodist Healthcare Memphis Hospitals</a><span class="sub">Memphis, TN · group D · <a href="https://projects.propublica.org/nonprofits/organizations/620479367/202343199349314249/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=440049">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$106.3M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$29,938</td><td role="cell" data-label="IRS 7a (e) net">$106.2M</td><td role="cell" data-label="CMS S-10 line 23">$131.6M</td><td role="cell" data-label="CMS S-10 line 5">$54.7M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$25.4M</td><td role="cell" data-label="% of larger figure">19.3%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">10</span> <a href="/hospitals/#h=941458282">NorthBay Hospital Group</a><span class="sub">Fairfield, CA · group D · <a href="https://projects.propublica.org/nonprofits/organizations/941458282/202333189349308748/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=050367">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$30.0M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$0</td><td role="cell" data-label="IRS 7a (e) net">$30.0M</td><td role="cell" data-label="CMS S-10 line 23">$6.7M</td><td role="cell" data-label="CMS S-10 line 5">—</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$23.3M</td><td role="cell" data-label="% of larger figure">77.8%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">11</span> <a href="/hospitals/#h=750827446">Hendrick Medical Center</a><span class="sub">Abilene, TX · group C · <a href="https://projects.propublica.org/nonprofits/organizations/750827446/202441979349301459/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=450229">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$35.9M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$22.1M</td><td role="cell" data-label="IRS 7a (e) net">$4.5M</td><td role="cell" data-label="CMS S-10 line 23">$24.5M</td><td role="cell" data-label="CMS S-10 line 5">$28.2M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$19.9M</td><td role="cell" data-label="% of larger figure">81.5%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">12</span> <a href="/hospitals/#h=231689692">Lehigh Valley Hospital</a><span class="sub">Allentown, PA · group D · <a href="https://projects.propublica.org/nonprofits/organizations/231689692/202431349349302843/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=390133">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$6.1M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">—</td><td role="cell" data-label="IRS 7a (e) net">$6.1M</td><td role="cell" data-label="CMS S-10 line 23">$25.7M</td><td role="cell" data-label="CMS S-10 line 5">$38.6M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$19.6M</td><td role="cell" data-label="% of larger figure">76.4%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">13</span> <a href="/hospitals/#h=60646659">Greenwich Hospital</a><span class="sub">Greenwich, CT · group A · <a href="https://projects.propublica.org/nonprofits/organizations/60646659/202432269349301653/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=070018">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$34.6M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$11.0M</td><td role="cell" data-label="IRS 7a (e) net">$23.6M</td><td role="cell" data-label="CMS S-10 line 23">$4.0M</td><td role="cell" data-label="CMS S-10 line 5">−$19.8M</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$19.6M</td><td role="cell" data-label="% of larger figure">83.1%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">14</span> <a href="/hospitals/#h=131624070">Lenox Hill Hospital</a><span class="sub">New York, NY · group D · <a href="https://projects.propublica.org/nonprofits/organizations/131624070/202313179349302341/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=330119">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$45.2M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$4.5M</td><td role="cell" data-label="IRS 7a (e) net">$40.7M</td><td role="cell" data-label="CMS S-10 line 23">$22.0M</td><td role="cell" data-label="CMS S-10 line 5">$11.0M</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$18.7M</td><td role="cell" data-label="% of larger figure">45.9%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">15</span> <a href="/hospitals/#h=620347580">Saint Thomas West Hospital</a><span class="sub">Nashville, TN · group B · <a href="https://projects.propublica.org/nonprofits/organizations/620347580/202441329349300404/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=440082">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$33.5M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">—</td><td role="cell" data-label="IRS 7a (e) net">$33.5M</td><td role="cell" data-label="CMS S-10 line 23">$51.5M</td><td role="cell" data-label="CMS S-10 line 5">$16.9M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$18.0M</td><td role="cell" data-label="% of larger figure">35.0%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">16</span> <a href="/hospitals/#h=590747311">Baptist Medical Center (Jacksonville)</a><span class="sub">Jacksonville, FL · group B · <a href="https://projects.propublica.org/nonprofits/organizations/590747311/202442279349303059/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=100088">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$34.8M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$0</td><td role="cell" data-label="IRS 7a (e) net">$34.8M</td><td role="cell" data-label="CMS S-10 line 23">$52.6M</td><td role="cell" data-label="CMS S-10 line 5">—</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$17.8M</td><td role="cell" data-label="% of larger figure">33.8%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">17</span> <a href="/hospitals/#h=741109636">Ascension Providence</a><span class="sub">Waco, TX · group A · <a href="https://projects.propublica.org/nonprofits/organizations/741109636/202441359349310174/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=450042">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$16.2M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$8.9M</td><td role="cell" data-label="IRS 7a (e) net">$7.3M</td><td role="cell" data-label="CMS S-10 line 23">$24.5M</td><td role="cell" data-label="CMS S-10 line 5">$13.2M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$17.2M</td><td role="cell" data-label="% of larger figure">70.1%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">18</span> <a href="/hospitals/#h=320197974">Western Regional Medical Center</a><span class="sub">Goodyear, AZ · group C · <a href="https://projects.propublica.org/nonprofits/organizations/320197974/202422269349302102/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=030138">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$1.1M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">—</td><td role="cell" data-label="IRS 7a (e) net">$1.1M</td><td role="cell" data-label="CMS S-10 line 23">$18.1M</td><td role="cell" data-label="CMS S-10 line 5">—</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$16.9M</td><td role="cell" data-label="% of larger figure">93.7%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">19</span> <a href="/hospitals/#h=60646704">Lawrence + Memorial Hospital</a><span class="sub">New London, CT · group A · <a href="https://projects.propublica.org/nonprofits/organizations/60646704/202402269349301765/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=070007">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$32.1M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$11.0M</td><td role="cell" data-label="IRS 7a (e) net">$21.1M</td><td role="cell" data-label="CMS S-10 line 23">$4.8M</td><td role="cell" data-label="CMS S-10 line 5">−$16.3M</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$16.3M</td><td role="cell" data-label="% of larger figure">77.3%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">20</span> <a href="/hospitals/#h=274658935">Martin Luther King Jr. Community Hospital</a><span class="sub">Los Angeles, CA · group D · <a href="https://projects.propublica.org/nonprofits/organizations/274658935/202401349349306240/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=050779">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$31.1M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">—</td><td role="cell" data-label="IRS 7a (e) net">$31.1M</td><td role="cell" data-label="CMS S-10 line 23">$15.6M</td><td role="cell" data-label="CMS S-10 line 5">$96.1M</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$15.5M</td><td role="cell" data-label="% of larger figure">49.8%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">21</span> <a href="/hospitals/#h=752051646">Cook Children&#x27;s Medical Center</a><span class="sub">Fort Worth, TX · group D · <a href="https://projects.propublica.org/nonprofits/organizations/752051646/202412279349300236/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=453300">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$13.6M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$2.3M</td><td role="cell" data-label="IRS 7a (e) net">$11.3M</td><td role="cell" data-label="CMS S-10 line 23">$26.8M</td><td role="cell" data-label="CMS S-10 line 5">—</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$15.5M</td><td role="cell" data-label="% of larger figure">57.7%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">22</span> <a href="/hospitals/#h=131740114">Montefiore Medical Center</a><span class="sub">Bronx, NY · group D · <a href="https://projects.propublica.org/nonprofits/organizations/131740114/202343179349311564/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=330059">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$57.2M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$18.3M</td><td role="cell" data-label="IRS 7a (e) net">$38.9M</td><td role="cell" data-label="CMS S-10 line 23">$24.0M</td><td role="cell" data-label="CMS S-10 line 5">—</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$15.0M</td><td role="cell" data-label="% of larger figure">38.5%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">23</span> <a href="/hospitals/#h=860110232">Flagstaff Medical Center</a><span class="sub">Flagstaff, AZ · group D · <a href="https://projects.propublica.org/nonprofits/organizations/860110232/202421359349314017/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=030023">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$22.0M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$0</td><td role="cell" data-label="IRS 7a (e) net">$22.0M</td><td role="cell" data-label="CMS S-10 line 23">$7.4M</td><td role="cell" data-label="CMS S-10 line 5">—</td><td role="cell" data-label="Difference (CMS − IRS)" class="neg">−$14.6M</td><td role="cell" data-label="% of larger figure">66.5%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">24</span> <a href="/hospitals/#h=620475842">Saint Thomas Rutherford Hospital</a><span class="sub">Murfreesboro, TN · group B · <a href="https://projects.propublica.org/nonprofits/organizations/620475842/202411329349300301/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/8457c184-a531-40db-8597-2497fec80c7a/data?filter[Provider%20CCN]=440053">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$22.0M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">—</td><td role="cell" data-label="IRS 7a (e) net">$22.0M</td><td role="cell" data-label="CMS S-10 line 23">$35.6M</td><td role="cell" data-label="CMS S-10 line 5">$10.2M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$13.7M</td><td role="cell" data-label="% of larger figure">38.3%</td></tr>
+        <tr role="row"><td role="cell" class="l name"><span class="rk">25</span> <a href="/hospitals/#h=845074208">Bayfront Health St. Petersburg</a><span class="sub">St Petersburg, FL · group A · <a href="https://projects.propublica.org/nonprofits/organizations/845074208/202442279349300739/IRS990ScheduleH">IRS return</a> · <a href="https://data.cms.gov/data-api/v1/dataset/f08d4c46-c0e4-4bcb-a54a-c62c87d59251/data?filter[Provider%20CCN]=100032">CMS record</a></span></td><td role="cell" data-label="IRS 7a (c) total expense">$14.3M</td><td role="cell" data-label="IRS 7a (d) offsetting revenue">$9.9M</td><td role="cell" data-label="IRS 7a (e) net">$4.4M</td><td role="cell" data-label="CMS S-10 line 23">$17.6M</td><td role="cell" data-label="CMS S-10 line 5">$26.9M</td><td role="cell" data-label="Difference (CMS − IRS)" class="pos">+$13.2M</td><td role="cell" data-label="% of larger figure">75.2%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="src">Columns: IRS Schedule H Part I line 7a (c) total expense, (d) direct offsetting revenue, (e) net; CMS Worksheet S-10 line 23 column 3 and line 5. The difference is the CMS figure minus the IRS net figure; the percentage is the absolute difference as a share of the larger of the two. The full ranked index of all 493, with the S-10 uninsured and insured columns, fiscal periods and cost report status, is at <a href="/hospitals/">troveproject.com/hospitals</a>.</p>
 
-  <h2>Why I built it</h2>
-  <p>The raw data is public but punishing. CMS ships the Medicare Cost Reports as headerless, 100,000-row "long-skinny" CSVs. The IRS publishes 990s as XML inside bulk ZIP files. Lining up a single hospital's two charity-care numbers means parsing both, matching CCNs to EINs, and reconciling fiscal calendars — hours of work per hospital. trove does that parsing and joining once, for everyone, and publishes the result as clean tables plus a Claude Code skill you can ask questions in plain English.</p>
+  <h3>What the components show</h3>
+  <p>The two filings for each of these 25 were read and sorted by what the published components show. These are reconciliations from the filings alone. They are not statements by the hospitals, and no filing says what its offsetting revenue or its line 5 consists of.</p>
+  <ul class="groups">
+    <li><span class="g">A · 9</span>Column (d) or S-10 line 5 is at least half the size of the difference and points the same way: offsetting revenue in column (d) where the CMS figure is the larger (it is subtracted on the IRS line only), or a negative line 5 where the IRS figure is the larger. <a href="/hospitals/#h=60646652">Yale New Haven Hospital</a>, <a href="/hospitals/#h=593458145">Tampa General Hospital</a>, <a href="/hospitals/#h=221487330">St. Peter&#x27;s University Hospital</a>, <a href="/hospitals/#h=590774199">St. Joseph&#x27;s Hospital (Tampa)</a>, <a href="/hospitals/#h=271344467">St. Joseph&#x27;s University Medical Center</a>, <a href="/hospitals/#h=60646659">Greenwich Hospital</a>, <a href="/hospitals/#h=741109636">Ascension Providence</a>, <a href="/hospitals/#h=60646704">Lawrence + Memorial Hospital</a>, <a href="/hospitals/#h=845074208">Bayfront Health St. Petersburg</a>. For the three Connecticut hospitals it is line 5; for the other six it is column (d), which is subtracted on the IRS line and has no counterpart in S-10 line 23.</li>
+    <li><span class="g">B · 3</span>The IRS figure is nearer the CMS uninsured-only column (line 23 column 1) than the total; the insured column is 44%, 75% and 71% of the difference for these three. <a href="/hospitals/#h=620347580">Saint Thomas West Hospital</a>, <a href="/hospitals/#h=590747311">Baptist Medical Center (Jacksonville)</a>, <a href="/hospitals/#h=620475842">Saint Thomas Rutherford Hospital</a>. Their uninsured columns are $43.6M, $39.3M and $26.0M; their insured columns $7.9M, $13.3M and $9.6M.</li>
+    <li><span class="g">C · 2</span>The difference rests on a figure that cannot be read at face value. On the <a href="/hospitals/#h=750827446">Hendrick Medical Center</a> return, line 7a does not add up: (c) − (d) is $13,776,776 and (e) is $4,523,276. <a href="/hospitals/#h=320197974">Western Regional Medical Center</a> (AZ) has entries that are hard to read at face value: its S-10 lists all $18.1M of charity care in the insured column and nothing in the uninsured column, and the 990's Medicaid line (7b, column c) is $190.2M against total expenses of $134.8M on the same return.</li>
+    <li><span class="g">D · 11</span>Neither filing shows a mechanism that can be pointed to. These are the open questions: what is in one figure that is not in the other? The IRS figure is the larger in 8 of them and the CMS figure in 3. Five of these show a positive line 5 at least half the size of the difference (Long Island Jewish: line 5 +$35.8M, difference −$36.1M). A positive line 5 is payments received net of taxes; neither filing shows it entering either figure, so it is not counted as accounting for the difference.
+      <ul class="open-list">
+      <li><a href="/hospitals/#h=112241326">Long Island Jewish Medical Center</a> (#3): IRS net $73.0M, CMS $36.9M, difference −$36.1M (49.5%); column (d) $11.4M; line 5 +$35.8M.</li>
+      <li><a href="/hospitals/#h=111562701">North Shore University Hospital</a> (#6): IRS net $58.9M, CMS $26.9M, difference −$32.0M (54.3%); column (d) $4.5M; line 5 +$13.7M.</li>
+      <li><a href="/hospitals/#h=111635081">Maimonides Medical Center</a> (#8): IRS net $45.9M, CMS $20.1M, difference −$25.8M (56.2%); column (d) $0; no amount on line 5.</li>
+      <li><a href="/hospitals/#h=620479367">Methodist Healthcare Memphis Hospitals</a> (#9): IRS net $106.2M, CMS $131.6M, difference +$25.4M (19.3%); column (d) $29,938; line 5 +$54.7M.</li>
+      <li><a href="/hospitals/#h=941458282">NorthBay Hospital Group</a> (#10): IRS net $30.0M, CMS $6.7M, difference −$23.3M (77.8%); column (d) $0; no amount on line 5.</li>
+      <li><a href="/hospitals/#h=231689692">Lehigh Valley Hospital</a> (#12): IRS net $6.1M, CMS $25.7M, difference +$19.6M (76.4%); column (d) blank; line 5 +$38.6M.</li>
+      <li><a href="/hospitals/#h=131624070">Lenox Hill Hospital</a> (#14): IRS net $40.7M, CMS $22.0M, difference −$18.7M (45.9%); column (d) $4.5M; line 5 +$11.0M.</li>
+      <li><a href="/hospitals/#h=274658935">Martin Luther King Jr. Community Hospital</a> (#20): IRS net $31.1M, CMS $15.6M, difference −$15.5M (49.8%); column (d) blank; line 5 +$96.1M.</li>
+      <li><a href="/hospitals/#h=752051646">Cook Children&#x27;s Medical Center</a> (#21): IRS net $11.3M, CMS $26.8M, difference +$15.5M (57.7%); column (d) $2.3M; no amount on line 5.</li>
+      <li><a href="/hospitals/#h=131740114">Montefiore Medical Center</a> (#22): IRS net $38.9M, CMS $24.0M, difference −$15.0M (38.5%); column (d) $18.3M; no amount on line 5.</li>
+      <li><a href="/hospitals/#h=860110232">Flagstaff Medical Center</a> (#23): IRS net $22.0M, CMS $7.4M, difference −$14.6M (66.5%); column (d) $0; no amount on line 5.</li>
+      </ul>
+      Differences in costing method, or in which write-offs each form counts, are possible, but nothing in the two published lines distinguishes them. If you know one of these hospitals' filings, <a href="https://github.com/cbetz/trove/issues">an explanation is welcome</a>.</li>
+  </ul>
+
+  <h2 id="missing">Missing is not zero</h2>
+  <p>A line with no value on the form is shown as “not reported on this line”. It is never shown as $0, and no difference is computed for that row. 159 matched systems have no S-10 line 23 figure and 53 have a blank line 7a column (e); 195 systems are missing one or both.</p>
+  <p>Examples: <a href="/hospitals/#h=520591656">The Johns Hopkins Hospital</a> files a Worksheet S-10 with no value on line 23. <a href="/hospitals/#h=620646012">St. Jude Children&#x27;s Research Hospital</a> and <a href="/hospitals/#h=741100555">Texas Children&#x27;s Hospital</a> have no Worksheet S-10 in the CMS file. All three are in the lookup with their IRS figure and no difference.</p>
+  <p>Multi-hospital systems are in the lookup but not in the ranked index. <a href="/hospitals/#h=383952644">Mayo Clinic</a>'s return covers 19 cost reports under one EIN. <a href="/hospitals/#h=912153073">Cleveland Clinic</a>'s covers 17, one of which has no S-10 line 23, so no system total is computed for it and the partial sum is shown separately, labelled as partial.</p>
+
+  <h2 id="correction">Correction, November 19, 2026</h2>
+  <div class="correction">
+    <p>The first version of this note, published July 25, 2026, has been revised. Three things changed.</p>
+    <ul>
+      <li><strong>The framing.</strong> The earlier version described line 7a and S-10 line 23 as directly comparable and presented the differences as two reports of the same thing that did not match. That was wrong: the two lines are defined differently, as set out above, and the difference at its lead example, Yale New Haven Hospital, is mostly the size of an amount the cost report shows on a separate line. The headline and text now say what each line measures and show the components.</li>
+      <li><strong>Missing values.</strong> The earlier data showed $0 on the CMS side where the cost report had no value on line 23, or no Worksheet S-10 at all. Those rows are now shown as not reported, with no difference computed.</li>
+      <li><strong>Coverage.</strong> The earlier index covered 99 hospitals. It left out the IRS's 2023 e-file release and used only the CMS fiscal year 2023 file, so a hospital whose fiscal year began before October 2022 was set against its following year's cost report and dropped from the index. With IRS releases 2023 through 2026 and the CMS fiscal year 2022 and 2023 files, the index now covers 493 hospitals. All 99 earlier rows are still in it.</li>
+    </ul>
+  </div>
+
+  <h2>Limits</h2>
+  <ul>
+    <li><strong>One tax year.</strong> Everything here is tax year 2022: returns for fiscal periods ending between late 2022 and November 2023. A single year says nothing about whether a difference persists.</li>
+    <li><strong>Crosswalk vintage.</strong> CCNs are linked to EINs with the Community Benefit Insight crosswalk, frozen in December 2024, which lists 2,385 EINs. 245 of the CCNs it lists for matched EINs have no cost report in the two CMS files; for 39 index rows the crosswalk lists further CCNs of that kind, and those rows are marked on the <a href="/hospitals/">lookup page</a>. For-profit and government hospitals file no Schedule H and are not here.</li>
+    <li><strong>End-date alignment.</strong> Periods are matched on their end dates only. No index row has begin dates more than a month apart, but in the full lookup a short-period report can match on its end date; each card shows both periods.</li>
+    <li><strong>Multi-CCN systems.</strong> Where one EIN covers several cost reports, the lookup shows sums across them, and no total when any one of them lacks the line. Those rows are not ranked.</li>
+    <li><strong>Status.</strong> Cost reports can be as submitted, amended, settled or reopened, and a 990 can be amended. 103 index rows rest on an as-submitted cost report. Figures can change in later CMS files, and the summary record on data.cms.gov can differ slightly from the file used here.</li>
+    <li><strong>The classification is by hand.</strong> The groups A to D above were assigned by reading the two filings for 25 hospitals. The other 468 index rows have not been read that way.</li>
+    <li><strong>The worksheets are not public.</strong> Schedule H Worksheet 1 is not filed, so what a hospital included in line 7a can be inferred from the filings but not confirmed.</li>
+  </ul>
 
   <a class="cta" href="/hospitals/">
-    <b>Look up your hospital →</b><br>
-    Search 1,295 nonprofit hospital systems. See what each told the IRS vs. CMS, side by side, with links to both filings.
+    <b>Look up a hospital →</b><br>
+    Search 2,099 matched nonprofit hospital systems. Each card shows both figures with their components, both fiscal periods, and links to both filings.
   </a>
 
-  <p class="src">Data: CMS HCRIS Worksheet S-10 (FY2023) × IRS Form 990 Schedule H (TY2022), joined via the Community Benefit Insight CCN↔EIN crosswalk. Method and every caveat: <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">summary</a> · ranked index: <a href="https://github.com/cbetz/trove/blob/main/artifacts/charity_care_gap_index_2022.md">charity_care_gap_index_2022.md</a> · all code MIT-licensed at <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>.</p>
+  <p class="src">Sources: CMS HCRIS hospital cost report files (form 2552-10) for fiscal years 2022 and 2023, extract generated 2026-10-02, posted 2026-10-05; IRS Form 990 e-file releases 2023 through 2026, returns for tax year 2022; joined with the Community Benefit Insight CCN-to-EIN crosswalk (December 2024). Method and funnel: <a href="https://github.com/cbetz/trove/blob/main/artifacts/community_benefit_gap_2022_summary.md">summary</a> · ranked index: <a href="https://github.com/cbetz/trove/blob/main/artifacts/charity_care_gap_index_2022.md">charity_care_gap_index_2022.md</a> · data: <a href="/data/charity_care_gap_index_2022.json">index (JSON)</a>, <a href="/data/community_benefit_gap_2022.csv">full table (CSV)</a> · code, MIT-licensed: <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>.</p>
 
   <footer>
     <p>Built by Chris Betz on personal time. Not affiliated with my employer; opinions my own. A difference between two filings is not evidence that either one is wrong.</p>
-    <p><a href="/">← trove</a> · <a href="/hospitals/">hospital lookup</a> · <a href="https://github.com/cbetz/trove">source</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a></p>
+    <p><a href="/">← trove</a> · <a href="/hospitals/">hospital lookup</a> · <a href="https://github.com/cbetz/trove">source</a> · <a href="https://github.com/cbetz/trove">★ Star on GitHub</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a></p>
   </footer>
   <script defer src="/_vercel/insights/script.js"></script>
 </body>

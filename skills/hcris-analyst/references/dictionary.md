@@ -2,9 +2,11 @@
 
 Every variable trove exposes from the Medicare Cost Report Hospital form, with the canonical (worksheet, line, column) source and a short description. Generated from `packages/hcris/src/hcris/dictionaries/2552-10.yaml`.
 
-**Pivoted Parquet bundle:** `https://troveproject.com/data/hcris_2023_wide.parquet` (one row per hospital, every variable below as a named column).
+**Pivoted Parquet bundles:** `https://troveproject.com/data/hcris_2022_wide.parquet` and `https://troveproject.com/data/hcris_2023_wide.parquet` (CMS fiscal-year files, keyed on the date the reporting period begins; one row per cost report, every variable below as a named column, plus `hcris_file_fy`, `rpt_rec_num`, `prvdr_num`, `fy_bgn_dt`, `fy_end_dt`, `rpt_stus_cd`, `rpt_status`, `proc_dt` and `s10_filed`).
 
-Total: **44 variables** across 7 worksheets.
+A null value means the cell is blank or zero on the form: CMS's numeric file stores no zeros. It is not a reported $0.
+
+Total: **52 variables** across 7 worksheets.
 
 ## Worksheet `D10A181`
 
@@ -48,11 +50,21 @@ Total: **44 variables** across 7 worksheets.
 
 ## Worksheet `S100001`
 
+Also read from worksheet code `S100000` at the same line and column. CMS files Worksheet S-10 as `S100000` for cost reporting periods beginning before 2022-10-01 and S-10 Part I as `S100001` after; the bundles map both to the variables below.
+
 | Variable | Line | Column | Source | Type | Description |
 |----------|------|--------|--------|------|-------------|
-| `total_bad_debt` | 2600 | 100 | nmrc | currency_usd | Total bad debt expense reported on Worksheet S-10 (2010 format only). |
-| `charity_care_cost` | 2300 | 300 | nmrc | currency_usd | Cost of charity care reported on Worksheet S-10 (2010 format only). |
-| `uncompensated_care_cost` | 3000 | 100 | nmrc | currency_usd | Total cost of uncompensated care reported on Worksheet S-10 (2010 format only). |
+| `total_bad_debt` | 2600 | 100 | nmrc | currency_usd | Total bad debt expense reported on Worksheet S-10 (whole hospital complex). |
+| `charity_care_cost` | 2300 | 300 | nmrc | currency_usd | Cost of charity care reported on Worksheet S-10 (whole hospital complex). |
+| `uncompensated_care_cost` | 3000 | 100 | nmrc | currency_usd | Total cost of uncompensated care reported on Worksheet S-10 (whole hospital complex). |
+| `charity_care_cost_uninsured` | 2300 | 100 | nmrc | currency_usd | Cost of charity care for uninsured patients (S-10 line 23 column 1). |
+| `charity_care_cost_insured` | 2300 | 200 | nmrc | currency_usd | Cost of charity care for insured patients (S-10 line 23 column 2). |
+| `medicaid_net_revenue` | 200 | 100 | nmrc | currency_usd | Net revenue from Medicaid (S-10 line 2), net of provider taxes; includes DSH/supplemental payments when not separately identifiable. |
+| `medicaid_dsh_supplemental_payments` | 500 | 100 | nmrc | currency_usd | Medicaid DSH and supplemental payments not already in line 2, net of associated provider taxes or assessments (S-10 line 5). Negative when provider taxes exceed the payments. |
+| `medicaid_cost` | 700 | 100 | nmrc | currency_usd | Medicaid cost, the cost-to-charge ratio times Medicaid charges (S-10 line 7). |
+| `medicaid_shortfall` | 800 | 100 | nmrc | currency_usd | Medicaid cost minus Medicaid net revenue and DSH/supplemental payments, floored at zero (S-10 line 8). |
+| `unreimbursed_means_tested_cost` | 1900 | 100 | nmrc | currency_usd | Total unreimbursed cost for Medicaid, CHIP and state/local indigent care programs (S-10 line 19). |
+| `unreimbursed_and_uncompensated_care_cost` | 3100 | 100 | nmrc | currency_usd | Total unreimbursed and uncompensated care cost, line 19 plus line 30 (S-10 line 31). |
 | `charity_care_initial_charges` | 2000 | 300 | nmrc | currency_usd | Initial obligation-of-patients charges for charity care and uninsured discounts. |
 | `charity_care_cost_before_payments` | 2100 | 300 | nmrc | currency_usd | Cost of charity care and uninsured discounts before subtracting partial patient payments. |
 | `charity_care_partial_payments` | 2200 | 300 | nmrc | currency_usd | Partial payments received from patients approved for charity care. |

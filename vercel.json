@@ -1,7 +1,72 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "echo 'no build — static site'",
+  "buildCommand": "echo 'no build \u2014 static site'",
   "outputDirectory": "web",
-  "installCommand": "echo 'no install needed'"
+  "installCommand": "echo 'no install needed'",
+  "redirects": [
+    {
+      "source": "/drugs/imlygic",
+      "destination": "/drugs/",
+      "permanent": true
+    },
+    {
+      "source": "/drugs/imlygic/",
+      "destination": "/drugs/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/data/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, HEAD, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Range"
+        },
+        {
+          "key": "Access-Control-Expose-Headers",
+          "value": "Content-Range, Content-Length, Accept-Ranges"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)\\.md",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/markdown; charset=utf-8"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/llms.txt",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    }
+  ]
 }

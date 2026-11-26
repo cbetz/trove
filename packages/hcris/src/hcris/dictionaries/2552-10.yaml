@@ -9,6 +9,16 @@
 # own authorship. The Sacarny `hospital-cost-reports` repository was consulted
 # as a cross-reference for coverage; this file is an independent authoring.
 #
+# Worksheet S-10 has two worksheet codes. Per PRM 15-2 ch. 40 (Transmittal 18,
+# Dec 2022, electronic-spec note (o)): cost reporting periods beginning BEFORE
+# 2022-10-01 file it as S100000; periods beginning on/after 2022-10-01 file
+# S-10 Part I as S100001 (entire hospital complex — the same scope the old
+# worksheet had) and the new Part II as S100002 (services billable under the
+# hospital CCN only, a subset of Part I). The line and column numbers used here
+# (1, 2, 5-8, 19-23, 26-31) are the same in §4012 of Transmittal 16 (Apr 2020,
+# the old worksheet) and Transmittal 18 (Part I), so every S-10 variable maps
+# S100001 with `wksht_cd_aliases: [S100000]`. Part II is deliberately not mapped.
+#
 # Values for line_num and clmn_num are integers here for readability. The loader
 # zero-pads them to the 5-character strings that CMS actually emits in NMRC/ALPHA
 # (e.g. 200 -> "00200"). Alpha-suffixed column codes like "04A00" stay as strings.
@@ -125,25 +135,102 @@ variables:
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 2600
     clmn_num: 100
-    description: Total bad debt expense reported on Worksheet S-10 (2010 format only).
+    description: Total bad debt expense reported on Worksheet S-10 (whole hospital complex).
 
   - name: charity_care_cost
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 2300
     clmn_num: 300
-    description: Cost of charity care reported on Worksheet S-10 (2010 format only).
+    description: Cost of charity care reported on Worksheet S-10 (whole hospital complex).
 
   - name: uncompensated_care_cost
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 3000
     clmn_num: 100
-    description: Total cost of uncompensated care reported on Worksheet S-10 (2010 format only).
+    description: Total cost of uncompensated care reported on Worksheet S-10 (whole hospital complex).
+
+  - name: charity_care_cost_uninsured
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
+    line_num: 2300
+    clmn_num: 100
+    description: Cost of charity care for uninsured patients (S-10 line 23 column 1).
+
+  - name: charity_care_cost_insured
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
+    line_num: 2300
+    clmn_num: 200
+    description: Cost of charity care for insured patients (S-10 line 23 column 2).
+
+  # --- Medicaid and other means-tested programs (Worksheet S-10 lines 2-19) ---
+
+  - name: medicaid_net_revenue
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
+    line_num: 200
+    clmn_num: 100
+    description: Net revenue from Medicaid (S-10 line 2), net of provider taxes; includes DSH/supplemental payments when not separately identifiable.
+
+  - name: medicaid_dsh_supplemental_payments
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
+    line_num: 500
+    clmn_num: 100
+    description: Medicaid DSH and supplemental payments not already in line 2, net of associated provider taxes or assessments (S-10 line 5). Negative when provider taxes exceed the payments.
+
+  - name: medicaid_cost
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
+    line_num: 700
+    clmn_num: 100
+    description: Medicaid cost, the cost-to-charge ratio times Medicaid charges (S-10 line 7).
+
+  - name: medicaid_shortfall
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
+    line_num: 800
+    clmn_num: 100
+    description: Medicaid cost minus Medicaid net revenue and DSH/supplemental payments, floored at zero (S-10 line 8).
+
+  - name: unreimbursed_means_tested_cost
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
+    line_num: 1900
+    clmn_num: 100
+    description: Total unreimbursed cost for Medicaid, CHIP and state/local indigent care programs (S-10 line 19).
+
+  - name: unreimbursed_and_uncompensated_care_cost
+    source: nmrc
+    type: currency_usd
+    wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
+    line_num: 3100
+    clmn_num: 100
+    description: Total unreimbursed and uncompensated care cost, line 19 plus line 30 (S-10 line 31).
 
   # --- Charity care detail (Worksheet S-10) ---
 
@@ -151,6 +238,7 @@ variables:
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 2000
     clmn_num: 300
     description: Initial obligation-of-patients charges for charity care and uninsured discounts.
@@ -159,6 +247,7 @@ variables:
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 2100
     clmn_num: 300
     description: Cost of charity care and uninsured discounts before subtracting partial patient payments.
@@ -167,6 +256,7 @@ variables:
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 2200
     clmn_num: 300
     description: Partial payments received from patients approved for charity care.
@@ -177,6 +267,7 @@ variables:
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 2700
     clmn_num: 100
     description: Portion of bad debt that is Medicare-reimbursable.
@@ -185,6 +276,7 @@ variables:
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 2800
     clmn_num: 100
     description: Non-Medicare bad debt expense (total bad debt minus Medicare-reimbursable portion).
@@ -193,6 +285,7 @@ variables:
     source: nmrc
     type: currency_usd
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 2900
     clmn_num: 100
     description: Cost of non-Medicare bad debt after applying the cost-to-charge ratio.
@@ -201,6 +294,7 @@ variables:
     source: nmrc
     type: ratio
     wksht_cd: S100001
+    wksht_cd_aliases: [S100000]
     line_num: 100
     clmn_num: 100
     description: Hospital-wide cost-to-charge ratio used to translate Worksheet S-10 charges into costs.

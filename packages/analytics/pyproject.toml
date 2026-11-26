@@ -7,8 +7,12 @@ requires-python = ">=3.12"
 license = "MIT"
 authors = [{ name = "Chris Betz" }]
 dependencies = [
+    "form990",
     "pandas>=2.2",
 ]
+
+[tool.uv.sources]
+form990 = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]

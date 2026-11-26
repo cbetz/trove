@@ -11,13 +11,13 @@
   <meta property="og:title" content="trove — Claude Code skills for healthcare data">
   <meta property="og:description" content="Two Claude Code skills that turn natural-language questions into queries over real healthcare data: fda-analyst and hcris-analyst.">
   <meta property="og:url" content="https://troveproject.com/skills/">
-  <meta property="og:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta property="og:image" content="https://troveproject.com/og-20261119.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="trove — Claude Code skills for healthcare data">
   <meta name="twitter:description" content="Two Claude Code skills that turn natural-language questions into queries over real healthcare data.">
-  <meta name="twitter:image" content="https://troveproject.com/og-20260725.jpg">
+  <meta name="twitter:image" content="https://troveproject.com/og-20261119.jpg">
   <script type="application/ld+json">
 [
   {
@@ -36,7 +36,7 @@
     "sameAs": "https://github.com/cbetz/trove",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Cross-platform (Claude Code)",
-    "softwareVersion": "1.0.1",
+    "softwareVersion": "1.1.0",
     "license": "https://opensource.org/licenses/MIT",
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
     "author": {
@@ -108,7 +108,8 @@
     a:hover { opacity: 0.7; }
     code { background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }
     pre { background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }
-    pre code { background: none; padding: 0; }
+    pre code { background: none; padding: 0; overflow-wrap: normal; }
+    p, li { overflow-wrap: anywhere; }
 
     .skill-card {
       display: block;
@@ -148,7 +149,7 @@
   </header>
 
   <section>
-    <p>trove ships two <a href="https://docs.claude.com/en/docs/claude-code/skills">Claude Code skills</a> packaged as a single plugin. Each skill teaches Claude how to query a specific healthcare dataset, how to interpret the fields, and how to cite the source documents — so answers are grounded in real data rather than what an LLM half-remembers from training.</p>
+    <p>trove ships two <a href="https://docs.claude.com/en/docs/claude-code/skills">Claude Code skills</a> packaged as a single plugin. Each skill teaches Claude how to query a specific healthcare dataset, how to interpret the fields, and how to cite the source documents.</p>
   </section>
 
   <section>
@@ -156,18 +157,14 @@
     <p>Add Anthropic's public community marketplace, then install the plugin:</p>
 <pre><code>/plugin marketplace add anthropics/claude-plugins-community
 /plugin install trove@claude-community</code></pre>
-    <p>trove is listed in the community marketplace, not the separate official <code>claude-plugins-official</code> marketplace.</p>
-    <p>Or copy the skill directories directly if you'd rather skip the plugin layer:</p>
-<pre><code>git clone https://github.com/cbetz/trove
-cp -r trove/skills/fda-analyst ~/.claude/skills/
-cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
-    <p>Both work in Claude Code, Claude Desktop, and any other tool that loads the Claude Code skill format.</p>
+    <p>trove is listed in the community marketplace, not the separate official <code>claude-plugins-official</code> marketplace. The current plugin version is 1.1.0; both skills ship in it.</p>
+    <p>The skills' source, and instructions for installing them without the plugin, are at <a href="https://github.com/cbetz/trove/tree/main/skills">github.com/cbetz/trove/tree/main/skills</a>.</p>
   </section>
 
   <section>
     <h2>The two healthcare data skills</h2>
     <a class="skill-card" href="/skills/fda-analyst/">
-      <span class="skill-tag">v0.2 · 218 FDA approvals indexed (CDER + CBER)</span>
+      <span class="skill-tag">plugin 1.1.0 · 217 FDA approvals indexed (192 CDER + 25 CBER)</span>
       <p class="skill-name">fda-analyst</p>
       <p class="skill-desc">Answer questions about FDA novel drug approvals (2021–2024) — the basis for approval, the trials, the endpoints, the regulatory pathway, adverse events the FDA flagged in the medical review. The skill fetches the actual approval-package PDFs at query time rather than relying on training data.</p>
       <ul class="skill-examples">
@@ -177,13 +174,13 @@ cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
       </ul>
     </a>
     <a class="skill-card" href="/skills/hcris-analyst/">
-      <span class="skill-tag">v1.1 · 1,295 hospital systems · SVI context</span>
+      <span class="skill-tag">plugin 1.1.0 · 2,099 hospital systems · tax year 2022</span>
       <p class="skill-name">hcris-analyst</p>
-      <p class="skill-desc">Answer questions about U.S. nonprofit hospital financials, beds, staffing, charity care, and community benefit by querying CMS Medicare Cost Reports (HCRIS) and IRS Form 990 Schedule H side-by-side. Handles cross-form alignment, definitional caveats, and home-county Social Vulnerability Index context.</p>
+      <p class="skill-desc">Look up what a U.S. nonprofit hospital reports on IRS Form 990 Schedule H line 7a and on CMS cost report Worksheet S-10 line 23, side by side for the same fiscal period, with the components from each filing that show what is in the difference. Also answers questions about cost-report figures such as beds, revenue, expenses and uncompensated care.</p>
       <ul class="skill-examples">
-        <li><em>Show me a profile of New York-Presbyterian.</em></li>
+        <li><em>Show S-10 line 23 and Schedule H line 7a side by side for Yale New Haven Hospital.</em></li>
+        <li><em>Which Florida hospitals in the index differ by more than 50%?</em></li>
         <li><em>What does Worksheet S-10 line 23 column 1 mean?</em></li>
-        <li><em>Show the aligned-period CMS and IRS charity-care fields for Yale-New Haven.</em></li>
       </ul>
     </a>
   </section>
@@ -210,8 +207,8 @@ cp -r trove/skills/hcris-analyst ~/.claude/skills/</code></pre>
     <h2>Browse the underlying data without installing the skills</h2>
     <p>If you want to see the underlying data without installing a skill:</p>
     <ul>
-      <li><a href="/drugs/">Browse the FDA drug approvals index</a> — search any of 218 CDER + CBER novel approvals by name, see the approval package.</li>
-      <li><a href="/hospitals/">Browse the hospital reporting index</a> — look up any of 1,295 nonprofit U.S. hospital systems.</li>
+      <li><a href="/drugs/">Browse the FDA drug approvals index</a> — search any of 217 CDER + CBER novel approvals by name, see the approval package.</li>
+      <li><a href="/hospitals/">Browse the hospital figures</a> — two public figures side by side, financial assistance on IRS Schedule H line 7a and charity care on CMS Worksheet S-10 line 23, for 2,099 matched nonprofit hospital systems, with a ranked index of 493 single hospitals.</li>
       <li><a href="https://github.com/cbetz/trove">Read the source on GitHub</a> — parsers, build scripts, raw artifacts, MIT-licensed.</li>
     </ul>
   </section>

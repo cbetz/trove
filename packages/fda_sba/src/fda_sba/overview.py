@@ -10,6 +10,8 @@ sponsor; richer parsing is a v0.2 add.
 from __future__ import annotations
 
 import re
+import warnings
+from datetime import date, datetime
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -27,6 +29,15 @@ USER_AGENT = "trove/fda_sba (+https://github.com/cbetz/trove)"
 _COMPANY_RE = re.compile(
     r'Company:\s*</span>\s*<span[^>]*class="appl-details-top"[^>]*>([^<]+)',
     re.I | re.S,
+)
+
+
+# Rows of the "Original Approvals or Tentative Approvals" table:
+#   <td>11/17/2022</td> <td>ORIG-1</td> <td> Approval </td>
+# "Tentative Approval" rows are deliberately not matched.
+_ORIG_APPROVAL_RE = re.compile(
+    r"<td>\s*(\d{1,2}/\d{1,2}/\d{4})\s*</td>\s*<td>\s*ORIG-\d+\s*</td>\s*<td>\s*Approval\s*</td>",
+    re.I,
 )
 
 
@@ -64,6 +75,165 @@ def parse_sponsor(html_bytes: bytes) -> str | None:
     # Title-case is more readable than the all-caps FDA stores. Apply only
     # when the value is fully uppercase; preserve mixed-case as-is.
     return _normalize(raw)
+
+
+def parse_original_approval_date(html_bytes: bytes) -> date | None:
+    """Return the original-approval action date from a drugs@FDA overview HTML.
+
+    This is the action date of the ORIG approval submission — the date on the
+    approval letter. ``None`` when the page has no such row (e.g. the
+    application has since been withdrawn and dropped from drugs@FDA).
+    """
+    if not html_bytes:
+        return None
+    text = html_bytes.decode("utf-8", errors="replace")
+    dates = []
+    for m in _ORIG_APPROVAL_RE.finditer(text):
+        try:
+            dates.append(datetime.strptime(m.group(1), "%m/%d/%Y").date())
+        except ValueError:
+            continue
+    return min(dates) if dates else None
+
+
+# The "Original Approvals or Tentative Approvals" table, one <tr> per submission:
+#   Action Date | Submission | Action Type | Submission Classification |
+#   Review Priority; Orphan Status | Letters, Reviews, Labels | Notes | Url
+_ORIG_TABLE_RE = re.compile(r'id="exampleApplOrig".*?</table>', re.S)
+_TR_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S)
+_TD_RE = re.compile(r"<td[^>]*>(.*?)</td>", re.S)
+_DOC_LINK_RE = re.compile(r'<a\s+href="([^"]+)"[^>]*title="Links to (Label|Letter|Review)"', re.I)
+
+
+def _cell_text(fragment: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", fragment)).strip()
+
+
+def parse_original_approval_documents(html_bytes: bytes) -> dict[str, str | None]:
+    """Return the documents FDA posted for an application's original approval.
+
+    Reads the first ``ORIG`` submission whose action type is ``Approval`` from
+    the drugs@FDA overview page and returns ``approval_letter_url``,
+    ``review_url`` (the approval package: FDA's review documents),
+    ``label_url`` (the label approved with the original approval) and
+    ``submission_classification`` (e.g. ``Type 1 - New Molecular Entity``;
+    blank for BLAs). Every value is ``None`` when the page has no such row.
+    """
+    out: dict[str, str | None] = {
+        "approval_letter_url": None,
+        "review_url": None,
+        "label_url": None,
+        "submission_classification": None,
+    }
+    if not html_bytes:
+        return out
+    table = _ORIG_TABLE_RE.search(html_bytes.decode("utf-8", errors="replace"))
+    if not table:
+        return out
+    candidates = []
+    for tr in _TR_RE.finditer(table.group(0)):
+        cells = _TD_RE.findall(tr.group(1))
+        if len(cells) < 6:
+            continue
+        submission = re.fullmatch(r"ORIG-(\d+)", _cell_text(cells[1]))
+        if not submission or _cell_text(cells[2]) != "Approval":
+            continue
+        candidates.append((int(submission.group(1)), cells))
+    if not candidates:
+        return out
+    _, cells = min(candidates, key=lambda c: c[0])
+    links = {kind.lower(): url for url, kind in _DOC_LINK_RE.findall(cells[5])}
+    out["approval_letter_url"] = links.get("letter")
+    out["review_url"] = links.get("review")
+    out["label_url"] = links.get("label")
+    out["submission_classification"] = _cell_text(cells[3]) or None
+    return out
+
+
+def enrich_with_approval_documents(
+    df: pd.DataFrame,
+    cache_dir: Path | str = "data/raw/fda/overview",
+) -> pd.DataFrame:
+    """Add ``approval_letter_url``, ``review_url`` and ``submission_classification``.
+
+    Also fills ``label_pdf_url`` from the original-approval row when FDA's
+    annual list linked the drug name to the drugs@FDA overview instead of to a
+    label PDF. A label link the list already carries is left alone. Uses the
+    overview pages cached by ``enrich_with_sponsor``.
+    """
+    out = df.copy()
+    cache = Path(cache_dir)
+    letters: list[str | None] = []
+    reviews: list[str | None] = []
+    classes: list[str | None] = []
+    labels = [v if isinstance(v, str) and v else None for v in out["label_pdf_url"].tolist()]
+    for i, appl_no in enumerate(out["application_number"].fillna("").tolist()):
+        docs = parse_original_approval_documents(b"")
+        if appl_no:
+            try:
+                docs = parse_original_approval_documents(
+                    fetch_application_overview(appl_no, cache).read_bytes()
+                )
+            except Exception as exc:  # noqa: BLE001
+                warnings.warn(
+                    f"{appl_no}: could not read the drugs@FDA overview ({exc!r}); "
+                    "no approval documents recorded",
+                    stacklevel=2,
+                )
+        letters.append(docs["approval_letter_url"])
+        reviews.append(docs["review_url"])
+        classes.append(docs["submission_classification"])
+        if labels[i] is None:
+            labels[i] = docs["label_url"]
+    out["approval_letter_url"] = letters
+    out["review_url"] = reviews
+    out["submission_classification"] = classes
+    out["label_pdf_url"] = labels
+    return out
+
+
+def reconcile_approval_dates(
+    df: pd.DataFrame,
+    cache_dir: Path | str = "data/raw/fda/overview",
+) -> pd.DataFrame:
+    """Replace list-page approval dates with the drugs@FDA action date where they differ.
+
+    FDA's annual Novel Drug Approvals page is hand-maintained and occasionally
+    off by a day from the approval letter (Tzield is listed as 11/18/22; its
+    approval letter and drugs@FDA both say November 17, 2022). drugs@FDA is
+    FDA's system of record for the action date, so it wins. The list-page date
+    is kept when drugs@FDA has no original-approval row, or when the two
+    disagree about the *year* — that is too large a gap to resolve silently,
+    so it is reported instead. Uses the overview pages already cached by
+    ``enrich_with_sponsor``; makes no extra requests once that has run.
+    """
+    out = df.copy()
+    cache = Path(cache_dir)
+    dates = list(out["approval_date"])
+    apps = out["application_number"].fillna("").tolist()
+    names = out["drug_name"].tolist()
+    for i, appl_no in enumerate(apps):
+        if not appl_no:
+            continue
+        try:
+            official = parse_original_approval_date(
+                fetch_application_overview(appl_no, cache).read_bytes()
+            )
+        except Exception:  # noqa: BLE001
+            continue
+        if official is None or official == dates[i]:
+            continue
+        if official.year != dates[i].year:
+            warnings.warn(
+                f"{names[i]}: drugs@FDA original approval {official.isoformat()} and the "
+                f"Novel Drug Approvals list ({dates[i].isoformat()}) disagree by year; "
+                "keeping the list date",
+                stacklevel=2,
+            )
+            continue
+        dates[i] = official
+    out["approval_date"] = dates
+    return out
 
 
 def enrich_with_sponsor(

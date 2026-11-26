@@ -1,47 +1,95 @@
 # trove
 
-**Yale New Haven Hospital reported $113.1M in financial assistance to the IRS and $35.6M in charity care to CMS — for the same fiscal year, on a comparable ~$4.1 billion expense base.**
+Open-source parsers, published data files, and Claude Code skills for public-domain U.S. healthcare data that is widely cited but hard to use raw. The first area sets two public hospital filings side by side; the second indexes FDA novel drug approvals.
 
-Every nonprofit U.S. hospital reports the cost of the care it gave patients who couldn't pay to two federal regulators: to the IRS on Form 990 Schedule H (Part I, line 7a) and to CMS on Worksheet S-10 of the Medicare Cost Report. Both fiscal periods ended 2023-09-30; the two filings' total expenses agree within 5%. You can check it yourself: [Yale's 990 on ProPublica](https://projects.propublica.org/nonprofits/organizations/60646652) · [the method](artifacts/charity_care_gap_index_2022.md).
+**Hospital charity care: the IRS figure and the CMS figure, side by side.** Nonprofit hospitals publish a financial-assistance figure on IRS Form 990 Schedule H (Part I, line 7a) and a charity-care figure on the CMS cost report (Worksheet S-10, line 23). trove puts the two next to each other for 2,099 matched hospital systems, tax year 2022, with the components from each filing that show what is in the difference. The two lines are defined differently, so they can differ when both are filed correctly.
 
-Of 1,295 nonprofit hospital systems, **99 clear an apples-to-apples bar** — single reporting facility, filing periods ending within one month of each other, both figures at least $1M, and total expenses within 5%. **22 of those 99 differ by more than 50%.**
+A ranked index covers the 493 hospitals, in 48 states, where one facility files both for the same fiscal period. In 107 of them the two figures differ by more than 50% of the larger; the CMS figure is the larger in 321, the IRS figure in 169, and 3 show the same amount. Those counts describe two differently defined lines: 143 of the 493 list offsetting revenue in line 7a column (d), and 301 show an amount on S-10 line 5.
 
-> **A gap is not an accusation.** The two forms have genuinely different definitions, cost-to-charge handling, and category boundaries, and a difference can be entirely legitimate. That the two figures diverge is a long-documented measurement inconsistency, not a novel discovery — the GAO has noted there is no standard federal definition of uncompensated care ([GAO-16-568](https://www.gao.gov/products/gao-16-568)) and separately scrutinized Schedule H reporting ([GAO-20-679](https://www.gao.gov/products/gao-20-679)); CRS laid out the differing definitions (2018); researchers have compared the two sources (Zare et al., *Health Services Research*, 2022). What hasn't existed is a fast way to check it for a **specific hospital**, with links to both filings. That's what this is.
+An example, Yale New Haven Hospital (fiscal year ending 2023-09-30 on both filings):
 
-**[Read the write-up →](https://troveproject.com/notes/charity-care-gap/)** · **[Look up any hospital →](https://troveproject.com/hospitals/)**
+- IRS line 7a: $257.3M total expense (c), $144.2M offsetting revenue (d), **$113.1M net (e)**.
+- CMS S-10 line 23: **$35.6M**. S-10 line 5: −$71.5M.
+- Of the $77.5M difference, about $71.5M appears to be Connecticut's hospital provider tax net of the state supplemental payments it funds: the amount on S-10 line 5, which the cost report keeps separate from charity care. The worksheet behind the IRS line is not public, so this is a reconciliation from the hospital's own filings, not a figure the hospital has stated.
+
+**[Look up any hospital →](https://troveproject.com/hospitals/)** · **[How to read a difference →](https://troveproject.com/notes/charity-care-gap/)** · [ranked index](artifacts/charity_care_gap_index_2022.md) · [method](artifacts/community_benefit_gap_2022_summary.md)
+
+> A difference between the two figures is a reason to open both filings and read the components. It does not, by itself, say anything about either filing.
 
 ## Query it in one line
 
-The published bundles are Parquet over HTTPS, so DuckDB reads them with no download and no API key:
+The published tables are Parquet over HTTPS, so DuckDB reads them with no download and no API key. This runs as pasted:
 
 ```sql
 INSTALL httpfs; LOAD httpfs;
 
 SELECT hospital_name,
-       sched_h_financial_assistance_at_cost AS told_irs,
-       hcris_charity_care_cost              AS told_cms,
+       sched_h_financial_assistance_at_cost AS irs_7a_net,
+       hcris_charity_care_cost              AS cms_s10_line23,
        sched_h_tax_period_end, hcris_fy_end_dt
 FROM 'https://troveproject.com/data/community_benefit_gap_2022.parquet'
-WHERE sched_h_organization_name ILIKE '%<YOUR HOSPITAL>%';
+WHERE sched_h_organization_name ILIKE '%yale%';
 ```
 
-Compare the two period-end columns before comparing the two dollar figures — 64% of matched systems are 12 months apart, and a difference across different years means nothing. Three bundles are served:
+```
+┌─────────────────────────┬─────────────┬────────────────┬────────────────────────┬─────────────────────┐
+│      hospital_name      │ irs_7a_net  │ cms_s10_line23 │ sched_h_tax_period_end │   hcris_fy_end_dt   │
+│         varchar         │   double    │     double     │       timestamp        │      timestamp      │
+├─────────────────────────┼─────────────┼────────────────┼────────────────────────┼─────────────────────┤
+│ YALE NEW HAVEN HOSPITAL │ 113100512.0 │     35568680.0 │ 2023-09-30 00:00:00    │ 2023-09-30 00:00:00 │
+└─────────────────────────┴─────────────┴────────────────┴────────────────────────┴─────────────────────┘
+```
+
+Change `'%yale%'` to part of your hospital's legal name. (The CMS column can be `NULL`: a hospital with no value on S-10 line 23 is published as missing, never `0`.)
+
+The components for the Connecticut hospitals with the largest differences:
+
+```sql
+SELECT hospital_name,
+       sched_h_financial_assistance_gross::BIGINT          AS irs_7a_c,
+       sched_h_financial_assistance_offset_revenue::BIGINT AS irs_7a_d,
+       sched_h_financial_assistance_at_cost::BIGINT        AS irs_7a_e,
+       hcris_charity_care_cost::BIGINT                     AS s10_line23,
+       hcris_medicaid_dsh_supplemental::BIGINT             AS s10_line5,
+       charity_gap::BIGINT                                 AS cms_minus_irs
+FROM 'https://troveproject.com/data/community_benefit_gap_2022.parquet'
+WHERE state = 'CT' AND period_aligned AND charity_gap IS NOT NULL
+ORDER BY abs(charity_gap) DESC
+LIMIT 6;
+```
+
+```
+┌──────────────────────────────┬───────────┬───────────┬───────────┬────────────┬───────────┬───────────────┐
+│        hospital_name         │ irs_7a_c  │ irs_7a_d  │ irs_7a_e  │ s10_line23 │ s10_line5 │ cms_minus_irs │
+│           varchar            │   int64   │   int64   │   int64   │   int64    │   int64   │     int64     │
+├──────────────────────────────┼───────────┼───────────┼───────────┼────────────┼───────────┼───────────────┤
+│ YALE NEW HAVEN HOSPITAL      │ 257262512 │ 144162000 │ 113100512 │   35568680 │ -71469000 │     -77531832 │
+│ GREENWICH HOSPITAL           │  34595829 │  11028000 │  23567829 │    3984548 │ -19837000 │     -19583281 │
+│ LAWRENCE & MEMORIAL HOSPITAL │  32103082 │  11014000 │  21089082 │    4783389 │ -16316000 │     -16305693 │
+│ BRIDGEPORT HOSPITAL          │  64722486 │  32019000 │  32703486 │   19539141 │ -12084000 │     -13164345 │
+│ ST. MARYS HOSPITAL           │    518747 │      NULL │    518747 │    3392481 │      NULL │       2873734 │
+│ HARTFORD HOSPITAL            │  21532625 │      NULL │  21532625 │   24361522 │ -12598390 │       2828897 │
+└──────────────────────────────┴───────────┴───────────┴───────────┴────────────┴───────────┴───────────────┘
+```
+
+`period_aligned` is true when the cost report's period ends within one month of the 990's (1,979 of the 2,099 rows; 1,797 of the 1,904 with both figures). A difference on a row that is not aligned compares two different years. Four tables are served:
 
 | URL | What's in it |
 |---|---|
-| [`community_benefit_gap_2022.parquet`](https://troveproject.com/data/community_benefit_gap_2022.parquet) | The matched dataset — HCRIS S-10 summed per EIN, joined to Schedule H 7a (1,334 × 20) |
-| [`hcris_2023_wide.parquet`](https://troveproject.com/data/hcris_2023_wide.parquet) | HCRIS Hospital 2552-10 FY2023, pivoted wide, 48 named variables (~6,100 rows) |
-| [`schedule_h_2022.parquet`](https://troveproject.com/data/schedule_h_2022.parquet) | IRS 990 Schedule H filings, TY2022 (~1,500 × 23) |
+| [`community_benefit_gap_2022.parquet`](https://troveproject.com/data/community_benefit_gap_2022.parquet) | The matched table: Worksheet S-10 summed per EIN, joined to Schedule H line 7a, with components (2,099 × 51 from 1.1.0; also as [CSV](https://troveproject.com/data/community_benefit_gap_2022.csv)) |
+| [`hcris_2022_wide.parquet`](https://troveproject.com/data/hcris_2022_wide.parquet) | HCRIS Hospital 2552-10, FY2022 file, one row per cost report, 52 named variables (6,069 rows; new in 1.1.0) |
+| [`hcris_2023_wide.parquet`](https://troveproject.com/data/hcris_2023_wide.parquet) | The same for the FY2023 file (6,109 rows). CMS files a report under the fiscal year in which its period begins, so the two union directly |
+| [`schedule_h_2022.parquet`](https://troveproject.com/data/schedule_h_2022.parquet) | IRS 990 Schedule H returns, tax year 2022, columns (c), (d) and (e) for every Part I line (2,360 × 51 from 1.1.0) |
 
 Or skip SQL: the [`hcris-analyst`](https://troveproject.com/skills/hcris-analyst/) Claude Code skill answers the same questions in plain English.
 
 ## Look it up
 
-- **[troveproject.com/hospitals/](https://troveproject.com/hospitals/)** — the ranked index, plus a lookup of 1,295 nonprofit hospital systems with both filings side-by-side and a link to each 990
-- **[troveproject.com/drugs/](https://troveproject.com/drugs/)** — 218 FDA novel drug approvals, 2021–2024 (CDER NMEs + CBER cell &amp; gene therapies); click any record for its full approval package
-- **[troveproject.com/skills/](https://troveproject.com/skills/)** — install the trove Claude Code plugin (`fda-analyst` + `hcris-analyst`)
-- **[troveproject.com/docs/](https://troveproject.com/docs/)** — plain-language explainers: [what is HCRIS](https://troveproject.com/docs/hcris/), [what is IRS 990 Schedule H](https://troveproject.com/docs/schedule-h/), [what is an FDA novel drug approval](https://troveproject.com/docs/fda-nme/)
-- **[troveproject.com/notes/](https://troveproject.com/notes/)** — findings written from the published tables
+- **[troveproject.com/hospitals/](https://troveproject.com/hospitals/)**: the ranked index of 493 hospitals, plus a lookup of 2,099 matched nonprofit hospital systems with both figures, their components, and links to both filings
+- **[troveproject.com/drugs/](https://troveproject.com/drugs/)**: 217 FDA novel drug approvals, 2021–2024 (192 CDER NMEs and novel BLAs + 25 CBER cell and gene therapies); click any record for its full approval package
+- **[troveproject.com/skills/](https://troveproject.com/skills/)**: install the trove Claude Code plugin (`fda-analyst` + `hcris-analyst`)
+- **[troveproject.com/docs/](https://troveproject.com/docs/)**: plain-language explainers: [what is HCRIS](https://troveproject.com/docs/hcris/), [what is IRS 990 Schedule H](https://troveproject.com/docs/schedule-h/), [what is an FDA novel drug approval](https://troveproject.com/docs/fda-nme/)
+- **[troveproject.com/notes/](https://troveproject.com/notes/)**: write-ups from the published tables
 
 ## What this is
 
@@ -51,23 +99,36 @@ Two areas live today:
 
 ### [/hospitals](https://troveproject.com/hospitals/) — hospital reporting (CMS + IRS)
 
-Charity-care reporting that nonprofit hospitals file with two different regulators, side by side. Both lines are meant to capture the cost of caring for patients who couldn't pay, but the rules and scope diverge enough that the two numbers can legitimately differ.
+Two public figures for each nonprofit hospital, side by side:
 
-For tax year 2022 the funnel is: **1,334 systems matched** at the EIN level → **1,295 computable** (both figures present) → **372 period-aligned within 1 month** → **99 that also clear the single-facility, materiality, and same-expense-base tests**. Each row carries filing-period context, a home-county Social Vulnerability Index proxy, and a deep link to the actual 990 on ProPublica.
+- **IRS Form 990, Schedule H, Part I, line 7a** reports financial assistance at cost: column (c) total expense, column (d) direct offsetting revenue, and column (e) net, which is (c) − (d).
+- **CMS cost report (form 2552-10), Worksheet S-10, line 23, column 3** is the cost of charity care after patient payments: uninsured patients (column 1) plus insured patients (column 2).
+
+The two lines are defined differently. The IRS Schedule H instructions (Worksheet 1, line 4) have a filer include Medicaid or provider taxes in the line 7a cost when payments from an uncompensated care pool or DSH program in its state are intended primarily to offset the cost of financial assistance, with that pool revenue reported as offsetting revenue; otherwise those amounts belong on line 7b. The cost report keeps Medicaid DSH and supplemental payments, net of provider taxes, on a separate line (S-10 line 5) that is not part of line 23. The S-10 insured column counts deductibles and coinsurance written off. So the two can differ when both are filed correctly, and the published components are there so a difference can be read.
+
+For tax year 2022 the funnel is: **2,099 systems matched** at the EIN level → **1,904 with both figures** → **1,797 period-aligned** (cost report ending within one month of the 990) → **1,642 with a single cost report** → **493 in the ranked index**, which also requires both figures to be at least $1M and total expenses on the two filings to be within 5%. Multi-hospital systems (Mayo Clinic's return covers 19 cost reports, Cleveland Clinic's 17) are in the lookup but not the index.
+
+**Missing is not zero.** 159 matched systems have no value on S-10 line 23 and 53 have a blank line 7a column (e). Those rows are published with an empty value and no difference, never `0`. The Johns Hopkins Hospital, for example, files a Worksheet S-10 with no value on line 23; St. Jude Children's Research Hospital and Texas Children's Hospital have no Worksheet S-10 in the CMS file.
+
+Each row carries both fiscal periods, the cost report's status, a home-county Social Vulnerability Index value, and the object id of the return, which links to its Schedule H on ProPublica.
 
 Ranked index: [`artifacts/charity_care_gap_index_2022.md`](artifacts/charity_care_gap_index_2022.md) · Full data: [`artifacts/community_benefit_gap_2022.csv`](artifacts/community_benefit_gap_2022.csv) · Method and every caveat: [`artifacts/community_benefit_gap_2022_summary.md`](artifacts/community_benefit_gap_2022_summary.md).
 
-**The comparison is net-to-net.** The IRS figure is Schedule H Part I line 7a column (e) — net community benefit expense for financial assistance. The CMS figure is S-10 cost of charity care, net of partial patient payments. The two "net" definitions still aren't identical, so a residual difference is expected even for a hospital reporting both correctly.
+Sources: CMS HCRIS hospital cost report files for fiscal years 2022 and 2023 (extract generated 2026-10-02, posted 2026-10-05); IRS Form 990 e-file releases 2023 through 2026, returns for tax year 2022; the Community Benefit Insight CCN-to-EIN crosswalk (December 2024).
 
 ### [/drugs](https://troveproject.com/drugs/) — FDA drug approvals
 
-Every FDA novel drug approval from 2021–2024 (218 drugs) across both regulatory centers: **CDER** (192 NMEs and novel antibody BLAs from the annual *Novel Drug Approvals* lists) plus **CBER** (26 cell and gene therapy approvals — Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, Adstiladrin, and others). Each row carries application number, sponsor, approval date, indication, a `regulatory_center` column, and a deep link to the approval-package documents — medical, statistical, pharmacology, and chemistry reviews. The `fda-analyst` skill reads those PDFs at query time.
+Every FDA novel drug approval from 2021–2024 (217 drugs, by original approval date) across both regulatory centers: **CDER** (192 NMEs and novel antibody BLAs from the annual *Novel Drug Approvals* lists) plus **CBER** (25 cell and gene therapy approvals: Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, Adstiladrin, and others). Each row carries application number, sponsor, approval date, indication, a `regulatory_center` column, and a deep link to the approval-package documents — medical, statistical, pharmacology, and chemistry reviews. The `fda-analyst` skill reads those PDFs at query time.
 
-Sources: FDA's annual *Novel Drug Approvals* lists (CDER); *Approved Cellular and Gene Therapy Products* page (CBER); drugs@FDA. US government work, public domain.
+For CDER approvals each record also links the approval letter and the review package posted with the original approval, and carries the review designation, orphan, accelerated approval, breakthrough and fast track status and the FDA receipt date from FDA's compilation.
+
+Beyond the per-drug index: a list for [every approval year from 1985](https://troveproject.com/drugs/2025/), [approval statistics](https://troveproject.com/drugs/statistics/) (approvals per year, designation shares, receipt-to-approval times), and FDA's *Compilation of CDER NME and New Biologic Approvals* (1,387 approvals, 1985–2025) [converted from Excel to CSV and Parquet](https://troveproject.com/drugs/compilation/).
+
+Sources: FDA's annual *Novel Drug Approvals* lists (CDER); *Approved Cellular and Gene Therapy Products* page (CBER); drugs@FDA; *Compilation of CDER NME and New Biologic Approvals*. US government work, public domain.
 
 ## Install the skills
 
-trove is packaged as a Claude Code plugin (`.claude-plugin/plugin.json`) containing both skills.
+trove is packaged as a Claude Code plugin (`.claude-plugin/plugin.json`, version 1.1.0) containing both skills.
 
 **Plugin install** — Anthropic's community marketplace:
 
@@ -78,59 +139,52 @@ trove is packaged as a Claude Code plugin (`.claude-plugin/plugin.json`) contain
 
 That's the public community marketplace, not the separate official `claude-plugins-official` one.
 
-**Filesystem install:**
+Restart Claude Code and both skills are loaded. Each skill's `description` tells Claude when to invoke it — you don't call them by name.
 
-```bash
-git clone https://github.com/cbetz/trove
-cp -r trove/skills/hcris-analyst ~/.claude/skills/
-cp -r trove/skills/fda-analyst  ~/.claude/skills/
-```
-
-Either way, restart Claude Code and both are loaded. Each skill's `description` tells Claude when to invoke it — you don't call them by name.
-
-- `skills/hcris-analyst/` — natural-language queries over hospital reporting (HCRIS S-10 + IRS 990 Schedule H + CCN↔EIN crosswalk + CDC SVI). Profile lookups, peer context, glossary, cross-form difference context.
+- `skills/hcris-analyst/` — natural-language queries over hospital reporting (HCRIS S-10 + IRS 990 Schedule H + CCN↔EIN crosswalk + CDC SVI). Profile lookups, peer context, glossary, and the components behind a difference between the two filings.
 - `skills/fda-analyst/` — questions about specific FDA approvals; reads approval-package PDFs at query time.
 
-For per-project install, Claude.ai upload, or authoring a new skill, see [`skills/README.md`](skills/README.md).
+The plugin is the documented install path. To copy the skill folders by hand instead (per-project install, Claude.ai upload), or to author a new skill, see [`skills/README.md`](skills/README.md).
 
 ## What's in the box
 
 **Hospital reporting:**
 
-- **`hcris`** — CMS Medicare Cost Reports (form 2552-10) parser with a 44-variable semantic dictionary. Turns headerless long-skinny CSVs into tidy DataFrames and partitioned Parquet.
-- **`form990`** — IRS Form 990 Schedule H parser. Bulk-XML download, index reader, 19 fields per filing including Part I 7a–k community benefit amounts and Part III bad debt. Handles the DEFLATE64 ZIPs the IRS introduced in 2025.
+- **`hcris`** — CMS Medicare Cost Reports (form 2552-10) parser with a 52-variable semantic dictionary. Turns headerless long-skinny CSVs into tidy DataFrames and partitioned Parquet.
+- **`form990`** — IRS Form 990 Schedule H parser. Bulk-XML download and ZIP discovery, columns (c), (d) and (e) for Part I lines 7a–k, and Part III bad debt. Handles the DEFLATE64 ZIPs the IRS introduced in 2025.
 - **`crosswalk`** — CCN ↔ EIN crosswalk (3,523 hospitals, 2,385 EINs), bundled from Community Benefit Insight.
 - **`analytics`** — composed queries. `community_benefit_gap()` is the cross-form charity-care primitive.
 - **`sdoh`** — CDC Social Vulnerability Index 2022 county-level (public domain, ships in the public bundles) and UW Area Deprivation Index county aggregation (local-only — UW's terms are non-sublicensable).
 
 **FDA drug approvals:**
 
-- **`fda_sba`** — scrapes FDA's novel-approval sources across CDER and CBER; extracts application number, drug name, active ingredient, approval date, sponsor, indication, `regulatory_center`, and links to the approval-package PDFs. Covers 2021–2024 (218 drugs: 192 CDER + 26 CBER).
+- **`fda_sba`** — scrapes FDA's novel-approval sources across CDER and CBER; extracts application number, drug name, active ingredient, approval date, sponsor, indication, `regulatory_center`, and links to the label, approval letter and review package. Covers 2021–2024 (217 drugs: 192 CDER + 25 CBER). Also parses FDA's NME compilation workbook (1985–2025) and joins its review designations onto the index.
 
 **Site:** static HTML on Vercel at troveproject.com. See [`web/README.md`](web/README.md).
 
 ## Rebuild from raw sources
 
-Everything published here is reproducible from primary sources. The downloads total roughly 8.4 GB — mostly the IRS bulk-XML ZIPs — and are automatic apart from the two calls noted below.
+Everything published here is reproducible from primary sources. The hospital build needs the CMS HCRIS ZIPs for fiscal years 2022 and 2023 (about 130 MB each, kept under `data/raw/`) and reads the IRS e-file ZIPs of the 2023–2026 releases, about 17 GB in total. The IRS ZIPs are downloaded and parsed one at a time and deleted after parsing, so the build never holds all of them at once; the first run is long.
 
 ```bash
 git clone https://github.com/cbetz/trove
 cd trove && uv sync --all-packages
 
-# One-time raw downloads (~8.4 GB, cached under data/raw/, gitignored)
-uv run python -c "import hcris; hcris.download_year(2023)"
-# IRS Schedule H ZIPs are fetched by build_gap_dataset.py on first run,
-# or explicitly: form990.download_zip(tax_year=2022, release_year=2024)
+# /hospitals, in this order; each reads the previous one's output.
+# The first run downloads the CMS files and scans the IRS ZIPs; later runs use the caches.
+uv run python scripts/build_gap_dataset.py   # artifacts CSV + sources JSON (source of truth)
+uv run python scripts/build_gap_index.py     # ranked index + summary (MD) and index JSON
+uv run python scripts/build_web_data.py      # site lookup JSON
+uv run python scripts/build_web_bundles.py   # published Parquet files + CSV copy
 
-# /hospitals — in this order; each reads the previous one's output
-uv run python scripts/build_gap_dataset.py   # artifacts CSV + parquet (source of truth)
-uv run python scripts/build_gap_index.py     # the ranked index (MD + JSON)
-uv run python scripts/build_web_data.py      # site search JSON
-uv run python scripts/build_web_bundles.py   # published Parquet bundles + CSV copy
+# Optional flags
+uv run python scripts/build_gap_dataset.py --refresh-hcris   # re-download the CMS files
+uv run python scripts/build_gap_dataset.py --refresh-990     # re-ingest every IRS ZIP (~17 GB)
+uv run python scripts/build_gap_index.py --inject-chart      # also rewrite the chart in the site pages
 
 # /drugs
-uv run python scripts/build_fda_index.py
-uv run python scripts/build_drug_pages.py    # per-drug pages AND web/sitemap.xml
+uv run python scripts/build_fda_index.py     # per-drug index + FDA's NME compilation as CSV/Parquet
+uv run python scripts/build_drug_pages.py    # per-drug, per-year, statistics and compilation pages (HTML + Markdown) AND the /drugs/ entries in web/sitemap.xml
 ```
 
 CDC SVI and the UW ADI file (if you have your own license) are read from `data/raw/svi/` and `data/raw/adi/`. ADI never enters the public bundles — see the license note below.
@@ -139,7 +193,7 @@ CDC SVI and the UW ADI file (if you have your own license) are read from `data/r
 
 ```bash
 uv sync --all-packages
-uv run pytest        # 116 tests
+uv run pytest
 uv run ruff check
 uv run ruff format --check
 ```
@@ -161,9 +215,9 @@ Per-package detail in `packages/*/README.md`. Release history in [`CHANGELOG.md`
 
 ## Corrections
 
-If a number here looks wrong, it might be — the underlying filings are self-reported and the join spans two federal systems with different fiscal calendars. Open a [data question](https://github.com/cbetz/trove/issues/new?template=data-question.yml) with the hospital and the figure, and it gets checked against the source filing. Methodology disagreements are welcome too, as a [methodology issue](https://github.com/cbetz/trove/issues/new?template=methodology.yml) — better in public than in my inbox. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+If a number here looks wrong, it might be: the join spans two federal systems with different fiscal calendars and reporting units. Open a [data question](https://github.com/cbetz/trove/issues/new?template=data-question.yml) with the hospital and the figure, and it gets checked against the source filing. Methodology disagreements are welcome too, as a [methodology issue](https://github.com/cbetz/trove/issues/new?template=methodology.yml) — better in public than in my inbox. See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-One thing to check first, because it explains most apparent errors: compare `hcris_fy_end_dt` against `sched_h_tax_period_end` before comparing two dollar figures.
+Two things to check first: that `period_aligned` is true for the row (otherwise the two figures cover different years), and whether the line is empty (a missing S-10 line 23 is published as empty, not `0`).
 
 Built by [Chris Betz](https://cbetz.com) on personal time. Not affiliated with my employer; opinions my own. Not medical, legal, or financial advice.
 

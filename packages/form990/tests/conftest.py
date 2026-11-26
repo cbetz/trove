@@ -20,6 +20,10 @@ def _filing_xml(
     total_revenue: int = 1_000_000_000,
     total_expenses: int = 950_000_000,
     fa_at_cost_net: int = 50_000_000,
+    fa_at_cost_gross: int | None = None,
+    fa_at_cost_offset: int | None = None,
+    return_ts: str = "2023-11-15T10:00:00-05:00",
+    amended: bool = False,
     medicaid_net: int = 30_000_000,
     total_community_benefit_net: int = 100_000_000,
     total_community_benefit_pct: str = "0.10500",
@@ -27,10 +31,22 @@ def _filing_xml(
     facility_count: int = 1,
 ) -> str:
     sch_h_block = ""
+    gross = (
+        ""
+        if fa_at_cost_gross is None
+        else f"<TotalCommunityBenefitExpnsAmt>{fa_at_cost_gross}</TotalCommunityBenefitExpnsAmt>"
+    )
+    offset = (
+        ""
+        if fa_at_cost_offset is None
+        else f"<DirectOffsettingRevenueAmt>{fa_at_cost_offset}</DirectOffsettingRevenueAmt>"
+    )
+    amended_block = "<AmendedReturnInd>X</AmendedReturnInd>" if amended else ""
     if schedule_h:
         sch_h_block = f"""
     <IRS990ScheduleH documentId="RetDoc1">
       <FinancialAssistanceAtCostTyp>
+        {gross}{offset}
         <NetCommunityBenefitExpnsAmt>{fa_at_cost_net}</NetCommunityBenefitExpnsAmt>
       </FinancialAssistanceAtCostTyp>
       <UnreimbursedMedicaidGrp>
@@ -46,6 +62,7 @@ def _filing_xml(
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <Return xmlns="http://www.irs.gov/efile" returnVersion="2022v5.0">
   <ReturnHeader>
+    <ReturnTs>{return_ts}</ReturnTs>
     <TaxPeriodBeginDt>{tax_period_begin}</TaxPeriodBeginDt>
     <TaxPeriodEndDt>{tax_period_end}</TaxPeriodEndDt>
     <ReturnTypeCd>{return_type}</ReturnTypeCd>
@@ -55,10 +72,15 @@ def _filing_xml(
       <BusinessName>
         <BusinessNameLine1Txt>{name}</BusinessNameLine1Txt>
       </BusinessName>
+      <USAddress>
+        <CityNm>SPRINGFIELD</CityNm>
+        <StateAbbreviationCd>IL</StateAbbreviationCd>
+      </USAddress>
     </Filer>
   </ReturnHeader>
   <ReturnData>
     <IRS990 documentId="RetDoc0">
+      {amended_block}
       <CYTotalRevenueAmt>{total_revenue}</CYTotalRevenueAmt>
       <CYTotalExpensesAmt>{total_expenses}</CYTotalExpensesAmt>
     </IRS990>{sch_h_block}
@@ -99,8 +121,11 @@ def fake_zip_factory(tmp_path: Path):
                     "tax_period_end": "2022-12-31",
                     **f,
                 }
+                # ``member`` overrides the ZIP member name (the IRS uses
+                # ``{BATCH}/{OBJECT_ID}_public.xml``); default is the EIN.
+                member = opts.pop("member", f"{f['ein']}_public.xml")
                 xml = _filing_xml(**opts)
-                zf.writestr(f"{f['ein']}_public.xml", xml)
+                zf.writestr(member, xml)
         return path
 
     return build

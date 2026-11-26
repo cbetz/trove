@@ -22,4 +22,7 @@ INDEX_COLUMNS: Final[tuple[str, ...]] = (
     "XML_BATCH_ID",
 )
 
+# The 2023 release's index has no XML_BATCH_ID column; every later release does.
+INDEX_OPTIONAL_COLUMNS: Final[frozenset[str]] = frozenset({"XML_BATCH_ID"})
+
 RETURN_TYPE_990: Final[str] = "990"

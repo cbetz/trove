@@ -14,7 +14,9 @@ cares about — first-time approvals of meaningful new drugs.
 from __future__ import annotations
 
 import re
+import warnings
 from collections.abc import Iterable
+from datetime import date, datetime
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -64,9 +66,7 @@ def scrape_nme_year(
     rows = list(_iter_rows(page_path, year))
     if not rows:
         return pd.DataFrame(columns=_OUTPUT_COLUMNS)
-    df = pd.DataFrame(rows, columns=_OUTPUT_COLUMNS)
-    df["approval_date"] = pd.to_datetime(df["approval_date"], errors="coerce").dt.date
-    return df
+    return pd.DataFrame(rows, columns=_OUTPUT_COLUMNS)
 
 
 def build_index(
@@ -123,7 +123,13 @@ def _iter_rows(page_path: Path, year: int):
         # otherwise FDA points at the drugs@FDA overview directly.
         label_url = link_url if _is_label_pdf_url(link_url) else None
         active = _clean(cells[2].text_content())
-        approval_date = _clean(cells[3].text_content())
+        approval_date = _parse_approval_date(_clean(cells[3].text_content()), drug_name)
+        if approval_date.year != year:
+            warnings.warn(
+                f"{drug_name}: approval date {approval_date.isoformat()} is not in the "
+                f"{year} page it was listed on",
+                stacklevel=2,
+            )
         use_cell = cells[4] if len(cells) > 4 else None
         indication = _strip_to_indication(use_cell)
         snapshot_url = _trials_snapshot_url(use_cell) if use_cell is not None else None
@@ -139,6 +145,30 @@ def _iter_rows(page_path: Path, year: int):
             "drugs_at_fda_url": _drugs_at_fda_url(appl_no),
             "trials_snapshot_url": snapshot_url,
         }
+
+
+# FDA hand-edits the date cell, so the format drifts row to row: most rows
+# are M/D/YYYY, a few are M/D/YY ("11/18/22" for Tzield), and "Month D, YYYY"
+# has appeared too. Each cell is parsed on its own against every known format.
+# The previous implementation ran ``pd.to_datetime(column, errors="coerce")``,
+# which infers ONE format from the first row and silently turns every cell
+# that deviates into NaT — which then shipped as the literal string "NaT".
+_DATE_FORMATS = ("%m/%d/%Y", "%m/%d/%y", "%m-%d-%Y", "%B %d, %Y", "%B %d %Y", "%b %d, %Y")
+
+
+def _parse_approval_date(text: str, drug_name: str = "") -> date:
+    """Parse one approval-date cell. Raises ``ValueError`` rather than guessing.
+
+    An unparseable date must stop the build: a row without a real approval
+    date is not publishable.
+    """
+    cleaned = text.strip().rstrip(".")
+    for fmt in _DATE_FORMATS:
+        try:
+            return datetime.strptime(cleaned, fmt).date()
+        except ValueError:
+            continue
+    raise ValueError(f"unparseable approval date {text!r} for {drug_name or 'unknown drug'}")
 
 
 def _clean(s: str | None) -> str:
