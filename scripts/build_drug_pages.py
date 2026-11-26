@@ -1,219 +1,254 @@
-"""Generate per-drug static HTML pages under web/drugs/{slug}/index.html.
+"""Generate the FDA section of the site from the published data bundles.
 
-Each page is a permalink for one FDA novel drug approval — its own URL,
-metadata, JSON-LD, links back to the lookup index, and links to related
-approvals (chronological neighbours, same sponsor, same year). Generated from
-the same source JSON the /drugs/ lookup uses.
+Per-drug pages under ``web/drugs/{slug}/`` — one permalink for each FDA novel
+drug approval in the index, opening with a plain-language answer (what was
+approved, when, under which application), then the facts FDA records about the
+application, direct links to the label, approval letter, review documents and
+Drug Trials Snapshot, and links to related approvals. Each page has a Markdown
+twin at ``index.md``.
 
-Pages for drugs no longer in the source JSON are removed, and the sitemap's
-per-drug entries are regenerated; every other sitemap entry is left exactly
-as it is.
+It then calls ``build_fda_lists`` for the per-year lists, the statistics page,
+the compilation download page and the static list inside ``/drugs/``.
+
+Pages for drugs no longer in the source JSON are removed, and the sitemap
+entries under ``/drugs/`` are regenerated; every other sitemap entry is left
+exactly as it is. A page's ``dateModified`` and sitemap ``lastmod`` change only
+when its content does.
 
 Usage: ``uv run python scripts/build_drug_pages.py``
 """
 
 from __future__ import annotations
 
-import html
 import json
 import re
 from datetime import UTC, datetime
 from pathlib import Path
 
-from build_og_image import FILENAME as OG_FILENAME
+import build_fda_lists
+from fda_site_common import (
+    DRUGS_AT_FDA_URL,
+    NOVEL_APPROVALS_URL,
+    PERSON,
+    PUBLISHER,
+    REPO_URL,
+    SITE,
+    breadcrumbs,
+    cber_use,
+    days_between,
+    designations,
+    esc,
+    fmt_date,
+    fmt_date_long,
+    is_priority,
+    is_yes,
+    join_words,
+    page_shell,
+    slugify,
+    title_case,
+    update_sitemap,
+    url_attr,
+    write_page,
+)
 
 SRC = Path("web/data/fda_approvals_nme_recent.json")
 OUT_DIR = Path("web/drugs")
-SITEMAP = Path("web/sitemap.xml")
-SITE = "https://troveproject.com"
-# Single-sourced from build_og_image so regenerating the per-drug pages can't
-# silently revert them to a stale, cache-busted card filename.
-OG_IMAGE = f"{SITE}/{OG_FILENAME}"
-REPO_URL = "https://github.com/cbetz/trove"
 # Keep in step with README.md "Install the skills" and web/skills/index.html.
 PLUGIN_INSTALL = """/plugin marketplace add anthropics/claude-plugins-community
 /plugin install trove@claude-community"""
 # How many same-sponsor / same-year links to show before deferring to the index.
 MAX_RELATED = 8
 
-
-def slugify(s: str) -> str:
-    s = s.lower()
-    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
-    return s
-
-
-def title_case(s: str | None) -> str:
-    """Match the JS titleCase on the index — convert SHOUTING sponsor names."""
-    if not s:
-        return ""
-    letters = [c for c in s if c.isalpha()]
-    if not letters:
-        return s
-    upper = sum(1 for c in letters if c.isupper())
-    if upper / len(letters) < 0.8:
-        return s
-    return re.sub(r"\w\S*", lambda m: m.group(0)[0].upper() + m.group(0)[1:].lower(), s)
+_VOUCHERS = {
+    "TD": "tropical disease",
+    "RPD": "rare pediatric disease",
+    "MTMC": "material threat medical countermeasure",
+}
+_CENTERS = {
+    "CDER": "CDER (Center for Drug Evaluation and Research)",
+    "CBER": "CBER (Center for Biologics Evaluation and Research)",
+}
 
 
-def fmt_date(iso: str | None) -> str:
-    """Format an ISO date for display. Raises on anything that is not a date.
+def is_cber(r: dict) -> bool:
+    return r.get("regulatory_center") == "CBER"
 
-    A missing or malformed approval date used to be echoed straight onto the
-    page (Tzield shipped as "approved NaT"); it now stops the build instead.
+
+def application(r: dict) -> str:
+    return f"{r.get('application_type') or ''} {r.get('application_number') or ''}".strip()
+
+
+def summary_paragraphs(r: dict) -> list[str]:
+    """The answer-first paragraphs at the top of a drug page, as plain text.
+
+    Each stands on its own: it names the drug and does not rely on a heading
+    or on the paragraph before it.
     """
-    if not iso:
-        raise ValueError("missing approval date")
-    d = datetime.strptime(iso, "%Y-%m-%d")
-    return d.strftime("%b %-d, %Y")
+    name = r["drug_name"]
+    active = r.get("active_ingredient")
+    named = f"{name} ({active})" if active else name
+    sponsor = title_case(r.get("sponsor"))
+    when = fmt_date_long(r["approval_date"])
+    app = application(r)
+    if is_cber(r):
+        first = (
+            f"The FDA approved {named} on {when}. It is licensed by FDA's Center for Biologics "
+            f"Evaluation and Research (CBER)"
+            + (f" under {app}" if r.get("application_number") else "")
+            + (f"; the manufacturer is {sponsor}." if sponsor else ".")
+        )
+    else:
+        first = (
+            f"The FDA approved {named} on {when}"
+            + (f", under {app}" if app else "")
+            + (f". The sponsor is {sponsor}." if sponsor else ".")
+        )
+    if r.get("indication") and not is_cber(r):
+        first += f" FDA lists the approved use as: “{r['indication'].rstrip('.')}.”"
+    out = [first]
+
+    review = r.get("review_designation")
+    if review:
+        flags = designations(r)
+        if is_priority(review):
+            second = f"At original approval, FDA recorded {join_words(flags)} for {name}."
+        elif flags:
+            second = (
+                f"FDA reviewed {name} on the standard review clock and recorded "
+                f"{join_words(flags)} at original approval."
+            )
+        else:
+            second = (
+                f"FDA reviewed {name} on the standard review clock. Its records show no orphan "
+                f"drug, accelerated approval, breakthrough therapy or fast track designation at "
+                f"original approval."
+            )
+        days = days_between(r.get("fda_receipt_date"), r["approval_date"])
+        if days and days > 0:
+            second += (
+                f" FDA received the application on {fmt_date_long(r['fda_receipt_date'])} and "
+                f"approved it {days:,} days later."
+            )
+        out.append(second)
+    return out
 
 
-def esc(s: str | None) -> str:
-    return html.escape(s or "", quote=True)
+def fact_rows(r: dict) -> list[tuple[str, str, str]]:
+    """``(label, text, html)`` for each line of the facts table."""
+    rows: list[tuple[str, str, str]] = []
+
+    def add(label: str, text: object, markup: str | None = None) -> None:
+        if text not in (None, ""):
+            rows.append((label, str(text), markup if markup is not None else esc(text)))
+
+    year = r["year"]
+    add("Brand name", r["drug_name"])
+    add("Active ingredient", r.get("active_ingredient"))
+    add("Manufacturer" if is_cber(r) else "Sponsor", title_case(r.get("sponsor")))
+    add("Application", application(r))
+    add("FDA approval date", fmt_date_long(r["approval_date"]))
+    add(
+        "Approval year",
+        year,
+        f'<a href="/drugs/{year}/">{year}</a> (all {year} novel drug approvals)',
+    )
+    if r.get("fda_receipt_date"):
+        add("FDA received application", fmt_date_long(r["fda_receipt_date"]))
+        days = days_between(r["fda_receipt_date"], r["approval_date"])
+        if days and days > 0:
+            add("Receipt to approval", f"{days:,} days")
+    add("Dosage form", r.get("dosage_form"))
+    add("Route of administration", r.get("route_of_administration"))
+    add("Review designation", r.get("review_designation"))
+    add("Orphan drug designation", r.get("orphan_drug_designation"))
+    add("Accelerated approval", r.get("accelerated_approval"))
+    add("Breakthrough therapy designation", r.get("breakthrough_therapy_designation"))
+    add("Fast track designation", r.get("fast_track_designation"))
+    if is_yes(r.get("qualified_infectious_disease_product")):
+        add("Qualified infectious disease product", r["qualified_infectious_disease_product"])
+    voucher = r.get("priority_review_voucher_issued")
+    if voucher in _VOUCHERS:
+        add("Priority review voucher issued", f"Yes ({_VOUCHERS[voucher]})")
+    if is_yes(r.get("priority_review_voucher_redeemed")):
+        add("Priority review voucher redeemed", "Yes")
+    add("Submission classification", r.get("submission_classification"))
+    add("FDA center", _CENTERS.get(r.get("regulatory_center"), r.get("regulatory_center")))
+    return rows
 
 
-PAGE_TEMPLATE = """<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{title}</title>
-  <meta name="description" content="{description}">
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="canonical" href="{canonical}">
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="{og_title}">
-  <meta property="og:description" content="{description}">
-  <meta property="og:url" content="{canonical}">
-  <meta property="og:image" content="{og_image}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{og_title}">
-  <meta name="twitter:description" content="{description}">
-  <meta name="twitter:image" content="{og_image}">
-  <script type="application/ld+json">
-{jsonld}
-  </script>
-  <style>
-    :root {{
-      color-scheme: light dark;
-      --bg: #ffffff;
-      --fg: #111111;
-      --muted: #5a5a5a;
-      --border: rgba(127, 127, 127, 0.3);
-      --row-hover: rgba(127, 127, 127, 0.08);
-    }}
-    @media (prefers-color-scheme: dark) {{
-      :root {{ --bg: #111111; --fg: #f2f2f2; --muted: #adadad; }}
-    }}
-    * {{ box-sizing: border-box; }}
-    body {{
-      margin: 0 auto;
-      padding: 4rem 1.5rem 6rem;
-      max-width: 44rem;
-      font: 15px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      background: var(--bg);
-      color: var(--fg);
-    }}
-    .breadcrumb {{ color: var(--muted); margin: 0 0 1.25rem; font-size: 0.9em; }}
-    .breadcrumb a {{ text-decoration: none; }}
-    .breadcrumb a:hover {{ text-decoration: underline; }}
-    h1 {{ font-size: 2.4rem; margin: 0 0 0.4rem; letter-spacing: -0.025em; font-weight: 700; }}
-    .subtitle {{ color: var(--muted); margin: 0 0 0.4rem; font-size: 1.05rem; }}
-    .sponsor {{ color: var(--muted); margin: 0 0 2rem; font-size: 0.95em; }}
-    h2 {{ font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin: 2.5rem 0 0.85rem; font-weight: 600; }}
-    a {{ color: inherit; }}
-    a:hover {{ opacity: 0.7; }}
-    code {{ background: var(--border); padding: 0.05em 0.35em; border-radius: 3px; font-size: 0.9em; }}
-    pre {{ background: var(--border); padding: 1rem 1.25rem; border-radius: 6px; overflow-x: auto; font-size: 0.85em; line-height: 1.5; }}
-
-    .meta {{ border: 1px solid var(--border); border-radius: 6px; padding: 1.25rem 1.5rem; }}
-    .meta-row {{ display: flex; gap: 0.8rem; align-items: baseline; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }}
-    .meta-row:last-child {{ border-bottom: 0; }}
-    .meta-label {{ color: var(--muted); white-space: nowrap; min-width: 11rem; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.05em; }}
-    @media (max-width: 640px) {{
-      h1 {{ font-size: 1.9rem; }}
-      .meta-row {{ flex-direction: column; gap: 0.1rem; }}
-      .meta-label {{ min-width: auto; }}
-    }}
-
-    .indication {{ border: 1px solid var(--border); border-radius: 6px; padding: 1.25rem 1.5rem; }}
-    .indication p {{ margin: 0; line-height: 1.55; }}
-
-    .links {{ list-style: none; padding: 0; margin: 0; }}
-    .links li {{ padding: 0.5rem 0; border-bottom: 1px solid var(--border); }}
-    .links li:last-child {{ border-bottom: 0; }}
-    .links a {{ display: block; }}
-    .links .when {{ color: var(--muted); font-size: 0.85em; }}
-    h3 {{ font-size: 0.9rem; margin: 1.5rem 0 0.4rem; font-weight: 600; }}
-    .related {{ list-style: none; padding: 0; margin: 0; }}
-    .related li {{ padding: 0.3rem 0; }}
-    .related .when {{ color: var(--muted); font-size: 0.85em; }}
-
-    footer {{ margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85em; }}
-    footer p {{ margin: 0 0 0.5rem; }}
-  </style>
-</head>
-<body>
-  <p class="breadcrumb"><a href="/">trove</a> / <a href="/drugs/">FDA drug approvals</a> / {drug_name}</p>
-
-  <header>
-    <h1>{drug_name}</h1>
-    <p class="subtitle">{active_ingredient}</p>
-    <p class="sponsor">{sponsor}</p>
-  </header>
-
-  <h2>Approval</h2>
-  <div class="meta">
-    <div class="meta-row"><span class="meta-label">Application</span><span>{application_type} {application_number}</span></div>
-    <div class="meta-row"><span class="meta-label">Approval date</span><span>{approval_date_fmt}</span></div>
-    <div class="meta-row"><span class="meta-label">Approval year</span><span>{year}</span></div>
-    <div class="meta-row"><span class="meta-label">Sponsor</span><span>{sponsor}</span></div>
-  </div>
-
-  <h2>FDA-approved use</h2>
-  <div class="indication"><p>{indication}</p></div>
-
-  <h2>Approval package</h2>
-  <ul class="links">
-{link_items}
-  </ul>
-
-  <h2>Related approvals</h2>
-{related}
-
-  <h2>Query with Claude</h2>
-  <p>The <a href="/skills/fda-analyst/"><code>fda-analyst</code> skill</a> answers natural-language questions about this approval by fetching the relevant FDA review PDFs at query time. It ships in the trove Claude Code plugin. Add Anthropic's public community marketplace, then install the plugin:</p>
-<pre><code>{plugin_install}</code></pre>
-  <p>Other install options are on the <a href="/skills/">skills page</a>; the source is at <a href="{repo_url}">github.com/cbetz/trove</a>.</p>
-  <p>Example prompts for {drug_name}:</p>
-  <ul>
-    <li><em>"What was the basis for {drug_name}'s approval — what trials, what endpoints?"</em></li>
-    <li><em>"What adverse events did the FDA flag in the {drug_name} medical review?"</em></li>
-    <li><em>"What regulatory pathway did {drug_name} use — priority review, breakthrough, accelerated approval?"</em></li>
-  </ul>
-
-  <footer>
-    <p><a href="/drugs/">← All FDA novel drug approvals</a> · <a href="/">trove home</a> · <a href="/skills/">Claude skills</a> · <a href="{repo_url}">Source on GitHub</a></p>
-    <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> ({coverage}) at <a href="/">trove</a>. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
-    <p>Source: U.S. Food and Drug Administration, <a href="https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda">Novel Drug Approvals</a>; <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">Drugs@FDA database</a>. US government work, public domain.</p>
-    <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
-  </footer>
-
-  <script defer src="/_vercel/insights/script.js"></script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
-</body>
-</html>
-"""
+def document_links(r: dict) -> list[tuple[str, str, str]]:
+    """``(url, link text, what it is)`` for each FDA document we can link."""
+    name = r["drug_name"]
+    links: list[tuple[str, str, str]] = []
+    if is_cber(r):
+        if r.get("label_pdf_url"):
+            links.append(
+                (
+                    r["label_pdf_url"],
+                    f"{name} package insert (prescribing information), PDF",
+                    "The FDA-approved labeling: indications, dosing, warnings and adverse reactions.",
+                )
+            )
+        if r.get("drugs_at_fda_url"):
+            links.append(
+                (
+                    r["drugs_at_fda_url"],
+                    f"FDA product page for {name} (CBER)",
+                    "Approval letter, Summary Basis for Regulatory Action, review memos and approval history.",
+                )
+            )
+        return links
+    if r.get("label_pdf_url"):
+        links.append(
+            (
+                r["label_pdf_url"],
+                f"{name} FDA label (prescribing information), PDF",
+                "The label from FDA's approval listing: indications, dosing, warnings and adverse reactions. Later revisions are on Drugs@FDA.",
+            )
+        )
+    if r.get("approval_letter_url"):
+        links.append(
+            (
+                r["approval_letter_url"],
+                f"{name} FDA approval letter, PDF",
+                "The letter authorizing marketing: the approved indication, postmarketing requirements and commitments, and the FDA contact for the application.",
+            )
+        )
+    if r.get("review_url"):
+        links.append(
+            (
+                r["review_url"],
+                f"{name} FDA review documents (approval package)",
+                "FDA's own reviews of the application: clinical, statistical, clinical pharmacology, nonclinical and chemistry, with the summary review.",
+            )
+        )
+    if r.get("trials_snapshot_url"):
+        links.append(
+            (
+                r["trials_snapshot_url"],
+                f"{name} Drug Trials Snapshot",
+                "Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.",
+            )
+        )
+    if r.get("drugs_at_fda_url"):
+        links.append(
+            (
+                r["drugs_at_fda_url"],
+                f"Drugs@FDA record for {application(r)}",
+                "Every FDA action on the application since approval: supplements, label revisions and letters.",
+            )
+        )
+    return links
 
 
-def build_jsonld(r: dict, canonical: str) -> str:
+def build_jsonld(r: dict, path: str, modified: str, description: str) -> list[dict]:
+    canonical = f"{SITE}{path}"
     drug_node = {
         "@context": "https://schema.org",
         "@type": "Drug",
         "name": r["drug_name"],
         "url": canonical,
+        "nonProprietaryName": r.get("active_ingredient"),
         "activeIngredient": r.get("active_ingredient"),
         "manufacturer": {
             "@type": "Organization",
@@ -222,47 +257,33 @@ def build_jsonld(r: dict, canonical: str) -> str:
         if r.get("sponsor")
         else None,
         "description": r.get("indication"),
+        "dosageForm": r.get("dosage_form"),
+        "administrationRoute": r.get("route_of_administration"),
+        "prescribingInfo": r.get("label_pdf_url"),
         "isProprietary": True,
     }
     drug_node = {k: v for k, v in drug_node.items() if v is not None}
-
-    breadcrumbs = {
+    page_node = {
         "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "trove", "item": f"{SITE}/"},
-            {
-                "@type": "ListItem",
-                "position": 2,
-                "name": "FDA drug approvals",
-                "item": f"{SITE}/drugs/",
-            },
-            {"@type": "ListItem", "position": 3, "name": r["drug_name"], "item": canonical},
-        ],
+        "@type": "WebPage",
+        "name": f"{r['drug_name']} FDA approval",
+        "description": description,
+        "url": canonical,
+        "isPartOf": {"@type": "WebSite", "name": "trove", "url": f"{SITE}/"},
+        "author": PERSON,
+        "publisher": PUBLISHER,
+        "dateModified": modified,
+        "isBasedOn": [u for u in (r.get("drugs_at_fda_url"), NOVEL_APPROVALS_URL) if u],
     }
-
-    return json.dumps([drug_node, breadcrumbs], indent=2)
-
-
-def build_link_items(r: dict) -> str:
-    items = []
-    if r.get("drugs_at_fda_url"):
-        items.append(
-            f'    <li><a href="{esc(r["drugs_at_fda_url"])}" rel="noopener" target="_blank">↗ Drugs@FDA: full approval-package overview (every PDF the FDA released)</a></li>'
-        )
-    if r.get("label_pdf_url"):
-        items.append(
-            f'    <li><a href="{esc(r["label_pdf_url"])}" rel="noopener" target="_blank">↗ FDA-approved label (PDF)</a></li>'
-        )
-    if r.get("trials_snapshot_url"):
-        items.append(
-            f'    <li><a href="{esc(r["trials_snapshot_url"])}" rel="noopener" target="_blank">↗ FDA Drug Trials Snapshot</a></li>'
-        )
-    return (
-        "\n".join(items)
-        if items
-        else '    <li><span style="color: var(--muted);">No FDA links available for this row.</span></li>'
+    crumbs = breadcrumbs(
+        [
+            ("trove", "/"),
+            ("FDA drug approvals", "/drugs/"),
+            (str(r["year"]), f"/drugs/{r['year']}/"),
+            (r["drug_name"], path),
+        ]
     )
+    return [drug_node, page_node, crumbs]
 
 
 def _related_link(r: dict) -> str:
@@ -330,96 +351,167 @@ def build_related(r: dict, ordered: list[dict]) -> str:
             f"  <h3>More {esc(str(r.get('year')))} {kind}</h3>\n" + _related_list(nearest)
         )
 
+    year = r["year"]
     blocks.append(
-        '  <p><a href="/drugs/">Search all FDA novel drug approvals in the index →</a></p>'
+        f'  <p><a href="/drugs/{year}/">All FDA novel drug approvals in {year} →</a> · '
+        f'<a href="/drugs/">Search the index →</a></p>'
     )
     return "\n".join(blocks)
 
 
-def build_page(r: dict, ordered: list[dict], coverage: str) -> tuple[str, str]:
-    slug = slugify(r["drug_name"])
-    canonical = f"{SITE}/drugs/{slug}/"
-    sponsor = title_case(r.get("sponsor")) or "Sponsor not identified"
-    active = r.get("active_ingredient") or "—"
-    indication = r.get("indication") or "Indication not summarized in the FDA annual page."
-    approval_date_fmt = fmt_date(r.get("approval_date"))
+def render_drug(
+    r: dict, ordered: list[dict], coverage: str, sources_read: dict, modified: str
+) -> tuple[str, str]:
+    """Return ``(html, markdown)`` for one drug page."""
+    name = r["drug_name"]
+    slug = slugify(name)
+    path = f"/drugs/{slug}/"
+    active = r.get("active_ingredient") or ""
+    named = f"{name} ({active})" if active else name
+    sponsor = title_case(r.get("sponsor"))
+    paragraphs = summary_paragraphs(r)
+    facts = fact_rows(r)
+    links = document_links(r)
 
-    title = f"{r['drug_name']} ({active}) FDA approval — trove"
-    og_title = f"{r['drug_name']} — FDA approval package"
+    title = f"{named} FDA approval: date, label, review documents | trove"
     description = (
-        f"FDA novel drug approval for {r['drug_name']} ({active}), {r.get('application_type', '')} "
-        f"{r.get('application_number', '')}, approved {approval_date_fmt} for {sponsor}. "
-        f"Direct links to the FDA approval package."
-    ).strip()
-
-    page = PAGE_TEMPLATE.format(
-        title=esc(title),
-        description=esc(description),
-        canonical=canonical,
-        og_title=esc(og_title),
-        og_image=OG_IMAGE,
-        jsonld=build_jsonld(r, canonical),
-        drug_name=esc(r["drug_name"]),
-        active_ingredient=esc(active),
-        sponsor=esc(sponsor),
-        application_type=esc(r.get("application_type") or ""),
-        application_number=esc(r.get("application_number") or "—"),
-        approval_date_fmt=esc(approval_date_fmt),
-        year=esc(str(r.get("year") or "")),
-        indication=esc(indication),
-        link_items=build_link_items(r),
-        related=build_related(r, ordered),
-        plugin_install=esc(PLUGIN_INSTALL),
-        repo_url=REPO_URL,
-        coverage=esc(coverage),
+        f"{named} was approved by the FDA on {fmt_date_long(r['approval_date'])}"
+        + (
+            f" ({application(r)}" + (f", {sponsor}" if sponsor else "") + ")"
+            if application(r)
+            else ""
+        )
+        + ". Approval facts and direct links to the FDA label, approval letter, review documents "
+        "and Drug Trials Snapshot."
     )
-    return slug, page
-
-
-_DRUG_URL_BLOCK_RE = re.compile(
-    r"[ \t]*<url>\s*<loc>" + re.escape(SITE) + r"/drugs/[a-z0-9-]+/</loc>.*?</url>[ \t]*\n?",
-    re.S,
-)
-
-
-def update_sitemap(slugs: list[str]) -> int:
-    """Regenerate only the per-drug ``<url>`` entries of the sitemap.
-
-    Every other entry is kept byte-for-byte: the rest of the sitemap is
-    maintained elsewhere, and this script used to overwrite it wholesale from
-    a hard-coded list. Returns the number of per-drug entries written.
-    """
-    today = datetime.now(UTC).strftime("%Y-%m-%d")
-    drug_blocks = "".join(
-        "  <url>\n"
-        f"    <loc>{SITE}/drugs/{slug}/</loc>\n"
-        f"    <lastmod>{today}</lastmod>\n"
-        "    <changefreq>yearly</changefreq>\n"
-        "    <priority>0.7</priority>\n"
-        "  </url>\n"
-        for slug in sorted(slugs)
+    read_on = sources_read.get("cber" if is_cber(r) else "cder")
+    read_line = (
+        f" FDA pages for this record were read on {fmt_date_long(read_on)}; FDA may have "
+        f"posted documents since."
+        if read_on
+        else ""
     )
-    text = SITEMAP.read_text()
-    if "</urlset>" not in text:
-        raise SystemExit(f"{SITEMAP} has no </urlset>; refusing to rewrite it")
-    text = _DRUG_URL_BLOCK_RE.sub("", text)
-    text = text.replace("</urlset>", drug_blocks + "</urlset>", 1)
-    SITEMAP.write_text(text)
-    return len(slugs)
+    fact_html = "\n".join(
+        f"    <div><dt>{esc(label)}</dt><dd>{markup}</dd></div>" for label, _, markup in facts
+    )
+    if links:
+        link_html = "\n".join(
+            f'    <li><a href="{url_attr(url)}" rel="noopener">{esc(text)} ↗</a>'
+            f'<span class="what">{esc(what)}</span></li>'
+            for url, text, what in links
+        )
+    else:
+        link_html = (
+            '    <li><span class="muted">No FDA links available for this record.</span></li>'
+        )
+    has_designations = bool(r.get("review_designation"))
+    designation_note = (
+        '  <p class="note">Review designation and the expedited-program rows are from FDA\'s '
+        '<a href="/drugs/compilation/">compilation of CDER NME and new biologic approvals</a> and '
+        "describe the application at the time of original approval.</p>\n"
+        if has_designations
+        else ""
+    )
+    use = cber_use(r.get("indication")) if is_cber(r) else ""
+    use_html = (
+        f"\n  <h2>What {esc(name)} is approved for</h2>\n"
+        f"  <p>FDA's product page for {esc(name)} gives the indication as: {esc(use)}</p>\n"
+        '  <p class="note">Copied from FDA\'s CBER product page, which can abbreviate. The package '
+        "insert linked below has the full indication.</p>\n"
+        if use
+        else ""
+    )
+    doc_kinds = (
+        "package insert and FDA product page"
+        if is_cber(r)
+        else "label, approval letter, review documents and Drug Trials Snapshot"
+    )
+    body = f"""  <header>
+    <h1>{esc(named)} FDA approval</h1>
+    <p class="subtitle">{esc(" · ".join(x for x in (sponsor, application(r), f"approved {fmt_date(r['approval_date'])}") if x))}</p>
+  </header>
+
+  <p class="lead">{esc(paragraphs[0])}</p>
+{"".join(f"  <p>{esc(p)}</p>{chr(10)}" for p in paragraphs[1:])}
+  <h2>{esc(name)} approval facts</h2>
+  <dl class="facts">
+{fact_html}
+  </dl>
+{designation_note}{use_html}
+  <h2>{esc(name)} FDA {doc_kinds}</h2>
+  <p>FDA's documents for {esc(name)} are public. These links go straight to them on FDA's site.</p>
+  <ul class="links">
+{link_html}
+  </ul>
+  <p class="note">New to these? See <a href="/docs/fda-approval-package/">what is in an FDA approval package</a>, <a href="/docs/drug-trials-snapshot/">what a Drug Trials Snapshot is</a> and <a href="/docs/new-molecular-entity/">what a new molecular entity is</a>.{esc(read_line)}</p>
+
+  <h2>Related approvals</h2>
+{build_related(r, ordered)}
+
+  <h2>Ask Claude about {esc(name)}</h2>
+  <p>The <a href="/skills/fda-analyst/"><code>fda-analyst</code> skill</a> answers natural-language questions about this approval by fetching the relevant FDA review PDFs at query time. It ships in the trove Claude Code plugin. Add Anthropic's public community marketplace, then install the plugin:</p>
+<pre><code>{esc(PLUGIN_INSTALL)}</code></pre>
+  <p>Other install options are on the <a href="/skills/">skills page</a>; the source is at <a href="{REPO_URL}">github.com/cbetz/trove</a>.</p>
+  <p>Example prompts for {esc(name)}:</p>
+  <ul>
+    <li><em>"What was the basis for {esc(name)}'s approval — what trials, what endpoints?"</em></li>
+    <li><em>"What adverse events did the FDA flag in the {esc(name)} medical review?"</em></li>
+    <li><em>"What postmarketing requirements are in the {esc(name)} approval letter?"</em></li>
+  </ul>"""
+
+    footer = f"""    <p><a href="/drugs/">← All FDA novel drug approvals</a> · <a href="/drugs/{r["year"]}/">{r["year"]} approvals</a> · <a href="/drugs/statistics/">Approval statistics</a> · <a href="/">trove home</a> · <a href="/skills/">Claude skills</a> · <a href="{REPO_URL}">Source on GitHub</a></p>
+    <p>One record from the <a href="/drugs/">FDA novel drug approvals index</a> ({esc(coverage)}) at <a href="/">trove</a>. Page updated {esc(fmt_date_long(modified))}. Built by <a href="https://github.com/cbetz">Chris Betz</a>. Not medical advice; the FDA approval package is the source of truth.</p>
+    <p>Source: U.S. Food and Drug Administration, <a href="{NOVEL_APPROVALS_URL}">Novel Drug Approvals</a>; <a href="{DRUGS_AT_FDA_URL}">Drugs@FDA database</a>. US government work, public domain.</p>
+    <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>"""
+
+    page = page_shell(
+        title=title,
+        description=description,
+        path=path,
+        og_title=f"{name} — FDA approval, label and review documents",
+        nodes=build_jsonld(r, path, modified, description),
+        crumbs_html=(
+            f'<a href="/">trove</a> / <a href="/drugs/">FDA drug approvals</a> / '
+            f'<a href="/drugs/{r["year"]}/">{r["year"]}</a> / {esc(name)}'
+        ),
+        body=body,
+        footer=footer,
+        markdown_path=f"{path}index.md",
+    )
+
+    md = [f"# {named} FDA approval", "", *[p + "\n" for p in paragraphs]]
+    md += [f"## {name} approval facts", ""]
+    md += [f"- {label}: {text}" for label, text, _ in facts]
+    if use:
+        md += ["", f"## What {name} is approved for", ""]
+        md += [f"FDA's product page gives the indication as: {use}"]
+    md += ["", f"## {name} FDA documents", ""]
+    md += [f"- [{text}]({url.replace(' ', '%20')}): {what}" for url, text, what in links]
+    md += [
+        "",
+        f"Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation "
+        f"of CDER NME and New Biologic Approvals).{read_line} Page: {SITE}{path} (updated "
+        f"{modified}). All {r['year']} approvals: {SITE}/drugs/{r['year']}/. Not medical advice.",
+        "",
+    ]
+    return page, "\n".join(md)
 
 
-def prune_stale_pages(slugs: set[str]) -> list[str]:
+def prune_stale_pages(keep: set[str]) -> list[str]:
     """Delete generated pages for drugs that are no longer in the index.
 
-    Only touches a directory that holds nothing but a generated ``index.html``.
+    ``keep`` is every directory name that should exist: drug slugs plus the
+    list pages. Only touches a directory that holds nothing but generated
+    ``index.html`` / ``index.md`` files.
     """
     removed = []
     for d in sorted(OUT_DIR.iterdir()):
-        if not d.is_dir() or d.name in slugs:
+        if not d.is_dir() or d.name in keep:
             continue
-        if [f.name for f in d.iterdir()] != ["index.html"]:
+        if not {f.name for f in d.iterdir()} <= {"index.html", "index.md"}:
             continue
-        (d / "index.html").unlink()
+        for f in d.iterdir():
+            f.unlink()
         d.rmdir()
         removed.append(d.name)
     return removed
@@ -430,6 +522,8 @@ def main() -> None:
     rows = data["rows"]
     totals = data["totals"]
     coverage = f"{totals['year_min']}–{totals['year_max']}"
+    sources_read = totals.get("sources_read", {})
+    today = datetime.now(UTC).strftime("%Y-%m-%d")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     bad = [
@@ -442,21 +536,33 @@ def main() -> None:
     slugs = [slugify(r["drug_name"]) for r in rows]
     if len(set(slugs)) != len(slugs):
         raise SystemExit("Two drugs map to the same page slug")
+    reserved = build_fda_lists.reserved_dirs()
+    clash = sorted(set(slugs) & reserved)
+    if clash:
+        raise SystemExit(f"Drug slugs collide with list pages: {', '.join(clash)}")
     ordered = sorted(rows, key=lambda r: (r["approval_date"], r["drug_name"]))
 
+    entries: list[tuple[str, str, str, str]] = []
     for r in rows:
-        slug, page = build_page(r, ordered, coverage)
-        dir_out = OUT_DIR / slug
-        dir_out.mkdir(parents=True, exist_ok=True)
-        (dir_out / "index.html").write_text(page)
+        slug = slugify(r["drug_name"])
+        out = OUT_DIR / slug
 
+        def render(d: str, r: dict = r) -> tuple[str, str]:
+            return render_drug(r, ordered, coverage, sources_read, d)
+
+        modified = write_page(out / "index.html", lambda d, render=render: render(d)[0], today)
+        (out / "index.md").write_text(render(modified)[1])
+        entries.append((f"/drugs/{slug}/", modified, "yearly", "0.7"))
     print(f"  → wrote {len(slugs)} per-drug pages under {OUT_DIR}/")
-    removed = prune_stale_pages(set(slugs))
+
+    entries += build_fda_lists.write_all(data, today)
+
+    removed = prune_stale_pages(set(slugs) | reserved)
     if removed:
         print(f"  → removed {len(removed)} stale page(s): {', '.join(removed)}")
 
-    n = update_sitemap(slugs)
-    print(f"  → updated {n} per-drug URLs in {SITEMAP} (other entries untouched)")
+    n = update_sitemap(entries)
+    print(f"  → updated {n} URLs under /drugs/ in web/sitemap.xml (other entries untouched)")
 
 
 if __name__ == "__main__":

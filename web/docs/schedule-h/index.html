@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>What is IRS Form 990 Schedule H? Nonprofit hospital community benefit explained — trove</title>
-  <meta name="description" content="Form 990 Schedule H is the community-benefit schedule nonprofit hospitals attach to their annual IRS tax return. Plain-language explainer covering Parts I–VI, the Part I 7a financial-assistance number, and how it differs from CMS HCRIS Worksheet S-10.">
+  <title>What is IRS Form 990 Schedule H? Parts, line 7a and the instructions explained — trove</title>
+  <meta name="description" content="Form 990 Schedule H is the community-benefit schedule nonprofit hospitals attach to their annual IRS return. Plain-language guide to Parts I–VI, line 7a financial assistance, the IRS instructions and their worksheets, and how line 7a differs from CMS charity care.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://troveproject.com/docs/schedule-h/">
   <meta property="og:type" content="article">
@@ -34,7 +34,7 @@
     },
     "publisher": {"@type": "Organization", "name": "trove", "url": "https://troveproject.com/"},
     "datePublished": "2026-05-12",
-    "dateModified": "2026-11-19"
+    "dateModified": "2026-11-26"
   },
   {
     "@context": "https://schema.org",
@@ -152,6 +152,22 @@
     <p>Line 7a is the cost of free or discounted care provided under the hospital's financial assistance policy. It has three dollar columns: (c) total expense, (d) direct offsetting revenue, and (e) net, which is (c) − (d). Trove publishes all three.</p>
     <p class="callout">Under the Schedule H instructions (Worksheet 1), a filer enters Medicaid or provider taxes in the line 7a cost when payments from an uncompensated care pool or DSH program in its state are intended primarily to offset the cost of financial assistance, and reports the pool revenue as offsetting revenue in column (d). When the payments are primarily to offset the cost of Medicaid services, both go to line 7b instead; when state law does not make the purpose clear, the instructions allow a proportional split. This is a classification the instructions permit, and it depends on the state. The worksheet itself is not part of the public return.</p>
 
+    <h2 id="instructions">Form 990 Schedule H instructions: where they are and how they are organized</h2>
+    <p>The IRS publishes the official <strong>Instructions for Schedule H (Form 990)</strong> each year, as a <a href="https://www.irs.gov/instructions/i990sh">web page</a> and a <a href="https://www.irs.gov/pub/irs-pdf/i990sh.pdf">PDF</a>. The blank form is <a href="https://www.irs.gov/pub/irs-pdf/f990sh.pdf">f990sh.pdf</a>, and the IRS page <a href="https://www.irs.gov/forms-pubs/about-schedule-h-form-990">About Schedule H (Form 990)</a> links the current revision and prior years. The instructions are the authority; this page is a guide to them.</p>
+    <p><strong>Who must file.</strong> Under the instructions, an organization that answered "Yes" on Form 990, Part IV, line 20a must complete and attach Schedule H. That is a hospital organization that operated at least one hospital facility at any time during the tax year, a hospital facility being one a state requires to be licensed, registered or similarly recognized as a hospital. The organization files one Schedule H that combines its hospital facilities.</p>
+    <p><strong>The worksheets behind Part I, line 7.</strong> The instructions include eight worksheets that filers can use to calculate the amounts in the Part I table. They are working papers: they are not filed with the return and are not public.</p>
+    <ul>
+      <li>Worksheet 1. Financial Assistance at Cost (Part I, line 7a)</li>
+      <li>Worksheet 2. Ratio of Patient Care Cost to Charges (feeds the other worksheets)</li>
+      <li>Worksheet 3. Medicaid and Other Means-Tested Government Health Programs (Part I, lines 7b and 7c)</li>
+      <li>Worksheet 4. Community Health Improvement Services and Community Benefit Operations (Part I, line 7e)</li>
+      <li>Worksheet 5. Health Professions Education (Part I, line 7f)</li>
+      <li>Worksheet 6. Subsidized Health Services (Part I, line 7g)</li>
+      <li>Worksheet 7. Research (Part I, line 7h)</li>
+      <li>Worksheet 8. Cash and In-Kind Contributions for Community Benefit (Part I, line 7i)</li>
+    </ul>
+    <p>The instructions describe Worksheet 1 as the way to calculate financial assistance "(sometimes referred to as 'charity care')" at cost for line 7a. The section on line 7a above explains the choice that worksheet gives a filer about provider taxes and uncompensated care pool payments, which is the main reason line 7a can differ from the charity-care line on the same hospital's Medicare cost report.</p>
+
     <h2>Where the data lives</h2>
     <p>The IRS publishes Form 990 e-file submissions as XML, in ZIP files grouped by the year of release. A hospital's tax year 2022 return (a fiscal period that began in 2022) can be in the 2023, 2024, 2025 or 2026 release, depending on when it was filed. Trove's tax year 2022 ingest opens every ZIP in those four releases, 51 in all, and reads each return's own tax year, without relying on the IRS index files to locate returns. It found 2,360 returns with a Schedule H: 849 in the 2023 release, 1,464 in 2024, 47 in 2025 and none in 2026.</p>
     <p class="callout">More than one return can exist for one EIN and tax year: an amended return, or a short-year return next to a full-year one. Trove's Schedule H file keeps every return found. Where one return per EIN is needed, trove takes a full-year return over a short-year one, then the latest period end, then the latest e-file timestamp, so an amended return is used over the original.</p>
@@ -203,7 +219,7 @@ WHERE ein = '060646652';</code></pre>
   </article>
 
   <footer>
-    <p>One of three trove dataset explainers. See also: <a href="/docs/hcris/">HCRIS Medicare Cost Reports</a> and <a href="/docs/fda-nme/">FDA novel drug approvals</a>.</p>
+    <p>More explainers: <a href="/docs/hcris/">HCRIS Medicare Cost Reports</a> · <a href="/docs/schedule-h/">IRS 990 Schedule H</a> · <a href="/docs/fda-nme/">FDA novel drug approvals</a> · <a href="/docs/new-molecular-entity/">New molecular entity (NME)</a> · <a href="/docs/fda-approval-package/">FDA approval package</a> · <a href="/docs/drug-trials-snapshot/">Drug Trials Snapshot</a>.</p>
     <p>Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Bugs and questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
     <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
   </footer>

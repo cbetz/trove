@@ -3,6 +3,43 @@
 Release and milestone history for [trove](https://github.com/cbetz/trove). Milestone dates
 are approximate to the month; see `git log` for exact commits.
 
+## Unreleased
+
+FDA section, driven by what the site's search queries were asking for.
+
+**Data (additive).** `fda_approvals_nme_recent` gains 14 columns for CDER rows. From the
+drugs@FDA application page: `approval_letter_url`, `review_url` (the approval package's table
+of contents) and `submission_classification`; `label_pdf_url` is now filled from the
+original-approval row when FDA's annual list did not link a label (159 → 216 of 217 rows).
+From FDA's Compilation of CDER NME and New Biologic Approvals: `review_designation`,
+`orphan_drug_designation`, `accelerated_approval`, `breakthrough_therapy_designation`,
+`fast_track_designation`, `qualified_infectious_disease_product`, the two priority review
+voucher columns, `fda_receipt_date`, `dosage_form` and `route_of_administration`. No existing
+value changed. CBER rows have none of these.
+
+**New dataset.** FDA's compilation itself, 1,387 CDER novel approvals from 1985 through 2025,
+converted from FDA's Excel workbook to `web/data/fda_nme_compilation.csv` and `.parquet`
+(`packages/fda_sba/src/fda_sba/compilation.py`, standard-library XLSX reader, no new
+dependency). `fda_nme_compilation_source.json` records FDA's file name, date and SHA-256.
+
+**Site.** A page for every approval year 1985–2025 (`/drugs/2023/`), an approval statistics
+page (`/drugs/statistics/`), a download page for the compilation (`/drugs/compilation/`),
+and three explainers: new molecular entity (NME vs NCE), FDA approval package, Drug Trials
+Snapshot. Drug pages open with a plain-language answer and link the label, approval letter
+and review documents directly. `/drugs/` now carries a static list of every year and drug
+(the search box alone was invisible to crawlers that do not run JavaScript). The Schedule H
+explainer gained a section on the IRS instructions and their worksheets.
+
+**For crawlers and agents.** Markdown twins (`index.md`) of every generated page, `llms.txt`,
+an explicit `robots.txt`, `dateModified` and sitemap `lastmod` that change only when a page's
+content does.
+
+**Known, not fixed here.** The indication text scraped from CBER product pages can start or
+end with stray fragments; drug pages now trim it for display and keep it out of the summary
+sentence, but `indication` in the data is unchanged. The cached FDA pages behind the per-drug
+index were read in May 2026. The index still covers 2021–2024; 2025 approvals appear in the
+year list and the compilation but have no per-drug page yet.
+
 ## 1.1.0 — 2026-11-19
 
 A correction release. The hospital data was rebuilt, and the way the two figures are

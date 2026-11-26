@@ -34,7 +34,7 @@
     },
     "publisher": {"@type": "Organization", "name": "trove", "url": "https://troveproject.com/"},
     "datePublished": "2026-05-12",
-    "dateModified": "2026-11-19"
+    "dateModified": "2026-11-26"
   },
   {
     "@context": "https://schema.org",
@@ -139,6 +139,7 @@
   <article>
     <p>Each year FDA publishes a curated list of <strong>Novel Drug Approvals</strong> — first-time approvals of drugs with active ingredients that have never been approved before. In 2024 the list had 50 drugs; in 2023, 55; 2022, 37; 2021, 50. These are mostly <strong>NMEs</strong> (New Molecular Entities, approved via NDA) plus a handful of <strong>novel BLAs</strong> (Biologics License Applications for first-of-kind biologics). The list excludes generics, biosimilars, new formulations of existing drugs, and supplemental approvals adding indications to already-approved drugs.</p>
     <p>The list is what most public discourse about "what drugs got approved this year" refers to. It's also the cohort with the largest, most-detailed approval packages on accessdata.fda.gov.</p>
+    <p>Related pages: <a href="/docs/new-molecular-entity/">what a new molecular entity (NME) is, and how it differs from an NCE</a>; <a href="/docs/fda-approval-package/">what is in an FDA approval package</a>; <a href="/docs/drug-trials-snapshot/">what a Drug Trials Snapshot is</a>; <a href="/drugs/statistics/">approvals per year since 1985</a>; and each year's full list, for example <a href="/drugs/2024/">2024</a>, <a href="/drugs/2023/">2023</a>, <a href="/drugs/2022/">2022</a> and <a href="/drugs/2021/">2021</a>.</p>
     <p class="callout"><strong>CDER vs. CBER.</strong> The Novel Drug Approvals page is curated by <strong>CDER</strong> (Center for Drug Evaluation and Research), which reviews small-molecule drugs and most antibody biologics. Cell and gene therapy products — Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, and other recent gene therapies — are regulated by <strong>CBER</strong> (Center for Biologics Evaluation and Research) and appear on a <a href="https://www.fda.gov/vaccines-blood-biologics/cellular-gene-therapy-products/approved-cellular-and-gene-therapy-products">separate FDA page</a>. Trove ingests both. Each row carries a <code>regulatory_center</code> column distinguishing CDER from CBER.</p>
 
     <h2>What an approval is</h2>
@@ -170,7 +171,7 @@
       <li><strong>Fast track</strong> — also during development; allows rolling review of the application.</li>
       <li><strong>Accelerated approval</strong> — approval based on a surrogate endpoint reasonably likely to predict clinical benefit, with required confirmatory trials.</li>
     </ul>
-    <p>The specific pathways used for a given approval are documented in the medical review and the approval letter.</p>
+    <p>The specific pathways used for a given approval are documented in the medical review and the approval letter. FDA also records them, for every CDER novel approval since 1985, in its compilation of NME and new biologic approvals; trove shows them on each drug page and publishes the compilation as <a href="/drugs/compilation/">CSV and Parquet</a>.</p>
 
     <h2>How to find an approval's documents</h2>
     <p>FDA's front door for CDER products is the <strong>Drugs@FDA</strong> database at <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">accessdata.fda.gov/scripts/cder/daf/</a>. Each approval has an application-overview page that lists every document FDA released — original approval plus any post-approval supplements. The application-overview URL has the form <code>?event=overview.process&amp;ApplNo=XXXXXX</code>. For CBER cell and gene therapies, each product has its own page under <code>fda.gov/vaccines-blood-biologics/</code> that links to the package insert, approval letter, clinical review memo, and Summary Basis for Regulatory Action. The trove FDA index gives you the right URL for each of 217 novel drug approvals from 2021–2024 (192 CDER + 25 CBER) so you don't have to guess at it.</p>
@@ -201,7 +202,7 @@
   </article>
 
   <footer>
-    <p>One of three trove dataset explainers. See also: <a href="/docs/hcris/">HCRIS Medicare Cost Reports</a> and <a href="/docs/schedule-h/">IRS 990 Schedule H</a>.</p>
+    <p>More explainers: <a href="/docs/new-molecular-entity/">New molecular entity (NME)</a> · <a href="/docs/fda-approval-package/">FDA approval package</a> · <a href="/docs/drug-trials-snapshot/">Drug Trials Snapshot</a> · <a href="/docs/hcris/">HCRIS Medicare Cost Reports</a> · <a href="/docs/schedule-h/">IRS 990 Schedule H</a>.</p>
     <p>Built by <a href="https://github.com/cbetz">Chris Betz</a> on personal time. Bugs and questions: <a href="https://github.com/cbetz/trove/issues">github.com/cbetz/trove/issues</a>.</p>
     <p>More from Chris: <a href="https://cbetz.com">cbetz.com</a> · <a href="https://x.com/thechrisbetz">@thechrisbetz</a> on X · <a href="https://github.com/cbetz">github.com/cbetz</a>.</p>
   </footer>

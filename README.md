@@ -120,7 +120,11 @@ Sources: CMS HCRIS hospital cost report files for fiscal years 2022 and 2023 (ex
 
 Every FDA novel drug approval from 2021–2024 (217 drugs, by original approval date) across both regulatory centers: **CDER** (192 NMEs and novel antibody BLAs from the annual *Novel Drug Approvals* lists) plus **CBER** (25 cell and gene therapy approvals: Lenmeldy, Casgevy, Lyfgenia, Beqvez, Hemgenix, Roctavian, Adstiladrin, and others). Each row carries application number, sponsor, approval date, indication, a `regulatory_center` column, and a deep link to the approval-package documents — medical, statistical, pharmacology, and chemistry reviews. The `fda-analyst` skill reads those PDFs at query time.
 
-Sources: FDA's annual *Novel Drug Approvals* lists (CDER); *Approved Cellular and Gene Therapy Products* page (CBER); drugs@FDA. US government work, public domain.
+For CDER approvals each record also links the approval letter and the review package posted with the original approval, and carries the review designation, orphan, accelerated approval, breakthrough and fast track status and the FDA receipt date from FDA's compilation.
+
+Beyond the per-drug index: a list for [every approval year from 1985](https://troveproject.com/drugs/2025/), [approval statistics](https://troveproject.com/drugs/statistics/) (approvals per year, designation shares, receipt-to-approval times), and FDA's *Compilation of CDER NME and New Biologic Approvals* (1,387 approvals, 1985–2025) [converted from Excel to CSV and Parquet](https://troveproject.com/drugs/compilation/).
+
+Sources: FDA's annual *Novel Drug Approvals* lists (CDER); *Approved Cellular and Gene Therapy Products* page (CBER); drugs@FDA; *Compilation of CDER NME and New Biologic Approvals*. US government work, public domain.
 
 ## Install the skills
 
@@ -154,7 +158,7 @@ The plugin is the documented install path. To copy the skill folders by hand ins
 
 **FDA drug approvals:**
 
-- **`fda_sba`** — scrapes FDA's novel-approval sources across CDER and CBER; extracts application number, drug name, active ingredient, approval date, sponsor, indication, `regulatory_center`, and links to the approval-package PDFs. Covers 2021–2024 (217 drugs: 192 CDER + 25 CBER).
+- **`fda_sba`** — scrapes FDA's novel-approval sources across CDER and CBER; extracts application number, drug name, active ingredient, approval date, sponsor, indication, `regulatory_center`, and links to the label, approval letter and review package. Covers 2021–2024 (217 drugs: 192 CDER + 25 CBER). Also parses FDA's NME compilation workbook (1985–2025) and joins its review designations onto the index.
 
 **Site:** static HTML on Vercel at troveproject.com. See [`web/README.md`](web/README.md).
 
@@ -179,8 +183,8 @@ uv run python scripts/build_gap_dataset.py --refresh-990     # re-ingest every I
 uv run python scripts/build_gap_index.py --inject-chart      # also rewrite the chart in the site pages
 
 # /drugs
-uv run python scripts/build_fda_index.py
-uv run python scripts/build_drug_pages.py    # per-drug pages AND the drug entries in web/sitemap.xml
+uv run python scripts/build_fda_index.py     # per-drug index + FDA's NME compilation as CSV/Parquet
+uv run python scripts/build_drug_pages.py    # per-drug, per-year, statistics and compilation pages (HTML + Markdown) AND the /drugs/ entries in web/sitemap.xml
 ```
 
 CDC SVI and the UW ADI file (if you have your own license) are read from `data/raw/svi/` and `data/raw/adi/`. ADI never enters the public bundles — see the license note below.

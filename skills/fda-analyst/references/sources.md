@@ -50,6 +50,18 @@ When iterating, use `data["rows"]`, not `data` directly.
 | `drugs_at_fda_url` | CDER: drugs@FDA application-overview URL. CBER: per-product FDA page under `fda.gov/vaccines-blood-biologics/` — that page is the canonical hub for the approval letter, package insert, clinical review memo, and Summary Basis for Regulatory Action. |
 | `trials_snapshot_url` | Drug Trials Snapshot URL (CDER only; CBER doesn't publish Trials Snapshots — `null`) |
 | `regulatory_center` | `"CDER"` or `"CBER"`. CDER = small molecules + most antibody biologics. CBER = cell and gene therapies. |
+| `approval_letter_url` | CDER only. The approval letter FDA posted for the original approval (PDF), from the drugs@FDA application page. 191 of 192 CDER rows. A few URLs contain spaces; percent-encode before fetching. |
+| `review_url` | CDER only. The approval package for the original approval: an HTML table of contents linking each FDA review PDF (clinical, statistical, clinical pharmacology, summary review). 190 of 192 CDER rows. **Start here** instead of scraping the drugs@FDA overview page. |
+| `submission_classification` | CDER NDAs only. FDA's classification on drugs@FDA, e.g. `Type 1 - New Molecular Entity`. Null for BLAs. |
+| `fda_receipt_date` | CDER only. Date FDA received the first complete application, ISO. |
+| `dosage_form`, `route_of_administration` | CDER only. As FDA lists them at original approval; `; `-separated when a product has more than one. |
+| `review_designation` | CDER only. `Priority` or `Standard`, sometimes qualified, e.g. `Priority (used priority review voucher)`. |
+| `orphan_drug_designation`, `accelerated_approval`, `breakthrough_therapy_designation`, `fast_track_designation`, `qualified_infectious_disease_product` | CDER only. `Yes` / `No`, sometimes qualified, e.g. `Yes (indication [A] only)`. Test with `LIKE 'Yes%'`. |
+| `priority_review_voucher_issued`, `priority_review_voucher_redeemed` | CDER only. Issued is `TD`, `RPD`, `MTMC` or `No`. |
+
+The designation columns come from FDA's Compilation of CDER NME and New Biologic Approvals and describe the application **at the time of original approval**. They answer "was X approved under accelerated approval / with breakthrough designation?" without opening a PDF; cite the compilation when you use them. They are null for every CBER row. `label_pdf_url` is populated for 216 of 217 rows.
+
+The whole compilation (every CDER novel approval, 1985–2025, 1,387 rows, same designation columns) is published separately at `https://troveproject.com/data/fda_nme_compilation.parquet` and `.csv`; column definitions are at `https://troveproject.com/drugs/compilation/index.md`. Use it for questions about approvals outside 2021–2024 or about trends (approvals per year, share with priority review). It has no document links.
 
 ## Query patterns
 

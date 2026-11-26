@@ -24,8 +24,9 @@ and this way there's nothing to build and nothing to break.
 
 ## Regenerating
 
-Anything under `data/`, the per-drug pages under `drugs/<slug>/`, the drug entries in
-`sitemap.xml`, the social card, and the chart block between the `GAP_CHART` markers in
+Anything under `data/`, everything under `drugs/` except `drugs/index.html` (per-drug,
+per-year, statistics and compilation pages, with their `index.md` twins), the `/drugs/`
+entries in `sitemap.xml`, the social card, and the chart block between the `GAP_CHART` markers in
 `hospitals/index.html` and `notes/charity-care-gap/index.html` are **generated**. Don't
 hand-edit them. `drugs/index.html` (the search page) is hand-written.
 
@@ -34,8 +35,8 @@ uv run python scripts/build_gap_dataset.py   # artifacts CSV + sources JSON (sou
 uv run python scripts/build_gap_index.py     # ranked index + summary: artifacts MD + data/charity_care_gap_index_2022.json
 uv run python scripts/build_web_data.py      # data/community_benefit_gap_2022.json (site lookup)
 uv run python scripts/build_web_bundles.py   # data/*.parquet + the CSV copy for the site
-uv run python scripts/build_fda_index.py     # data/fda_approvals_nme_recent.{json,parquet}
-uv run python scripts/build_drug_pages.py    # drugs/<slug>/ pages AND the drug entries in sitemap.xml
+uv run python scripts/build_fda_index.py     # data/fda_approvals_nme_recent.{json,parquet} + data/fda_nme_compilation.{csv,parquet}
+uv run python scripts/build_drug_pages.py    # drugs/<slug>/, drugs/<year>/, drugs/statistics/, drugs/compilation/ (index.html + index.md), the static list in drugs/index.html, AND every /drugs/ entry in sitemap.xml
 uv run python scripts/build_og_image.py      # the og-YYYYMMDD.jpg social card
 ```
 
@@ -60,8 +61,21 @@ Things that bite:
   and the static fallbacks in `hospitals/index.html` are written into the HTML. After a
   data rebuild, check them against `data/charity_care_gap_index_2022.json` (`counts`) and
   `data/community_benefit_gap_2022.json` (`totals`).
-- **The drug entries in `sitemap.xml` are written by `build_drug_pages.py`.** The other
-  entries are left alone; add a new top-level page to the sitemap by hand.
+- **Every `/drugs/<something>/` entry in `sitemap.xml` is written by `build_drug_pages.py`.**
+  The other entries (including `/drugs/` itself and `/docs/`) are left alone; add a new
+  top-level page to the sitemap by hand. A generated page's `lastmod` and JSON-LD
+  `dateModified` change only when its content changes, so re-running the script on unchanged
+  data rewrites nothing.
+- **Generated pages have Markdown twins.** Each `drugs/**/index.html` the scripts write has
+  an `index.md` beside it with the same facts, advertised with
+  `<link rel="alternate" type="text/markdown">` and served `noindex` (see `vercel.json`).
+  `llms.txt` and `robots.txt` are hand-written; update the counts in `llms.txt` after a
+  data rebuild.
+- **`drugs/index.html` is hand-written except between the `fda-static-list` markers,** which
+  hold the crawlable year links and drug links (the search box itself needs JavaScript).
+- **The docs pages quote counts.** `docs/new-molecular-entity/`, `docs/fda-approval-package/`
+  and `docs/drug-trials-snapshot/` state figures from the FDA bundles (1,387 approvals,
+  118 Type 1 NDAs, 189 Snapshots and so on). Check them after a rebuild.
 - **The site's CSV download is a copy.** `build_web_bundles.py` copies
   `artifacts/community_benefit_gap_2022.csv` into `data/` so the published download can't
   drift from the committed artifact.

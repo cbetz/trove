@@ -96,6 +96,102 @@ def parse_original_approval_date(html_bytes: bytes) -> date | None:
     return min(dates) if dates else None
 
 
+# The "Original Approvals or Tentative Approvals" table, one <tr> per submission:
+#   Action Date | Submission | Action Type | Submission Classification |
+#   Review Priority; Orphan Status | Letters, Reviews, Labels | Notes | Url
+_ORIG_TABLE_RE = re.compile(r'id="exampleApplOrig".*?</table>', re.S)
+_TR_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S)
+_TD_RE = re.compile(r"<td[^>]*>(.*?)</td>", re.S)
+_DOC_LINK_RE = re.compile(r'<a\s+href="([^"]+)"[^>]*title="Links to (Label|Letter|Review)"', re.I)
+
+
+def _cell_text(fragment: str) -> str:
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", fragment)).strip()
+
+
+def parse_original_approval_documents(html_bytes: bytes) -> dict[str, str | None]:
+    """Return the documents FDA posted for an application's original approval.
+
+    Reads the first ``ORIG`` submission whose action type is ``Approval`` from
+    the drugs@FDA overview page and returns ``approval_letter_url``,
+    ``review_url`` (the approval package: FDA's review documents),
+    ``label_url`` (the label approved with the original approval) and
+    ``submission_classification`` (e.g. ``Type 1 - New Molecular Entity``;
+    blank for BLAs). Every value is ``None`` when the page has no such row.
+    """
+    out: dict[str, str | None] = {
+        "approval_letter_url": None,
+        "review_url": None,
+        "label_url": None,
+        "submission_classification": None,
+    }
+    if not html_bytes:
+        return out
+    table = _ORIG_TABLE_RE.search(html_bytes.decode("utf-8", errors="replace"))
+    if not table:
+        return out
+    candidates = []
+    for tr in _TR_RE.finditer(table.group(0)):
+        cells = _TD_RE.findall(tr.group(1))
+        if len(cells) < 6:
+            continue
+        submission = re.fullmatch(r"ORIG-(\d+)", _cell_text(cells[1]))
+        if not submission or _cell_text(cells[2]) != "Approval":
+            continue
+        candidates.append((int(submission.group(1)), cells))
+    if not candidates:
+        return out
+    _, cells = min(candidates, key=lambda c: c[0])
+    links = {kind.lower(): url for url, kind in _DOC_LINK_RE.findall(cells[5])}
+    out["approval_letter_url"] = links.get("letter")
+    out["review_url"] = links.get("review")
+    out["label_url"] = links.get("label")
+    out["submission_classification"] = _cell_text(cells[3]) or None
+    return out
+
+
+def enrich_with_approval_documents(
+    df: pd.DataFrame,
+    cache_dir: Path | str = "data/raw/fda/overview",
+) -> pd.DataFrame:
+    """Add ``approval_letter_url``, ``review_url`` and ``submission_classification``.
+
+    Also fills ``label_pdf_url`` from the original-approval row when FDA's
+    annual list linked the drug name to the drugs@FDA overview instead of to a
+    label PDF. A label link the list already carries is left alone. Uses the
+    overview pages cached by ``enrich_with_sponsor``.
+    """
+    out = df.copy()
+    cache = Path(cache_dir)
+    letters: list[str | None] = []
+    reviews: list[str | None] = []
+    classes: list[str | None] = []
+    labels = [v if isinstance(v, str) and v else None for v in out["label_pdf_url"].tolist()]
+    for i, appl_no in enumerate(out["application_number"].fillna("").tolist()):
+        docs = parse_original_approval_documents(b"")
+        if appl_no:
+            try:
+                docs = parse_original_approval_documents(
+                    fetch_application_overview(appl_no, cache).read_bytes()
+                )
+            except Exception as exc:  # noqa: BLE001
+                warnings.warn(
+                    f"{appl_no}: could not read the drugs@FDA overview ({exc!r}); "
+                    "no approval documents recorded",
+                    stacklevel=2,
+                )
+        letters.append(docs["approval_letter_url"])
+        reviews.append(docs["review_url"])
+        classes.append(docs["submission_classification"])
+        if labels[i] is None:
+            labels[i] = docs["label_url"]
+    out["approval_letter_url"] = letters
+    out["review_url"] = reviews
+    out["submission_classification"] = classes
+    out["label_pdf_url"] = labels
+    return out
+
+
 def reconcile_approval_dates(
     df: pd.DataFrame,
     cache_dir: Path | str = "data/raw/fda/overview",

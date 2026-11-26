@@ -15,6 +15,9 @@ Outputs:
 - ``web/data/fda_approvals_nme_recent.parquet`` and
   ``web/data/fda_approvals_nme_recent.json`` — published bundles for the
   /drugs page and the fda-analyst skill
+- ``web/data/fda_nme_compilation.{csv,parquet}`` — FDA's Compilation of CDER
+  NME and New Biologic Approvals (1985 onward), converted from FDA's XLSX, plus
+  ``fda_nme_compilation_source.json`` recording which FDA file it came from
 
 Usage: ``uv run python scripts/build_fda_index.py``
 """
@@ -23,12 +26,13 @@ from __future__ import annotations
 
 import json
 import math
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-from fda_sba import build_index
+from fda_sba import build_index, fetch_compilation, parse_compilation, read_source_metadata
 
 YEARS = (2021, 2022, 2023, 2024)
 ARTIFACTS_DIR = Path("artifacts")
@@ -39,7 +43,9 @@ RAW_CACHE = Path("data/raw/fda")
 
 def main() -> None:
     print(f"Scraping FDA novel approvals (CDER + CBER) for {min(YEARS)}–{max(YEARS)}...")
-    df = build_index(YEARS, cache_dir=RAW_CACHE)
+    compilation_path = fetch_compilation(RAW_CACHE / "compilation")
+    compilation = parse_compilation(compilation_path)
+    df = build_index(YEARS, cache_dir=RAW_CACHE, compilation=compilation)
     print(f"  {len(df):,} drug approvals across {df['year'].nunique()} years")
     print("  by year:")
     for year, count in df.groupby("year").size().sort_index(ascending=False).items():
@@ -50,6 +56,8 @@ def main() -> None:
     _check_dates(df)
     sponsor_cov = df["sponsor"].notna().sum()
     print(f"  sponsor coverage: {sponsor_cov:,}/{len(df):,}")
+    for col in ("label_pdf_url", "approval_letter_url", "review_url", "review_designation"):
+        print(f"  {col} coverage: {df[col].notna().sum():,}/{len(df):,}")
 
     # Persist as Parquet partitioned by year (gitignored)
     for year, sub in df.groupby("year"):
@@ -78,12 +86,57 @@ def main() -> None:
             "year_min": int(df["year"].min()),
             "year_max": int(df["year"].max()),
             "by_year": {int(y): int(c) for y, c in df.groupby("year").size().items()},
+            "sources_read": _sources_read(),
         },
         "rows": rows,
     }
     web_json = WEB_DATA / "fda_approvals_nme_recent.json"
     web_json.write_text(json.dumps(bundle, separators=(",", ":")) + "\n")
     print(f"  → {web_json} ({web_json.stat().st_size / 1024:.1f} KB)")
+
+    _write_compilation(compilation, read_source_metadata(compilation_path))
+
+
+def _write_compilation(comp: pd.DataFrame, source: dict) -> None:
+    """Publish FDA's NME compilation as CSV and Parquet, with its provenance."""
+    year_min, year_max = int(comp["approval_year"].min()), int(comp["approval_year"].max())
+    print(f"FDA NME compilation: {len(comp):,} approvals, {year_min}–{year_max}")
+    csv_out = WEB_DATA / "fda_nme_compilation.csv"
+    comp.to_csv(csv_out, index=False)
+    print(f"  → {csv_out} ({csv_out.stat().st_size / 1024:.1f} KB)")
+    pq_out = WEB_DATA / "fda_nme_compilation.parquet"
+    pq.write_table(pa.Table.from_pandas(comp, preserve_index=False), pq_out, compression="zstd")
+    print(f"  → {pq_out} ({pq_out.stat().st_size / 1024:.1f} KB)")
+    meta = {
+        "source": source,
+        "totals": {
+            "approvals": int(len(comp)),
+            "year_min": year_min,
+            "year_max": year_max,
+            "by_year": {int(y): int(c) for y, c in comp.groupby("approval_year").size().items()},
+        },
+        "columns": list(comp.columns),
+    }
+    meta_out = WEB_DATA / "fda_nme_compilation_source.json"
+    meta_out.write_text(json.dumps(meta, indent=2) + "\n")
+    print(f"  → {meta_out}")
+
+
+def _sources_read() -> dict:
+    """When the cached FDA pages behind the index were fetched.
+
+    Uses the oldest file in each cache, so the date on a drug page is never
+    later than the day its FDA page was actually read.
+    """
+
+    def oldest(paths) -> str | None:
+        stamps = [p.stat().st_mtime for p in paths]
+        return date.fromtimestamp(min(stamps)).isoformat() if stamps else None
+
+    return {
+        "cder": oldest([*RAW_CACHE.glob("nme_*.html"), *(RAW_CACHE / "overview").glob("*.html")]),
+        "cber": oldest((RAW_CACHE / "cber").glob("*.html")),
+    }
 
 
 def _check_dates(df) -> None:
@@ -112,6 +165,20 @@ def _row_to_json(r) -> dict:
         "drugs_at_fda_url": _str(r.drugs_at_fda_url),
         "trials_snapshot_url": _str(r.trials_snapshot_url),
         "regulatory_center": _str(getattr(r, "regulatory_center", None)),
+        "approval_letter_url": _str(r.approval_letter_url),
+        "review_url": _str(r.review_url),
+        "submission_classification": _str(r.submission_classification),
+        "fda_receipt_date": _str(r.fda_receipt_date),
+        "dosage_form": _str(r.dosage_form),
+        "route_of_administration": _str(r.route_of_administration),
+        "review_designation": _str(r.review_designation),
+        "orphan_drug_designation": _str(r.orphan_drug_designation),
+        "accelerated_approval": _str(r.accelerated_approval),
+        "breakthrough_therapy_designation": _str(r.breakthrough_therapy_designation),
+        "fast_track_designation": _str(r.fast_track_designation),
+        "qualified_infectious_disease_product": _str(r.qualified_infectious_disease_product),
+        "priority_review_voucher_issued": _str(r.priority_review_voucher_issued),
+        "priority_review_voucher_redeemed": _str(r.priority_review_voucher_redeemed),
     }
 
 
