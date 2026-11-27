@@ -4,6 +4,8 @@ The FDA approved Mounjaro (tirzepatide) on May 13, 2022, under NDA 215866. The s
 
 At original approval, FDA recorded priority review (used priority review voucher) for Mounjaro. FDA received the application on September 15, 2021 and approved it 240 days later.
 
+FDA's labeling data puts Mounjaro in the established pharmacologic classes: Glucose-dependent Insulinotropic Polypeptide Receptor Agonist and GLP-1 Receptor Agonist.
+
 ## Mounjaro approval facts
 
 - Brand name: Mounjaro
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review (used priority review voucher
 - Approval year: 2022
 - FDA received application: September 15, 2021
 - Receipt to approval: 240 days
+- Pharmacologic class: Glucose-dependent Insulinotropic Polypeptide Receptor Agonist; GLP-1 Receptor Agonist
 - Dosage form: Solution
 - Route of administration: Subcutaneous
 - Review designation: Priority (used priority review voucher)
@@ -33,4 +36,4 @@ At original approval, FDA recorded priority review (used priority review voucher
 - [Mounjaro Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-mounjaro): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 215866](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=215866): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/mounjaro/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/mounjaro/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

@@ -10,7 +10,7 @@ row. Don't hand-edit them.
 | [`community_benefit_gap_2022.csv`](community_benefit_gap_2022.csv) | The full matched dataset: 2,099 hospital systems (1,904 with both figures present), HCRIS Worksheet S-10 joined to IRS 990 Schedule H at the EIN level, 51 columns. Sorted alphabetically, not by difference — it's a lookup table, not a ranking. `scripts/build_gap_dataset.py` |
 | [`community_benefit_gap_2022_summary.md`](community_benefit_gap_2022_summary.md) | Method, the 2,099 → 1,904 → 1,797 → 493 funnel, the column list and every caveat. Read this before quoting any number. `scripts/build_gap_index.py` |
 | [`community_benefit_gap_2022_sources.json`](community_benefit_gap_2022_sources.json) | What the source files say about their own vintage: CMS extract date, posted date, latest processing date and ZIP hashes, IRS returns by release year, crosswalk coverage. The summary quotes it instead of a hand-typed date. `scripts/build_gap_dataset.py` |
-| [`fda_approvals_nme_recent.csv`](fda_approvals_nme_recent.csv) | FDA novel drug approvals 2021–2024, 217 rows across CDER (NMEs and novel BLAs) and CBER (cell and gene therapy), each with links to its label, approval letter and review package, plus the review designation and expedited-program flags FDA records in its NME compilation. `scripts/build_fda_index.py` |
+| [`fda_approvals_nme_recent.csv`](fda_approvals_nme_recent.csv) | FDA novel drug approvals 2021–2025, 268 rows across CDER (NMEs and novel BLAs) and CBER (cell and gene therapy), each with links to its label, approval letter and review package, plus the review designation and expedited-program flags FDA records in its NME compilation. `scripts/build_fda_index.py` |
 
 ## The caveats that matter most
 

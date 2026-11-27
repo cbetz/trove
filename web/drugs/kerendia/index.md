@@ -4,6 +4,8 @@ The FDA approved Kerendia (finerenone) on July 9, 2021, under NDA 215341. The sp
 
 At original approval, FDA recorded priority review and fast track designation for Kerendia. FDA received the application on November 9, 2020 and approved it 242 days later.
 
+FDA's labeling data puts Kerendia in the established pharmacologic class: Nonsteroidal Mineralocorticoid-Receptor Antagonist.
+
 ## Kerendia approval facts
 
 - Brand name: Kerendia
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review and fast track designation fo
 - Approval year: 2021
 - FDA received application: November 9, 2020
 - Receipt to approval: 242 days
+- Pharmacologic class: Nonsteroidal Mineralocorticoid-Receptor Antagonist
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review and fast track designation fo
 - [Kerendia Drug Trials Snapshot](https://www.fda.gov/node/406901): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 215341](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=215341): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/kerendia/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/kerendia/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

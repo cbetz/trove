@@ -4,6 +4,8 @@ The FDA approved Opdualag (nivolumab and relatlimab-rmbw) on March 18, 2022, und
 
 At original approval, FDA recorded priority review, orphan drug designation and fast track designation for Opdualag. FDA received the application on July 19, 2021 and approved it 242 days later.
 
+FDA's labeling data puts Opdualag in the established pharmacologic classes: Programmed Death Receptor-1 Blocking Antibody and Lymphocyte Activation Gene-3 Blocker.
+
 ## Opdualag approval facts
 
 - Brand name: Opdualag
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - Approval year: 2022
 - FDA received application: July 19, 2021
 - Receipt to approval: 242 days
+- Pharmacologic class: Programmed Death Receptor-1 Blocking Antibody; Lymphocyte Activation Gene-3 Blocker
 - Dosage form: Solution
 - Route of administration: Intravenous
 - Review designation: Priority
@@ -31,4 +34,4 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - [Opdualag Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshot-opdualag): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761234](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761234): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/opdualag/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/opdualag/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

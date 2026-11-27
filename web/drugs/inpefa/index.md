@@ -4,6 +4,8 @@ The FDA approved Inpefa (sotagliflozin) on May 26, 2023, under NDA 216203. The s
 
 FDA reviewed Inpefa on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on May 27, 2022 and approved it 364 days later.
 
+FDA's labeling data puts Inpefa in the established pharmacologic class: Sodium-Glucose Cotransporter 2 Inhibitor.
+
 ## Inpefa approval facts
 
 - Brand name: Inpefa
@@ -14,6 +16,7 @@ FDA reviewed Inpefa on the standard review clock. Its records show no orphan dru
 - Approval year: 2023
 - FDA received application: May 27, 2022
 - Receipt to approval: 364 days
+- Pharmacologic class: Sodium-Glucose Cotransporter 2 Inhibitor
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Inpefa on the standard review clock. Its records show no orphan dru
 - [Inpefa Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-inpefa): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 216203](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216203): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/inpefa/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/inpefa/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

@@ -1,6 +1,6 @@
 ---
 name: fda-analyst
-description: Answer questions about FDA drug approvals — the basis for approval, the trials, the endpoints, the regulatory pathway, the adverse events flagged in the medical review. Use when the user asks about a specific FDA-approved drug (especially one approved 2021–2024), wants the actual evidence behind an approval rather than marketing copy, or wants to compare approvals along regulatory dimensions.
+description: Answer questions about FDA drug approvals — the basis for approval, the trials, the endpoints, the regulatory pathway, the adverse events flagged in the medical review. Use when the user asks about a specific FDA-approved drug (especially one approved 2021–2025), wants the actual evidence behind an approval rather than marketing copy, or wants to compare approvals along regulatory dimensions.
 ---
 
 # fda-analyst
@@ -20,7 +20,7 @@ Invoke when the user asks about:
 ## Don't use this skill for
 
 - **Clinical advice or dosing.** This is a reference tool over public approval documents, not a substitute for the prescribing label or clinical judgment.
-- **Drugs approved before 2021 or after 2024.** The trove index covers original approvals dated 2021–2024 only. A drug outside that window is not in the bundle; say so rather than answering from memory. (The document-fetch recipes below still work for any application number the user supplies.)
+- **Drugs approved before 2021 or after 2025.** The trove index covers original approvals dated 2021–2025 only. A drug outside that window is not in the bundle; say so rather than answering from memory. (The document-fetch recipes below still work for any application number the user supplies.)
 - **Devices, biosimilars, generics (ANDA), or supplemental approvals.** Out of scope — the index covers FDA's curated "Novel Drug Approvals" lists (NMEs and novel BLAs). Vaccines and blood products are also out of scope: trove ingests only the CBER cell & gene therapy page, not the broader CBER vaccines/blood list.
 - **Questions that don't require the actual approval package** — labeling questions, prescribing information, formulary status, etc. Use FDA's public-facing tools or the prescribing label.
 
@@ -82,9 +82,10 @@ Code-execution sandboxes often allow only a short list of domains. By default `t
 
 ## Coverage
 
-- **2021–2024 calendar years** of FDA novel drug approvals (NMEs and novel BLAs from FDA's annual lists), by date of original approval. Approvals from 2025 onward are not in the index yet.
-- 217 drugs total (192 CDER + 25 CBER cell & gene therapies). Each row carries a `regulatory_center` column.
-- Each drug has the metadata index plus a direct link to the drugs@FDA application overview where every approval-document PDF lives.
+- **2021–2025 calendar years** of FDA novel drug approvals (NMEs and novel BLAs from FDA's annual lists), by date of original approval. Approvals from 2026 onward are not in the index yet.
+- 268 drugs total (238 CDER + 30 CBER cell & gene therapies). Each row carries a `regulatory_center` column.
+- Each drug has the metadata index plus a direct link to the drugs@FDA application overview where every approval-document PDF lives. For 2021–2024 CDER approvals the index also carries direct `approval_letter_url` and `review_url` links; for 2025 approvals those two are null, so read the document links from the overview page.
+- Review designation, orphan, accelerated approval, breakthrough and fast track status (CDER rows) and the pharmacologic class where FDA records one are columns in the index: answer those from the data and cite FDA's NME compilation or openFDA, not memory.
 
 ## Sources and citations
 
@@ -96,4 +97,4 @@ When you produce output that quotes data values, cite the source.
 
 ## Skill version
 
-Shipped in trove plugin 1.1.0 (November 2026). Corrections and questions: https://github.com/cbetz/trove/issues
+Shipped in trove plugin 1.2.0 (November 2026). Corrections and questions: https://github.com/cbetz/trove/issues

@@ -5,7 +5,7 @@
 - Parquet: `https://troveproject.com/data/fda_approvals_nme_recent.parquet`
 - JSON: `https://troveproject.com/data/fda_approvals_nme_recent.json`
 
-217 rows covering FDA novel drug approvals whose original approval falls in calendar years 2021–2024. Both regulatory centers are included: 192 CDER (NMEs + novel antibody BLAs from the annual *Novel Drug Approvals* pages) plus 25 CBER (cell and gene therapies from the *Approved Cellular and Gene Therapy Products* page). Approvals from 2025 onward are not in the bundle yet.
+268 rows covering FDA novel drug approvals whose original approval falls in calendar years 2021–2025. Both regulatory centers are included: 238 CDER (NMEs + novel antibody BLAs from the annual *Novel Drug Approvals* pages) plus 30 CBER (cell and gene therapies from the *Approved Cellular and Gene Therapy Products* page). Approvals from 2025 onward are not in the bundle yet.
 
 **If `troveproject.com` is unreachable** (sandboxes commonly block it — the symptom is a DNS or connection error, not an HTTP status), the same files are in the GitHub repo, which sandboxes normally allow:
 
@@ -23,10 +23,10 @@ The JSON is **not** a top-level array. It's an object:
 ```json
 {
   "totals": {
-    "drugs": 217,
+    "drugs": 268,
     "year_min": 2021,
-    "year_max": 2024,
-    "by_year": {"2021": 54, "2022": 42, "2023": 62, "2024": 59}
+    "year_max": 2025,
+    "by_year": {"2021": 54, "2022": 42, "2023": 62, "2024": 59, "2025": 51}
   },
   "rows": [ /* one object per drug */ ]
 }
@@ -41,27 +41,29 @@ When iterating, use `data["rows"]`, not `data` directly.
 | `year` | Calendar year of approval |
 | `drug_name` | FDA brand name |
 | `active_ingredient` | International nonproprietary or USAN name |
-| `sponsor` | Company that holds the application. CDER: parsed from drugs@FDA, title-cased from FDA's all-caps stored form. CBER: parsed from the per-product page's "Manufacturer" field. 216 of 217 rows populated. |
+| `sponsor` | Company that holds the application. CDER: parsed from drugs@FDA, title-cased from FDA's all-caps stored form. CBER: parsed from the per-product page's "Manufacturer" field. Where drugs@FDA had no page for the application (every 2025 CDER row so far, and withdrawn products such as Pepaxto), this is the applicant named in FDA's NME compilation instead. Populated for all 268 rows. |
 | `approval_date` | Date of the **original** approval, ISO `YYYY-MM-DD`, never null. CDER: the original-approval action date in drugs@FDA (the date on the approval letter), which occasionally differs by a day from FDA's annual list. CBER: the date of the original approval letter — not a later supplement letter. |
-| `indication` | FDA-approved use string |
+| `indication` | CDER: FDA's one-line approved-use summary from its annual list. CBER: the indication on the product page **as it read when fetched**, which can include indications added after the original approval; several indications are joined with `; `, and text over 600 characters is cut with `…`. |
 | `application_number` | NDA / BLA application number (6 digits). For CBER products this is the STN. |
 | `application_type` | "NDA" or "BLA". CBER products are always BLA. |
 | `label_pdf_url` | Direct link to the FDA-approved label PDF (CDER) or Package Insert (CBER). |
 | `drugs_at_fda_url` | CDER: drugs@FDA application-overview URL. CBER: per-product FDA page under `fda.gov/vaccines-blood-biologics/` — that page is the canonical hub for the approval letter, package insert, clinical review memo, and Summary Basis for Regulatory Action. |
 | `trials_snapshot_url` | Drug Trials Snapshot URL (CDER only; CBER doesn't publish Trials Snapshots — `null`) |
 | `regulatory_center` | `"CDER"` or `"CBER"`. CDER = small molecules + most antibody biologics. CBER = cell and gene therapies. |
-| `approval_letter_url` | CDER only. The approval letter FDA posted for the original approval (PDF), from the drugs@FDA application page. 191 of 192 CDER rows. A few URLs contain spaces; percent-encode before fetching. |
-| `review_url` | CDER only. The approval package for the original approval: an HTML table of contents linking each FDA review PDF (clinical, statistical, clinical pharmacology, summary review). 190 of 192 CDER rows. **Start here** instead of scraping the drugs@FDA overview page. |
+| `approval_letter_url` | CDER only. The approval letter FDA posted for the original approval (PDF), from the drugs@FDA application page. 191 of the 192 CDER rows for 2021–2024; **null for every 2025 row** (not collected yet), so for a 2025 approval read the document links from the overview page at `drugs_at_fda_url` as described below. A few URLs contain spaces; percent-encode before fetching. |
+| `review_url` | CDER only. The approval package for the original approval: an HTML table of contents linking each FDA review PDF (clinical, statistical, clinical pharmacology, summary review). 190 of the 192 CDER rows for 2021–2024; null for every 2025 row. **Start here** instead of scraping the drugs@FDA overview page. |
 | `submission_classification` | CDER NDAs only. FDA's classification on drugs@FDA, e.g. `Type 1 - New Molecular Entity`. Null for BLAs. |
 | `fda_receipt_date` | CDER only. Date FDA received the first complete application, ISO. |
 | `dosage_form`, `route_of_administration` | CDER only. As FDA lists them at original approval; `; `-separated when a product has more than one. |
 | `review_designation` | CDER only. `Priority` or `Standard`, sometimes qualified, e.g. `Priority (used priority review voucher)`. |
 | `orphan_drug_designation`, `accelerated_approval`, `breakthrough_therapy_designation`, `fast_track_designation`, `qualified_infectious_disease_product` | CDER only. `Yes` / `No`, sometimes qualified, e.g. `Yes (indication [A] only)`. Test with `LIKE 'Yes%'`. |
 | `priority_review_voucher_issued`, `priority_review_voucher_redeemed` | CDER only. Issued is `TD`, `RPD`, `MTMC` or `No`. |
+| `pharm_class_epc` | FDA's Established Pharmacologic Class for the product, from openFDA's label data, e.g. `Kinase Inhibitor`; `; `-separated when there is more than one. Populated for 110 of 268 rows: FDA assigns a class only where the active moiety has been indexed, so null means "not recorded", not "no class". No CBER row has one. |
+| `pharm_class_moa` | Mechanism-of-action classes from the same source (95 rows). These include interaction classes such as `Cytochrome P450 3A Inducers`, so do not present the list as the drug's therapeutic mechanism without reading the label. |
 
-The designation columns come from FDA's Compilation of CDER NME and New Biologic Approvals and describe the application **at the time of original approval**. They answer "was X approved under accelerated approval / with breakthrough designation?" without opening a PDF; cite the compilation when you use them. They are null for every CBER row. `label_pdf_url` is populated for 216 of 217 rows.
+The designation columns come from FDA's Compilation of CDER NME and New Biologic Approvals and describe the application **at the time of original approval**. They answer "was X approved under accelerated approval / with breakthrough designation?" without opening a PDF; cite the compilation when you use them. They are null for every CBER row. `label_pdf_url` is populated for 263 of 268 rows.
 
-The whole compilation (every CDER novel approval, 1985–2025, 1,387 rows, same designation columns) is published separately at `https://troveproject.com/data/fda_nme_compilation.parquet` and `.csv`; column definitions are at `https://troveproject.com/drugs/compilation/index.md`. Use it for questions about approvals outside 2021–2024 or about trends (approvals per year, share with priority review). It has no document links.
+The whole compilation (every CDER novel approval, 1985–2025, 1,387 rows, same designation columns) is published separately at `https://troveproject.com/data/fda_nme_compilation.parquet` and `.csv`; column definitions are at `https://troveproject.com/drugs/compilation/index.md`. Use it for questions about approvals outside 2021–2025 or about trends (approvals per year, share with priority review). It has no document links.
 
 ## Query patterns
 
@@ -150,5 +152,5 @@ If FDA cannot be reached at all (DNS failure, timeout, or a proxy `403`), the sa
 ## What's NOT in the bundle
 
 - **Document text content.** The bundle is metadata; document text is in the PDFs at FDA. Fetch at query time.
-- **Approvals before 2021 or after 2024.** Not in the bundle. 2025–2026 approvals have not been ingested yet.
+- **Approvals before 2021 or after 2025.** Not in the bundle. 2025–2026 approvals have not been ingested yet.
 - **Generic (ANDA) and supplemental (sNDA) approvals.** The bundle covers FDA's "Novel Drug Approvals" curated lists only.

@@ -4,6 +4,8 @@ The FDA approved Vivjoa (oteseconazole) on April 26, 2022, under NDA 215888. The
 
 At original approval, FDA recorded priority review, fast track designation and qualified infectious disease product designation for Vivjoa. FDA received the application on May 27, 2021 and approved it 334 days later.
 
+FDA's labeling data puts Vivjoa in the established pharmacologic class: Azole Antifungal.
+
 ## Vivjoa approval facts
 
 - Brand name: Vivjoa
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, fast track designation and q
 - Approval year: 2022
 - FDA received application: May 27, 2021
 - Receipt to approval: 334 days
+- Pharmacologic class: Azole Antifungal
 - Dosage form: Capsule
 - Route of administration: Oral
 - Review designation: Priority
@@ -33,4 +36,4 @@ At original approval, FDA recorded priority review, fast track designation and q
 - [Vivjoa Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-vivjoa): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 215888](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=215888): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/vivjoa/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/vivjoa/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

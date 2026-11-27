@@ -20,6 +20,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import warnings
 import zipfile
 from datetime import date, datetime, timedelta
 from pathlib import Path
@@ -296,6 +297,45 @@ def _join_distinct(*values: object) -> str | None:
     return "; ".join(seen) or None
 
 
+def fill_missing_application_numbers(df: pd.DataFrame, compilation: pd.DataFrame) -> pd.DataFrame:
+    """Give list rows that have no application number the one FDA's compilation records.
+
+    FDA's annual list links each drug name to its label or its drugs@FDA page,
+    and the application number is read from that link. The newest rows are
+    sometimes listed before the link is added. The compilation names the same
+    approval, so a row is matched on brand name and approval year (exact,
+    ignoring case) and takes the compilation's first application number.
+    """
+    by_name = {
+        (str(rec["proprietary_name"]).strip().lower(), int(rec["approval_year"])): rec
+        for rec in compilation.to_dict("records")
+    }
+    out = df.copy()
+    numbers, kinds, urls = (
+        out["application_number"].tolist(),
+        out["application_type"].tolist(),
+        out["drugs_at_fda_url"].tolist(),
+    )
+    for i, (name, year) in enumerate(zip(out["drug_name"], out["year"], strict=True)):
+        if isinstance(numbers[i], str) and numbers[i]:
+            continue
+        rec = by_name.get((str(name).strip().lower(), int(year)))
+        if rec is None:
+            continue
+        numbers[i] = rec["application_number"]
+        kinds[i] = rec["application_type"]
+        urls[i] = (
+            "https://www.accessdata.fda.gov/scripts/cder/daf/"
+            f"index.cfm?event=overview.process&ApplNo={rec['application_number']}"
+        )
+    out["application_number"], out["application_type"], out["drugs_at_fda_url"] = (
+        numbers,
+        kinds,
+        urls,
+    )
+    return out
+
+
 def enrich_with_designations(df: pd.DataFrame, compilation: pd.DataFrame) -> pd.DataFrame:
     """Join the compilation's regulatory characteristics onto the approvals index.
 
@@ -325,4 +365,24 @@ def enrich_with_designations(df: pd.DataFrame, compilation: pd.DataFrame) -> pd.
             values[c].append(v if isinstance(v, str) and v else None)
     for c in added:
         out[c] = values[c]
+    # Where drugs@FDA gave no sponsor (its page could not be read, or the
+    # application has left drugs@FDA), fall back to the applicant FDA names in
+    # the compilation, and say where a date disagrees.
+    if "sponsor" in out.columns:
+        sponsors = out["sponsor"].tolist()
+        for i, number in enumerate(out["application_number"].tolist()):
+            rec = lookup.get(number) if isinstance(number, str) else None
+            if rec is None:
+                continue
+            if not (isinstance(sponsors[i], str) and sponsors[i]):
+                sponsors[i] = rec.get("applicant")
+            listed = out["approval_date"].iloc[i]
+            listed = listed.isoformat() if hasattr(listed, "isoformat") else str(listed)
+            if listed[:10] != rec["fda_approval_date"]:
+                warnings.warn(
+                    f"{out['drug_name'].iloc[i]}: approval date {listed[:10]} differs from "
+                    f"FDA's compilation ({rec['fda_approval_date']})",
+                    stacklevel=2,
+                )
+        out["sponsor"] = sponsors
     return out

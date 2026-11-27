@@ -4,6 +4,8 @@ The FDA approved Iqirvo (elafibranor) on June 10, 2024, under NDA 218860. The sp
 
 At original approval, FDA recorded priority review, orphan drug designation, accelerated approval and breakthrough therapy designation for Iqirvo. FDA received the application on October 10, 2023 and approved it 244 days later.
 
+FDA's labeling data puts Iqirvo in the established pharmacologic class: Peroxisome Proliferator-activated Receptor Agonist.
+
 ## Iqirvo approval facts
 
 - Brand name: Iqirvo
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation, acc
 - Approval year: 2024
 - FDA received application: October 10, 2023
 - Receipt to approval: 244 days
+- Pharmacologic class: Peroxisome Proliferator-activated Receptor Agonist
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, orphan drug designation, acc
 - [Iqirvo Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-iqirvo): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 218860](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=218860): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/iqirvo/ (updated 2026-11-26). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/iqirvo/ (updated 2026-11-27). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.

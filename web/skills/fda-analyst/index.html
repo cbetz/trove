@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>fda-analyst — Claude Code skill for FDA drug approvals — trove</title>
-  <meta name="description" content="A Claude Code skill for FDA novel drug approvals 2021–2024. Reads the actual medical / statistical / pharmacology / chemistry reviews from FDA's approval package at query time to answer questions about the basis for approval, trials, endpoints, and regulatory pathway.">
+  <meta name="description" content="A Claude Code skill for FDA novel drug approvals 2021–2025. Reads the actual medical / statistical / pharmacology / chemistry reviews from FDA's approval package at query time to answer questions about the basis for approval, trials, endpoints, and regulatory pathway.">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://troveproject.com/skills/fda-analyst/">
   <meta property="og:type" content="article">
@@ -28,7 +28,7 @@
     "sameAs": "https://github.com/cbetz/trove/tree/main/skills/fda-analyst",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Cross-platform (Claude Code)",
-    "softwareVersion": "1.1.0",
+    "softwareVersion": "1.2.0",
     "license": "https://opensource.org/licenses/MIT",
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
     "author": {
@@ -41,7 +41,7 @@
         "https://github.com/cbetz"
       ]
     },
-    "description": "A Claude Code skill for FDA novel drug approvals 2021–2024. Reads the actual medical, statistical, pharmacology, and chemistry reviews from FDA's approval package to answer questions about the basis for approval."
+    "description": "A Claude Code skill for FDA novel drug approvals 2021–2025. Reads the actual medical, statistical, pharmacology, and chemistry reviews from FDA's approval package to answer questions about the basis for approval."
   },
   {
     "@context": "https://schema.org",
@@ -99,7 +99,7 @@
 
   <section>
     <h2>Install</h2>
-    <p>Install the trove plugin (version 1.1.0) from Anthropic's public community marketplace:</p>
+    <p>Install the trove plugin (version 1.2.0) from Anthropic's public community marketplace:</p>
 <pre><code>/plugin marketplace add anthropics/claude-plugins-community
 /plugin install trove@claude-community</code></pre>
     <p>trove is listed in the community marketplace, not the separate official <code>claude-plugins-official</code> marketplace. The skill's source, and instructions for installing it without the plugin, are at <a href="https://github.com/cbetz/trove/tree/main/skills">github.com/cbetz/trove/tree/main/skills</a>.</p>
@@ -160,7 +160,7 @@ treatment of major depressive disorder (MDD) and for the treatment of postpartum
   <section>
     <h2>What this skill does</h2>
     <ul>
-      <li><strong>Finds the application.</strong> The skill queries trove's <a href="/drugs/">FDA approvals index</a> (a Parquet bundle with 217 novel drug approvals from 2021–2024: 192 from CDER and 25 CBER cell &amp; gene therapies) to locate the application number, sponsor, and approval-package URL for the drug in question.</li>
+      <li><strong>Finds the application.</strong> The skill queries trove's <a href="/drugs/">FDA approvals index</a> (a Parquet bundle with 268 novel drug approvals from 2021–2025: 238 from CDER and 30 CBER cell &amp; gene therapies) to locate the application number, sponsor, and approval-package URL for the drug in question.</li>
       <li><strong>Picks the right document.</strong> Different questions need different documents — the medical review for "basis for approval" and "adverse events", the statistical review for endpoint analyses, the pharmacology review for ADME, the chemistry review for manufacturing. The skill knows the mapping.</li>
       <li><strong>Reads it at query time.</strong> No pre-extracted summaries. The skill fetches the PDF from FDA's site, checks its size, reads the relevant section (in page ranges when the review is large), and quotes back with a citation.</li>
       <li><strong>Cites the source.</strong> Answers reference the specific document and page so users can verify.</li>
@@ -171,7 +171,7 @@ treatment of major depressive disorder (MDD) and for the treatment of postpartum
     <h2>What this skill doesn't do</h2>
     <ul>
       <li><strong>Clinical advice or dosing.</strong> It's a reference tool over public approval documents, not a substitute for the prescribing label or clinical judgment.</li>
-      <li><strong>Drugs first approved before 2021 or after 2024.</strong> The index covers original approvals dated 2021–2024.</li>
+      <li><strong>Drugs first approved before 2021 or after 2025.</strong> The index covers original approvals dated 2021–2025.</li>
       <li><strong>Devices, biosimilars, or generic (ANDA) approvals.</strong> The trove index covers FDA's curated <em>Novel Drug Approvals</em> lists (NMEs and novel BLAs) only.</li>
       <li><strong>Work without network access to FDA.</strong> The review documents have no mirror. In a sandbox that cannot reach <code>www.accessdata.fda.gov</code> or <code>www.fda.gov</code>, the skill gives you the document URL and asks you to allow the domain or upload the PDF.</li>
     </ul>
@@ -179,7 +179,7 @@ treatment of major depressive disorder (MDD) and for the treatment of postpartum
 
   <section>
     <h2>Coverage</h2>
-    <p>217 FDA novel drug approvals with an original approval date in 2021–2024: 192 CDER (small molecules and most antibody biologics) plus 25 CBER (cell &amp; gene therapies). Browse the index at <a href="/drugs/">/drugs/</a> — each drug has its own permalink page with the approval-package URL, e.g. <a href="/drugs/elahere/">/drugs/elahere/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/casgevy/">/drugs/casgevy/</a>.</p>
+    <p>268 FDA novel drug approvals with an original approval date in 2021–2025: 238 CDER (small molecules and most antibody biologics) plus 30 CBER (cell &amp; gene therapies). Browse the index at <a href="/drugs/">/drugs/</a> — each drug has its own permalink page with the approval-package URL, e.g. <a href="/drugs/elahere/">/drugs/elahere/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/casgevy/">/drugs/casgevy/</a>.</p>
   </section>
 
   <section>

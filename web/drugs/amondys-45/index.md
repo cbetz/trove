@@ -4,6 +4,8 @@ The FDA approved Amondys 45 (casimersen) on February 25, 2021, under NDA 213026.
 
 At original approval, FDA recorded priority review, orphan drug designation, accelerated approval and fast track designation for Amondys 45. FDA received the application on June 25, 2020 and approved it 245 days later.
 
+FDA's labeling data puts Amondys 45 in the established pharmacologic class: Antisense Oligonucleotide.
+
 ## Amondys 45 approval facts
 
 - Brand name: Amondys 45
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation, acc
 - Approval year: 2021
 - FDA received application: June 25, 2020
 - Receipt to approval: 245 days
+- Pharmacologic class: Antisense Oligonucleotide
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Priority
@@ -33,4 +36,4 @@ At original approval, FDA recorded priority review, orphan drug designation, acc
 - [Amondys 45 Drug Trials Snapshot](https://www.fda.gov/node/404287): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 213026](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=213026): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/amondys-45/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/amondys-45/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

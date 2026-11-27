@@ -4,6 +4,8 @@ The FDA approved Ryzneuta (efbemalenograstim alfa-vuxw) on November 16, 2023, un
 
 FDA reviewed Ryzneuta on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on March 30, 2021 and approved it 961 days later.
 
+FDA's labeling data puts Ryzneuta in the established pharmacologic class: Leukocyte Growth Factor.
+
 ## Ryzneuta approval facts
 
 - Brand name: Ryzneuta
@@ -14,6 +16,7 @@ FDA reviewed Ryzneuta on the standard review clock. Its records show no orphan d
 - Approval year: 2023
 - FDA received application: March 30, 2021
 - Receipt to approval: 961 days
+- Pharmacologic class: Leukocyte Growth Factor
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Ryzneuta on the standard review clock. Its records show no orphan d
 - [Ryzneuta Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-ryzneuta): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761134](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761134): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/ryzneuta/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/ryzneuta/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

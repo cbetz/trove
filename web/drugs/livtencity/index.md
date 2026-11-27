@@ -4,6 +4,8 @@ The FDA approved Livtencity (maribavir) on November 23, 2021, under NDA 215596. 
 
 At original approval, FDA recorded priority review, orphan drug designation and breakthrough therapy designation for Livtencity. FDA received the application on March 23, 2021 and approved it 245 days later.
 
+FDA's labeling data puts Livtencity in the established pharmacologic class: Cytomegalovirus pUL97 Kinase Inhibitor.
+
 ## Livtencity approval facts
 
 - Brand name: Livtencity
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - Approval year: 2021
 - FDA received application: March 23, 2021
 - Receipt to approval: 245 days
+- Pharmacologic class: Cytomegalovirus pUL97 Kinase Inhibitor
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - [Livtencity Drug Trials Snapshot](https://www.fda.gov/node/407484): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 215596](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=215596): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/livtencity/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/livtencity/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

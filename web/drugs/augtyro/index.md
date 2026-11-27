@@ -4,6 +4,8 @@ The FDA approved Augtyro (repotrectinib) on November 15, 2023, under NDA 218213.
 
 At original approval, FDA recorded priority review and orphan drug designation for Augtyro. FDA received the application on March 27, 2023 and approved it 233 days later.
 
+FDA's labeling data puts Augtyro in the established pharmacologic class: Kinase Inhibitor.
+
 ## Augtyro approval facts
 
 - Brand name: Augtyro
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review and orphan drug designation f
 - Approval year: 2023
 - FDA received application: March 27, 2023
 - Receipt to approval: 233 days
+- Pharmacologic class: Kinase Inhibitor
 - Dosage form: Capsule
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review and orphan drug designation f
 - [Augtyro Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-augtyro): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 218213](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=218213): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/augtyro/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/augtyro/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Loqtorzi (toripalimab-tpzi) on October 27, 2023, under BLA 7612
 
 At original approval, FDA recorded priority review, orphan drug designation and breakthrough therapy designation for Loqtorzi. FDA received the application on August 31, 2021 and approved it 787 days later.
 
+FDA's labeling data puts Loqtorzi in the established pharmacologic class: Programmed Death Receptor-1 Blocking Antibody.
+
 ## Loqtorzi approval facts
 
 - Brand name: Loqtorzi
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - Approval year: 2023
 - FDA received application: August 31, 2021
 - Receipt to approval: 787 days
+- Pharmacologic class: Programmed Death Receptor-1 Blocking Antibody
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Priority
@@ -30,4 +33,4 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - [Loqtorzi FDA review documents (approval package)](https://www.accessdata.fda.gov/drugsatfda_docs/nda/2023/761240Orig1s000TOC.html): FDA's own reviews of the application: clinical, statistical, clinical pharmacology, nonclinical and chemistry, with the summary review.
 - [Drugs@FDA record for BLA 761240](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761240): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/loqtorzi/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/loqtorzi/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

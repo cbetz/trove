@@ -4,6 +4,8 @@ The FDA approved Qalsody (tofersen) on April 25, 2023, under NDA 215887. The spo
 
 At original approval, FDA recorded priority review, orphan drug designation, accelerated approval and fast track designation for Qalsody. FDA received the application on May 25, 2022 and approved it 335 days later.
 
+FDA's labeling data puts Qalsody in the established pharmacologic class: Antisense Oligonucleotide.
+
 ## Qalsody approval facts
 
 - Brand name: Qalsody
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation, acc
 - Approval year: 2023
 - FDA received application: May 25, 2022
 - Receipt to approval: 335 days
+- Pharmacologic class: Antisense Oligonucleotide
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, orphan drug designation, acc
 - [Qalsody Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-qalsody): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 215887](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=215887): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/qalsody/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/qalsody/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

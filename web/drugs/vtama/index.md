@@ -4,6 +4,8 @@ The FDA approved Vtama (tapinarof) on May 23, 2022, under NDA 215272. The sponso
 
 FDA reviewed Vtama on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on May 26, 2021 and approved it 362 days later.
 
+FDA's labeling data puts Vtama in the established pharmacologic class: Aryl Hydrocarbon Receptor Agonist.
+
 ## Vtama approval facts
 
 - Brand name: Vtama
@@ -14,6 +16,7 @@ FDA reviewed Vtama on the standard review clock. Its records show no orphan drug
 - Approval year: 2022
 - FDA received application: May 26, 2021
 - Receipt to approval: 362 days
+- Pharmacologic class: Aryl Hydrocarbon Receptor Agonist
 - Dosage form: Cream
 - Route of administration: Topical
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Vtama on the standard review clock. Its records show no orphan drug
 - [Vtama Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-vtama): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 215272](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=215272): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/vtama/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/vtama/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Empaveli (pegcetacoplan) on May 14, 2021, under NDA 215014. The
 
 At original approval, FDA recorded priority review, orphan drug designation and fast track designation for Empaveli. FDA received the application on September 14, 2020 and approved it 242 days later.
 
+FDA's labeling data puts Empaveli in the established pharmacologic class: Complement Inhibitor.
+
 ## Empaveli approval facts
 
 - Brand name: Empaveli
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - Approval year: 2021
 - FDA received application: September 14, 2020
 - Receipt to approval: 242 days
+- Pharmacologic class: Complement Inhibitor
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - [Empaveli Drug Trials Snapshot](https://www.fda.gov/node/405591): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 215014](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=215014): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/empaveli/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/empaveli/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Rezdiffra (resmetirom) on March 14, 2024, under NDA 217785. The
 
 At original approval, FDA recorded priority review, accelerated approval, breakthrough therapy designation and fast track designation for Rezdiffra. FDA received the application on July 14, 2023 and approved it 244 days later.
 
+FDA's labeling data puts Rezdiffra in the established pharmacologic class: Thyroid Hormone Receptor beta Agonist.
+
 ## Rezdiffra approval facts
 
 - Brand name: Rezdiffra
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, accelerated approval, breakt
 - Approval year: 2024
 - FDA received application: July 14, 2023
 - Receipt to approval: 244 days
+- Pharmacologic class: Thyroid Hormone Receptor beta Agonist
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, accelerated approval, breakt
 - [Rezdiffra Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-rezdiffra): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 217785](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=217785): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/rezdiffra/ (updated 2026-11-26). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/rezdiffra/ (updated 2026-11-27). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.

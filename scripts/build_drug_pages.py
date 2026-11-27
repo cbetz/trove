@@ -26,6 +26,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import build_fda_lists
+import build_llms_txt
 from fda_site_common import (
     DRUGS_AT_FDA_URL,
     NOVEL_APPROVALS_URL,
@@ -58,6 +59,9 @@ PLUGIN_INSTALL = """/plugin marketplace add anthropics/claude-plugins-community
 /plugin install trove@claude-community"""
 # How many same-sponsor / same-year links to show before deferring to the index.
 MAX_RELATED = 8
+# A CBER indication this short is quoted in the opening sentence; a longer one
+# gets its own section so the opening stays readable.
+CBER_USE_IN_LEAD = 320
 
 _VOUCHERS = {
     "TD": "tropical disease",
@@ -87,7 +91,7 @@ def summary_paragraphs(r: dict) -> list[str]:
     name = r["drug_name"]
     active = r.get("active_ingredient")
     named = f"{name} ({active})" if active else name
-    sponsor = title_case(r.get("sponsor"))
+    sponsor = title_case(r.get("sponsor")).rstrip(".")
     when = fmt_date_long(r["approval_date"])
     app = application(r)
     if is_cber(r):
@@ -103,7 +107,10 @@ def summary_paragraphs(r: dict) -> list[str]:
             + (f", under {app}" if app else "")
             + (f". The sponsor is {sponsor}." if sponsor else ".")
         )
-    if r.get("indication") and not is_cber(r):
+    use = cber_use(r.get("indication")) if is_cber(r) else ""
+    if use and len(use) <= CBER_USE_IN_LEAD:
+        first += f" FDA's product page gives the indication as: \u201c{use}.\u201d"
+    elif r.get("indication") and not is_cber(r):
         first += f" FDA lists the approved use as: “{r['indication'].rstrip('.')}.”"
     out = [first]
 
@@ -130,6 +137,13 @@ def summary_paragraphs(r: dict) -> list[str]:
                 f"approved it {days:,} days later."
             )
         out.append(second)
+    epc = r.get("pharm_class_epc")
+    if epc:
+        classes = [c.strip() for c in epc.split(";") if c.strip()]
+        out.append(
+            f"FDA's labeling data puts {name} in the established pharmacologic "
+            f"{'class' if len(classes) == 1 else 'classes'}: {join_words(classes)}."
+        )
     return out
 
 
@@ -157,6 +171,7 @@ def fact_rows(r: dict) -> list[tuple[str, str, str]]:
         days = days_between(r["fda_receipt_date"], r["approval_date"])
         if days and days > 0:
             add("Receipt to approval", f"{days:,} days")
+    add("Pharmacologic class", r.get("pharm_class_epc"))
     add("Dosage form", r.get("dosage_form"))
     add("Route of administration", r.get("route_of_administration"))
     add("Review designation", r.get("review_designation"))
@@ -231,14 +246,59 @@ def document_links(r: dict) -> list[tuple[str, str, str]]:
             )
         )
     if r.get("drugs_at_fda_url"):
+        has_documents = bool(r.get("approval_letter_url") or r.get("review_url"))
         links.append(
             (
                 r["drugs_at_fda_url"],
                 f"Drugs@FDA record for {application(r)}",
-                "Every FDA action on the application since approval: supplements, label revisions and letters.",
+                "Every FDA action on the application since approval: supplements, label revisions and letters."
+                if has_documents
+                else "FDA's page for the application: the approval letter, review documents and label history.",
             )
         )
     return links
+
+
+def document_kinds(r: dict) -> str:
+    """The documents a page actually links, for its title, heading and description."""
+    if is_cber(r):
+        return "package insert and FDA product page"
+    kinds = [
+        label
+        for key, label in (
+            ("label_pdf_url", "label"),
+            ("approval_letter_url", "approval letter"),
+            ("review_url", "review documents"),
+            ("trials_snapshot_url", "Drug Trials Snapshot"),
+        )
+        if r.get(key)
+    ]
+    return join_words(kinds) if kinds else "Drugs@FDA record"
+
+
+def source_note(r: dict, sources_read: dict) -> str:
+    """One sentence saying when the FDA pages behind a record were read."""
+    if is_cber(r):
+        read_on = sources_read.get("cber")
+        return (
+            f" FDA's product page was read on {fmt_date_long(read_on)}; FDA may have posted "
+            f"documents since."
+            if read_on
+            else ""
+        )
+    if r.get("approval_letter_url") or r.get("review_url"):
+        read_on = sources_read.get("drugs_at_fda")
+        return (
+            f" Drugs@FDA was read on {fmt_date_long(read_on)}; FDA may have posted documents since."
+            if read_on
+            else ""
+        )
+    read_on = sources_read.get("cder_lists")
+    return (
+        " Direct links to the approval letter and review documents have not been collected "
+        "for this record yet; the Drugs@FDA record has them."
+        + (f" FDA's approval list was read on {fmt_date_long(read_on)}." if read_on else "")
+    )
 
 
 def build_jsonld(r: dict, path: str, modified: str, description: str) -> list[dict]:
@@ -373,7 +433,12 @@ def render_drug(
     facts = fact_rows(r)
     links = document_links(r)
 
-    title = f"{named} FDA approval: date, label, review documents | trove"
+    kinds = document_kinds(r)
+    title = (
+        f"{named} FDA approval: date, label, review documents | trove"
+        if r.get("review_url") or is_cber(r)
+        else f"{named} FDA approval: date, application, label | trove"
+    )
     description = (
         f"{named} was approved by the FDA on {fmt_date_long(r['approval_date'])}"
         + (
@@ -381,16 +446,9 @@ def render_drug(
             if application(r)
             else ""
         )
-        + ". Approval facts and direct links to the FDA label, approval letter, review documents "
-        "and Drug Trials Snapshot."
+        + f". Approval facts and direct links to the FDA {kinds}."
     )
-    read_on = sources_read.get("cber" if is_cber(r) else "cder")
-    read_line = (
-        f" FDA pages for this record were read on {fmt_date_long(read_on)}; FDA may have "
-        f"posted documents since."
-        if read_on
-        else ""
-    )
+    read_line = source_note(r, sources_read)
     fact_html = "\n".join(
         f"    <div><dt>{esc(label)}</dt><dd>{markup}</dd></div>" for label, _, markup in facts
     )
@@ -413,19 +471,18 @@ def render_drug(
         else ""
     )
     use = cber_use(r.get("indication")) if is_cber(r) else ""
+    if len(use) <= CBER_USE_IN_LEAD:
+        use = ""  # already quoted in the opening sentence
     use_html = (
         f"\n  <h2>What {esc(name)} is approved for</h2>\n"
         f"  <p>FDA's product page for {esc(name)} gives the indication as: {esc(use)}</p>\n"
-        '  <p class="note">Copied from FDA\'s CBER product page, which can abbreviate. The package '
-        "insert linked below has the full indication.</p>\n"
+        '  <p class="note">Copied from FDA\'s CBER product page as it read when trove fetched it; '
+        "it can be abbreviated, and can include indications added after the original approval. "
+        "The package insert linked below has the full text.</p>\n"
         if use
         else ""
     )
-    doc_kinds = (
-        "package insert and FDA product page"
-        if is_cber(r)
-        else "label, approval letter, review documents and Drug Trials Snapshot"
-    )
+    doc_kinds = kinds
     body = f"""  <header>
     <h1>{esc(named)} FDA approval</h1>
     <p class="subtitle">{esc(" · ".join(x for x in (sponsor, application(r), f"approved {fmt_date(r['approval_date'])}") if x))}</p>
@@ -468,7 +525,7 @@ def render_drug(
         title=title,
         description=description,
         path=path,
-        og_title=f"{name} — FDA approval, label and review documents",
+        og_title=f"{name} — FDA approval, {kinds}",
         nodes=build_jsonld(r, path, modified, description),
         crumbs_html=(
             f'<a href="/">trove</a> / <a href="/drugs/">FDA drug approvals</a> / '
@@ -563,6 +620,7 @@ def main() -> None:
 
     n = update_sitemap(entries)
     print(f"  → updated {n} URLs under /drugs/ in web/sitemap.xml (other entries untouched)")
+    build_llms_txt.write()
 
 
 if __name__ == "__main__":

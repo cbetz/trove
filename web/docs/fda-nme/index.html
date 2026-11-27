@@ -34,7 +34,7 @@
     },
     "publisher": {"@type": "Organization", "name": "trove", "url": "https://troveproject.com/"},
     "datePublished": "2026-05-12",
-    "dateModified": "2026-11-26"
+    "dateModified": "2026-11-27"
   },
   {
     "@context": "https://schema.org",
@@ -77,7 +77,7 @@
         "name": "Where do I find FDA approval-package documents?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Approval packages live on accessdata.fda.gov for CDER products and on per-product pages under fda.gov/vaccines-blood-biologics/ for CBER cell and gene therapies. The trove FDA index gives you the right approval-package URL for each of 217 novel drug approvals from 2021-2024 (192 CDER + 25 CBER) so you don't have to guess at it."
+          "text": "Approval packages live on accessdata.fda.gov for CDER products and on per-product pages under fda.gov/vaccines-blood-biologics/ for CBER cell and gene therapies. The trove FDA index gives you the right approval-package URL for each of 268 novel drug approvals from 2021-2025 (238 CDER + 30 CBER) so you don't have to guess at it."
         }
       },
       {
@@ -85,7 +85,7 @@
         "name": "Are CBER cell and gene therapy approvals in trove's FDA index?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes. Lenmeldy (atidarsagene autotemcel), Casgevy and Lyfgenia (sickle cell gene therapies), Beqvez, Hemgenix, Roctavian, Adstiladrin, and other recent CBER-regulated gene therapies are included alongside CDER novel drug approvals. Each row carries a regulatory_center column distinguishing CDER from CBER. The trove FDA index covers 217 novel approvals from 2021-2024: 192 CDER plus 25 CBER."
+          "text": "Yes. Lenmeldy (atidarsagene autotemcel), Casgevy and Lyfgenia (sickle cell gene therapies), Beqvez, Hemgenix, Roctavian, Adstiladrin, and other recent CBER-regulated gene therapies are included alongside CDER novel drug approvals. Each row carries a regulatory_center column distinguishing CDER from CBER. The trove FDA index covers 268 novel approvals from 2021-2025: 238 CDER plus 30 CBER."
         }
       }
     ]
@@ -174,7 +174,7 @@
     <p>The specific pathways used for a given approval are documented in the medical review and the approval letter. FDA also records them, for every CDER novel approval since 1985, in its compilation of NME and new biologic approvals; trove shows them on each drug page and publishes the compilation as <a href="/drugs/compilation/">CSV and Parquet</a>.</p>
 
     <h2>How to find an approval's documents</h2>
-    <p>FDA's front door for CDER products is the <strong>Drugs@FDA</strong> database at <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">accessdata.fda.gov/scripts/cder/daf/</a>. Each approval has an application-overview page that lists every document FDA released — original approval plus any post-approval supplements. The application-overview URL has the form <code>?event=overview.process&amp;ApplNo=XXXXXX</code>. For CBER cell and gene therapies, each product has its own page under <code>fda.gov/vaccines-blood-biologics/</code> that links to the package insert, approval letter, clinical review memo, and Summary Basis for Regulatory Action. The trove FDA index gives you the right URL for each of 217 novel drug approvals from 2021–2024 (192 CDER + 25 CBER) so you don't have to guess at it.</p>
+    <p>FDA's front door for CDER products is the <strong>Drugs@FDA</strong> database at <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">accessdata.fda.gov/scripts/cder/daf/</a>. Each approval has an application-overview page that lists every document FDA released — original approval plus any post-approval supplements. The application-overview URL has the form <code>?event=overview.process&amp;ApplNo=XXXXXX</code>. For CBER cell and gene therapies, each product has its own page under <code>fda.gov/vaccines-blood-biologics/</code> that links to the package insert, approval letter, clinical review memo, and Summary Basis for Regulatory Action. The trove FDA index gives you the right URL for each of 268 novel drug approvals from 2021–2025 (238 CDER + 30 CBER) so you don't have to guess at it.</p>
 
     <h2>What's not on FDA's approval-package page</h2>
     <ul>
@@ -186,10 +186,10 @@
 
     <h2>How to use FDA approval-package data</h2>
     <ul>
-      <li><strong>Use trove's FDA novel drug approvals index</strong> — search any of 217 approvals from 2021–2024 (192 CDER NMEs and novel BLAs + 25 CBER cell/gene therapies) and click straight through to the approval package: <a href="/drugs/">/drugs/</a>. Each drug has its own permalink, e.g. <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/casgevy/">/drugs/casgevy/</a>.</li>
+      <li><strong>Use trove's FDA novel drug approvals index</strong> — search any of 268 approvals from 2021–2025 (238 CDER NMEs and novel BLAs + 30 CBER cell/gene therapies) and click straight through to the approval package: <a href="/drugs/">/drugs/</a>. Each drug has its own permalink, e.g. <a href="/drugs/lenmeldy/">/drugs/lenmeldy/</a>, <a href="/drugs/leqembi/">/drugs/leqembi/</a>, <a href="/drugs/casgevy/">/drugs/casgevy/</a>.</li>
       <li><strong>Install the <a href="/skills/fda-analyst/">fda-analyst Claude Code skill</a></strong> to ask natural-language questions like <em>"What was the basis for Lenmeldy's approval?"</em> or <em>"What adverse events did the FDA flag in the Elahere medical review?"</em> The skill fetches and reads the relevant PDF at query time.</li>
       <li><strong>Browse Drugs@FDA directly</strong> at <a href="https://www.accessdata.fda.gov/scripts/cder/daf/">accessdata.fda.gov</a> if you want to dig through everything yourself.</li>
-      <li><strong>Read the source.</strong> The index, the scraper and the skill are at <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>, MIT-licensed. Approval dates are the date of original approval; the index covers original approvals dated 2021 through 2024.</li>
+      <li><strong>Read the source.</strong> The index, the scraper and the skill are at <a href="https://github.com/cbetz/trove">github.com/cbetz/trove</a>, MIT-licensed. Approval dates are the date of original approval; the index covers original approvals dated 2021 through 2025.</li>
     </ul>
 
     <h2>Citations</h2>

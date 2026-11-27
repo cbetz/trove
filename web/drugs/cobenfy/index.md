@@ -4,6 +4,8 @@ The FDA approved Cobenfy (xanomeline and trospium chloride) on September 26, 202
 
 FDA reviewed Cobenfy on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on September 26, 2023 and approved it 366 days later.
 
+FDA's labeling data puts Cobenfy in the established pharmacologic class: Cholinergic Muscarinic Agonist.
+
 ## Cobenfy approval facts
 
 - Brand name: Cobenfy
@@ -14,6 +16,7 @@ FDA reviewed Cobenfy on the standard review clock. Its records show no orphan dr
 - Approval year: 2024
 - FDA received application: September 26, 2023
 - Receipt to approval: 366 days
+- Pharmacologic class: Cholinergic Muscarinic Agonist
 - Dosage form: Capsule
 - Route of administration: Oral
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Cobenfy on the standard review clock. Its records show no orphan dr
 - [Cobenfy Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshot-cobenfy): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 216158](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216158): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/cobenfy/ (updated 2026-11-26). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/cobenfy/ (updated 2026-11-27). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.

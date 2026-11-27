@@ -4,6 +4,8 @@ The FDA approved Briumvi (ublituximab-xiiy) on December 28, 2022, under BLA 7612
 
 FDA reviewed Briumvi on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on September 28, 2021 and approved it 456 days later.
 
+FDA's labeling data puts Briumvi in the established pharmacologic class: CD20-directed Cytolytic Antibody.
+
 ## Briumvi approval facts
 
 - Brand name: Briumvi
@@ -14,6 +16,7 @@ FDA reviewed Briumvi on the standard review clock. Its records show no orphan dr
 - Approval year: 2022
 - FDA received application: September 28, 2021
 - Receipt to approval: 456 days
+- Pharmacologic class: CD20-directed Cytolytic Antibody
 - Dosage form: Injectable
 - Route of administration: Intravenous
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Briumvi on the standard review clock. Its records show no orphan dr
 - [Briumvi Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-briumvi): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761238](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761238): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/briumvi/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/briumvi/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Tevimbra (tislelizumab-jsgr) on March 13, 2024, under BLA 76123
 
 FDA reviewed Tevimbra on the standard review clock and recorded orphan drug designation at original approval. FDA received the application on July 12, 2021 and approved it 975 days later.
 
+FDA's labeling data puts Tevimbra in the established pharmacologic class: Programmed Death Receptor-1 Blocking Antibody.
+
 ## Tevimbra approval facts
 
 - Brand name: Tevimbra
@@ -14,6 +16,7 @@ FDA reviewed Tevimbra on the standard review clock and recorded orphan drug desi
 - Approval year: 2024
 - FDA received application: July 12, 2021
 - Receipt to approval: 975 days
+- Pharmacologic class: Programmed Death Receptor-1 Blocking Antibody
 - Dosage form: Injectable
 - Route of administration: Intravenous
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Tevimbra on the standard review clock and recorded orphan drug desi
 - [Tevimbra Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-tevimbra): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761232](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761232): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/tevimbra/ (updated 2026-11-26). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/tevimbra/ (updated 2026-11-27). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.

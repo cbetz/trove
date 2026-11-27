@@ -4,6 +4,8 @@ The FDA approved Rylaze (asparaginase erwinia chrysanthemi (recombinant)-rywn) o
 
 FDA reviewed Rylaze on the standard review clock and recorded orphan drug designation and fast track designation at original approval. FDA received the application on April 30, 2021 and approved it 61 days later.
 
+FDA's labeling data puts Rylaze in the established pharmacologic class: Asparagine-specific Enzyme.
+
 ## Rylaze approval facts
 
 - Brand name: Rylaze
@@ -14,6 +16,7 @@ FDA reviewed Rylaze on the standard review clock and recorded orphan drug design
 - Approval year: 2021
 - FDA received application: April 30, 2021
 - Receipt to approval: 61 days
+- Pharmacologic class: Asparagine-specific Enzyme
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Rylaze on the standard review clock and recorded orphan drug design
 - [Rylaze Drug Trials Snapshot](https://www.fda.gov/node/405654): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761179](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761179): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/rylaze/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/rylaze/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

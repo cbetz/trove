@@ -4,6 +4,8 @@ The FDA approved Quviviq (daridorexant) on January 7, 2022, under NDA 214985. Th
 
 FDA reviewed Quviviq on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on January 8, 2021 and approved it 364 days later.
 
+FDA's labeling data puts Quviviq in the established pharmacologic class: Orexin Receptor Antagonist.
+
 ## Quviviq approval facts
 
 - Brand name: Quviviq
@@ -14,6 +16,7 @@ FDA reviewed Quviviq on the standard review clock. Its records show no orphan dr
 - Approval year: 2022
 - FDA received application: January 8, 2021
 - Receipt to approval: 364 days
+- Pharmacologic class: Orexin Receptor Antagonist
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Quviviq on the standard review clock. Its records show no orphan dr
 - [Quviviq Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-quviviq): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 214985](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=214985): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/quviviq/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/quviviq/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

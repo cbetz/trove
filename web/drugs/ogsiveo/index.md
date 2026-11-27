@@ -4,6 +4,8 @@ The FDA approved Ogsiveo (nirogacestat) on November 27, 2023, under NDA 217677. 
 
 At original approval, FDA recorded priority review, orphan drug designation, breakthrough therapy designation and fast track designation for Ogsiveo. FDA received the application on December 27, 2022 and approved it 335 days later.
 
+FDA's labeling data puts Ogsiveo in the established pharmacologic class: Gamma Secretase Inhibitor.
+
 ## Ogsiveo approval facts
 
 - Brand name: Ogsiveo
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation, bre
 - Approval year: 2023
 - FDA received application: December 27, 2022
 - Receipt to approval: 335 days
+- Pharmacologic class: Gamma Secretase Inhibitor
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, orphan drug designation, bre
 - [Ogsiveo Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-ogsiveo): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 217677](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=217677): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/ogsiveo/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). Drugs@FDA was read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/ogsiveo/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
