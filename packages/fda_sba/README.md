@@ -6,8 +6,8 @@ Index of recent FDA novel drug approvals (NMEs + novel BLA approvals) with links
 
 ## What's covered
 
-- **Calendar years 2021–2024** of FDA's annual *Novel Drug Approvals* lists. Those lists curate the meaningful approvals — new molecular entities (NMEs) approved via NDA, plus novel BLA approvals. We scrape the curated lists rather than every FDA approval, because they're the set most public discourse cares about.
-- 217 approvals in the published index: 192 from CDER's annual lists plus 25 CBER cell and gene therapies (from FDA's Approved Cellular and Gene Therapy Products page), each with a `regulatory_center` column. Rows are dated by original approval; a product first approved outside 2021–2024 is left out.
+- **Calendar years 2021–2025** of FDA's annual *Novel Drug Approvals* lists. Those lists curate the meaningful approvals — new molecular entities (NMEs) approved via NDA, plus novel BLA approvals. We scrape the curated lists rather than every FDA approval, because they're the set most public discourse cares about.
+- 268 approvals in the published index: 238 from CDER's annual lists plus 30 CBER cell and gene therapies (from FDA's Approved Cellular and Gene Therapy Products page), each with a `regulatory_center` column. Rows are dated by original approval; a product first approved outside 2021–2025 is left out.
 - 2020 isn't included — FDA's 2020 page isn't reachable on the current site. Pre-2020 needs a different source (Wayback Machine or alternative).
 - Each row includes a direct link to the drugs@FDA application overview, which is FDA's index of every PDF document FDA released for that approval (label, medical review, statistical review, pharmacology review, chemistry review, etc.).
 

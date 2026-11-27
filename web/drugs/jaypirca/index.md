@@ -4,6 +4,8 @@ The FDA approved Jaypirca (pirtobrutinib) on January 27, 2023, under NDA 216059.
 
 At original approval, FDA recorded priority review, orphan drug designation, accelerated approval and fast track designation for Jaypirca. FDA received the application on May 27, 2022 and approved it 245 days later.
 
+FDA's labeling data puts Jaypirca in the established pharmacologic class: Kinase Inhibitor.
+
 ## Jaypirca approval facts
 
 - Brand name: Jaypirca
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation, acc
 - Approval year: 2023
 - FDA received application: May 27, 2022
 - Receipt to approval: 245 days
+- Pharmacologic class: Kinase Inhibitor
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, orphan drug designation, acc
 - [Jaypirca Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-jaypirca): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 216059](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216059): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/jaypirca/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/jaypirca/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

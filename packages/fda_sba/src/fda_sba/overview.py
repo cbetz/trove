@@ -9,10 +9,13 @@ sponsor; richer parsing is a v0.2 add.
 
 from __future__ import annotations
 
+import os
 import re
+import time
 import warnings
 from datetime import date, datetime
 from pathlib import Path
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import pandas as pd
@@ -22,6 +25,27 @@ OVERVIEW_URL_TEMPLATE = (
     "index.cfm?event=overview.process&ApplNo={appl_no}"
 )
 USER_AGENT = "trove/fda_sba (+https://github.com/cbetz/trove)"
+
+# Seconds to wait after each request to accessdata.fda.gov. FDA throttles
+# clients that ask too fast: a run of a few hundred back-to-back requests got
+# this project's address blocked ("excessive requests") in November 2026.
+REQUEST_DELAY = 2.0
+
+
+class FdaBlockedError(RuntimeError):
+    """accessdata.fda.gov refused the request as abusive or excessive."""
+
+
+# Set once FDA refuses a request; every later fetch in the same run fails fast
+# instead of sending more requests to a server that has asked us to stop.
+_blocked_reason: str | None = None
+# Applications whose page could not be fetched in this run, so the three
+# enrichment passes do not each ask for it again.
+_failed: dict[str, str] = {}
+# accessdata.fda.gov also answers 404 for pages that exist when it does not
+# accept the client. A run of these is a refusal, not a run of missing pages.
+_consecutive_404 = 0
+_MAX_CONSECUTIVE_404 = 3
 
 # The overview page renders the sponsor as
 #   <span class="prodBoldText">Company:</span> <span class="appl-details-top">{NAME} ...</span>
@@ -47,16 +71,51 @@ def fetch_application_overview(
     *,
     force: bool = False,
 ) -> Path:
-    """Download the drugs@FDA overview HTML for ``appl_no`` and cache it."""
+    """Download the drugs@FDA overview HTML for ``appl_no`` and cache it.
+
+    Waits ``REQUEST_DELAY`` seconds after each request, and stops asking for
+    the rest of the run once FDA refuses one (``FdaBlockedError``). Set the
+    environment variable ``TROVE_FDA_OFFLINE=1`` to use only cached pages.
+    """
     cache = Path(cache_dir)
     cache.mkdir(parents=True, exist_ok=True)
     target = cache / f"{appl_no}.html"
     if target.exists() and not force:
         return target
+    global _blocked_reason, _consecutive_404
+    if os.environ.get("TROVE_FDA_OFFLINE"):
+        raise RuntimeError(f"TROVE_FDA_OFFLINE is set and application {appl_no} is not cached")
+    if _blocked_reason:
+        raise FdaBlockedError(_blocked_reason)
+    if appl_no in _failed:
+        raise RuntimeError(_failed[appl_no])
     url = OVERVIEW_URL_TEMPLATE.format(appl_no=appl_no)
     req = Request(url, headers={"User-Agent": USER_AGENT})
-    with urlopen(req, timeout=30) as resp:
-        target.write_bytes(resp.read())
+    try:
+        with urlopen(req, timeout=30) as resp:
+            body = resp.read()
+            final_url = resp.geturl()
+    except HTTPError as exc:
+        if exc.code in (403, 429):
+            _blocked_reason = f"accessdata.fda.gov answered {exc.code} for application {appl_no}"
+            raise FdaBlockedError(_blocked_reason) from exc
+        _failed[appl_no] = f"accessdata.fda.gov answered {exc.code} for application {appl_no}"
+        if exc.code == 404:
+            _consecutive_404 += 1
+            if _consecutive_404 >= _MAX_CONSECUTIVE_404:
+                _blocked_reason = (
+                    f"accessdata.fda.gov answered 404 for {_consecutive_404} applications in a "
+                    "row; it does that when it does not accept the client"
+                )
+                raise FdaBlockedError(_blocked_reason) from exc
+        raise
+    finally:
+        time.sleep(REQUEST_DELAY)
+    _consecutive_404 = 0
+    if "apology_objects" in final_url or b"apology_objects" in body[:2000]:
+        _blocked_reason = f"accessdata.fda.gov served its apology page for application {appl_no}"
+        raise FdaBlockedError(_blocked_reason)
+    target.write_bytes(body)
     return target
 
 

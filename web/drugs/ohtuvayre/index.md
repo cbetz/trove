@@ -4,6 +4,8 @@ The FDA approved Ohtuvayre (ensifentrine) on June 26, 2024, under NDA 217389. Th
 
 FDA reviewed Ohtuvayre on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on June 26, 2023 and approved it 366 days later.
 
+FDA's labeling data puts Ohtuvayre in the established pharmacologic classes: Phosphodiesterase 3 Inhibitor and Phosphodiesterase 4 Inhibitor.
+
 ## Ohtuvayre approval facts
 
 - Brand name: Ohtuvayre
@@ -14,6 +16,7 @@ FDA reviewed Ohtuvayre on the standard review clock. Its records show no orphan 
 - Approval year: 2024
 - FDA received application: June 26, 2023
 - Receipt to approval: 366 days
+- Pharmacologic class: Phosphodiesterase 3 Inhibitor; Phosphodiesterase 4 Inhibitor
 - Dosage form: Suspension
 - Route of administration: Inhalation
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Ohtuvayre on the standard review clock. Its records show no orphan 
 - [Ohtuvayre Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-ohtuvayre): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 217389](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=217389): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/ohtuvayre/ (updated 2026-11-26). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/ohtuvayre/ (updated 2026-11-27). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.

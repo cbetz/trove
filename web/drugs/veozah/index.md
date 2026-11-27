@@ -4,6 +4,8 @@ The FDA approved Veozah (fezolinetant) on May 12, 2023, under NDA 216578. The sp
 
 At original approval, FDA recorded priority review (used priority review voucher) for Veozah. FDA received the application on June 22, 2022 and approved it 324 days later.
 
+FDA's labeling data puts Veozah in the established pharmacologic class: Neurokinin 3 Receptor Antagonist.
+
 ## Veozah approval facts
 
 - Brand name: Veozah
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review (used priority review voucher
 - Approval year: 2023
 - FDA received application: June 22, 2022
 - Receipt to approval: 324 days
+- Pharmacologic class: Neurokinin 3 Receptor Antagonist
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority (used priority review voucher)
@@ -33,4 +36,4 @@ At original approval, FDA recorded priority review (used priority review voucher
 - [Veozah Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-veozah): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 216578](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216578): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/veozah/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/veozah/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

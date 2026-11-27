@@ -1,6 +1,6 @@
 """Build the FDA novel drug approvals index (CDER + CBER).
 
-Scrapes two FDA sources for the last 4 calendar years and writes:
+Scrapes two FDA sources for the complete calendar years in ``YEARS`` and writes:
 
 - CDER — annual Novel Drug Approvals pages (NMEs and novel BLAs from
   the Center for Drug Evaluation and Research)
@@ -34,7 +34,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from fda_sba import build_index, fetch_compilation, parse_compilation, read_source_metadata
 
-YEARS = (2021, 2022, 2023, 2024)
+YEARS = (2021, 2022, 2023, 2024, 2025)
 ARTIFACTS_DIR = Path("artifacts")
 PARQUET_DIR = Path("data/parquet")
 WEB_DATA = Path("web/data")
@@ -54,9 +54,21 @@ def main() -> None:
     for center, count in df.groupby("regulatory_center").size().items():
         print(f"    {center}: {count}")
     _check_dates(df)
+    # Rows whose letter or review link came from the cached drugs@FDA pages
+    # were read when that cache was; openFDA-filled rows carry their own date.
+    page_read = _sources_read()["drugs_at_fda"]
+    has_docs = df["approval_letter_url"].notna() | df["review_url"].notna()
+    df.loc[has_docs & df["documents_read"].isna(), "documents_read"] = page_read
     sponsor_cov = df["sponsor"].notna().sum()
     print(f"  sponsor coverage: {sponsor_cov:,}/{len(df):,}")
-    for col in ("label_pdf_url", "approval_letter_url", "review_url", "review_designation"):
+    for col in (
+        "label_pdf_url",
+        "approval_letter_url",
+        "review_url",
+        "review_designation",
+        "pharm_class_epc",
+        "pharm_class_moa",
+    ):
         print(f"  {col} coverage: {df[col].notna().sum():,}/{len(df):,}")
 
     # Persist as Parquet partitioned by year (gitignored)
@@ -134,8 +146,10 @@ def _sources_read() -> dict:
         return date.fromtimestamp(min(stamps)).isoformat() if stamps else None
 
     return {
-        "cder": oldest([*RAW_CACHE.glob("nme_*.html"), *(RAW_CACHE / "overview").glob("*.html")]),
+        "cder_lists": oldest(RAW_CACHE.glob("nme_*.html")),
+        "drugs_at_fda": oldest((RAW_CACHE / "overview").glob("*.html")),
         "cber": oldest((RAW_CACHE / "cber").glob("*.html")),
+        "openfda": oldest((RAW_CACHE / "openfda").glob("*.json")),
     }
 
 
@@ -179,6 +193,9 @@ def _row_to_json(r) -> dict:
         "qualified_infectious_disease_product": _str(r.qualified_infectious_disease_product),
         "priority_review_voucher_issued": _str(r.priority_review_voucher_issued),
         "priority_review_voucher_redeemed": _str(r.priority_review_voucher_redeemed),
+        "documents_read": _str(getattr(r, "documents_read", None)),
+        "pharm_class_epc": _str(r.pharm_class_epc),
+        "pharm_class_moa": _str(r.pharm_class_moa),
     }
 
 

@@ -1,8 +1,10 @@
 # Daxxify (daxibotulinumtoixnA-lanm) FDA approval
 
-The FDA approved Daxxify (daxibotulinumtoixnA-lanm) on September 7, 2022, under BLA 761127. The sponsor is Revance Therapeutics, INC.. FDA lists the approved use as: “To treat moderate-to-severe glabellar lines associated with corrugator and/or procerus muscle activity.”
+The FDA approved Daxxify (daxibotulinumtoixnA-lanm) on September 7, 2022, under BLA 761127. The sponsor is Revance Therapeutics, INC. FDA lists the approved use as: “To treat moderate-to-severe glabellar lines associated with corrugator and/or procerus muscle activity.”
 
 FDA reviewed Daxxify on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on November 25, 2019 and approved it 1,017 days later.
+
+FDA's labeling data puts Daxxify in the established pharmacologic classes: Acetylcholine Release Inhibitor and Neuromuscular Blocker.
 
 ## Daxxify approval facts
 
@@ -14,6 +16,7 @@ FDA reviewed Daxxify on the standard review clock. Its records show no orphan dr
 - Approval year: 2022
 - FDA received application: November 25, 2019
 - Receipt to approval: 1,017 days
+- Pharmacologic class: Acetylcholine Release Inhibitor; Neuromuscular Blocker
 - Dosage form: Injectable
 - Route of administration: Intramuscular, Subcutaneous
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Daxxify on the standard review clock. Its records show no orphan dr
 - [Daxxify Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshot-daxxify): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761127](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761127): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/daxxify/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/daxxify/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Alyftrek (vanzacaftor, tezacaftor, and deutivacaftor) on Decemb
 
 At original approval, FDA recorded priority review (used priority review voucher) and orphan drug designation for Alyftrek. FDA received the application on May 2, 2024 and approved it 232 days later.
 
+FDA's labeling data puts Alyftrek in the established pharmacologic class: Cystic Fibrosis Transmembrane Conductance Regulator Potentiator.
+
 ## Alyftrek approval facts
 
 - Brand name: Alyftrek
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review (used priority review voucher
 - Approval year: 2024
 - FDA received application: May 2, 2024
 - Receipt to approval: 232 days
+- Pharmacologic class: Cystic Fibrosis Transmembrane Conductance Regulator Potentiator
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority (used priority review voucher)
@@ -33,4 +36,4 @@ At original approval, FDA recorded priority review (used priority review voucher
 - [Alyftrek Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshot-alyftrek): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 218730](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=218730): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/alyftrek/ (updated 2026-11-26). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/alyftrek/ (updated 2026-11-27). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Beyfortus (nirsevimab-alip) on July 17, 2023, under BLA 761328.
 
 FDA reviewed Beyfortus on the standard review clock and recorded fast track designation at original approval. FDA received the application on September 26, 2022 and approved it 294 days later.
 
+FDA's labeling data puts Beyfortus in the established pharmacologic class: Respiratory Syncytial Virus Anti-F Protein Monoclonal Antibody.
+
 ## Beyfortus approval facts
 
 - Brand name: Beyfortus
@@ -14,6 +16,7 @@ FDA reviewed Beyfortus on the standard review clock and recorded fast track desi
 - Approval year: 2023
 - FDA received application: September 26, 2022
 - Receipt to approval: 294 days
+- Pharmacologic class: Respiratory Syncytial Virus Anti-F Protein Monoclonal Antibody
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Beyfortus on the standard review clock and recorded fast track desi
 - [Beyfortus Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-beyfortus): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761328](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761328): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/beyfortus/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/beyfortus/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

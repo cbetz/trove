@@ -73,7 +73,7 @@ def test_summary_states_the_approval_and_only_what_fda_recorded() -> None:
     assert first.startswith(
         "The FDA approved Testavir (testavirum) on December 18, 2023, under NDA 215064."
     )
-    assert "The sponsor is Acme Pharms Inc." in first
+    assert "The sponsor is Acme Pharms Inc. FDA lists" in first
     assert "“To treat test conditions.”" in first
     assert "priority review" in second and "accelerated approval" not in second
     assert "approved it 244 days later" in second
@@ -84,18 +84,19 @@ def test_summary_states_the_approval_and_only_what_fda_recorded() -> None:
     assert "standard review clock" in build_drug_pages.summary_paragraphs(plain)[1]
 
 
-def test_cber_summary_does_not_quote_the_scraped_indication() -> None:
+def test_cber_summary_leaves_a_long_indication_to_its_own_section() -> None:
     cber = _row(
         regulatory_center="CBER",
         application_type="BLA",
-        indication="s: Treatment of something Production Information Package Insert",
+        indication="Treatment of something. " * 20,
         review_designation=None,
         fda_receipt_date=None,
     )
     paragraphs = build_drug_pages.summary_paragraphs(cber)
     assert len(paragraphs) == 1
     assert "CBER" in paragraphs[0] and "Treatment of something" not in paragraphs[0]
-    assert fda_site_common.cber_use(cber["indication"]) == "Treatment of something"
+    legacy = "s: Treatment of something Production Information Package Insert"
+    assert fda_site_common.cber_use(legacy) == "Treatment of something"
 
 
 def test_document_links_depend_on_the_center() -> None:
@@ -114,6 +115,47 @@ def test_document_links_depend_on_the_center() -> None:
     ]
     # A space in an FDA URL must not break the href.
     assert fda_site_common.url_attr("https://x/a, b ltr.pdf") == "https://x/a,%20b%20ltr.pdf"
+
+
+def test_a_page_names_only_the_documents_it_links() -> None:
+    assert build_drug_pages.document_kinds(_row()) == (
+        "label, approval letter, review documents and Drug Trials Snapshot"
+    )
+    bare = _row(approval_letter_url=None, review_url=None, trials_snapshot_url=None)
+    assert build_drug_pages.document_kinds(bare) == "label"
+    assert build_drug_pages.document_kinds(_row(regulatory_center="CBER")).startswith("package")
+    read = {"cder_lists": "2026-11-26", "drugs_at_fda": "2026-05-05", "cber": "2026-11-26"}
+    assert "were read on May 5, 2026" in build_drug_pages.source_note(_row(), read)
+    filled = _row(documents_read="2026-11-26")
+    assert "were read on November 26, 2026" in build_drug_pages.source_note(filled, read)
+    note = build_drug_pages.source_note(bare, read)
+    assert "have not been collected" in note and "November 26, 2026" in note
+
+
+def test_pharmacologic_class_and_short_cber_indication_reach_the_summary() -> None:
+    row = _row(pharm_class_epc="Kinase Inhibitor; Other Class")
+    assert build_drug_pages.summary_paragraphs(row)[-1] == (
+        "FDA's labeling data puts Testavir in the established pharmacologic classes: "
+        "Kinase Inhibitor and Other Class."
+    )
+    cber = _row(
+        regulatory_center="CBER",
+        application_type="BLA",
+        indication="the treatment of adults with a condition",
+        review_designation=None,
+        sponsor="Acme, Inc.",
+    )
+    first = build_drug_pages.summary_paragraphs(cber)[0]
+    assert "the manufacturer is Acme, Inc." in first and "Inc.." not in first
+    assert "\u201cThe treatment of adults with a condition.\u201d" in first
+
+
+def test_llms_txt_is_generated_from_the_bundles(index) -> None:
+    import build_llms_txt
+
+    text = build_llms_txt.render()
+    assert text == (WEB / "llms.txt").read_text()
+    assert f"each of {index['totals']['drugs']} novel approvals" in text
 
 
 def test_write_page_changes_the_date_only_when_the_content_changes(tmp_path: Path) -> None:

@@ -4,6 +4,8 @@ The FDA approved Orserdu (elacestrant) on January 27, 2023, under NDA 217639. Th
 
 At original approval, FDA recorded priority review and fast track designation for Orserdu. FDA received the application on June 17, 2022 and approved it 224 days later.
 
+FDA's labeling data puts Orserdu in the established pharmacologic class: Estrogen Receptor Antagonist.
+
 ## Orserdu approval facts
 
 - Brand name: Orserdu
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review and fast track designation fo
 - Approval year: 2023
 - FDA received application: June 17, 2022
 - Receipt to approval: 224 days
+- Pharmacologic class: Estrogen Receptor Antagonist
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review and fast track designation fo
 - [Orserdu Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-orserdu): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 217639](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=217639): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/orserdu/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/orserdu/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

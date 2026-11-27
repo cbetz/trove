@@ -14,11 +14,11 @@ The FDA approved Casgevy (exagamglogene autotemcel) on December 8, 2023. It is l
 
 ## What Casgevy is approved for
 
-FDA's product page gives the indication as: Treatment of sickle cell disease (SCD) and the treatment of transfusion dependent β-thalassemia (TDT) in patients 12 years of age and older
+FDA's product page gives the indication as: STN 125787 - For the treatment of patients aged 2 years and older with: Sickle cell disease (SCD) with recurrent vaso-occlusive crises (VOCs). Transfusion-dependent β-thalassemia (TDT); STN 125785 - Indicated for the treatment of patients aged 12 years and older with sickle cell disease (SCD) with recurrent vaso occlusive crises (VOCs) and transfusion-dependent ß-thalassemia (TDT)
 
 ## Casgevy FDA documents
 
 - [Casgevy package insert (prescribing information), PDF](https://www.fda.gov/media/174615/download?attachment): The FDA-approved labeling: indications, dosing, warnings and adverse reactions.
 - [FDA product page for Casgevy (CBER)](https://www.fda.gov/vaccines-blood-biologics/casgevy): Approval letter, Summary Basis for Regulatory Action, review memos and approval history.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 11, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/casgevy/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's product page was read on November 26, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/casgevy/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

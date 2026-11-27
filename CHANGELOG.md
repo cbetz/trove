@@ -3,19 +3,37 @@
 Release and milestone history for [trove](https://github.com/cbetz/trove). Milestone dates
 are approximate to the month; see `git log` for exact commits.
 
-## Unreleased
+## 1.2.0 — 2026-11-26
 
-FDA section, driven by what the site's search queries were asking for.
+The FDA section, driven by what the site's search queries were asking for. Nothing in the
+hospital data changed.
 
-**Data (additive).** `fda_approvals_nme_recent` gains 14 columns for CDER rows. From the
-drugs@FDA application page: `approval_letter_url`, `review_url` (the approval package's table
-of contents) and `submission_classification`; `label_pdf_url` is now filled from the
-original-approval row when FDA's annual list did not link a label (159 → 216 of 217 rows).
-From FDA's Compilation of CDER NME and New Biologic Approvals: `review_designation`,
-`orphan_drug_designation`, `accelerated_approval`, `breakthrough_therapy_designation`,
-`fast_track_designation`, `qualified_infectious_disease_product`, the two priority review
-voucher columns, `fda_receipt_date`, `dosage_form` and `route_of_administration`. No existing
-value changed. CBER rows have none of these.
+**Coverage.** The per-drug index now runs 2021–2025: 268 approvals (238 CDER + 30 CBER), up
+from 217. FDA's annual lists and CBER product pages were re-read on 2026-11-26.
+
+**Data (additive).** `fda_approvals_nme_recent` gains 17 columns.
+
+- From drugs@FDA, for CDER rows: `approval_letter_url` (237 of 238), `review_url` (the
+  approval package's table of contents; 236 of 238), `submission_classification` (NDAs) and
+  `documents_read`. `label_pdf_url` is filled from the original-approval record when FDA's
+  annual list did not link a label (159 of 217 before; 267 of 268 now).
+- From FDA's Compilation of CDER NME and New Biologic Approvals, for CDER rows:
+  `review_designation`, `orphan_drug_designation`, `accelerated_approval`,
+  `breakthrough_therapy_designation`, `fast_track_designation`,
+  `qualified_infectious_disease_product`, the two priority review voucher columns,
+  `fda_receipt_date`, `dosage_form` and `route_of_administration`.
+- From openFDA's drug label API, for every row that has one: `pharm_class_epc` (110 rows) and
+  `pharm_class_moa` (95 rows).
+
+Existing 2021–2024 values are unchanged except: CBER `indication` text (see below), one Drug
+Trials Snapshot URL FDA changed (Alhemo), one active-ingredient spelling FDA corrected
+(Adstiladrin), and Pepaxto's sponsor, previously empty.
+
+**Fixed: CBER indications.** The indication on a CBER product page is now read from the
+page's markup (both the older bold-label layout and FDA's newer accordion layout) instead of
+from its flattened text. That removes the stray "s:" left from "Indications:", the "Product
+Information" heading that ran on to the end, and "Limitations of Use" text. The value is the
+indication as the page read when fetched.
 
 **New dataset.** FDA's compilation itself, 1,387 CDER novel approvals from 1985 through 2025,
 converted from FDA's Excel workbook to `web/data/fda_nme_compilation.csv` and `.parquet`
@@ -25,20 +43,31 @@ dependency). `fda_nme_compilation_source.json` records FDA's file name, date and
 **Site.** A page for every approval year 1985–2025 (`/drugs/2023/`), an approval statistics
 page (`/drugs/statistics/`), a download page for the compilation (`/drugs/compilation/`),
 and three explainers: new molecular entity (NME vs NCE), FDA approval package, Drug Trials
-Snapshot. Drug pages open with a plain-language answer and link the label, approval letter
-and review documents directly. `/drugs/` now carries a static list of every year and drug
-(the search box alone was invisible to crawlers that do not run JavaScript). The Schedule H
-explainer gained a section on the IRS instructions and their worksheets.
+Snapshot. Drug pages open with a plain-language answer, show the pharmacologic class where
+FDA records one, and link the label, approval letter and review documents directly.
+`/drugs/` carries a static list of every year and drug (the search box alone was invisible
+to crawlers that do not run JavaScript). The Schedule H explainer gained a section on the
+IRS instructions and their worksheets.
 
-**For crawlers and agents.** Markdown twins (`index.md`) of every generated page, `llms.txt`,
-an explicit `robots.txt`, `dateModified` and sitemap `lastmod` that change only when a page's
-content does.
+**For crawlers and agents.** Markdown twins (`index.md`) of every generated page, an
+`llms.txt` generated from the data bundles, an explicit `robots.txt`, an IndexNow key and
+submit script, and `dateModified` / sitemap `lastmod` that change only when a page's content
+does.
 
-**Known, not fixed here.** The indication text scraped from CBER product pages can start or
-end with stray fragments; drug pages now trim it for display and keep it out of the summary
-sentence, but `indication` in the data is unchanged. The cached FDA pages behind the per-drug
-index were read in May 2026. The index still covers 2021–2024; 2025 approvals appear in the
-year list and the compilation but have no per-drug page yet.
+**Scraper.** Requests to accessdata.fda.gov are now paced, and a run stops asking as soon as
+FDA refuses a request. `TROVE_FDA_OFFLINE=1` builds from the cache alone. Document links a
+cached page does not supply are read from openFDA's Drugs@FDA endpoint, FDA's own API.
+
+**Known gaps.**
+
+- **The drugs@FDA application pages could not be re-read.** On 2026-11-26
+  accessdata.fda.gov answered the scraper's requests for those pages with 404 and then
+  blocked the address for excessive requests. The 2021–2024 rows keep the links read in May
+  2026. The 46 CDER approvals from 2025 take their approval letter, review package, label
+  and classification from openFDA's Drugs@FDA endpoint instead (read 2026-11-26), and their
+  sponsor and application number from FDA's compilation; `documents_read` records which
+  date applies to each row. Every approval date agrees with both sources.
+- Pharmacologic class is missing for 158 of 268 rows: openFDA has no class for those labels.
 
 ## 1.1.0 — 2026-11-19
 

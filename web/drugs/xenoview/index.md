@@ -4,6 +4,8 @@ The FDA approved Xenoview (hyperpolarized Xe-129) on December 23, 2022, under ND
 
 FDA reviewed Xenoview on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on October 5, 2020 and approved it 809 days later.
 
+FDA's labeling data puts Xenoview in the established pharmacologic class: Hyperpolarized Contrast Agent.
+
 ## Xenoview approval facts
 
 - Brand name: Xenoview
@@ -14,6 +16,7 @@ FDA reviewed Xenoview on the standard review clock. Its records show no orphan d
 - Approval year: 2022
 - FDA received application: October 5, 2020
 - Receipt to approval: 809 days
+- Pharmacologic class: Hyperpolarized Contrast Agent
 - Dosage form: Gas
 - Route of administration: Inhalation
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Xenoview on the standard review clock. Its records show no orphan d
 - [Xenoview Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-xenoview): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 214375](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=214375): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/xenoview/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/xenoview/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

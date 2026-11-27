@@ -4,6 +4,8 @@ The FDA approved Pylarify (piflufolastat F 18) on May 26, 2021, under NDA 214793
 
 At original approval, FDA recorded priority review for Pylarify. FDA received the application on September 29, 2020 and approved it 239 days later.
 
+FDA's labeling data puts Pylarify in the established pharmacologic class: Radioactive Diagnostic Agent.
+
 ## Pylarify approval facts
 
 - Brand name: Pylarify
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review for Pylarify. FDA received th
 - Approval year: 2021
 - FDA received application: September 29, 2020
 - Receipt to approval: 239 days
+- Pharmacologic class: Radioactive Diagnostic Agent
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review for Pylarify. FDA received th
 - [Pylarify Drug Trials Snapshot](https://www.fda.gov/node/405655): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 214793](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=214793): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/pylarify/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/pylarify/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

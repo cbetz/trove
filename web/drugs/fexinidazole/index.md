@@ -4,6 +4,8 @@ The FDA approved Fexinidazole (fexinidazole) on July 16, 2021, under NDA 214429.
 
 At original approval, FDA recorded priority review and orphan drug designation for Fexinidazole. FDA received the application on March 12, 2020 and approved it 491 days later.
 
+FDA's labeling data puts Fexinidazole in the established pharmacologic class: Nitroimidazole Antimicrobial.
+
 ## Fexinidazole approval facts
 
 - Brand name: Fexinidazole
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review and orphan drug designation f
 - Approval year: 2021
 - FDA received application: March 12, 2020
 - Receipt to approval: 491 days
+- Pharmacologic class: Nitroimidazole Antimicrobial
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -33,4 +36,4 @@ At original approval, FDA recorded priority review and orphan drug designation f
 - [Fexinidazole Drug Trials Snapshot](https://www.fda.gov/node/406980): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 214429](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=214429): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/fexinidazole/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/fexinidazole/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

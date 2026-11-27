@@ -15,7 +15,7 @@ and this way there's nothing to build and nothing to break.
 | `index.html` | Homepage — leads with the hospital side-by-side, then the dataset areas |
 | `notes/` | Write-ups from the published tables. `notes/index.html` is the hub |
 | `hospitals/` | IRS Schedule H line 7a and CMS S-10 line 23 side by side: the ranked index (493 hospitals) plus a lookup over every matched system (2,099) |
-| `drugs/` | FDA novel approvals: search page plus 217 generated per-drug pages |
+| `drugs/` | FDA novel approvals: search page plus 268 generated per-drug pages |
 | `docs/` | Plain-language explainers — HCRIS, 990 Schedule H, FDA NMEs |
 | `skills/` | Install pages for the two Claude Code skills |
 | `data/` | Published JSON/CSV/Parquet files the pages and skills read over HTTPS |
@@ -79,7 +79,7 @@ Things that bite:
   hold the crawlable year links and drug links (the search box itself needs JavaScript).
 - **The docs pages quote counts.** `docs/new-molecular-entity/`, `docs/fda-approval-package/`
   and `docs/drug-trials-snapshot/` state figures from the FDA bundles (1,387 approvals,
-  118 Type 1 NDAs, 189 Snapshots and so on). Check them after a rebuild.
+  118 Type 1 NDAs, 232 Snapshots and so on). Check them after a rebuild.
 - **The site's CSV download is a copy.** `build_web_bundles.py` copies
   `artifacts/community_benefit_gap_2022.csv` into `data/` so the published download can't
   drift from the committed artifact.

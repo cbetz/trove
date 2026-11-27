@@ -4,6 +4,8 @@ The FDA approved Besremi (ropeginterferon alfa-2b-njft) on November 12, 2021, un
 
 FDA reviewed Besremi on the standard review clock and recorded orphan drug designation at original approval. FDA received the application on March 13, 2020 and approved it 609 days later.
 
+FDA's labeling data puts Besremi in the established pharmacologic class: Interferon alfa-2b.
+
 ## Besremi approval facts
 
 - Brand name: Besremi
@@ -14,6 +16,7 @@ FDA reviewed Besremi on the standard review clock and recorded orphan drug desig
 - Approval year: 2021
 - FDA received application: March 13, 2020
 - Receipt to approval: 609 days
+- Pharmacologic class: Interferon alfa-2b
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Besremi on the standard review clock and recorded orphan drug desig
 - [Besremi Drug Trials Snapshot](https://www.fda.gov/node/407242): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761166](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761166): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/besremi/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/besremi/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Filspari (sparsentan) on February 17, 2023, under NDA 216403. T
 
 At original approval, FDA recorded priority review, orphan drug designation and accelerated approval for Filspari. FDA received the application on March 17, 2022 and approved it 337 days later.
 
+FDA's labeling data puts Filspari in the established pharmacologic classes: Endothelin Receptor Antagonist and Angiotensin 2 Receptor Blocker.
+
 ## Filspari approval facts
 
 - Brand name: Filspari
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - Approval year: 2023
 - FDA received application: March 17, 2022
 - Receipt to approval: 337 days
+- Pharmacologic class: Endothelin Receptor Antagonist; Angiotensin 2 Receptor Blocker
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - [Filspari Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots-filspari): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 216403](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216403): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/filspari/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/filspari/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

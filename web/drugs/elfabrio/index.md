@@ -4,6 +4,8 @@ The FDA approved Elfabrio (pegunigalsidase alfa-iwxj) on May 9, 2023, under BLA 
 
 At original approval, FDA recorded priority review and fast track designation for Elfabrio. FDA received the application on May 27, 2020 and approved it 1,077 days later.
 
+FDA's labeling data puts Elfabrio in the established pharmacologic class: Hydrolytic Lysosomal Neutral Glycosphingolipid-specific Enzyme.
+
 ## Elfabrio approval facts
 
 - Brand name: Elfabrio
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review and fast track designation fo
 - Approval year: 2023
 - FDA received application: May 27, 2020
 - Receipt to approval: 1,077 days
+- Pharmacologic class: Hydrolytic Lysosomal Neutral Glycosphingolipid-specific Enzyme
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Priority
@@ -31,4 +34,4 @@ At original approval, FDA recorded priority review and fast track designation fo
 - [Elfabrio Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-elfabrio): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761161](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761161): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/elfabrio/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/elfabrio/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

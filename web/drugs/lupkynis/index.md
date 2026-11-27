@@ -4,6 +4,8 @@ The FDA approved Lupkynis (voclosporin) on January 22, 2021, under NDA 213716. T
 
 At original approval, FDA recorded priority review and fast track designation for Lupkynis. FDA received the application on May 22, 2020 and approved it 245 days later.
 
+FDA's labeling data puts Lupkynis in the established pharmacologic class: Calcineurin Inhibitor Immunosuppressant.
+
 ## Lupkynis approval facts
 
 - Brand name: Lupkynis
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review and fast track designation fo
 - Approval year: 2021
 - FDA received application: May 22, 2020
 - Receipt to approval: 245 days
+- Pharmacologic class: Calcineurin Inhibitor Immunosuppressant
 - Dosage form: Capsule
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review and fast track designation fo
 - [Lupkynis Drug Trials Snapshot](https://www.fda.gov/node/396152): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 213716](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=213716): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/lupkynis/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/lupkynis/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Rolvedon (eflapegrastim) on September 9, 2022, under BLA 761148
 
 FDA reviewed Rolvedon on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on October 24, 2019 and approved it 1,051 days later.
 
+FDA's labeling data puts Rolvedon in the established pharmacologic class: Leukocyte Growth Factor.
+
 ## Rolvedon approval facts
 
 - Brand name: Rolvedon
@@ -14,6 +16,7 @@ FDA reviewed Rolvedon on the standard review clock. Its records show no orphan d
 - Approval year: 2022
 - FDA received application: October 24, 2019
 - Receipt to approval: 1,051 days
+- Pharmacologic class: Leukocyte Growth Factor
 - Dosage form: Injectable
 - Route of administration: Subcutaneous
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Rolvedon on the standard review clock. Its records show no orphan d
 - [Rolvedon Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-rolvedon): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761148](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761148): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/rolvedon/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/rolvedon/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

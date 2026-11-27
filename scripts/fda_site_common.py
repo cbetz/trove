@@ -134,16 +134,17 @@ def designations(r: dict) -> list[str]:
     return out
 
 
-_CBER_LEAD_RE = re.compile(r"^(?:s\s*:|STN\s*\d+\s*-)\s*", re.I)
+_CBER_LEAD_RE = re.compile(r"^s\s*:\s*", re.I)
 _CBER_TAIL_RE = re.compile(r"\s*Produc\w+ Information Package.*$", re.S)
 
 
 def cber_use(text: str | None) -> str:
     """Tidy the indication text scraped from a CBER product page for display.
 
-    Those pages have no consistent layout, so the scraped text can start with
-    a stray fragment ("s:", "STN 125787 -") or run on into the next block.
-    This trims both ends; it does not rewrite the indication.
+    The parser now reads the indication from the page's markup, so this is a
+    safety net for a page it has to read as flat text: it drops a stray "s:"
+    left from "Indications:" and a "Product Information" heading run on to the
+    end, and capitalises the first letter. It does not rewrite the indication.
     """
     if not text:
         return ""

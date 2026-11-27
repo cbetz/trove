@@ -4,6 +4,8 @@ The FDA approved Miebo (perfluorhexyloctane) on May 18, 2023, under NDA 216675. 
 
 FDA reviewed Miebo on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on June 28, 2022 and approved it 324 days later.
 
+FDA's labeling data puts Miebo in the established pharmacologic class: Semifluorinated Alkane.
+
 ## Miebo approval facts
 
 - Brand name: Miebo
@@ -14,6 +16,7 @@ FDA reviewed Miebo on the standard review clock. Its records show no orphan drug
 - Approval year: 2023
 - FDA received application: June 28, 2022
 - Receipt to approval: 324 days
+- Pharmacologic class: Semifluorinated Alkane
 - Dosage form: Solution
 - Route of administration: Ophthalmic
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Miebo on the standard review clock. Its records show no orphan drug
 - [Miebo Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshot-miebo): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 216675](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216675): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/miebo/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/miebo/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

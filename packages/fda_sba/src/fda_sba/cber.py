@@ -246,7 +246,7 @@ def parse_cber_product(product_html: bytes | str) -> dict:
 
     approval_date, approval_letter_url = _earliest_approval_letter(tree)
     stn = _first_stn(tree, body_text)
-    indication = _match_text(body_text, _INDICATION_RE)
+    indication = _indication_from_markup(tree) or _match_text(body_text, _INDICATION_RE)
     manufacturer = _match_text(body_text, _MFR_RE)
     package_insert_url = _find_link_starting_with(tree, "Package Insert")
 
@@ -384,6 +384,125 @@ def _first_stn(tree, body_text: str) -> str | None:
         m = _STN_RE.search(t)
         if m:
             return m.group(1)
+    return None
+
+
+_INDICATION_LABEL_RE = re.compile(r"^\s*Indications?\s*:?\s*$", re.I)
+_LABEL_TAGS = ("strong", "b")
+
+
+def _squash(text: str) -> str:
+    return " ".join(text.replace("\xa0", " ").split())
+
+
+def _next_element(el):
+    nxt = el.getnext()
+    while nxt is not None and not isinstance(nxt.tag, str):
+        nxt = nxt.getnext()
+    return nxt
+
+
+def _join_items(items: list[str]) -> str:
+    """Join list items with "; ", or a space where an item already ends in a
+    connective ("..., or" / "..., and")."""
+    out = ""
+    for item in items:
+        if not out:
+            out = item
+        elif out.rstrip(",").endswith((" or", " and")) or out.endswith(","):
+            out += " " + item
+        else:
+            out += "; " + item
+    return out
+
+
+def _list_items(list_el) -> list[str]:
+    """Top-level items of a list; a nested list stays inside its parent's text."""
+    items = [_squash(" ".join(li.itertext())).rstrip(" .;") for li in list_el.findall("li")]
+    return [i for i in items if i]
+
+
+def _statement(lead_in: str, list_el) -> str | None:
+    parts = [lead_in] if lead_in else []
+    if list_el is not None and list_el.tag in ("ul", "ol"):
+        items = _list_items(list_el)
+        if items:
+            parts.append(_join_items(items))
+    text = " ".join(parts).strip().lstrip(":").rstrip(":.").strip()
+    if len(text) > 600:
+        text = text[:600].rsplit(" ", 1)[0] + "…"
+    return text or None
+
+
+def _indication_from_markup(tree) -> str | None:
+    """Read the indication from the page's markup rather than its flattened text.
+
+    Product pages come in two layouts. The older one has a bold
+    ``Indication:`` (or ``Indications:``) label followed by one or more of:
+    text on the same line, text after a line break in the same paragraph, a
+    paragraph of its own, and a bulleted list. The newer one is an accordion
+    whose "Indication" panel holds the same content. Reading exactly that
+    block keeps out the leftover "s:" of "Indications:", the "Product
+    Information" heading that used to run on to the end, and "Limitations of
+    Use" paragraphs. List items are joined with "; ". Returns ``None`` when
+    the page has neither layout, so the caller can fall back to the text
+    pattern.
+    """
+    for label in tree.iter(*_LABEL_TAGS):
+        if not _INDICATION_LABEL_RE.match(label.text_content().replace("\xa0", " ")):
+            continue
+        # Text after the label inside its own paragraph. A line break right
+        # after the label is layout; one after some text ends the statement.
+        pieces = [label.tail or ""]
+        for sib in label.itersiblings():
+            if sib.tag in _LABEL_TAGS:
+                break
+            if sib.tag == "br":
+                if _squash("".join(pieces)):
+                    break
+                pieces.append(sib.tail or "")
+                continue
+            pieces.append(" ".join(sib.itertext()))
+            pieces.append(sib.tail or "")
+        lead_in = _squash("".join(pieces))
+
+        block = label.getparent() if label.getparent() is not None else label
+        nxt = _next_element(block)
+        # A label alone in its paragraph: the statement is the next paragraph.
+        if not lead_in and nxt is not None and nxt.tag == "p" and not nxt.xpath(".//strong|.//b"):
+            lead_in = _squash(" ".join(nxt.itertext()))
+            nxt = _next_element(nxt)
+        text = _statement(lead_in, nxt)
+        if text:
+            return text
+
+    # Accordion layout: <div class="panel-heading"><h2><a>Indication</a></h2></div>
+    # followed by the panel that holds the statement.
+    for heading in tree.xpath('//div[contains(@class, "panel-heading")]'):
+        if not _INDICATION_LABEL_RE.match(heading.text_content().replace("\xa0", " ")):
+            continue
+        panel = _next_element(heading)
+        if panel is None:
+            continue
+        # Walk the panel in document order: paragraphs up to the first list
+        # are the statement's lead-in and that list completes it. A
+        # "Limitations of Use" paragraph ends the statement.
+        lead: list[str] = []
+        first_list = None
+        for el in panel.iter("p", "ul", "ol"):
+            if any(a.tag == "li" for a in el.iterancestors()):
+                continue
+            if el.tag in ("ul", "ol"):
+                first_list = el
+                break
+            para = _squash(" ".join(el.itertext()))
+            if para.lower().startswith("limitation"):
+                break
+            if para:
+                lead.append(para)
+        text = _statement(" ".join(lead), first_list)
+        if text:
+            return text
     return None
 
 

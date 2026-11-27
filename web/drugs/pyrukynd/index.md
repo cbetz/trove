@@ -4,6 +4,8 @@ The FDA approved Pyrukynd (mitapivat) on February 17, 2022, under NDA 216196. Th
 
 At original approval, FDA recorded priority review, orphan drug designation and fast track designation for Pyrukynd. FDA received the application on June 17, 2021 and approved it 245 days later.
 
+FDA's labeling data puts Pyrukynd in the established pharmacologic class: Pyruvate Kinase Activator.
+
 ## Pyrukynd approval facts
 
 - Brand name: Pyrukynd
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - Approval year: 2022
 - FDA received application: June 17, 2021
 - Receipt to approval: 245 days
+- Pharmacologic class: Pyruvate Kinase Activator
 - Dosage form: Tablet
 - Route of administration: Oral
 - Review designation: Priority
@@ -32,4 +35,4 @@ At original approval, FDA recorded priority review, orphan drug designation and 
 - [Pyrukynd Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshot-pyrukynd): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 216196](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=216196): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/pyrukynd/ (updated 2026-11-26). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/pyrukynd/ (updated 2026-11-27). All 2022 approvals: https://troveproject.com/drugs/2022/. Not medical advice.

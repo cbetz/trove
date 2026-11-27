@@ -4,6 +4,8 @@ The FDA approved Piasky (crovalimab-akkz) on June 20, 2024, under BLA 761388. Th
 
 FDA reviewed Piasky on the standard review clock and recorded orphan drug designation at original approval. FDA received the application on June 20, 2023 and approved it 366 days later.
 
+FDA's labeling data puts Piasky in the established pharmacologic class: Complement C5 Inhibitor.
+
 ## Piasky approval facts
 
 - Brand name: Piasky
@@ -14,6 +16,7 @@ FDA reviewed Piasky on the standard review clock and recorded orphan drug design
 - Approval year: 2024
 - FDA received application: June 20, 2023
 - Receipt to approval: 366 days
+- Pharmacologic class: Complement C5 Inhibitor
 - Dosage form: Injectable
 - Route of administration: Intravenous, Subcutaneous
 - Review designation: Standard
@@ -31,4 +34,4 @@ FDA reviewed Piasky on the standard review clock and recorded orphan drug design
 - [Piasky Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-piasky): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761388](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761388): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/piasky/ (updated 2026-11-26). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/piasky/ (updated 2026-11-27). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.

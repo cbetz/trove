@@ -4,6 +4,8 @@ The FDA approved Flyrcado (flurpiridaz F 18) on September 27, 2024, under NDA 21
 
 FDA reviewed Flyrcado on the standard review clock. Its records show no orphan drug, accelerated approval, breakthrough therapy or fast track designation at original approval. FDA received the application on September 27, 2023 and approved it 366 days later.
 
+FDA's labeling data puts Flyrcado in the established pharmacologic class: Radioactive Diagnostic Agent.
+
 ## Flyrcado approval facts
 
 - Brand name: Flyrcado
@@ -14,6 +16,7 @@ FDA reviewed Flyrcado on the standard review clock. Its records show no orphan d
 - Approval year: 2024
 - FDA received application: September 27, 2023
 - Receipt to approval: 366 days
+- Pharmacologic class: Radioactive Diagnostic Agent
 - Dosage form: Solution
 - Route of administration: Intravenous
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Flyrcado on the standard review clock. Its records show no orphan d
 - [Flyrcado Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-flyrcado): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 215168](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=215168): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/flyrcado/ (updated 2026-11-26). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/flyrcado/ (updated 2026-11-27). All 2024 approvals: https://troveproject.com/drugs/2024/. Not medical advice.

@@ -4,6 +4,8 @@ The FDA approved Wainua (eplontersen) on December 21, 2023, under NDA 217388. Th
 
 FDA reviewed Wainua on the standard review clock and recorded orphan drug designation at original approval. FDA received the application on December 22, 2022 and approved it 364 days later.
 
+FDA's labeling data puts Wainua in the established pharmacologic classes: Transthyretin-directed RNA Interaction and Antisense Oligonucleotide.
+
 ## Wainua approval facts
 
 - Brand name: Wainua
@@ -14,6 +16,7 @@ FDA reviewed Wainua on the standard review clock and recorded orphan drug design
 - Approval year: 2023
 - FDA received application: December 22, 2022
 - Receipt to approval: 364 days
+- Pharmacologic class: Transthyretin-directed RNA Interaction; Antisense Oligonucleotide
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Standard
@@ -32,4 +35,4 @@ FDA reviewed Wainua on the standard review clock and recorded orphan drug design
 - [Wainua Drug Trials Snapshot](https://www.fda.gov/drugs/drug-trials-snapshots/drug-trials-snapshots-wainua): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for NDA 217388](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=217388): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/wainua/ (updated 2026-11-26). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/wainua/ (updated 2026-11-27). All 2023 approvals: https://troveproject.com/drugs/2023/. Not medical advice.

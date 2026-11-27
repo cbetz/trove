@@ -4,6 +4,8 @@ The FDA approved Tezspire (tezepelumab-ekko) on December 17, 2021, under BLA 761
 
 At original approval, FDA recorded priority review for Tezspire. FDA received the application on May 7, 2021 and approved it 224 days later.
 
+FDA's labeling data puts Tezspire in the established pharmacologic class: Thymic Stromal Lymphopoietin Blocker.
+
 ## Tezspire approval facts
 
 - Brand name: Tezspire
@@ -14,6 +16,7 @@ At original approval, FDA recorded priority review for Tezspire. FDA received th
 - Approval year: 2021
 - FDA received application: May 7, 2021
 - Receipt to approval: 224 days
+- Pharmacologic class: Thymic Stromal Lymphopoietin Blocker
 - Dosage form: Injectable
 - Route of administration: Injection
 - Review designation: Priority
@@ -31,4 +34,4 @@ At original approval, FDA recorded priority review for Tezspire. FDA received th
 - [Tezspire Drug Trials Snapshot](https://www.fda.gov/node/406022): Who took part in the trials behind the approval, by sex, race, age and ethnicity, and whether results differed among groups.
 - [Drugs@FDA record for BLA 761224](https://www.accessdata.fda.gov/scripts/cder/daf/index.cfm?event=overview.process&ApplNo=761224): Every FDA action on the application since approval: supplements, label revisions and letters.
 
-Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA pages for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/tezspire/ (updated 2026-11-26). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.
+Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation of CDER NME and New Biologic Approvals). FDA's document links for this record were read on May 5, 2026; FDA may have posted documents since. Page: https://troveproject.com/drugs/tezspire/ (updated 2026-11-27). All 2021 approvals: https://troveproject.com/drugs/2021/. Not medical advice.

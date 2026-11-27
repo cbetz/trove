@@ -6,15 +6,15 @@ Every figure on the site comes from a named federal source and links back to it.
 
 ## FDA drug approvals
 
-- [FDA drug approvals: list and lookup](https://troveproject.com/drugs/): 1,387 CDER novel approvals by year, 1985–2025, and a page for each of 217 novel approvals from 2021–2024
+- [FDA drug approvals: list and lookup](https://troveproject.com/drugs/): 1,387 CDER novel approvals by year, 1985–2025, and a page for each of 268 novel approvals from 2021–2025
 - [FDA drug approval statistics, 1985–2025](https://troveproject.com/drugs/statistics/index.md): approvals per year, NDA and BLA counts, priority review, orphan, accelerated approval, breakthrough and fast track counts, receipt-to-approval times
 - [FDA NME compilation as CSV and Parquet](https://troveproject.com/drugs/compilation/index.md): FDA's Compilation of CDER NME and New Biologic Approvals, converted from Excel, with column definitions
 - Per-year lists: [2025](https://troveproject.com/drugs/2025/index.md) [2024](https://troveproject.com/drugs/2024/index.md) [2023](https://troveproject.com/drugs/2023/index.md) [2022](https://troveproject.com/drugs/2022/index.md) [2021](https://troveproject.com/drugs/2021/index.md) [2020](https://troveproject.com/drugs/2020/index.md) [2019](https://troveproject.com/drugs/2019/index.md) [2018](https://troveproject.com/drugs/2018/index.md) (pattern: https://troveproject.com/drugs/YYYY/index.md, 1985 onward)
-- Per-drug pages: https://troveproject.com/drugs/<brand-name>/index.md, for example [Filsuvez](https://troveproject.com/drugs/filsuvez/index.md), [Casgevy](https://troveproject.com/drugs/casgevy/index.md), [Leqembi](https://troveproject.com/drugs/leqembi/index.md). Each gives the approval date, application number, sponsor, review designation and links to the FDA label, approval letter, review documents and Drug Trials Snapshot
+- Per-drug pages: https://troveproject.com/drugs/<brand-name>/index.md, for example [Nereus](https://troveproject.com/drugs/nereus/index.md), [Yartemlea](https://troveproject.com/drugs/yartemlea/index.md), [Myqorzo](https://troveproject.com/drugs/myqorzo/index.md). Each gives the approval date, application number, sponsor, review designation, pharmacologic class where FDA records one, and links to the FDA label, approval letter, review documents and Drug Trials Snapshot
 
 ## Hospital charity care (IRS and CMS)
 
-- [Hospital charity care: the IRS figure and the CMS figure, side by side](https://troveproject.com/hospitals/): lookup of 2,099 matched nonprofit hospital systems, tax year 2022
+- [Hospital charity care: the IRS figure and the CMS figure, side by side](https://troveproject.com/hospitals/): lookup of 2,099 matched nonprofit hospital systems, tax year 2022, and a ranked index of 493 single-facility hospitals in 48 states
 - [Note: what is in the difference between the two figures](https://troveproject.com/notes/charity-care-gap/): method, a worked reconciliation for one hospital, and the largest differences
 
 ## Explainers
@@ -28,10 +28,10 @@ Every figure on the site comes from a named federal source and links back to it.
 
 ## Data files
 
-- [fda_approvals_nme_recent.json](https://troveproject.com/data/fda_approvals_nme_recent.json): 217 FDA novel approvals, one object per drug, with document URLs and review designations (also .parquet)
+- [fda_approvals_nme_recent.json](https://troveproject.com/data/fda_approvals_nme_recent.json): 268 FDA novel approvals, 2021–2025, one object per drug, with document URLs, review designations and pharmacologic class (also .parquet)
 - [fda_nme_compilation.csv](https://troveproject.com/data/fda_nme_compilation.csv): 1,387 CDER novel approvals, 1985–2025 (also .parquet)
-- [community_benefit_gap_2022.csv](https://troveproject.com/data/community_benefit_gap_2022.csv): IRS Schedule H line 7a and CMS S-10 line 23 for matched hospital systems, tax year 2022 (also .json, .parquet)
-- [charity_care_gap_index_2022.json](https://troveproject.com/data/charity_care_gap_index_2022.json): the ranked index of single-facility hospitals
+- [community_benefit_gap_2022.csv](https://troveproject.com/data/community_benefit_gap_2022.csv): IRS Schedule H line 7a and CMS S-10 line 23 for 2,099 matched hospital systems, tax year 2022 (also .json, .parquet)
+- [charity_care_gap_index_2022.json](https://troveproject.com/data/charity_care_gap_index_2022.json): the ranked index of 493 single-facility hospitals
 
 ## Optional
 
