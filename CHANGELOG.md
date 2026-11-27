@@ -11,12 +11,12 @@ hospital data changed.
 **Coverage.** The per-drug index now runs 2021–2025: 268 approvals (238 CDER + 30 CBER), up
 from 217. FDA's annual lists and CBER product pages were re-read on 2026-11-26.
 
-**Data (additive).** `fda_approvals_nme_recent` gains 16 columns.
+**Data (additive).** `fda_approvals_nme_recent` gains 17 columns.
 
-- From the drugs@FDA application page, for CDER rows: `approval_letter_url`, `review_url`
-  (the approval package's table of contents) and `submission_classification`. `label_pdf_url`
-  is filled from the original-approval row when FDA's annual list did not link a label
-  (159 of 217 before; 263 of 268 now).
+- From drugs@FDA, for CDER rows: `approval_letter_url` (237 of 238), `review_url` (the
+  approval package's table of contents; 236 of 238), `submission_classification` (NDAs) and
+  `documents_read`. `label_pdf_url` is filled from the original-approval record when FDA's
+  annual list did not link a label (159 of 217 before; 267 of 268 now).
 - From FDA's Compilation of CDER NME and New Biologic Approvals, for CDER rows:
   `review_designation`, `orphan_drug_designation`, `accelerated_approval`,
   `breakthrough_therapy_designation`, `fast_track_designation`,
@@ -55,17 +55,18 @@ submit script, and `dateModified` / sitemap `lastmod` that change only when a pa
 does.
 
 **Scraper.** Requests to accessdata.fda.gov are now paced, and a run stops asking as soon as
-FDA refuses a request. `TROVE_FDA_OFFLINE=1` builds from the cache alone.
+FDA refuses a request. `TROVE_FDA_OFFLINE=1` builds from the cache alone. Document links a
+cached page does not supply are read from openFDA's Drugs@FDA endpoint, FDA's own API.
 
 **Known gaps.**
 
-- **2025 CDER approvals have no approval-letter or review links.** On 2026-11-26
-  accessdata.fda.gov answered the scraper's requests for drugs@FDA application pages with
-  404 and then blocked the address for excessive requests. The 46 pages were not fetched.
-  Those rows take their sponsor and application number from FDA's compilation and link the
-  drugs@FDA record; their approval dates agree with the compilation.
-- **The drugs@FDA pages behind the 2021–2024 rows were read in May 2026** and could not be
-  refreshed for the same reason.
+- **The drugs@FDA application pages could not be re-read.** On 2026-11-26
+  accessdata.fda.gov answered the scraper's requests for those pages with 404 and then
+  blocked the address for excessive requests. The 2021–2024 rows keep the links read in May
+  2026. The 46 CDER approvals from 2025 take their approval letter, review package, label
+  and classification from openFDA's Drugs@FDA endpoint instead (read 2026-11-26), and their
+  sponsor and application number from FDA's compilation; `documents_read` records which
+  date applies to each row. Every approval date agrees with both sources.
 - Pharmacologic class is missing for 158 of 268 rows: openFDA has no class for those labels.
 
 ## 1.1.0 — 2026-11-19

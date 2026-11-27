@@ -219,3 +219,96 @@ def test_offline_switch_uses_the_cache_and_sends_nothing(fetcher, monkeypatch) -
     with pytest.raises(RuntimeError, match="TROVE_FDA_OFFLINE"):
         overview.fetch_application_overview("222222", cache)
     assert calls == []
+
+
+# --- openFDA Drugs@FDA record -------------------------------------------------
+
+
+def test_original_approval_comes_from_the_first_approved_orig_submission() -> None:
+    from fda_sba import parse_original_approval
+
+    record = {
+        "submissions": [
+            {
+                "submission_type": "ORIG",
+                "submission_number": "2",
+                "submission_status": "AP",
+                "submission_status_date": "20250301",
+                "application_docs": [{"type": "Letter", "url": "https://x/second.pdf"}],
+            },
+            {
+                "submission_type": "ORIG",
+                "submission_number": "1",
+                "submission_status": "AP",
+                "submission_status_date": "20250130",
+                "submission_class_code_description": "Type 1 - New Molecular Entity",
+                "application_docs": [
+                    {"type": "Label", "url": "http://x/lbl.pdf", "date": "20250207"},
+                    {"type": "Letter", "url": "https://x/ltr.pdf", "date": "20250207"},
+                    {"type": "Letter", "url": "https://x/corrected.pdf", "date": "20250301"},
+                    {"type": "Review", "url": "https://x/TOC.html", "date": "20250224"},
+                ],
+            },
+            {"submission_type": "ORIG", "submission_number": "3", "submission_status": "TA"},
+        ]
+    }
+    assert parse_original_approval(record) == {
+        "approval_letter_url": "https://x/corrected.pdf",
+        "review_url": "https://x/TOC.html",
+        "label_url": "https://x/lbl.pdf",
+        "submission_classification": "Type 1 - New Molecular Entity",
+        "approval_date": "2025-01-30",
+    }
+    assert set(parse_original_approval({"submissions": []}).values()) == {None}
+
+
+def test_openfda_fills_only_what_is_missing_and_leaves_bla_classification_blank(
+    tmp_path, monkeypatch
+) -> None:
+    import json
+
+    from fda_sba import drugsfda
+
+    record = {
+        "fetched": "2026-11-26",
+        "submissions": [
+            {
+                "submission_type": "ORIG",
+                "submission_number": "1",
+                "submission_status": "AP",
+                "submission_status_date": "20250130",
+                "submission_class_code_description": "Type 1 - New Molecular Entity",
+                "application_docs": [
+                    {"type": "Letter", "url": "https://x/ltr.pdf"},
+                    {"type": "Review", "url": "https://x/TOC.html"},
+                    {"type": "Label", "url": "https://x/openfda-label.pdf"},
+                ],
+            }
+        ],
+    }
+    for key in ("NDA111111", "BLA222222"):
+        (tmp_path / f"{key}.json").write_text(json.dumps(record))
+    monkeypatch.setattr(drugsfda, "urlopen", lambda *a, **k: pytest.fail("network used"))
+    index = pd.DataFrame(
+        {
+            "drug_name": ["A", "B", "C"],
+            "application_type": ["NDA", "BLA", "NDA"],
+            "application_number": ["111111", "222222", "333333"],
+            "approval_date": [pd.Timestamp("2025-01-30").date()] * 3,
+            "approval_letter_url": [None, None, "https://x/page-letter.pdf"],
+            "review_url": [None, None, "https://x/page-toc.html"],
+            "label_pdf_url": ["https://x/list-label.pdf", None, "https://x/l.pdf"],
+            "submission_classification": [None, None, "Type 1 - New Molecular Entity"],
+        }
+    )
+    out = drugsfda.fill_approval_documents(index, tmp_path).to_dict("records")
+    assert out[0]["approval_letter_url"] == "https://x/ltr.pdf"
+    assert out[0]["label_pdf_url"] == "https://x/list-label.pdf"  # an existing link is kept
+    assert out[0]["submission_classification"] == "Type 1 - New Molecular Entity"
+    assert out[0]["documents_read"] == "2026-11-26"
+    assert out[1]["review_url"] == "https://x/TOC.html"
+    assert out[1]["label_pdf_url"] == "https://x/openfda-label.pdf"
+    assert pd.isna(out[1]["submission_classification"])
+    # A row the page pass completed is not looked up at all.
+    assert out[2]["approval_letter_url"] == "https://x/page-letter.pdf"
+    assert pd.isna(out[2]["documents_read"])

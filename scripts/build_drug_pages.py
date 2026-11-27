@@ -287,9 +287,10 @@ def source_note(r: dict, sources_read: dict) -> str:
             else ""
         )
     if r.get("approval_letter_url") or r.get("review_url"):
-        read_on = sources_read.get("drugs_at_fda")
+        read_on = r.get("documents_read") or sources_read.get("drugs_at_fda")
         return (
-            f" Drugs@FDA was read on {fmt_date_long(read_on)}; FDA may have posted documents since."
+            f" FDA's document links for this record were read on {fmt_date_long(read_on)}; "
+            f"FDA may have posted documents since."
             if read_on
             else ""
         )

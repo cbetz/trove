@@ -125,7 +125,9 @@ def test_a_page_names_only_the_documents_it_links() -> None:
     assert build_drug_pages.document_kinds(bare) == "label"
     assert build_drug_pages.document_kinds(_row(regulatory_center="CBER")).startswith("package")
     read = {"cder_lists": "2026-11-26", "drugs_at_fda": "2026-05-05", "cber": "2026-11-26"}
-    assert "Drugs@FDA was read on May 5, 2026" in build_drug_pages.source_note(_row(), read)
+    assert "were read on May 5, 2026" in build_drug_pages.source_note(_row(), read)
+    filled = _row(documents_read="2026-11-26")
+    assert "were read on November 26, 2026" in build_drug_pages.source_note(filled, read)
     note = build_drug_pages.source_note(bare, read)
     assert "have not been collected" in note and "November 26, 2026" in note
 

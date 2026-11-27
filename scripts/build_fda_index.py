@@ -54,6 +54,11 @@ def main() -> None:
     for center, count in df.groupby("regulatory_center").size().items():
         print(f"    {center}: {count}")
     _check_dates(df)
+    # Rows whose letter or review link came from the cached drugs@FDA pages
+    # were read when that cache was; openFDA-filled rows carry their own date.
+    page_read = _sources_read()["drugs_at_fda"]
+    has_docs = df["approval_letter_url"].notna() | df["review_url"].notna()
+    df.loc[has_docs & df["documents_read"].isna(), "documents_read"] = page_read
     sponsor_cov = df["sponsor"].notna().sum()
     print(f"  sponsor coverage: {sponsor_cov:,}/{len(df):,}")
     for col in (
@@ -188,6 +193,7 @@ def _row_to_json(r) -> dict:
         "qualified_infectious_disease_product": _str(r.qualified_infectious_disease_product),
         "priority_review_voucher_issued": _str(r.priority_review_voucher_issued),
         "priority_review_voucher_redeemed": _str(r.priority_review_voucher_redeemed),
+        "documents_read": _str(getattr(r, "documents_read", None)),
         "pharm_class_epc": _str(r.pharm_class_epc),
         "pharm_class_moa": _str(r.pharm_class_moa),
     }

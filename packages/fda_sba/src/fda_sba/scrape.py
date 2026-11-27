@@ -122,6 +122,9 @@ def _iter_rows(page_path: Path, year: int):
         # Only set label_pdf_url when the link is actually a label PDF;
         # otherwise FDA points at the drugs@FDA overview directly.
         label_url = link_url if _is_label_pdf_url(link_url) else None
+        if label_url:
+            # FDA's list writes a few label links with http://; it serves https.
+            label_url = re.sub(r"^http://", "https://", label_url)
         active = _clean(cells[2].text_content())
         approval_date = _parse_approval_date(_clean(cells[3].text_content()), drug_name)
         if approval_date.year != year:

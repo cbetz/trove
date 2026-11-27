@@ -84,7 +84,7 @@ Code-execution sandboxes often allow only a short list of domains. By default `t
 
 - **2021–2025 calendar years** of FDA novel drug approvals (NMEs and novel BLAs from FDA's annual lists), by date of original approval. Approvals from 2026 onward are not in the index yet.
 - 268 drugs total (238 CDER + 30 CBER cell & gene therapies). Each row carries a `regulatory_center` column.
-- Each drug has the metadata index plus a direct link to the drugs@FDA application overview where every approval-document PDF lives. For 2021–2024 CDER approvals the index also carries direct `approval_letter_url` and `review_url` links; for 2025 approvals those two are null, so read the document links from the overview page.
+- Each drug has the metadata index plus a direct link to the drugs@FDA application overview where every approval-document PDF lives. For CDER approvals the index also carries direct `approval_letter_url` and `review_url` links (237 and 236 of 238), with the date they were read in `documents_read`; start from `review_url` rather than probing for filenames.
 - Review designation, orphan, accelerated approval, breakthrough and fast track status (CDER rows) and the pharmacologic class where FDA records one are columns in the index: answer those from the data and cite FDA's NME compilation or openFDA, not memory.
 
 ## Sources and citations

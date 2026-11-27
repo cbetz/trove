@@ -15,6 +15,7 @@ from fda_sba.compilation import (
     parse_compilation,
     read_source_metadata,
 )
+from fda_sba.drugsfda import fill_approval_documents, parse_original_approval
 from fda_sba.overview import (
     enrich_with_approval_documents,
     enrich_with_sponsor,
@@ -47,7 +48,8 @@ def build_index(
     either ``"CDER"`` or ``"CBER"``.
 
     CDER rows also carry the documents FDA posted with the original approval
-    (approval letter, review package, label) from drugs@FDA, and the regulatory
+    (approval letter, review package, label) from drugs@FDA (its application
+    page where cached, openFDA's Drugs@FDA endpoint otherwise), and the regulatory
     characteristics FDA records in its NME compilation (review designation,
     orphan, accelerated approval, breakthrough, fast track). Pass an already
     parsed ``compilation`` to avoid reading the spreadsheet twice. CBER rows
@@ -62,6 +64,7 @@ def build_index(
     cder = enrich_with_sponsor(cder, cache_dir=Path(cache_dir) / "overview")
     cder = reconcile_approval_dates(cder, cache_dir=Path(cache_dir) / "overview")
     cder = enrich_with_approval_documents(cder, cache_dir=Path(cache_dir) / "overview")
+    cder = fill_approval_documents(cder, cache_dir=Path(cache_dir) / "drugsfda")
     cder = enrich_with_designations(cder, compilation)
     cder = cder.sort_values(["year", "approval_date"], ascending=[False, False]).reset_index(
         drop=True
@@ -91,10 +94,12 @@ __all__ = [
     "enrich_with_pharm_class",
     "enrich_with_sponsor",
     "fetch_application_overview",
+    "fill_approval_documents",
     "fetch_compilation",
     "fill_missing_application_numbers",
     "fetch_nme_year_html",
     "parse_compilation",
+    "parse_original_approval",
     "parse_original_approval_date",
     "parse_original_approval_documents",
     "parse_pharm_class",
