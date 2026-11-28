@@ -14,9 +14,42 @@
       "source": "/drugs/imlygic/",
       "destination": "/drugs/",
       "permanent": true
+    },
+    {
+      "source": "/drugs/:page",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": ".*text/markdown.*"
+        }
+      ],
+      "destination": "/drugs/:page/index.md",
+      "permanent": false
+    },
+    {
+      "source": "/drugs/:page/",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": ".*text/markdown.*"
+        }
+      ],
+      "destination": "/drugs/:page/index.md",
+      "permanent": false
     }
   ],
   "headers": [
+    {
+      "source": "/drugs/:page/",
+      "headers": [
+        {
+          "key": "Vary",
+          "value": "Accept"
+        }
+      ]
+    },
     {
       "source": "/data/(.*)",
       "headers": [

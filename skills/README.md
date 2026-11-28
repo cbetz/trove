@@ -1,11 +1,11 @@
 # trove skills
 
-Claude skill bundles that wrap trove's data so an agent can answer natural-language questions about it. Two skills ship today, one per area at troveproject.com. Both are in trove plugin 1.2.0.
+Claude skill bundles that wrap trove's data so an agent can answer natural-language questions about it. Two skills ship today, one per area at troveproject.com. Both are in trove plugin 1.3.0.
 
 | Skill | Domain | Source data | When to invoke |
 |-------|--------|-------------|----------------|
 | [`hcris-analyst/`](hcris-analyst/) | Hospital reporting | CMS cost reports (HCRIS form 2552-10, FY2022 and FY2023 files, incl. Worksheet S-10), IRS 990 Schedule H (tax year 2022), CCN↔EIN crosswalk, CDC SVI | A hospital's IRS line 7a and CMS S-10 line 23 side by side with the components each filing publishes; the ranked index; a hospital's cost-report profile; glossary lookups (worksheet/line/column); NL→SQL over the published Parquet bundles |
-| [`fda-analyst/`](fda-analyst/) | FDA drug approvals | Index of 268 FDA novel drug approvals 2021–2025 (238 CDER + 30 CBER); reads approval-package PDFs at query time | "What was the basis for [drug] approval?", "What adverse events did the FDA flag?", "Was this drug approved via accelerated approval?" |
+| [`fda-analyst/`](fda-analyst/) | FDA drug approvals | Index of 331 FDA novel drug approvals 2021–2026 (295 CDER + 36 CBER); reads approval-package PDFs at query time | "What was the basis for [drug] approval?", "What adverse events did the FDA flag?", "Was this drug approved via accelerated approval?" |
 
 Each skill is self-contained: a `SKILL.md` (frontmatter + instructions), a `references/` directory (data layout, glossary, examples, etc.), and no Python dependencies. The skills query trove's published bundles at `https://troveproject.com/data/` with DuckDB (or `curl` and the Python standard library), and fetch FDA PDFs at runtime. No local trove install is required.
 

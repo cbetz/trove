@@ -31,4 +31,4 @@ FDA's Center for Drug Evaluation and Research (CDER) approved 22 novel drugs in 
 | 1987-12-31 | Rimadyl | carprofen | Hoffmann-La Roche | NDA 018550 | Standard | — | acute or long-term use for the relief of signs and symptoms of rheumatiod arthritis, osteoarthritis, and acute gouty arthritis |
 | 1987-12-31 | Terazol 7 | terconazole | Ortho | NDA 019579 | Standard | — | local treatment of vulvovaginal candidiasis (moniliasis) |
 
-Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1987/ (updated 2026-11-26). Data: https://troveproject.com/data/fda_nme_compilation.csv
+Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1987/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_nme_compilation.csv

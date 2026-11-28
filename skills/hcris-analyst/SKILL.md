@@ -69,7 +69,7 @@ git clone --depth 1 https://github.com/cbetz/trove
 
 If both are blocked, tell the user the sandbox cannot reach the data and that they can either allow `troveproject.com` or upload the file. Do not answer from memory.
 
-**Check the bundle version before the first cross-form answer.** Plugin 1.2.0 expects the November 2026 build of the data. An older cached or not-yet-updated bundle lacks the columns this skill relies on and publishes a missing S-10 figure as 0. Run this once:
+**Check the bundle version before the first cross-form answer.** Plugin 1.3.0 expects the November 2026 build of the data. An older cached or not-yet-updated bundle lacks the columns this skill relies on and publishes a missing S-10 figure as 0. Run this once:
 
 ```sql
 SELECT COUNT(*) AS has_new_columns
@@ -114,4 +114,4 @@ It should return 3. If it returns 0, say plainly: "The data file I reached is an
 
 ## Skill version
 
-Shipped in trove plugin 1.2.0 (November 2026). Corrections and questions: https://github.com/cbetz/trove/issues
+Shipped in trove plugin 1.3.0 (November 2026). Corrections and questions: https://github.com/cbetz/trove/issues

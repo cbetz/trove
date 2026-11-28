@@ -1,10 +1,15 @@
-"""Fetch and parse the drugs@FDA application overview page.
+"""Read the drugs@FDA application overview page.
 
 The overview page (e.g. https://www.accessdata.fda.gov/scripts/cder/daf/
 index.cfm?event=overview.process&ApplNo=218614) carries the sponsor's
 name, the marketing status, and links to every approval-package
-document for an application. v0.1 of this module just extracts the
-sponsor; richer parsing is a v0.2 add.
+document for an application.
+
+accessdata.fda.gov stopped serving these pages to this project's scraper in
+November 2026, so by default only pages already in the local cache are read
+and nothing is requested. openFDA's Drugs@FDA endpoint (``fda_sba.drugsfda``)
+carries the same data and is what the index is refreshed from. Set
+``TROVE_FDA_FETCH_PAGES=1`` to let this module request pages again.
 """
 
 from __future__ import annotations
@@ -34,6 +39,10 @@ REQUEST_DELAY = 2.0
 
 class FdaBlockedError(RuntimeError):
     """accessdata.fda.gov refused the request as abusive or excessive."""
+
+
+class PageNotCachedError(RuntimeError):
+    """The page is not in the local cache and requesting it is switched off."""
 
 
 # Set once FDA refuses a request; every later fetch in the same run fails fast
@@ -71,11 +80,13 @@ def fetch_application_overview(
     *,
     force: bool = False,
 ) -> Path:
-    """Download the drugs@FDA overview HTML for ``appl_no`` and cache it.
+    """Return the cached drugs@FDA overview HTML for ``appl_no``.
 
-    Waits ``REQUEST_DELAY`` seconds after each request, and stops asking for
-    the rest of the run once FDA refuses one (``FdaBlockedError``). Set the
-    environment variable ``TROVE_FDA_OFFLINE=1`` to use only cached pages.
+    A page that is not cached is requested only when the environment variable
+    ``TROVE_FDA_FETCH_PAGES=1`` is set (and ``TROVE_FDA_OFFLINE`` is not);
+    otherwise this raises ``PageNotCachedError``. When requesting, it waits
+    ``REQUEST_DELAY`` seconds after each request and stops asking for the rest
+    of the run once FDA refuses one (``FdaBlockedError``).
     """
     cache = Path(cache_dir)
     cache.mkdir(parents=True, exist_ok=True)
@@ -83,8 +94,11 @@ def fetch_application_overview(
     if target.exists() and not force:
         return target
     global _blocked_reason, _consecutive_404
-    if os.environ.get("TROVE_FDA_OFFLINE"):
-        raise RuntimeError(f"TROVE_FDA_OFFLINE is set and application {appl_no} is not cached")
+    if os.environ.get("TROVE_FDA_OFFLINE") or not os.environ.get("TROVE_FDA_FETCH_PAGES"):
+        raise PageNotCachedError(
+            f"the drugs@FDA page for application {appl_no} is not cached and page requests "
+            "are off (set TROVE_FDA_FETCH_PAGES=1 to allow them)"
+        )
     if _blocked_reason:
         raise FdaBlockedError(_blocked_reason)
     if appl_no in _failed:
@@ -233,6 +247,8 @@ def enrich_with_approval_documents(
                 docs = parse_original_approval_documents(
                     fetch_application_overview(appl_no, cache).read_bytes()
                 )
+            except PageNotCachedError:
+                pass  # openFDA's Drugs@FDA record supplies these rows
             except Exception as exc:  # noqa: BLE001
                 warnings.warn(
                     f"{appl_no}: could not read the drugs@FDA overview ({exc!r}); "
@@ -319,6 +335,8 @@ def enrich_with_sponsor(
         try:
             page = fetch_application_overview(appl_no, cache)
             sponsors.append(parse_sponsor(page.read_bytes()))
+        except PageNotCachedError:
+            sponsors.append(None)
         except Exception as exc:  # noqa: BLE001
             if progress:
                 print(f"    skip {appl_no}: {exc!r}")

@@ -15,7 +15,7 @@ and this way there's nothing to build and nothing to break.
 | `index.html` | Homepage — leads with the hospital side-by-side, then the dataset areas |
 | `notes/` | Write-ups from the published tables. `notes/index.html` is the hub |
 | `hospitals/` | IRS Schedule H line 7a and CMS S-10 line 23 side by side: the ranked index (493 hospitals) plus a lookup over every matched system (2,099) |
-| `drugs/` | FDA novel approvals: search page plus 268 generated per-drug pages |
+| `drugs/` | FDA novel approvals: search page plus 331 generated per-drug pages |
 | `docs/` | Plain-language explainers — HCRIS, 990 Schedule H, FDA NMEs |
 | `skills/` | Install pages for the two Claude Code skills |
 | `data/` | Published JSON/CSV/Parquet files the pages and skills read over HTTPS |
@@ -69,8 +69,14 @@ Things that bite:
 - **Generated pages have Markdown twins.** Each `drugs/**/index.html` the scripts write has
   an `index.md` beside it with the same facts, advertised with
   `<link rel="alternate" type="text/markdown">` and served `noindex` (see `vercel.json`).
-  `llms.txt` and `robots.txt` are hand-written; update the counts in `llms.txt` after a
-  data rebuild.
+  `robots.txt` is hand-written; `llms.txt` is written by `build_drug_pages.py` from the
+  data bundles.
+- **`Accept: text/markdown` gets a redirect to the twin.** `vercel.json` redirects a request
+  for `/drugs/<page>/` to `/drugs/<page>/index.md` when its `Accept` header names
+  `text/markdown` (redirects are evaluated before static files; rewrites are not, which is
+  why this is a redirect). Check it after a deploy that touches `vercel.json`:
+  `curl -sI -H 'Accept: text/markdown' https://troveproject.com/drugs/2026/` should answer
+  307, and the same request without the header 200.
 - **The 32-character `.txt` file at the site root is the IndexNow key.** It is public by
   design: Bing and the other IndexNow engines fetch it to confirm that URL submissions come
   from this site. Don't delete or rename it. After a deploy that changes pages, run
@@ -79,7 +85,16 @@ Things that bite:
   hold the crawlable year links and drug links (the search box itself needs JavaScript).
 - **The docs pages quote counts.** `docs/new-molecular-entity/`, `docs/fda-approval-package/`
   and `docs/drug-trials-snapshot/` state figures from the FDA bundles (1,387 approvals,
-  118 Type 1 NDAs, 232 Snapshots and so on). Check them after a rebuild.
+  118 Type 1 NDAs, 235 Snapshots and so on). Check them after a rebuild;
+  `test_hand_written_counts_match_the_index` fails when the totals or the coverage years in
+  hand-written pages no longer match the data.
+- **FDA's current data comes through openFDA.** `build_fda_index.py` caches FDA's list pages
+  (`data/raw/fda/nme_<year>.html`) and one openFDA record per application
+  (`data/raw/fda/drugsfda/`). To pick up new approvals and newly posted documents, delete the
+  list page for the year in progress and the `drugsfda/` directory, then rebuild: about 300
+  requests, against openFDA's limit of 1,000 a day without a key. The drugs@FDA website
+  pages under `data/raw/fda/overview/` are a cached fallback; nothing requests them unless
+  `TROVE_FDA_FETCH_PAGES=1` is set, because FDA refused the scraper there in November 2026.
 - **The site's CSV download is a copy.** `build_web_bundles.py` copies
   `artifacts/community_benefit_gap_2022.csv` into `data/` so the published download can't
   drift from the committed artifact.

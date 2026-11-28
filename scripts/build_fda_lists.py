@@ -1,7 +1,9 @@
 """Generate the list pages of the FDA section.
 
 - ``web/drugs/<year>/`` — every novel drug FDA approved that calendar year,
-  1985 onward, as a static table.
+  1985 onward, as a static table. The year in progress, which FDA's
+  compilation does not cover yet, is built from the per-drug index instead and
+  says how far FDA's running list goes.
 - ``web/drugs/statistics/`` — approvals per year, review designations and
   receipt-to-approval times, computed from FDA's compilation.
 - ``web/drugs/compilation/`` — download page for FDA's Compilation of CDER NME
@@ -232,6 +234,38 @@ def _strip_tags(s: str) -> str:
     return s.replace("<strong>", "").replace("</strong>", "")
 
 
+def summarize_in_progress(rows: list[dict]) -> dict:
+    """Counts for a year FDA's compilation does not cover, from the per-drug index."""
+    return {
+        "n": len(rows),
+        "nda": sum(1 for r in rows if r["application_type"] == "NDA"),
+        "bla": sum(1 for r in rows if r["application_type"] == "BLA"),
+        "priority": sum(1 for r in rows if is_priority(r.get("review_designation"))),
+        "orphan": sum(1 for r in rows if is_yes(r.get("orphan_drug_designation"))),
+    }
+
+
+def _in_progress_lead(year: int, s: dict, cber_n: int, as_of: str) -> list[str]:
+    parts = [
+        f"FDA's Center for Drug Evaluation and Research (CDER) has approved <strong>{s['n']} "
+        f"novel drugs in {year}</strong> as of {fmt_date_long(as_of)}, the date on FDA's running "
+        f"list when trove read it: {s['nda']} under new drug applications (NDAs) and {s['bla']} "
+        f"under biologics license applications (BLAs).",
+        f"{s['priority']} of the {s['n']} ({pct(s['priority'], s['n'])}) had priority review, "
+        f"and {s['orphan']} of the applications carry an orphan flag in FDA's Drugs@FDA data. Counts of "
+        f"accelerated approvals, breakthrough therapy and fast track designations are not "
+        f"available yet: FDA's compilation of novel approvals, which records them, does not "
+        f"cover {year}.",
+    ]
+    if cber_n:
+        parts.append(
+            f"FDA's Center for Biologics Evaluation and Research (CBER) has separately approved "
+            f"{cber_n} cell and gene therapy product{'s' if cber_n != 1 else ''} in {year}, "
+            f"listed in the second table."
+        )
+    return parts
+
+
 def render_year(
     year: int,
     years: list[int],
@@ -239,27 +273,54 @@ def render_year(
     comp_rows: list[dict],
     vintage: str,
     modified: str,
+    as_of: str | None = None,
 ) -> tuple[str, str]:
-    """Return ``(html, markdown)`` for one year's page."""
+    """Return ``(html, markdown)`` for one year's page.
+
+    ``as_of`` marks the year in progress: the date FDA's running list was
+    current to. Such a year is not in FDA's compilation, so its page is built
+    from the per-drug index and shows review priority and orphan status only.
+    """
     rows = _year_rows(year, index_rows, comp_rows)
-    comp_year = [r for r in comp_rows if r["approval_year"] == year]
-    s = summarize(comp_year)
-    if s["n"] != len(rows):
-        raise SystemExit(f"{year}: index has {len(rows)} CDER rows, FDA's compilation {s['n']}")
+    comp_last = max(r["approval_year"] for r in comp_rows)
+    partial = as_of is not None
+    if partial:
+        s = summarize_in_progress(rows)
+    else:
+        s = summarize([r for r in comp_rows if r["approval_year"] == year])
+        if s["n"] != len(rows):
+            raise SystemExit(f"{year}: index has {len(rows)} CDER rows, FDA's compilation {s['n']}")
     cber = sorted(
         (r for r in index_rows if r["year"] == year and r["regulatory_center"] == "CBER"),
         key=lambda r: (r["approval_date"], r["drug_name"]),
     )
     has_pages = any(r["slug"] for r in rows)
     path = f"/drugs/{year}/"
-    title = f"FDA novel drug approvals {year}: all {s['n']} NMEs and new biologics | trove"
-    description = (
-        f"Every novel drug FDA's CDER approved in {year}: {s['n']} new molecular entities and "
-        f"new biologics"
-        + (f", plus {len(cber)} CBER cell and gene therapies" if cber else "")
-        + ". Approval date, applicant, application number, review designation and approved use."
-    )
-    lead = _year_lead(year, s, len(cber))
+    if partial:
+        title = f"FDA novel drug approvals {year}: {s['n']} NMEs and new biologics so far | trove"
+        description = (
+            f"Novel drugs FDA's CDER has approved in {year}, as of {fmt_date_long(as_of)}: "
+            f"{s['n']} new molecular entities and new biologics"
+            + (f", plus {len(cber)} CBER cell and gene therapies" if cber else "")
+            + ". Approval date, applicant, application number, review priority and approved use."
+        )
+        lead = _in_progress_lead(year, s, len(cber), as_of)
+    else:
+        title = f"FDA novel drug approvals {year}: all {s['n']} NMEs and new biologics | trove"
+        description = (
+            f"Every novel drug FDA's CDER approved in {year}: {s['n']} new molecular entities and "
+            f"new biologics"
+            + (f", plus {len(cber)} CBER cell and gene therapies" if cber else "")
+            + ". Approval date, applicant, application number, review designation and approved use."
+        )
+        lead = _year_lead(year, s, len(cber))
+
+    def programs(r: dict) -> str:
+        if partial:
+            return "Orphan" if is_yes(r.get("orphan_drug_designation")) else "—"
+        return ", ".join(flag_labels(r)) or "—"
+
+    programs_head = "Orphan flag" if partial else "Expedited programs"
 
     body_rows = "\n".join(
         "        <tr>"
@@ -268,12 +329,13 @@ def render_year(
         f"<td>{esc(r.get('applicant') or '')}</td>"
         f'<td class="nowrap">{esc(r["application_type"])} {esc(r["application_number"])}</td>'
         f"<td>{esc(review_label(r))}</td>"
-        f'<td class="flags">{esc(", ".join(flag_labels(r)) or "—")}</td>'
+        f'<td class="flags">{esc(programs(r))}</td>'
         f'<td class="use">{esc(r["use"])}</td>'
         "</tr>"
         for r in rows
     )
     cber_html = ""
+    cber_read = ", as it read when trove last fetched it" if partial else ""
     if cber:
         cber_rows = "\n".join(
             "        <tr>"
@@ -288,7 +350,7 @@ def render_year(
         )
         cber_html = f"""
   <h2>Cell and gene therapies approved by CBER in {year}</h2>
-  <p>These {len(cber)} products are licensed by FDA's Center for Biologics Evaluation and Research. They are not part of CDER's novel drug count above, and FDA's compilation does not record review designations for them. Source: FDA, <a href="{CBER_PRODUCTS_URL}">Approved Cellular and Gene Therapy Products</a>.</p>
+  <p>These {len(cber)} products are licensed by FDA's Center for Biologics Evaluation and Research. They are not part of CDER's novel drug count above, and FDA's compilation does not record review designations for them. Source: FDA, <a href="{CBER_PRODUCTS_URL}">Approved Cellular and Gene Therapy Products</a>{cber_read}.</p>
   <div class="scroll">
     <table>
       <caption>CBER cell and gene therapy approvals, {year}, in order of approval</caption>
@@ -309,6 +371,46 @@ def render_year(
         f"    <li>{y}</li>" if y == year else f'    <li><a href="/drugs/{y}/">{y}</a></li>'
         for y in reversed(years)
     )
+    stats_link = f'<a href="/drugs/statistics/">Approvals per year, 1985–{comp_last}</a>'
+    if partial:
+        heading = f"FDA novel drug approvals in {year} so far"
+        subtitle = (
+            f"New molecular entities and new biologics approved by FDA's CDER in calendar year "
+            f"{year}, through {fmt_date_long(as_of)}."
+        )
+        list_heading = f"List of {year} novel drug approvals to date (CDER)"
+        table_note = (
+            f"In order of approval. FDA adds to its {year} list as it approves drugs; this page "
+            f"shows the list as of {fmt_date_long(as_of)}. Review priority and the orphan flag come "
+            f"from each application's Drugs@FDA record. The orphan flag belongs to the "
+            f"application, so it can reflect a designation for a use other than the one approved. "
+            f"The approved use is FDA's one-line summary from its Novel Drug Approvals list. Each "
+            f"drug name links to a page with its label, approval letter and FDA review documents."
+        )
+        caption = f"CDER novel drug approvals, {year}: {s['n']} approvals through {fmt_date(as_of)}"
+        download = (
+            f'<p>The {year} rows are in <a href="/data/fda_approvals_nme_recent.json">'
+            f"fda_approvals_nme_recent.json</a> and "
+            f'<a href="/data/fda_approvals_nme_recent.parquet">fda_approvals_nme_recent.parquet</a> '
+            f'(filter <code>year = {year}</code>). FDA\'s <a href="/drugs/compilation/">compilation'
+            f"</a>, and the CSV made from it, run through {comp_last}.</p>"
+        )
+    else:
+        heading = f"FDA novel drug approvals in {year}"
+        subtitle = (
+            f"Every new molecular entity and new biologic approved by FDA's CDER in calendar "
+            f"year {year}."
+        )
+        list_heading = f"List of {year} novel drug approvals (CDER)"
+        table_note = None
+        caption = f"CDER novel drug approvals, {year}: {s['n']} approvals"
+        download = (
+            f'<p>All {year} rows are in <a href="/data/fda_nme_compilation.csv">'
+            f"fda_nme_compilation.csv</a> and "
+            f'<a href="/data/fda_nme_compilation.parquet">fda_nme_compilation.parquet</a> '
+            f"(filter <code>approval_year = {year}</code>). Column definitions are on the "
+            f'<a href="/drugs/compilation/">compilation page</a>.</p>'
+        )
     use_note = (
         "The approved use is FDA's one-line summary from its annual Novel Drug Approvals list."
         if has_pages
@@ -320,20 +422,27 @@ def render_year(
         if has_pages
         else ""
     )
+    if table_note is None:
+        table_note = (
+            "In order of approval. Review designation and the expedited-program columns describe "
+            "each application at the time of original approval, as FDA records them in its "
+            '<a href="/drugs/compilation/">compilation of CDER NME and new biologic approvals</a>. '
+            f"{use_note}{link_note}"
+        )
     body = f"""  <header>
-    <h1>FDA novel drug approvals in {year}</h1>
-    <p class="subtitle">Every new molecular entity and new biologic approved by FDA's CDER in calendar year {year}.</p>
+    <h1>{heading}</h1>
+    <p class="subtitle">{subtitle}</p>
   </header>
 
   <p class="lead">{lead[0]}</p>
   {"".join(f"<p>{p}</p>" for p in lead[1:])}
 
-  <h2>List of {year} novel drug approvals (CDER)</h2>
-  <p class="note">In order of approval. Review designation and the expedited-program columns describe each application at the time of original approval, as FDA records them in its <a href="/drugs/compilation/">compilation of CDER NME and new biologic approvals</a>. {use_note}{link_note}</p>
+  <h2>{list_heading}</h2>
+  <p class="note">{table_note}</p>
   <div class="scroll">
     <table>
-      <caption>CDER novel drug approvals, {year}: {s["n"]} approvals</caption>
-      <thead><tr><th>Approved</th><th>Drug</th><th>Applicant</th><th>Application</th><th>Review</th><th>Expedited programs</th><th>FDA-approved use</th></tr></thead>
+      <caption>{caption}</caption>
+      <thead><tr><th>Approved</th><th>Drug</th><th>Applicant</th><th>Application</th><th>Review</th><th>{programs_head}</th><th>FDA-approved use</th></tr></thead>
       <tbody>
 {body_rows}
       </tbody>
@@ -345,36 +454,43 @@ def render_year(
   <p>FDA uses "novel" for drugs never before approved or marketed in the United States. This list is CDER's count of new molecular entities and new therapeutic biologics. It leaves out generics, biosimilars, new formulations and new indications of drugs already approved, and products licensed by CBER such as vaccines, blood products and cell and gene therapies. See <a href="/docs/new-molecular-entity/">what a new molecular entity is</a> and <a href="/docs/fda-nme/">what an FDA novel drug approval is</a>.</p>
 
   <h2>Other years</h2>
-  <p>{" · ".join(nav)} · <a href="/drugs/statistics/">Approvals per year, 1985–{years[-1]}</a></p>
+  <p>{" · ".join(nav)} · {stats_link}</p>
   <ul class="yearnav">
 {all_years}
   </ul>
 
   <h2>Download this list</h2>
-  <p>All {year} rows are in <a href="/data/fda_nme_compilation.csv">fda_nme_compilation.csv</a> and <a href="/data/fda_nme_compilation.parquet">fda_nme_compilation.parquet</a> (filter <code>approval_year = {year}</code>). Column definitions are on the <a href="/drugs/compilation/">compilation page</a>.</p>"""
+  {download}"""
 
-    extra = (
-        f'    <p>Data: FDA, <a href="{COMPILATION_PAGE_URL}">Compilation of CDER NME and New Biologic Approvals</a>, '
-        f"file dated {esc(fmt_date_long(vintage))}"
-        + (
-            f'; <a href="{NOVEL_APPROVALS_URL}">Novel Drug Approvals</a> annual list'
-            if has_pages
-            else ""
+    if partial:
+        extra = (
+            f'    <p>Data: FDA, <a href="{NOVEL_APPROVALS_URL}">Novel Drug Approvals</a> list for '
+            f"{year}, current as of {esc(fmt_date_long(as_of))}; FDA's Drugs@FDA data through "
+            f'<a href="https://open.fda.gov/apis/drug/drugsfda/">openFDA</a>.</p>\n'
         )
-        + ".</p>\n"
-    )
+    else:
+        extra = (
+            f'    <p>Data: FDA, <a href="{COMPILATION_PAGE_URL}">Compilation of CDER NME and New Biologic Approvals</a>, '
+            f"file dated {esc(fmt_date_long(vintage))}"
+            + (
+                f'; <a href="{NOVEL_APPROVALS_URL}">Novel Drug Approvals</a> annual list'
+                if has_pages
+                else ""
+            )
+            + ".</p>\n"
+        )
     nodes = [
         {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            "name": f"FDA novel drug approvals in {year}",
+            "name": heading,
             "description": description,
             "url": f"{SITE}{path}",
             "isPartOf": {"@type": "WebSite", "name": "trove", "url": f"{SITE}/"},
             "author": PERSON,
             "publisher": PUBLISHER,
             "dateModified": modified,
-            "isBasedOn": COMPILATION_PAGE_URL,
+            "isBasedOn": NOVEL_APPROVALS_URL if partial else COMPILATION_PAGE_URL,
         },
         breadcrumbs([("trove", "/"), ("FDA drug approvals", "/drugs/"), (str(year), path)]),
     ]
@@ -400,7 +516,7 @@ def render_year(
         title=title,
         description=description,
         path=path,
-        og_title=f"FDA novel drug approvals in {year}",
+        og_title=heading,
         nodes=nodes,
         crumbs_html=f'<a href="/">trove</a> / <a href="/drugs/">FDA drug approvals</a> / {year}',
         body=body,
@@ -413,12 +529,12 @@ def render_year(
         return str(s or "").replace("|", "\\|").replace("\n", " ")
 
     md = [
-        f"# FDA novel drug approvals in {year}",
+        f"# {heading}",
         "",
         *[_strip_tags(p) + "\n" for p in lead],
-        f"## List of {year} novel drug approvals (CDER)",
+        f"## {list_heading}",
         "",
-        "| Approved | Drug | Active ingredient | Applicant | Application | Review | Expedited programs | FDA-approved use |",
+        f"| Approved | Drug | Active ingredient | Applicant | Application | Review | {programs_head} | FDA-approved use |",
         "|---|---|---|---|---|---|---|---|",
     ]
     for r in rows:
@@ -430,7 +546,7 @@ def render_year(
         md.append(
             f"| {r['date']} | {name} | {md_cell(r.get('active_ingredient'))} | "
             f"{md_cell(r.get('applicant'))} | {r['application_type']} {r['application_number']} | "
-            f"{md_cell(review_label(r))} | {md_cell(', '.join(flag_labels(r)) or '—')} | {md_cell(r['use'])} |"
+            f"{md_cell(review_label(r))} | {md_cell(programs(r))} | {md_cell(r['use'])} |"
         )
     if cber:
         md += [
@@ -447,13 +563,23 @@ def render_year(
                 f"BLA {md_cell(r.get('application_number') or '—')} | "
                 f"{md_cell(short_use(cber_use(r.get('indication'))))} |"
             )
-    md += [
-        "",
-        f"Source: FDA, Compilation of CDER NME and New Biologic Approvals ({COMPILATION_PAGE_URL}), "
-        f"file dated {fmt_date_long(vintage)}. Page: {SITE}{path} (updated {modified}). "
-        f"Data: {SITE}/data/fda_nme_compilation.csv",
-        "",
-    ]
+    if partial:
+        md += [
+            "",
+            f"Source: FDA, Novel Drug Approvals list for {year} ({NOVEL_APPROVALS_URL}), current "
+            f"as of {fmt_date_long(as_of)}; review priority and orphan flag from FDA's "
+            f"Drugs@FDA data through openFDA. Page: {SITE}{path} (updated {modified}). "
+            f"Data: {SITE}/data/fda_approvals_nme_recent.json",
+            "",
+        ]
+    else:
+        md += [
+            "",
+            f"Source: FDA, Compilation of CDER NME and New Biologic Approvals ({COMPILATION_PAGE_URL}), "
+            f"file dated {fmt_date_long(vintage)}. Page: {SITE}{path} (updated {modified}). "
+            f"Data: {SITE}/data/fda_nme_compilation.csv",
+            "",
+        ]
     return page, "\n".join(md)
 
 
@@ -507,7 +633,10 @@ def compute_statistics(comp_rows: list[dict]) -> dict:
     }
 
 
-def render_statistics(comp_rows: list[dict], vintage: str, modified: str) -> tuple[str, str]:
+def render_statistics(
+    comp_rows: list[dict], vintage: str, modified: str, current: dict | None = None
+) -> tuple[str, str]:
+    """``current`` is the year in progress: ``{"year", "n", "as_of"}``, or ``None``."""
     st = compute_statistics(comp_rows)
     years, a, rec = st["years"], st["all"], st["recent"]
     y0, y1 = years[0], years[-1]
@@ -529,6 +658,19 @@ def render_statistics(comp_rows: list[dict], vintage: str, modified: str) -> tup
         f"{mean_all:.1f} a year. The most in one year was {st['max_n']} "
         f"({join_words([str(y) for y in st['max_years']])}); the fewest was {st['min_n']} "
         f"({join_words([str(y) for y in st['min_years']])}). In {y1} CDER approved {latest['n']}."
+    )
+    current_note = (
+        f"{current['year']} is not in FDA's compilation yet, so it is not in these figures. FDA's "
+        f"running list showed {current['n']} CDER novel approvals in {current['year']} as of "
+        f"{fmt_date_long(current['as_of'])}."
+        if current
+        else ""
+    )
+    current_html = (
+        f'\n  <p>{current_note} See the <a href="/drugs/{current["year"]}/">{current["year"]} '
+        f"list to date</a>.</p>"
+        if current
+        else ""
     )
     q_per_year = (
         f"From {r0} through {r1}, CDER approved an average of {mean_recent:.1f} novel drugs a "
@@ -588,7 +730,7 @@ def render_statistics(comp_rows: list[dict], vintage: str, modified: str) -> tup
     <p class="subtitle">Novel drug approvals per year, review designations and review times, computed from FDA's own compilation.</p>
   </header>
 
-  <p class="lead">{lead}</p>
+  <p class="lead">{lead}</p>{current_html}
   <p class="note">"Novel" here means new molecular entities and new therapeutic biologics approved by CDER, as listed in FDA's <a href="/drugs/compilation/">Compilation of CDER NME and New Biologic Approvals</a> (file dated {esc(fmt_date_long(vintage))}). Every figure on this page is a count over that file; the <a href="/data/fda_nme_compilation.csv">CSV</a> is one click away if you want to check one.</p>
 
   <h2>How many novel drugs does the FDA approve each year?</h2>
@@ -678,6 +820,7 @@ GROUP BY 1 ORDER BY 1 DESC;</code></pre>"""
         "",
         _strip_tags(lead),
         "",
+        *([current_note, ""] if current else []),
         "## How many novel drugs does the FDA approve each year?",
         "",
         q_per_year,
@@ -952,7 +1095,9 @@ df = pd.read_csv("{SITE}/data/fda_nme_compilation.csv", dtype={{"application_num
 # --- static list inside /drugs/ ---------------------------------------------
 
 
-def render_static_list(index_rows: list[dict], comp_rows: list[dict]) -> str:
+def render_static_list(
+    index_rows: list[dict], comp_rows: list[dict], current: dict | None = None
+) -> str:
     """Crawlable HTML for /drugs/: year links plus every drug in the index."""
     years = sorted({r["approval_year"] for r in comp_rows})
     counts = {y: sum(1 for r in comp_rows if r["approval_year"] == y) for y in years}
@@ -960,6 +1105,11 @@ def render_static_list(index_rows: list[dict], comp_rows: list[dict]) -> str:
         f'      <li><a href="/drugs/{y}/">{y}</a> <span class="when">({counts[y]})</span></li>'
         for y in reversed(years)
     )
+    if current:
+        year_links = (
+            f'      <li><a href="/drugs/{current["year"]}/">{current["year"]}</a> '
+            f'<span class="when">({current["n"]} so far)</span></li>\n' + year_links
+        )
     blocks = []
     for y in sorted({r["year"] for r in index_rows}, reverse=True):
         rows = sorted(
@@ -974,7 +1124,7 @@ def render_static_list(index_rows: list[dict], comp_rows: list[dict]) -> str:
         )
     return f"""  <section>
     <h2>Browse FDA novel drug approvals by year</h2>
-    <p>Every new molecular entity and new biologic approved by FDA's CDER since {years[0]}, one page per year, with the number of approvals in parentheses. See also <a href="/drugs/statistics/">approval statistics, {years[0]}–{years[-1]}</a> and the <a href="/drugs/compilation/">full list as CSV</a>.</p>
+    <p>Every new molecular entity and new biologic approved by FDA's CDER since {years[0]}, one page per year, with the number of approvals in parentheses.{f" The {current['year']} count runs through {fmt_date_long(current['as_of'])}." if current else ""} See also <a href="/drugs/statistics/">approval statistics, {years[0]}–{years[-1]}</a> and the <a href="/drugs/compilation/">full list as CSV</a>.</p>
     <ul class="year-links">
 {year_links}
     </ul>
@@ -996,26 +1146,35 @@ def write_all(index: dict, today: str) -> list[tuple[str, str, str, str]]:
     comp_rows, source = load_compilation()
     vintage = source_date(source)
     years = sorted({r["approval_year"] for r in comp_rows})
+    current = year_in_progress(index, comp_rows)
+    if current:
+        years.append(current["year"])
     entries: list[tuple[str, str, str, str]] = []
 
-    def emit(path: str, render, priority: str) -> None:
+    def emit(path: str, render, priority: str, changefreq: str = "yearly") -> None:
         out = DRUGS_DIR / path.removeprefix("/drugs/")
         modified = write_page(out / "index.html", lambda d: render(d)[0], today)
         (out / "index.md").write_text(render(modified)[1])
-        entries.append((path, modified, "yearly", priority))
+        entries.append((path, modified, changefreq, priority))
 
     for y in years:
+        as_of = current["as_of"] if current and y == current["year"] else None
         emit(
             f"/drugs/{y}/",
-            lambda d, y=y: render_year(y, years, index_rows, comp_rows, vintage, d),
-            "0.6",
+            lambda d, y=y, as_of=as_of: render_year(
+                y, years, index_rows, comp_rows, vintage, d, as_of
+            ),
+            "0.8" if as_of else "0.6",
+            "monthly" if as_of else "yearly",
         )
-    emit("/drugs/statistics/", lambda d: render_statistics(comp_rows, vintage, d), "0.8")
+    emit("/drugs/statistics/", lambda d: render_statistics(comp_rows, vintage, d, current), "0.8")
     emit("/drugs/compilation/", lambda d: render_compilation(comp_rows, source, vintage, d), "0.8")
 
     DRUGS_INDEX.write_text(
         splice(
-            DRUGS_INDEX.read_text(), "fda-static-list", render_static_list(index_rows, comp_rows)
+            DRUGS_INDEX.read_text(),
+            "fda-static-list",
+            render_static_list(index_rows, comp_rows, current),
         )
     )
     print(
@@ -1024,7 +1183,27 @@ def write_all(index: dict, today: str) -> list[tuple[str, str, str, str]]:
     return entries
 
 
-def reserved_dirs() -> set[str]:
+def year_in_progress(index: dict, comp_rows: list[dict]) -> dict | None:
+    """``{"year", "n", "as_of"}`` for the year the compilation does not cover yet.
+
+    ``n`` counts the year's CDER rows in the per-drug index; ``as_of`` is the
+    date FDA's running list was current to when it was read.
+    """
+    record = index["totals"].get("year_in_progress")
+    if not record or record["year"] <= max(r["approval_year"] for r in comp_rows):
+        return None
+    if not record.get("cder_list_current_as_of"):
+        raise SystemExit(f"{record['year']}: FDA's list page gave no 'current as of' date")
+    n = sum(
+        1 for r in index["rows"] if r["year"] == record["year"] and r["regulatory_center"] == "CDER"
+    )
+    return {"year": record["year"], "n": n, "as_of": record["cder_list_current_as_of"]}
+
+
+def reserved_dirs(index: dict | None = None) -> set[str]:
     """Directory names under web/drugs/ that are not per-drug pages."""
     comp_rows, _ = load_compilation()
-    return RESERVED_SLUGS | {str(r["approval_year"]) for r in comp_rows}
+    years = {str(r["approval_year"]) for r in comp_rows}
+    if index:
+        years |= {str(r["year"]) for r in index["rows"]}
+    return RESERVED_SLUGS | years

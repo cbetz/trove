@@ -38,4 +38,4 @@ FDA's Center for Drug Evaluation and Research (CDER) approved 29 novel drugs in 
 | 1992-12-30 | Manoplax | flosequinan | Boots | NDA 019960 | Standard | — | management of congestive heart failure in patients not responding adequately to diuretics |
 | 1992-12-30 | Tilade | nedocromil sodium | Fisons | NDA 019660 | Standard | — | indicated for maintenance therapy in the management of patients with mild to moderate bronchial asthma |
 
-Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1992/ (updated 2026-11-26). Data: https://troveproject.com/data/fda_nme_compilation.csv
+Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1992/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_nme_compilation.csv

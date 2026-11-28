@@ -36,4 +36,4 @@ FDA's Center for Drug Evaluation and Research (CDER) approved 27 novel drugs in 
 | 1989-12-29 | Ortho Cyclen | norgestimate, ethinyl estradiol | RW Johnson | NDA 019653 | Standard | — | prevention of pregnancy in women who elect to use oral contraceptives as a method of contraception |
 | 1989-12-29 | Zoladex | goserelin acetate | ICI | NDA 019726 | Standard | — | palliative treatment of advanced carcinoma of the prostate |
 
-Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1989/ (updated 2026-11-26). Data: https://troveproject.com/data/fda_nme_compilation.csv
+Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1989/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_nme_compilation.csv

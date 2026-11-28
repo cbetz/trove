@@ -3,6 +3,51 @@
 Release and milestone history for [trove](https://github.com/cbetz/trove). Milestone dates
 are approximate to the month; see `git log` for exact commits.
 
+## 1.3.0 — 2026-11-28
+
+2026 approvals, and every document link re-read from FDA. Nothing in the hospital data changed.
+
+**Coverage.** The per-drug index now runs 2021–2026: 331 approvals (295 CDER + 36 CBER), up
+from 268. 2026 is in progress. Its 57 CDER rows run to November 24, 2026, the "current as of"
+date on FDA's list when it was read on November 28; `totals.year_in_progress` in the JSON
+bundle records that date, and `/drugs/2026/` says "so far".
+
+**How 2026 rows are built.** FDA's 2026 list names drugs without linking their labels, so there
+is no application number to read from it. Each drug is matched to its application in openFDA's
+Drugs@FDA data by brand name, and the match is accepted only if the original approval date
+there is within three days of the list's. All 57 matched. One date differs: FDA's list gives
+Pimjetmi as November 13, Drugs@FDA and FDA's own announcement say November 10, and the index
+uses November 10.
+
+**Fewer fields for 2026.** FDA's compilation stops at 2025. Until it covers 2026:
+
+- `review_designation` and `orphan_drug_designation` come from the application's Drugs@FDA
+  record, and the new column `designations_source` says so (`openfda` instead of
+  `compilation`). Drugs@FDA's orphan flag belongs to the application, so it can be set for a
+  use other than the one approved. On the 237 approvals from 2021–2025 that both sources
+  cover, its review priority agreed with the compilation for 236 and its orphan flag for 235.
+- Accelerated approval, breakthrough, fast track, the receipt date, dosage form and route are
+  null. Pages say "not recorded here yet" and never "no".
+- 12 of the 57 have no review documents and 5 no label yet: FDA had not posted them.
+
+**Document links refreshed.** Every CDER row's approval letter, review package and
+classification is now read from openFDA's Drugs@FDA endpoint (2026-11-28), not only the 2025
+rows. For 2021–2025 the result is identical to what was published, link for link, so nothing
+on those pages changed except the date the links were read. `documents_read` is 2026-11-28 on
+294 of 295 CDER rows; Pepaxto, withdrawn, is no longer in openFDA.
+
+**Scraper.** The drugs@FDA website pages are now read from the local cache only, and nothing
+is requested from accessdata.fda.gov unless `TROVE_FDA_FETCH_PAGES=1` is set. When openFDA
+lists more than one review under an original approval, the review index posted with the
+approval is used, not the latest (Imdelltra).
+
+**Site.** A request for a page under `/drugs/` that sends `Accept: text/markdown` is
+redirected (307) to the page's Markdown version. It is a `has` rule on a redirect in
+`vercel.json`, so no function runs and requests without that header are untouched.
+
+**Skills.** `fda-analyst` documents the year in progress and the 2026 designation fields.
+Plugin 1.3.0.
+
 ## 1.2.0 — 2026-11-26
 
 The FDA section, driven by what the site's search queries were asking for. Nothing in the

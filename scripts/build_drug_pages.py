@@ -78,6 +78,15 @@ def is_cber(r: dict) -> bool:
     return r.get("regulatory_center") == "CBER"
 
 
+def from_drugs_at_fda(r: dict) -> bool:
+    """True when a row's review priority and orphan status come from Drugs@FDA.
+
+    That is the case for a year FDA's compilation does not cover yet. Those
+    rows have no accelerated approval, breakthrough or fast track value.
+    """
+    return r.get("designations_source") == "openfda"
+
+
 def application(r: dict) -> str:
     return f"{r.get('application_type') or ''} {r.get('application_number') or ''}".strip()
 
@@ -115,7 +124,18 @@ def summary_paragraphs(r: dict) -> list[str]:
     out = [first]
 
     review = r.get("review_designation")
-    if review:
+    if review and from_drugs_at_fda(r):
+        # Only review priority goes in the prose. Drugs@FDA's orphan flag is
+        # looser than the compilation's (it can belong to another use of the
+        # application), so it stays in the facts table beside its caveat.
+        priority = "priority review" if is_priority(review) else "standard review"
+        out.append(
+            f"FDA's Drugs@FDA record lists {priority} for the {name} application. "
+            f"Whether {name} had accelerated approval, breakthrough therapy or fast track "
+            f"designation is not recorded here yet: FDA's compilation of novel approvals does "
+            f"not cover {r['year']}."
+        )
+    elif review:
         flags = designations(r)
         if is_priority(review):
             second = f"At original approval, FDA recorded {join_words(flags)} for {name}."
@@ -174,8 +194,12 @@ def fact_rows(r: dict) -> list[tuple[str, str, str]]:
     add("Pharmacologic class", r.get("pharm_class_epc"))
     add("Dosage form", r.get("dosage_form"))
     add("Route of administration", r.get("route_of_administration"))
-    add("Review designation", r.get("review_designation"))
-    add("Orphan drug designation", r.get("orphan_drug_designation"))
+    if from_drugs_at_fda(r):
+        add("Review priority (Drugs@FDA)", r.get("review_designation"))
+        add("Orphan flag (Drugs@FDA)", r.get("orphan_drug_designation"))
+    else:
+        add("Review designation", r.get("review_designation"))
+        add("Orphan drug designation", r.get("orphan_drug_designation"))
     add("Accelerated approval", r.get("accelerated_approval"))
     add("Breakthrough therapy designation", r.get("breakthrough_therapy_designation"))
     add("Fast track designation", r.get("fast_track_designation"))
@@ -288,11 +312,30 @@ def source_note(r: dict, sources_read: dict) -> str:
         )
     if r.get("approval_letter_url") or r.get("review_url"):
         read_on = r.get("documents_read") or sources_read.get("drugs_at_fda")
+        missing = [
+            kind
+            for key, kind in (("approval_letter_url", "approval letter"), ("review_url", "review"))
+            if not r.get(key)
+        ]
+        if not read_on:
+            return ""
+        if missing and r.get("documents_read"):
+            return (
+                f" FDA had not posted the {missing[0]} documents for this record when its "
+                f"Drugs@FDA data was read on {fmt_date_long(read_on)}; the Drugs@FDA record "
+                f"will show them once it does."
+                if missing == ["review"]
+                else f" FDA's Drugs@FDA data listed no {missing[0]} for this record when it was "
+                f"read on {fmt_date_long(read_on)}."
+            )
         return (
             f" FDA's document links for this record were read on {fmt_date_long(read_on)}; "
             f"FDA may have posted documents since."
-            if read_on
-            else ""
+        )
+    if r.get("documents_read"):
+        return (
+            f" FDA's Drugs@FDA data listed no approval letter or review documents for this "
+            f"record when it was read on {fmt_date_long(r['documents_read'])}."
         )
     read_on = sources_read.get("cder_lists")
     return (
@@ -435,11 +478,14 @@ def render_drug(
     links = document_links(r)
 
     kinds = document_kinds(r)
-    title = (
-        f"{named} FDA approval: date, label, review documents | trove"
-        if r.get("review_url") or is_cber(r)
-        else f"{named} FDA approval: date, application, label | trove"
-    )
+    if r.get("review_url") or is_cber(r):
+        title = f"{named} FDA approval: date, label, review documents | trove"
+    elif r.get("label_pdf_url"):
+        title = f"{named} FDA approval: date, application, label | trove"
+    elif r.get("approval_letter_url"):
+        title = f"{named} FDA approval: date, application, approval letter | trove"
+    else:
+        title = f"{named} FDA approval: date and application | trove"
     description = (
         f"{named} was approved by the FDA on {fmt_date_long(r['approval_date'])}"
         + (
@@ -464,13 +510,23 @@ def render_drug(
             '    <li><span class="muted">No FDA links available for this record.</span></li>'
         )
     has_designations = bool(r.get("review_designation"))
-    designation_note = (
-        '  <p class="note">Review designation and the expedited-program rows are from FDA\'s '
-        '<a href="/drugs/compilation/">compilation of CDER NME and new biologic approvals</a> and '
-        "describe the application at the time of original approval.</p>\n"
-        if has_designations
-        else ""
-    )
+    if has_designations and from_drugs_at_fda(r):
+        designation_note = (
+            '  <p class="note">Review priority and the orphan flag are from the application\'s '
+            "Drugs@FDA record. The orphan flag belongs to the application, so it can reflect a "
+            "designation for a use other than the one approved here. FDA's "
+            '<a href="/drugs/compilation/">compilation of CDER NME and new biologic approvals</a>, '
+            "which also records accelerated approval, breakthrough therapy and fast track "
+            f"designation, does not cover {r['year']} yet.</p>\n"
+        )
+    elif has_designations:
+        designation_note = (
+            '  <p class="note">Review designation and the expedited-program rows are from FDA\'s '
+            '<a href="/drugs/compilation/">compilation of CDER NME and new biologic approvals</a> '
+            "and describe the application at the time of original approval.</p>\n"
+        )
+    else:
+        designation_note = ""
     use = cber_use(r.get("indication")) if is_cber(r) else ""
     if len(use) <= CBER_USE_IN_LEAD:
         use = ""  # already quoted in the opening sentence
@@ -547,8 +603,9 @@ def render_drug(
     md += [f"- [{text}]({url.replace(' ', '%20')}): {what}" for url, text, what in links]
     md += [
         "",
-        f"Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA; Compilation "
-        f"of CDER NME and New Biologic Approvals).{read_line} Page: {SITE}{path} (updated "
+        "Source: U.S. Food and Drug Administration (Novel Drug Approvals; Drugs@FDA"
+        + ("" if from_drugs_at_fda(r) else "; Compilation of CDER NME and New Biologic Approvals")
+        + f").{read_line} Page: {SITE}{path} (updated "
         f"{modified}). All {r['year']} approvals: {SITE}/drugs/{r['year']}/. Not medical advice.",
         "",
     ]
@@ -594,7 +651,7 @@ def main() -> None:
     slugs = [slugify(r["drug_name"]) for r in rows]
     if len(set(slugs)) != len(slugs):
         raise SystemExit("Two drugs map to the same page slug")
-    reserved = build_fda_lists.reserved_dirs()
+    reserved = build_fda_lists.reserved_dirs(data)
     clash = sorted(set(slugs) & reserved)
     if clash:
         raise SystemExit(f"Drug slugs collide with list pages: {', '.join(clash)}")

@@ -31,4 +31,4 @@ FDA's Center for Drug Evaluation and Research (CDER) approved 22 novel drugs in 
 | 2006-10-31 | Veregen | kunecatechins | Medigene | NDA 021902 | Standard | — | treatment of external genital and perianal warts (Condylomata acuminata) in immunocompetent patients 18 years and older |
 | 2006-12-19 | Invega | paliperidone | Johnson & Johnson | NDA 021999 | Standard | — | treatment of schizophrenia |
 
-Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/2006/ (updated 2026-11-26). Data: https://troveproject.com/data/fda_nme_compilation.csv
+Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/2006/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_nme_compilation.csv
