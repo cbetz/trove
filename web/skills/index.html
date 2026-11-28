@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>trove — Claude Code skills for healthcare data</title>
-  <meta name="description" content="Two Claude Code skills that turn natural-language questions into queries over real healthcare data: fda-analyst (FDA novel drug approvals 2021–2025) and hcris-analyst (CMS Cost Reports + IRS 990 Schedule H).">
+  <meta name="description" content="Two Claude Code skills that turn natural-language questions into queries over real healthcare data: fda-analyst (FDA novel drug approvals 2021–2026) and hcris-analyst (CMS Cost Reports + IRS 990 Schedule H).">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="canonical" href="https://troveproject.com/skills/">
   <meta property="og:type" content="website">
@@ -36,7 +36,7 @@
     "sameAs": "https://github.com/cbetz/trove",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Cross-platform (Claude Code)",
-    "softwareVersion": "1.2.0",
+    "softwareVersion": "1.3.0",
     "license": "https://opensource.org/licenses/MIT",
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
     "author": {
@@ -49,7 +49,7 @@
         "https://github.com/cbetz"
       ]
     },
-    "description": "Two Claude Code skills for underused public healthcare data. fda-analyst answers questions about FDA novel drug approvals 2021–2025 from the actual approval-package documents. hcris-analyst queries CMS Worksheet S-10 and IRS Form 990 Schedule H side-by-side for U.S. nonprofit hospitals."
+    "description": "Two Claude Code skills for underused public healthcare data. fda-analyst answers questions about FDA novel drug approvals 2021–2026 from the actual approval-package documents. hcris-analyst queries CMS Worksheet S-10 and IRS Form 990 Schedule H side-by-side for U.S. nonprofit hospitals."
   },
   {
     "@context": "https://schema.org",
@@ -60,7 +60,7 @@
     "operatingSystem": "Cross-platform (Claude Code)",
     "license": "https://opensource.org/licenses/MIT",
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
-    "description": "A Claude Code skill for FDA novel drug approvals (2021–2025). Answers natural-language questions by reading the actual FDA approval-package documents — medical review, statistical review, pharmacology review, chemistry review."
+    "description": "A Claude Code skill for FDA novel drug approvals (2021–2026). Answers natural-language questions by reading the actual FDA approval-package documents — medical review, statistical review, pharmacology review, chemistry review."
   },
   {
     "@context": "https://schema.org",
@@ -157,16 +157,16 @@
     <p>Add Anthropic's public community marketplace, then install the plugin:</p>
 <pre><code>/plugin marketplace add anthropics/claude-plugins-community
 /plugin install trove@claude-community</code></pre>
-    <p>trove is listed in the community marketplace, not the separate official <code>claude-plugins-official</code> marketplace. The current plugin version is 1.2.0; both skills ship in it.</p>
+    <p>trove is listed in the community marketplace, not the separate official <code>claude-plugins-official</code> marketplace. The current plugin version is 1.3.0; both skills ship in it.</p>
     <p>The skills' source, and instructions for installing them without the plugin, are at <a href="https://github.com/cbetz/trove/tree/main/skills">github.com/cbetz/trove/tree/main/skills</a>.</p>
   </section>
 
   <section>
     <h2>The two healthcare data skills</h2>
     <a class="skill-card" href="/skills/fda-analyst/">
-      <span class="skill-tag">plugin 1.2.0 · 268 FDA approvals indexed (238 CDER + 30 CBER)</span>
+      <span class="skill-tag">plugin 1.3.0 · 331 FDA approvals indexed (295 CDER + 36 CBER)</span>
       <p class="skill-name">fda-analyst</p>
-      <p class="skill-desc">Answer questions about FDA novel drug approvals (2021–2025) — the basis for approval, the trials, the endpoints, the regulatory pathway, adverse events the FDA flagged in the medical review. The skill fetches the actual approval-package PDFs at query time rather than relying on training data.</p>
+      <p class="skill-desc">Answer questions about FDA novel drug approvals (2021–2026) — the basis for approval, the trials, the endpoints, the regulatory pathway, adverse events the FDA flagged in the medical review. The skill fetches the actual approval-package PDFs at query time rather than relying on training data.</p>
       <ul class="skill-examples">
         <li><em>What was the basis for Lenmeldy's approval?</em></li>
         <li><em>What adverse events did the FDA flag in the Elahere medical review?</em></li>
@@ -174,7 +174,7 @@
       </ul>
     </a>
     <a class="skill-card" href="/skills/hcris-analyst/">
-      <span class="skill-tag">plugin 1.2.0 · 2,099 hospital systems · tax year 2022</span>
+      <span class="skill-tag">plugin 1.3.0 · 2,099 hospital systems · tax year 2022</span>
       <p class="skill-name">hcris-analyst</p>
       <p class="skill-desc">Look up what a U.S. nonprofit hospital reports on IRS Form 990 Schedule H line 7a and on CMS cost report Worksheet S-10 line 23, side by side for the same fiscal period, with the components from each filing that show what is in the difference. Also answers questions about cost-report figures such as beds, revenue, expenses and uncompensated care.</p>
       <ul class="skill-examples">
@@ -207,7 +207,7 @@
     <h2>Browse the underlying data without installing the skills</h2>
     <p>If you want to see the underlying data without installing a skill:</p>
     <ul>
-      <li><a href="/drugs/">Browse the FDA drug approvals index</a> — search any of 268 CDER + CBER novel approvals by name, see the approval package.</li>
+      <li><a href="/drugs/">Browse the FDA drug approvals index</a> — search any of 331 CDER + CBER novel approvals by name, see the approval package.</li>
       <li><a href="/hospitals/">Browse the hospital figures</a> — two public figures side by side, financial assistance on IRS Schedule H line 7a and charity care on CMS Worksheet S-10 line 23, for 2,099 matched nonprofit hospital systems, with a ranked index of 493 single hospitals.</li>
       <li><a href="https://github.com/cbetz/trove">Read the source on GitHub</a> — parsers, build scripts, raw artifacts, MIT-licensed.</li>
     </ul>

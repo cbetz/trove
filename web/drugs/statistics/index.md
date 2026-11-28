@@ -2,6 +2,8 @@
 
 FDA's Center for Drug Evaluation and Research (CDER) approved 1,387 novel drugs from 1985 through 2025: 1,108 under new drug applications (NDAs) and 279 under biologics license applications (BLAs). That is an average of 33.8 a year. The most in one year was 59 (1996 and 2018); the fewest was 18 (2007). In 2025 CDER approved 46.
 
+2026 is not in FDA's compilation yet, so it is not in these figures. FDA's running list showed 57 CDER novel approvals in 2026 as of November 24, 2026.
+
 ## How many novel drugs does the FDA approve each year?
 
 From 2016 through 2025, CDER approved an average of 46.6 novel drugs a year, ranging from 22 to 59. Over the full 1985–2025 record the average is 33.8 a year.
@@ -64,4 +66,4 @@ This page counts novel approvals only: 1,387 new molecular entities and new biol
 | 1986 | 23 | 20 | 3 | 14 | 3 | — | — | — | 965 |
 | 1985 | 31 | 31 | 0 | 18 | 3 | — | — | — | 980 |
 
-Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026; counts computed by trove. Page: https://troveproject.com/drugs/statistics/ (updated 2026-11-26). Data: https://troveproject.com/data/fda_nme_compilation.csv
+Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026; counts computed by trove. Page: https://troveproject.com/drugs/statistics/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_nme_compilation.csv

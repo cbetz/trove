@@ -52,4 +52,4 @@ FDA's Center for Drug Evaluation and Research (CDER) approved 43 novel drugs in 
 | 1997-12-24 | Sclerosol | talc | Bryan | NDA 020587 | Priority | Orphan | for the prevention of the recurrence of malignant pleural effusions in symptomatic patients |
 | 1997-12-29 | Emadine | emedastine difumarate | Alcon | NDA 020706 | Standard | — | for the temporary relief of the signs and symptoms of allergic conjunctivitis |
 
-Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1997/ (updated 2026-11-26). Data: https://troveproject.com/data/fda_nme_compilation.csv
+Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1997/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_nme_compilation.csv

@@ -1,11 +1,16 @@
 """Build the FDA novel drug approvals index (CDER + CBER).
 
-Scrapes two FDA sources for the complete calendar years in ``YEARS`` and writes:
+Reads FDA's sources for the calendar years in ``YEARS`` and writes the index.
+The last year may be the one in progress: its rows run to the "current as of"
+date on FDA's list, which is recorded in the bundle.
 
 - CDER — annual Novel Drug Approvals pages (NMEs and novel BLAs from
   the Center for Drug Evaluation and Research)
 - CBER — Approved Cellular and Gene Therapy Products page (cell and
   gene therapies from the Center for Biologics Evaluation and Research)
+- openFDA — Drugs@FDA records (application, sponsor, approval documents) and
+  drug labels (pharmacologic class)
+- FDA's Compilation of CDER NME and New Biologic Approvals (designations)
 
 Outputs:
 
@@ -32,9 +37,15 @@ from pathlib import Path
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
-from fda_sba import build_index, fetch_compilation, parse_compilation, read_source_metadata
+from fda_sba import (
+    build_index,
+    fetch_compilation,
+    list_current_as_of,
+    parse_compilation,
+    read_source_metadata,
+)
 
-YEARS = (2021, 2022, 2023, 2024, 2025)
+YEARS = (2021, 2022, 2023, 2024, 2025, 2026)
 ARTIFACTS_DIR = Path("artifacts")
 PARQUET_DIR = Path("data/parquet")
 WEB_DATA = Path("web/data")
@@ -54,8 +65,9 @@ def main() -> None:
     for center, count in df.groupby("regulatory_center").size().items():
         print(f"    {center}: {count}")
     _check_dates(df)
-    # Rows whose letter or review link came from the cached drugs@FDA pages
-    # were read when that cache was; openFDA-filled rows carry their own date.
+    # A row openFDA has no record of (a withdrawn application) keeps the links
+    # from its cached drugs@FDA page, read when that cache was; every other
+    # row carries the day openFDA was read.
     page_read = _sources_read()["drugs_at_fda"]
     has_docs = df["approval_letter_url"].notna() | df["review_url"].notna()
     df.loc[has_docs & df["documents_read"].isna(), "documents_read"] = page_read
@@ -99,6 +111,7 @@ def main() -> None:
             "year_max": int(df["year"].max()),
             "by_year": {int(y): int(c) for y, c in df.groupby("year").size().items()},
             "sources_read": _sources_read(),
+            "year_in_progress": _year_in_progress(compilation),
         },
         "rows": rows,
     }
@@ -134,6 +147,19 @@ def _write_compilation(comp: pd.DataFrame, source: dict) -> None:
     print(f"  → {meta_out}")
 
 
+def _year_in_progress(compilation: pd.DataFrame) -> dict | None:
+    """The year FDA's compilation does not cover yet, and how far its list runs.
+
+    FDA adds a year to the compilation the following spring. Until then the
+    year's rows come from the running Novel Drug Approvals list, which is
+    complete only to its "current as of" date.
+    """
+    last = max(YEARS)
+    if last <= int(compilation["approval_year"].max()):
+        return None
+    return {"year": last, "cder_list_current_as_of": list_current_as_of(last, RAW_CACHE)}
+
+
 def _sources_read() -> dict:
     """When the cached FDA pages behind the index were fetched.
 
@@ -148,6 +174,7 @@ def _sources_read() -> dict:
     return {
         "cder_lists": oldest(RAW_CACHE.glob("nme_*.html")),
         "drugs_at_fda": oldest((RAW_CACHE / "overview").glob("*.html")),
+        "drugs_at_fda_api": oldest((RAW_CACHE / "drugsfda").glob("*.json")),
         "cber": oldest((RAW_CACHE / "cber").glob("*.html")),
         "openfda": oldest((RAW_CACHE / "openfda").glob("*.json")),
     }
@@ -193,6 +220,7 @@ def _row_to_json(r) -> dict:
         "qualified_infectious_disease_product": _str(r.qualified_infectious_disease_product),
         "priority_review_voucher_issued": _str(r.priority_review_voucher_issued),
         "priority_review_voucher_redeemed": _str(r.priority_review_voucher_redeemed),
+        "designations_source": _str(getattr(r, "designations_source", None)),
         "documents_read": _str(getattr(r, "documents_read", None)),
         "pharm_class_epc": _str(r.pharm_class_epc),
         "pharm_class_moa": _str(r.pharm_class_moa),

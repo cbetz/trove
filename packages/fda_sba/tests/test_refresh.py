@@ -168,6 +168,7 @@ def test_a_date_that_disagrees_with_the_compilation_is_reported() -> None:
 @pytest.fixture
 def fetcher(monkeypatch, tmp_path):
     monkeypatch.delenv("TROVE_FDA_OFFLINE", raising=False)
+    monkeypatch.setenv("TROVE_FDA_FETCH_PAGES", "1")
     monkeypatch.setattr(overview, "REQUEST_DELAY", 0)
     monkeypatch.setattr(overview, "_blocked_reason", None)
     monkeypatch.setattr(overview, "_failed", {})
@@ -216,7 +217,18 @@ def test_offline_switch_uses_the_cache_and_sends_nothing(fetcher, monkeypatch) -
     monkeypatch.setenv("TROVE_FDA_OFFLINE", "1")
     (cache / "111111.html").write_text("cached")
     assert overview.fetch_application_overview("111111", cache).read_text() == "cached"
-    with pytest.raises(RuntimeError, match="TROVE_FDA_OFFLINE"):
+    with pytest.raises(overview.PageNotCachedError):
+        overview.fetch_application_overview("222222", cache)
+    assert calls == []
+
+
+def test_pages_are_not_requested_unless_switched_on(fetcher, monkeypatch) -> None:
+    answer, calls, cache = fetcher
+    answer(403)
+    monkeypatch.delenv("TROVE_FDA_FETCH_PAGES")
+    (cache / "111111.html").write_text("cached")
+    assert overview.fetch_application_overview("111111", cache).read_text() == "cached"
+    with pytest.raises(overview.PageNotCachedError, match="TROVE_FDA_FETCH_PAGES"):
         overview.fetch_application_overview("222222", cache)
     assert calls == []
 
@@ -242,11 +254,16 @@ def test_original_approval_comes_from_the_first_approved_orig_submission() -> No
                 "submission_status": "AP",
                 "submission_status_date": "20250130",
                 "submission_class_code_description": "Type 1 - New Molecular Entity",
+                "review_priority": "PRIORITY",
+                "submission_property_type": [{"code": "Orphan"}],
                 "application_docs": [
                     {"type": "Label", "url": "http://x/lbl.pdf", "date": "20250207"},
                     {"type": "Letter", "url": "https://x/ltr.pdf", "date": "20250207"},
                     {"type": "Letter", "url": "https://x/corrected.pdf", "date": "20250301"},
                     {"type": "Review", "url": "https://x/TOC.html", "date": "20250224"},
+                    # A review FDA filed later under the same submission is not
+                    # the approval package.
+                    {"type": "Review", "url": "https://x/later-review.pdf", "date": "20260602"},
                 ],
             },
             {"submission_type": "ORIG", "submission_number": "3", "submission_status": "TA"},
@@ -258,26 +275,39 @@ def test_original_approval_comes_from_the_first_approved_orig_submission() -> No
         "label_url": "https://x/lbl.pdf",
         "submission_classification": "Type 1 - New Molecular Entity",
         "approval_date": "2025-01-30",
+        "review_designation": "Priority",
+        "orphan": "Yes",
     }
     assert set(parse_original_approval({"submissions": []}).values()) == {None}
-
-
-def test_openfda_fills_only_what_is_missing_and_leaves_bla_classification_blank(
-    tmp_path, monkeypatch
-) -> None:
-    import json
-
-    from fda_sba import drugsfda
-
-    record = {
-        "fetched": "2026-11-26",
+    # No orphan property is "not recorded", never "No".
+    plain = {
         "submissions": [
             {
                 "submission_type": "ORIG",
                 "submission_number": "1",
                 "submission_status": "AP",
-                "submission_status_date": "20250130",
+                "review_priority": "STANDARD",
+            }
+        ]
+    }
+    assert parse_original_approval(plain)["review_designation"] == "Standard"
+    assert parse_original_approval(plain)["orphan"] is None
+
+
+def _openfda_record(**extra) -> dict:
+    return {
+        "fetched": "2026-11-28",
+        "sponsor_name": "ACME PHARMS INC",
+        "products": [{"brand_name": "ALPHA FLEXTOUCH"}],
+        "submissions": [
+            {
+                "submission_type": "ORIG",
+                "submission_number": "1",
+                "submission_status": "AP",
+                "submission_status_date": "20260130",
                 "submission_class_code_description": "Type 1 - New Molecular Entity",
+                "review_priority": "PRIORITY",
+                "submission_property_type": [{"code": "Orphan"}],
                 "application_docs": [
                     {"type": "Letter", "url": "https://x/ltr.pdf"},
                     {"type": "Review", "url": "https://x/TOC.html"},
@@ -285,30 +315,121 @@ def test_openfda_fills_only_what_is_missing_and_leaves_bla_classification_blank(
                 ],
             }
         ],
+        **extra,
     }
-    for key in ("NDA111111", "BLA222222"):
-        (tmp_path / f"{key}.json").write_text(json.dumps(record))
+
+
+def test_openfda_refreshes_documents_and_fills_what_the_compilation_does_not_cover(
+    tmp_path, monkeypatch
+) -> None:
+    import json
+
+    from fda_sba import drugsfda
+
+    for key in ("NDA111111", "BLA222222", "NDA333333"):
+        (tmp_path / f"{key}.json").write_text(json.dumps(_openfda_record()))
+    # An application openFDA does not have (withdrawn) is cached as empty.
+    (tmp_path / "NDA444444.json").write_text(json.dumps({"fetched": "2026-11-28"}))
     monkeypatch.setattr(drugsfda, "urlopen", lambda *a, **k: pytest.fail("network used"))
+    day = pd.Timestamp("2026-01-30").date()
     index = pd.DataFrame(
         {
-            "drug_name": ["A", "B", "C"],
-            "application_type": ["NDA", "BLA", "NDA"],
-            "application_number": ["111111", "222222", "333333"],
-            "approval_date": [pd.Timestamp("2025-01-30").date()] * 3,
-            "approval_letter_url": [None, None, "https://x/page-letter.pdf"],
-            "review_url": [None, None, "https://x/page-toc.html"],
-            "label_pdf_url": ["https://x/list-label.pdf", None, "https://x/l.pdf"],
-            "submission_classification": [None, None, "Type 1 - New Molecular Entity"],
+            "drug_name": ["A", "B", "C", "D"],
+            "application_type": ["NDA", "BLA", "NDA", "NDA"],
+            "application_number": ["111111", "222222", "333333", "444444"],
+            # C's list date is two days off; D's record is empty.
+            "approval_date": [day, day, pd.Timestamp("2026-02-01").date(), day],
+            "approval_letter_url": [None, None, "https://x/old-letter.pdf", "https://x/page.pdf"],
+            "review_url": [None, None, None, None],
+            "label_pdf_url": ["https://x/list-label.pdf", None, None, None],
+            "submission_classification": [None, None, None, None],
+            "sponsor": ["Named By The Compilation", None, None, "Page Sponsor"],
+            "review_designation": ["Standard", None, None, None],
+            "orphan_drug_designation": ["No", None, None, None],
         }
     )
-    out = drugsfda.fill_approval_documents(index, tmp_path).to_dict("records")
-    assert out[0]["approval_letter_url"] == "https://x/ltr.pdf"
-    assert out[0]["label_pdf_url"] == "https://x/list-label.pdf"  # an existing link is kept
-    assert out[0]["submission_classification"] == "Type 1 - New Molecular Entity"
-    assert out[0]["documents_read"] == "2026-11-26"
-    assert out[1]["review_url"] == "https://x/TOC.html"
-    assert out[1]["label_pdf_url"] == "https://x/openfda-label.pdf"
-    assert pd.isna(out[1]["submission_classification"])
-    # A row the page pass completed is not looked up at all.
-    assert out[2]["approval_letter_url"] == "https://x/page-letter.pdf"
-    assert pd.isna(out[2]["documents_read"])
+    out = drugsfda.enrich_from_drugsfda(index, tmp_path).to_dict("records")
+    a, b, c, d = out
+    assert a["approval_letter_url"] == "https://x/ltr.pdf"
+    assert a["label_pdf_url"] == "https://x/list-label.pdf"  # the list's label link is kept
+    assert a["submission_classification"] == "Type 1 - New Molecular Entity"
+    assert a["sponsor"] == "Named By The Compilation"
+    # The compilation's designations are never overwritten.
+    assert (a["review_designation"], a["orphan_drug_designation"]) == ("Standard", "No")
+    assert a["designations_source"] == "compilation"
+    assert a["documents_read"] == "2026-11-28"
+
+    assert b["label_pdf_url"] == "https://x/openfda-label.pdf"
+    assert pd.isna(b["submission_classification"])  # shown for NDAs only
+    assert b["sponsor"] == "Acme Pharms INC"
+    assert (b["review_designation"], b["orphan_drug_designation"]) == ("Priority", "Yes")
+    assert b["designations_source"] == "openfda"
+
+    assert c["approval_letter_url"] == "https://x/ltr.pdf"  # openFDA is the fresher read
+    assert c["approval_date"] == day  # Drugs@FDA's date wins within a year
+
+    assert d["approval_letter_url"] == "https://x/page.pdf"  # kept from the cached page
+    assert d["sponsor"] == "Page Sponsor"
+    assert pd.isna(d["documents_read"])
+    assert pd.isna(d["designations_source"])
+
+
+def test_a_brand_name_is_matched_only_when_the_approval_date_agrees(tmp_path, monkeypatch) -> None:
+    import json
+
+    from fda_sba import drugsfda
+
+    monkeypatch.setattr(drugsfda, "REQUEST_DELAY", 0)
+    asked: list[str] = []
+
+    class Answer(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    def urlopen(req, timeout=30):
+        asked.append(req.full_url)
+        results = [
+            {"application_number": "BLA761326", **_openfda_record()},
+            # Same brand, approved years earlier: another product line.
+            {
+                "application_number": "NDA020000",
+                **_openfda_record(
+                    submissions=[
+                        {
+                            "submission_type": "ORIG",
+                            "submission_number": "1",
+                            "submission_status": "AP",
+                            "submission_status_date": "20010101",
+                        }
+                    ]
+                ),
+            },
+        ]
+        return Answer(json.dumps({"meta": {}, "results": results}).encode())
+
+    monkeypatch.setattr(drugsfda, "urlopen", urlopen)
+    # The list says January 31; Drugs@FDA says January 30. Close enough.
+    found = drugsfda.find_application("Alpha", "2026-01-31", tmp_path)
+    assert found["application"] == "BLA761326"
+    assert drugsfda.find_application("Alpha", "2026-06-30", tmp_path) is None
+    assert len(asked) == 1  # the second lookup came from the cache
+    assert drugsfda._same_brand("Alpha", "ALPHA FLEXTOUCH")
+    assert not drugsfda._same_brand("Alpha", "ALPHABET")
+
+    index = pd.DataFrame(
+        {
+            "drug_name": ["Alpha", "Listed"],
+            "approval_date": [pd.Timestamp("2026-01-31").date()] * 2,
+            "application_number": [None, "555555"],
+            "application_type": [None, "NDA"],
+            "drugs_at_fda_url": [None, "https://x/555555"],
+        }
+    )
+    out = drugsfda.fill_application_numbers(index, tmp_path).to_dict("records")
+    assert (out[0]["application_type"], out[0]["application_number"]) == ("BLA", "761326")
+    assert out[0]["drugs_at_fda_url"].endswith("ApplNo=761326")
+    assert out[1]["application_number"] == "555555"
+    assert len(asked) == 1

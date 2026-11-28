@@ -32,4 +32,4 @@ FDA's Center for Drug Evaluation and Research (CDER) approved 23 novel drugs in 
 | 1994-12-29 | Renormax | spirapril hydrochloride | Sandoz | NDA 020240 | Standard | — | treatment of hypertension |
 | 1994-12-30 | Vexol | rimexalone | Alcon | NDA 020474 | Priority | — | treatment of postoperative inflammation following ocular surgery and in the treatment of anterior uveitis |
 
-Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1994/ (updated 2026-11-26). Data: https://troveproject.com/data/fda_nme_compilation.csv
+Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/1994/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_nme_compilation.csv

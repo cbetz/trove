@@ -30,15 +30,16 @@ The plain-language explainers for each dataset live on the site rather than here
   [`artifacts/community_benefit_gap_2022.csv`](../artifacts/community_benefit_gap_2022.csv)
 - **Method, funnel and caveats** —
   [`artifacts/community_benefit_gap_2022_summary.md`](../artifacts/community_benefit_gap_2022_summary.md)
-- **FDA novel drug approvals** — 268 approvals, 2021–2025 (238 CDER + 30 CBER):
+- **FDA novel drug approvals** — 331 approvals, 2021–2026 (295 CDER + 36 CBER):
   [`artifacts/fda_approvals_nme_recent.csv`](../artifacts/fda_approvals_nme_recent.csv)
 - **Parquet files over HTTPS**, queryable directly from DuckDB — see the
   [README](../README.md).
 
 ## Status
 
-See [`CHANGELOG.md`](../CHANGELOG.md) for release history. Current: 1.2.0 (2026-11-26),
-which rebuilt the hospital data (missing values no longer published as zero, the 2023 IRS
-release and the CMS FY2022 file added, component columns added) and revised how the two
+See [`CHANGELOG.md`](../CHANGELOG.md) for release history. Current: 1.3.0 (2026-11-28),
+which added 2026 FDA approvals to date and re-read every FDA document link. 1.1.0
+(2026-11-19) rebuilt the hospital data (missing values no longer published as zero, the 2023
+IRS release and the CMS FY2022 file added, component columns added) and revised how the two
 figures are described: they are defined differently and are shown side by side with their
 components.

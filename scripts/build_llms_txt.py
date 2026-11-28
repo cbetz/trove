@@ -32,7 +32,8 @@ def render() -> str:
     matched = hospitals["totals"]["matched"]
     clean = ranked["counts"]["clean_aligned"]
     states = ranked["counts"]["clean_states"]
-    years = " ".join(f"[{y}]({SITE}/drugs/{y}/index.md)" for y in range(y1, y1 - 8, -1))
+    top = max(y1, i1)  # the per-drug index can run a year past FDA's compilation
+    years = " ".join(f"[{y}]({SITE}/drugs/{y}/index.md)" for y in range(top, top - 8, -1))
     examples = ", ".join(
         f"[{r['drug_name']}]({SITE}/drugs/{slug}/index.md)"
         for r, slug in (
@@ -42,9 +43,9 @@ def render() -> str:
     )
     return f"""# trove
 
-> Public-domain U.S. healthcare data, parsed and documented: FDA novel drug approvals ({y0}–{y1}) with labels, approval letters and review documents, and nonprofit hospital charity care as reported to the IRS (Form 990 Schedule H) and to CMS (Medicare cost report Worksheet S-10). Open source, MIT-licensed, built by Chris Betz. Not medical, legal or financial advice.
+> Public-domain U.S. healthcare data, parsed and documented: FDA novel drug approvals ({y0}–{top}) with labels, approval letters and review documents, and nonprofit hospital charity care as reported to the IRS (Form 990 Schedule H) and to CMS (Medicare cost report Worksheet S-10). Open source, MIT-licensed, built by Chris Betz. Not medical, legal or financial advice.
 
-Every figure on the site comes from a named federal source and links back to it. Data files are under {SITE}/data/ and can be read directly over HTTPS (CSV, JSON, Parquet). Pages listed below as .md are Markdown versions of the HTML pages.
+Every figure on the site comes from a named federal source and links back to it. Data files are under {SITE}/data/ and can be read directly over HTTPS (CSV, JSON, Parquet). Pages listed below as .md are Markdown versions of the HTML pages; a request for a page under /drugs/ with `Accept: text/markdown` is redirected to its Markdown version.
 
 ## FDA drug approvals
 

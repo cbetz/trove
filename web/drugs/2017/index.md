@@ -55,4 +55,4 @@ FDA's Center for Drug Evaluation and Research (CDER) approved 46 novel drugs in 
 | 2017-12-20 | Macrilen | macimorelin | Aeterna Zentaris GmBH | NDA 205598 | Standard | Orphan | MACRILEN is indicated for the diagnosis of adult growth hormone deficiency (AGHD). |
 | 2017-12-21 | Giapreza | angiotensin II | La Jolla Pharmaceuticals | NDA 209360 | Priority | — | GIAPREZA increases blood pressure in adults with septic or other distributive shock. |
 
-Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/2017/ (updated 2026-11-26). Data: https://troveproject.com/data/fda_nme_compilation.csv
+Source: FDA, Compilation of CDER NME and New Biologic Approvals (https://www.fda.gov/drugs/drug-approvals-and-databases/compilation-cder-new-molecular-entity-nme-drug-and-new-biologic-approvals), file dated May 12, 2026. Page: https://troveproject.com/drugs/2017/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_nme_compilation.csv

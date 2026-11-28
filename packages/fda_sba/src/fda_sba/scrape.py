@@ -57,6 +57,20 @@ def fetch_nme_year_html(
     return target
 
 
+_CURRENT_AS_OF_RE = re.compile(r'Content current as of.*?datetime="(\d{4}-\d\d-\d\d)', re.S)
+
+
+def list_current_as_of(year: int, cache_dir: Path | str = "data/raw/fda") -> str | None:
+    """The "Content current as of" date FDA prints on a year's list page (ISO).
+
+    For the year in progress this is how far the list runs: approvals after
+    that date were not on the page when it was read.
+    """
+    text = fetch_nme_year_html(year, cache_dir).read_text(errors="replace")
+    m = _CURRENT_AS_OF_RE.search(text)
+    return m.group(1) if m else None
+
+
 def scrape_nme_year(
     year: int,
     cache_dir: Path | str = "data/raw/fda",
