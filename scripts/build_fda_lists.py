@@ -252,7 +252,7 @@ def _in_progress_lead(year: int, s: dict, cber_n: int, as_of: str) -> list[str]:
         f"list when trove read it: {s['nda']} under new drug applications (NDAs) and {s['bla']} "
         f"under biologics license applications (BLAs).",
         f"{s['priority']} of the {s['n']} ({pct(s['priority'], s['n'])}) had priority review, "
-        f"and {s['orphan']} carry orphan status in FDA's Drugs@FDA records. Counts of "
+        f"and {s['orphan']} of the applications carry an orphan flag in FDA's Drugs@FDA data. Counts of "
         f"accelerated approvals, breakthrough therapy and fast track designations are not "
         f"available yet: FDA's compilation of novel approvals, which records them, does not "
         f"cover {year}.",
@@ -320,7 +320,7 @@ def render_year(
             return "Orphan" if is_yes(r.get("orphan_drug_designation")) else "—"
         return ", ".join(flag_labels(r)) or "—"
 
-    programs_head = "Orphan status" if partial else "Expedited programs"
+    programs_head = "Orphan flag" if partial else "Expedited programs"
 
     body_rows = "\n".join(
         "        <tr>"
@@ -381,7 +381,7 @@ def render_year(
         list_heading = f"List of {year} novel drug approvals to date (CDER)"
         table_note = (
             f"In order of approval. FDA adds to its {year} list as it approves drugs; this page "
-            f"shows the list as of {fmt_date_long(as_of)}. Review priority and orphan status come "
+            f"shows the list as of {fmt_date_long(as_of)}. Review priority and the orphan flag come "
             f"from each application's Drugs@FDA record. The orphan flag belongs to the "
             f"application, so it can reflect a designation for a use other than the one approved. "
             f"The approved use is FDA's one-line summary from its Novel Drug Approvals list. Each "
@@ -567,7 +567,7 @@ def render_year(
         md += [
             "",
             f"Source: FDA, Novel Drug Approvals list for {year} ({NOVEL_APPROVALS_URL}), current "
-            f"as of {fmt_date_long(as_of)}; review priority and orphan status from FDA's "
+            f"as of {fmt_date_long(as_of)}; review priority and orphan flag from FDA's "
             f"Drugs@FDA data through openFDA. Page: {SITE}{path} (updated {modified}). "
             f"Data: {SITE}/data/fda_approvals_nme_recent.json",
             "",

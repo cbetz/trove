@@ -2,7 +2,7 @@
 
 The FDA approved Zenbexus (iberdomide) on August 13, 2026, under NDA 221075. The sponsor is Bristol Myers Squibb. FDA lists the approved use as: “To be used in combination with daratumumab and hyaluronidase-fihj and dexamethasone for adults with multiple myeloma who have received at least one prior line of therapy, including a proteasome inhibitor and an immunomodulatory agent.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Zenbexus application. Whether Zenbexus had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Zenbexus application. Whether Zenbexus had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Zenbexus approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Zenbexus 
 - FDA approval date: August 13, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

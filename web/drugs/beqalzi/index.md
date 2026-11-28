@@ -2,7 +2,7 @@
 
 The FDA approved Beqalzi (sonrotoclax) on May 13, 2026, under NDA 220711. The sponsor is Beone Medicines USA. FDA lists the approved use as: “To treat adults with relapsed or refractory mantle cell lymphoma after at least two lines of systemic therapy, including a Bruton’s tyrosine kinase inhibitor.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Beqalzi application. Whether Beqalzi had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Beqalzi application. Whether Beqalzi had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Beqalzi approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Beqalzi a
 - FDA approval date: May 13, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

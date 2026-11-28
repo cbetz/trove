@@ -2,7 +2,7 @@
 
 The FDA approved Isembyld (apitegromab-mstn) on September 11, 2026, under BLA 761463. The sponsor is Scholar Rock INC. FDA lists the approved use as: “To treat spinal muscular atrophy in adults and pediatric patients 2 years of age and older who are currently receiving an SMN2-targeted treatment.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Isembyld application. Whether Isembyld had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Isembyld application. Whether Isembyld had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Isembyld approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Isembyld 
 - FDA approval date: September 11, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
 ## Isembyld FDA documents

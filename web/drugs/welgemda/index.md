@@ -2,7 +2,7 @@
 
 The FDA approved Welgemda (ribitol) on November 23, 2026, under NDA 220905. The sponsor is Ml Bio Solutions INC. FDA lists the approved use as: “To treat limb-girdle muscular dystrophy type 2I/R9.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Welgemda application. Whether Welgemda had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Welgemda application. Whether Welgemda had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Welgemda approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Welgemda 
 - FDA approval date: November 23, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

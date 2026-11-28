@@ -2,7 +2,7 @@
 
 The FDA approved Loargys (pegzilarginase-nbln) on February 23, 2026, under BLA 761211. The sponsor is Immedica Pharma AB. FDA lists the approved use as: “To treat hyperarginemia in adults and pediatric patients two years and older with Arginase 1 Deficiency, in conjunction with dietary protein restriction.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Loargys application. Whether Loargys had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Loargys application. Whether Loargys had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Loargys approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Loargys a
 - FDA approval date: February 23, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
 ## Loargys FDA documents

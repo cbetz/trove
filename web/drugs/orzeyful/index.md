@@ -2,7 +2,7 @@
 
 The FDA approved Orzeyful (oveporexton) on August 5, 2026, under NDA 220860. The sponsor is Takeda Pharms USA. FDA lists the approved use as: “To treat narcolepsy type 1.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Orzeyful application. Whether Orzeyful had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Orzeyful application. Whether Orzeyful had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Orzeyful approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Orzeyful 
 - FDA approval date: August 5, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

@@ -2,7 +2,7 @@
 
 The FDA approved Pasatru (garetosmab-grts) on August 19, 2026, under BLA 761508. The sponsor is Regeneron Pharmaceuticals, INC. FDA lists the approved use as: “To reduce new heterotopic ossification and clinician-assessed disease flare-ups in adults with fibrodysplasia ossificans progressiva.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Pasatru application. Whether Pasatru had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Pasatru application. Whether Pasatru had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Pasatru approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Pasatru a
 - FDA approval date: August 19, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
 ## Pasatru FDA documents

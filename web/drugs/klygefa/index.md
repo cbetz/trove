@@ -2,7 +2,7 @@
 
 The FDA approved Klygefa (gefurulimab-gaks) on November 13, 2026, under BLA 761488. The sponsor is Alexion Pharm. FDA lists the approved use as: “To treat anti-acetylcholine receptor antibody-positive generalized myasthenia gravis.”
 
-FDA's Drugs@FDA record lists standard review and orphan status for the Klygefa application. Whether Klygefa had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists standard review for the Klygefa application. Whether Klygefa had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Klygefa approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists standard review and orphan status for the Klygefa a
 - FDA approval date: November 13, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Standard
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
 ## Klygefa FDA documents

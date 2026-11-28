@@ -2,7 +2,7 @@
 
 The FDA approved Jideytro (zidesamtinib) on July 22, 2026, under NDA 220185. The sponsor is Nuvalent. FDA lists the approved use as: “To treat adults with locally advanced or metastatic ROS1-positive non-small cell lung cancer after receiving a ROS1 kinase inhibitor.”
 
-FDA's Drugs@FDA record lists standard review and orphan status for the Jideytro application. Whether Jideytro had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists standard review for the Jideytro application. Whether Jideytro had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Jideytro approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists standard review and orphan status for the Jideytro 
 - FDA approval date: July 22, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Standard
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

@@ -125,11 +125,12 @@ def summary_paragraphs(r: dict) -> list[str]:
 
     review = r.get("review_designation")
     if review and from_drugs_at_fda(r):
-        listed = ["priority review" if is_priority(review) else "standard review"]
-        if is_yes(r.get("orphan_drug_designation")):
-            listed.append("orphan status")
+        # Only review priority goes in the prose. Drugs@FDA's orphan flag is
+        # looser than the compilation's (it can belong to another use of the
+        # application), so it stays in the facts table beside its caveat.
+        priority = "priority review" if is_priority(review) else "standard review"
         out.append(
-            f"FDA's Drugs@FDA record lists {join_words(listed)} for the {name} application. "
+            f"FDA's Drugs@FDA record lists {priority} for the {name} application. "
             f"Whether {name} had accelerated approval, breakthrough therapy or fast track "
             f"designation is not recorded here yet: FDA's compilation of novel approvals does "
             f"not cover {r['year']}."
@@ -195,7 +196,7 @@ def fact_rows(r: dict) -> list[tuple[str, str, str]]:
     add("Route of administration", r.get("route_of_administration"))
     if from_drugs_at_fda(r):
         add("Review priority (Drugs@FDA)", r.get("review_designation"))
-        add("Orphan status (Drugs@FDA)", r.get("orphan_drug_designation"))
+        add("Orphan flag (Drugs@FDA)", r.get("orphan_drug_designation"))
     else:
         add("Review designation", r.get("review_designation"))
         add("Orphan drug designation", r.get("orphan_drug_designation"))
@@ -511,9 +512,9 @@ def render_drug(
     has_designations = bool(r.get("review_designation"))
     if has_designations and from_drugs_at_fda(r):
         designation_note = (
-            '  <p class="note">Review priority and orphan status are from the application\'s '
+            '  <p class="note">Review priority and the orphan flag are from the application\'s '
             "Drugs@FDA record. The orphan flag belongs to the application, so it can reflect a "
-            "designation for a use other than the one approved. FDA's "
+            "designation for a use other than the one approved here. FDA's "
             '<a href="/drugs/compilation/">compilation of CDER NME and new biologic approvals</a>, '
             "which also records accelerated approval, breakthrough therapy and fast track "
             f"designation, does not cover {r['year']} yet.</p>\n"

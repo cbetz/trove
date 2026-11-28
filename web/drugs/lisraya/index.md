@@ -2,7 +2,7 @@
 
 The FDA approved Lisraya (brepocitinib) on August 27, 2026, under NDA 220106. The sponsor is Priovant Therap. FDA lists the approved use as: “To treat dermatomyositis in adults.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Lisraya application. Whether Lisraya had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Lisraya application. Whether Lisraya had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Lisraya approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Lisraya a
 - FDA approval date: August 27, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

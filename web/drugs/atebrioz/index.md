@@ -2,7 +2,7 @@
 
 The FDA approved Atebrioz (zilurgisertib) on September 25, 2026, under NDA 221198. The sponsor is Mirum. FDA lists the approved use as: “To reduce the volume of total new heterotopic ossification in adults and pediatric patients 12 years and older with fibrodysplasia ossificans progressiva.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Atebrioz application. Whether Atebrioz had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Atebrioz application. Whether Atebrioz had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Atebrioz approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Atebrioz 
 - FDA approval date: September 25, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

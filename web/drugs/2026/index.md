@@ -2,13 +2,13 @@
 
 FDA's Center for Drug Evaluation and Research (CDER) has approved 57 novel drugs in 2026 as of November 24, 2026, the date on FDA's running list when trove read it: 45 under new drug applications (NDAs) and 12 under biologics license applications (BLAs).
 
-37 of the 57 (65%) had priority review, and 30 carry orphan status in FDA's Drugs@FDA records. Counts of accelerated approvals, breakthrough therapy and fast track designations are not available yet: FDA's compilation of novel approvals, which records them, does not cover 2026.
+37 of the 57 (65%) had priority review, and 30 of the applications carry an orphan flag in FDA's Drugs@FDA data. Counts of accelerated approvals, breakthrough therapy and fast track designations are not available yet: FDA's compilation of novel approvals, which records them, does not cover 2026.
 
 FDA's Center for Biologics Evaluation and Research (CBER) has separately approved 6 cell and gene therapy products in 2026, listed in the second table.
 
 ## List of 2026 novel drug approvals to date (CDER)
 
-| Approved | Drug | Active ingredient | Applicant | Application | Review | Orphan status | FDA-approved use |
+| Approved | Drug | Active ingredient | Applicant | Application | Review | Orphan flag | FDA-approved use |
 |---|---|---|---|---|---|---|---|
 | 2026-01-12 | [Zycubo](https://troveproject.com/drugs/zycubo/) | copper histidinate | Sentynl Theraps INC | NDA 211241 | Priority | Orphan | To treat Menkes disease |
 | 2026-02-12 | [Adquey](https://troveproject.com/drugs/adquey/) | difamilast | Acrotech Biopharma | NDA 219474 | Standard | — | To treat mild to moderate atopic dermatitis |
@@ -79,4 +79,4 @@ FDA's Center for Biologics Evaluation and Research (CBER) has separately approve
 | 2026-09-17 | [Fayuvi](https://troveproject.com/drugs/fayuvi/) | rebisufligene etisparvovec-hopf | Ultragenyx Pharmaceutical Inc | BLA 125845 | Treatment of neurologic manifestations of mucopolysaccharidosis type IIIA (MPS IIIA, Sanfilippo syndrome type A) in pediatric patients with preserved neurodevelopmental function |
 | 2026-10-30 | [Voceryq](https://troveproject.com/drugs/voceryq/) | doruxapapogene ralaplasmid and lalikinogene sifuplasmid-gxfd | Alliance Medical Products Inc. dba Siegfried (AMP), Irvine, CA | BLA 125825 | To reduce the frequency of surgical papilloma excisions in adults with Recurrent Respiratory Papillomatosis (RRP) |
 
-Source: FDA, Novel Drug Approvals list for 2026 (https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda), current as of November 24, 2026; review priority and orphan status from FDA's Drugs@FDA data through openFDA. Page: https://troveproject.com/drugs/2026/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_approvals_nme_recent.json
+Source: FDA, Novel Drug Approvals list for 2026 (https://www.fda.gov/drugs/development-approval-process-drugs/novel-drug-approvals-fda), current as of November 24, 2026; review priority and orphan flag from FDA's Drugs@FDA data through openFDA. Page: https://troveproject.com/drugs/2026/ (updated 2026-11-28). Data: https://troveproject.com/data/fda_approvals_nme_recent.json

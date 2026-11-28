@@ -2,7 +2,7 @@
 
 The FDA approved Nelkarmi (neladalkib) on November 17, 2026, under NDA 220936. The sponsor is Nuvalent. FDA lists the approved use as: “To treat locally advanced or metastatic anaplastic lymphoma kinase-positive non-small cell lung cancer after certain previous therapies.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Nelkarmi application. Whether Nelkarmi had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Nelkarmi application. Whether Nelkarmi had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Nelkarmi approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Nelkarmi 
 - FDA approval date: November 17, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

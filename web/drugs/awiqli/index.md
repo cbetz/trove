@@ -2,7 +2,7 @@
 
 The FDA approved Awiqli (insulin icodec-abae) on March 26, 2026, under BLA 761326. The sponsor is Novo Nordisk INC. FDA lists the approved use as: “To improve glycemic control in adults with type 2 diabetes mellitus.”
 
-FDA's Drugs@FDA record lists standard review and orphan status for the Awiqli application. Whether Awiqli had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists standard review for the Awiqli application. Whether Awiqli had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Awiqli approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists standard review and orphan status for the Awiqli ap
 - FDA approval date: March 26, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Standard
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
 ## Awiqli FDA documents

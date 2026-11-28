@@ -2,7 +2,7 @@
 
 The FDA approved Infilbray (venglustat) on November 18, 2026, under NDA 221144. The sponsor is Genzyme CORP A Sanofi CO. FDA lists the approved use as: “To treat the neurological symptoms of Type 3 Gaucher disease.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Infilbray application. Whether Infilbray had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Infilbray application. Whether Infilbray had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Infilbray approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Infilbray
 - FDA approval date: November 18, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

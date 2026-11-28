@@ -2,7 +2,7 @@
 
 The FDA approved Decnupaz (pivekimab sunirine-pvzy) on May 27, 2026, under BLA 761460. The sponsor is Abbvie INC. FDA lists the approved use as: “To treat adults with blastic plasmacytoid dendritic cell neoplasm.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Decnupaz application. Whether Decnupaz had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Decnupaz application. Whether Decnupaz had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Decnupaz approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Decnupaz 
 - FDA approval date: May 27, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
 ## Decnupaz FDA documents

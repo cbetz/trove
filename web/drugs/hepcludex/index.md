@@ -2,7 +2,7 @@
 
 The FDA approved Hepcludex (bulevirtide-gmod) on May 22, 2026, under BLA 761468. The sponsor is Gilead Sciences INC. FDA lists the approved use as: “To treat chronic hepatitis delta virus infection in adults without cirrhosis or with compensated cirrhosis.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Hepcludex application. Whether Hepcludex had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Hepcludex application. Whether Hepcludex had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Hepcludex approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Hepcludex
 - FDA approval date: May 22, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
 ## Hepcludex FDA documents

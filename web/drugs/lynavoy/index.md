@@ -2,7 +2,7 @@
 
 The FDA approved Lynavoy (linerixibat) on March 17, 2026, under NDA 220295. The sponsor is Intercept. FDA lists the approved use as: “To treat cholestatic pruritus associated with primary biliary cholangitis.”
 
-FDA's Drugs@FDA record lists standard review and orphan status for the Lynavoy application. Whether Lynavoy had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists standard review for the Lynavoy application. Whether Lynavoy had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 FDA's labeling data puts Lynavoy in the established pharmacologic class: Ileal Bile Acid Transporter Inhibitor.
 
@@ -16,7 +16,7 @@ FDA's labeling data puts Lynavoy in the established pharmacologic class: Ileal B
 - Approval year: 2026
 - Pharmacologic class: Ileal Bile Acid Transporter Inhibitor
 - Review priority (Drugs@FDA): Standard
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

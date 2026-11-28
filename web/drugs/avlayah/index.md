@@ -2,7 +2,7 @@
 
 The FDA approved Avlayah (tividenofusp alfa-eknm) on March 24, 2026, under BLA 761485. The sponsor is Denali Therapeutics INC. FDA lists the approved use as: “To treat certain individuals with Hunter syndrome (Mucopolysaccharidosis type II or MPS II).”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Avlayah application. Whether Avlayah had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Avlayah application. Whether Avlayah had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 FDA's labeling data puts Avlayah in the established pharmacologic class: Hydrolytic Lysosomal Glycosaminoglycan-specific Enzyme.
 
@@ -16,7 +16,7 @@ FDA's labeling data puts Avlayah in the established pharmacologic class: Hydroly
 - Approval year: 2026
 - Pharmacologic class: Hydrolytic Lysosomal Glycosaminoglycan-specific Enzyme
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
 ## Avlayah FDA documents

@@ -2,7 +2,7 @@
 
 The FDA approved Ekitna (bezuclastinib) on November 24, 2026, under NDA 221283. The sponsor is Cogent Biosciences INC. FDA lists the approved use as: “To treat advanced gastrointestinal stromal tumors, in combination with sunitinib, in adults who have received prior treatment with imatinib.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Ekitna application. Whether Ekitna had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Ekitna application. Whether Ekitna had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Ekitna approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Ekitna ap
 - FDA approval date: November 24, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

@@ -2,7 +2,7 @@
 
 The FDA approved Ambelvist (gadoquatrane) on June 12, 2026, under NDA 219627. The sponsor is Bayer Healthcare. FDA lists the approved use as: “To detect and visualize lesions with abnormal vascularity, in conjunction with MRI.”
 
-FDA's Drugs@FDA record lists standard review and orphan status for the Ambelvist application. Whether Ambelvist had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists standard review for the Ambelvist application. Whether Ambelvist had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Ambelvist approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists standard review and orphan status for the Ambelvist
 - FDA approval date: June 12, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Standard
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 

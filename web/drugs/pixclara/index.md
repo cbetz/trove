@@ -2,7 +2,7 @@
 
 The FDA approved Pixclara (floretyrosine F 18) on September 11, 2026, under NDA 218592. The sponsor is Telix. FDA lists the approved use as: “To use with positron emission tomography to differentiate recurrent or progressive glioma from treatment-related change in conjunction with other diagnostic evaluations.”
 
-FDA's Drugs@FDA record lists priority review and orphan status for the Pixclara application. Whether Pixclara had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
+FDA's Drugs@FDA record lists priority review for the Pixclara application. Whether Pixclara had accelerated approval, breakthrough therapy or fast track designation is not recorded here yet: FDA's compilation of novel approvals does not cover 2026.
 
 ## Pixclara approval facts
 
@@ -13,7 +13,7 @@ FDA's Drugs@FDA record lists priority review and orphan status for the Pixclara 
 - FDA approval date: September 11, 2026
 - Approval year: 2026
 - Review priority (Drugs@FDA): Priority
-- Orphan status (Drugs@FDA): Yes
+- Orphan flag (Drugs@FDA): Yes
 - Submission classification: Type 1 - New Molecular Entity
 - FDA center: CDER (Center for Drug Evaluation and Research)
 
